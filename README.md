@@ -1,90 +1,118 @@
 <div align="center">
-  
-  # 🌐 Three-D-GS Platform
 
-  **Immersive 3D digital-twin experiences, curated studio workflows, and public virtual tours built for modern property marketing and spatial storytelling.**
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:282828,40:3C3836,75:D65D0E,100:FABD2F&height=200&section=header&text=Prabhat%20Bhusal&fontSize=58&fontColor=FBF1C7&animation=twinkling&fontAlignY=38&desc=Game%20Dev%20%E2%80%A2%203DGS%20%E2%80%A2%20Full%20Stack%20%E2%80%A2%20Nepal&descAlignY=60&descSize=17" alt="Prabhat Bhusal" width="100%" />
+
+<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=1000&pause=1000&color=FE8019&background=62FF2500&center=true&width=600&lines=Hi+%F0%9F%91%8B;%F0%9F%92%BBI'm+Prabhat+Bhusal" alt="Typing SVG" /></a>
+
+<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=24&pause=1000&color=FABD2F&center=true&vCenter=true&width=600&lines=%F0%9F%8E%AE+Game+Developer;%F0%9F%8C%8C+3DGS+%26+Spatial+Web+Dev;%F0%9F%92%BB+Full+Stack+Developer;%E2%9C%A8+Crafting+Immersive+Worlds!" alt="Typing SVG" /></a>
+
+<img src="assets/splat-ridge.svg" alt="Gaussian splats assembling into a Himalayan ridge" width="100%" />
+
+<p><i>Pushing the boundaries of 3d-spatial computing, photorealistic rendering, and interactive web experiences from Nepal 🇳🇵</i></p>
+
+<p>
+  <img src="https://komarev.com/ghpvc/?username=prabhatbhusal&label=Profile%20views&color=E88E23&style=flat" alt="Profile Views" />
+  <a href="https://twitter.com/prabhatbhusal4" target="_blank"><img src="https://img.shields.io/twitter/follow/prabhatbhusal4?logo=twitter&style=flat&color=blue" alt="Twitter Follow" /></a>
+</p>
+
+<h3>🌐 Connect With Me</h3>
+
+<a href="https://twitter.com/prabhatbhusal4" target="_blank"><img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"/></a>
+<a href="https://www.linkedin.com/in/prabhat-bhusal-302672322/" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/></a>
+<a href="https://www.facebook.com/profile.php?id=100095264807276" target="_blank"><img src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" alt="Facebook"/></a>
+<a href="https://www.instagram.com/imprabhatbhusal/" target="_blank"><img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram"/></a>
+<a href="mailto:prabhatbhusal777@gmail.com"><img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/></a>
+
+<br/><br/>
+
+<a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://trophygithubreadmelang.cybee.dpdns.org/?username=prabhatbhusal&theme=gruvbox&margin-w=15" alt="GitHub Trophies" /></a>
 
 </div>
 
-## ✨ Overview
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:D65D0E,50:FABD2F,100:8EC07C&height=3" width="100%" alt="divider" />
 
-**Three-D-GS Platform** is a full-stack solution for creating, managing, and publishing immersive 3D spaces from real-world locations. It blends a marketing website, a private studio/editor, and a scalable backend API to transform captured spaces into browser-based tours. 
+### 👾 What I Do
 
-**No app installations required**—visitors explore directly on mobile or desktop browsers.
+- 🔭 I’m currently engineering solutions for a **3D Gaussian Splatting (3DGS) platform**, bringing high-fidelity volumetric scenes to life.
+- 🕹️ Building games and interactive experiences using **Unreal Engine**.
+- 💻 Creating seamless, responsive user interfaces as a **Frontend Developer**.
+- 💬 Ask me about: **Game architectures, 3D rendering pipelines, React, C++, and Backend integrations.**
+- 📫 Reach out at: **[prabhatbhusal777@gmail.com](mailto:prabhatbhusal777@gmail.com)**
 
-### 🔄 The Capture-to-Publish Workflow
+```mermaid
+mindmap
+  root((Prabhat))
+    🎮 Games
+      Unreal Engine
+      Unity
+      C++ / C#
+    🌌 Spatial Web
+      3D Gaussian Splatting
+      Virtual tours
+      Rendering pipelines
+    💻 Full Stack
+      React + Tailwind
+      Django REST
+      PostgreSQL
+```
 
-1. 📡 **Scan & Capture:** Walk the real site and collect spatial data using LiDAR or 3D workflows.
-2. 📥 **Import:** Upload the spatial data into the studio to generate a navigable scene.
-3. ✍️ **Author:** Set the tour structure, metadata, interactive viewpoints, and branding.
-4. 🚀 **Publish:** Push the space to the public gallery and virtual tour experience.
-5. 🤝 **Convert:** Visitors explore the space and submit enquiries from inside the tour.
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:D65D0E,50:FABD2F,100:8EC07C&height=3" width="100%" alt="divider" />
 
----
+<div align="center">
 
-## 🎯 Why This Platform Matters
+<h3>🛠️ Tech Stack & Arsenal</h3>
 
-Passive image galleries don't convert like they used to. This platform is built for spaces where people need to **explore before they decide**:
+<p><b>🎮 Game Engines & 3D Core</b></p>
+<img src="https://skillicons.dev/icons?i=unity,unreal,cpp,cs&perline=10" alt="Game Dev Stack" />
 
-| 🏨 Hospitality & Hotels | 🎓 Colleges & Campuses | 🏛️ Heritage Spaces | 🏢 Commercial Offices | 🔬 Labs & Facilities |
-|:---:|:---:|:---:|:---:|:---:|
+<br/><br/>
 
-*Instead of looking at photos, visitors can walk through a property and send enquiries without ever leaving the room.*
+<p><b>💻 Frontend & UI Development</b></p>
+<img src="https://skillicons.dev/icons?i=react,js,tailwind,html,css,figma&perline=10" alt="Frontend Stack" />
 
----
+<br/><br/>
 
-## 🌟 Core Features
+<p><b>⚙️ Backend, Database & Tools</b></p>
+<img src="https://skillicons.dev/icons?i=django,postgres,linux,git&perline=10" alt="Backend and Tools" />
 
-| Feature | Description |
-| :--- | :--- |
-| 🧭 **Virtual Tours** | Gaussian-splat tours in the browser. Features include Walk, Fly, Orbit, camera tracks, and a live floor map with a "you are here" indicator. |
-| 📍 **Smart Hotspots** | Embed text, images, video, audio, links, portals, and tables. Set them to always show, or reveal dynamically as visitors approach. |
-| 🌗 **Day / Night Mode** | Toggle a night version of a space in one tap without losing the current view. |
-| 🌐 **Multilingual** | Native support for English, नेपाली, and 中文 (via picker or `?lang=`). |
-| 🍽️ **Table Booking** | Interactive floor plans with GSAP animations. Guests pick tables; the studio manages approvals via the reservations inbox. |
-| 🛎️ **Lead Generation** | Built-in booking cards per space and in-tour enquiry panels to capture visitor intent. |
-| 🖥️ **Client Websites** | Full dedicated sites at `/s/<project>`. Includes live tours, menus, bookings, contact forms, and draft/publish controls. |
-| 🎨 **Auto-Branding** | Upload a logo and the system suggests brand colors. Custom fonts and branding info per project. |
-| 🧑‍💼 **Studio Workspace** | Powerful scene editor, version history, activity logging, and granular team roles. |
-| 📊 **Analytics** | Monthly visitor reports, exportable floor-plan PDF sheets, and CSV enquiry exports. |
-| ☁️ **Cloud Storage** | Native integration for S3-compatible buckets (Cloudflare R2) to synchronize splat data across machines. |
+</div>
 
-> 📚 **Full Feature Book:** Check out the detailed guide in [`docs/RCAAS-Feature-Book.pdf`](docs/RCAAS-Feature-Book.pdf).
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:D65D0E,50:FABD2F,100:8EC07C&height=3" width="100%" alt="divider" />
 
----
+### 🚀 Featured Projects
 
-## 🏗️ Architecture
+<div align="center">
 
-### Frontend Layer
-Powered by **Next.js** and **React 19** to deliver:
-* Public marketing pages & Gallery experiences.
-* The secure, authenticated Studio workspace.
-* A highly responsive viewer and editor UI.
+<a href="https://github.com/prabhatbhusal/Url-Shortener"><img src="https://github-readme-stats.vercel.app/api/pin/?username=prabhatbhusal&repo=Url-Shortener&theme=gruvbox&hide_border=true" alt="Url-Shortener" /></a>
+<!-- Add more pins by copying the line above and changing repo=<RepoName> -->
 
-### Backend & API Layer
-Built on **Node.js** and **Express.js** to manage:
-* Scene, gallery, and asset APIs.
-* Upload services (Local or S3/Cloudflare R2).
-* Lead submission, session controls, and embed support.
+</div>
 
-### 3D Rendering Engine
-Built around **Three.js** and **React Three Fiber** for hyper-smooth real-time spatial rendering, Gaussian splatting, and immersive web interactions.
+### 🐍 GitHub Contribution Snake
 
----
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/prabhatbhusal/prabhatbhusal/output/github-contribution-grid-snake-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/prabhatbhusal/prabhatbhusal/output/github-contribution-grid-snake.svg">
+    <img alt="github contribution grid snake animation" src="https://raw.githubusercontent.com/prabhatbhusal/prabhatbhusal/output/github-contribution-grid-snake.svg">
+  </picture>
+</div>
 
-## 🧱 Repository Structure
+### 📊 GitHub Analytics
 
-```text
-.
-├── docs/                      # Feature book (PDF)
-├── public/                    # Static media, sample assets, and site files
-├── scripts/dev.mjs            # Starts the site and the API together
-├── server/                    # Express API and file-backed storage layer
-│   ├── src/                   # Routes, storage.js (local), storage-s3.js (S3/R2)
-│   └── scripts/               # push-assets.js (`npm run assets:push`)
-├── src/
-│   ├── app/                   # Next.js App Router pages
-│   ├── components/            # UI, editor, viewer, and 3D scene components
-│   └── lib/                   # 3D game/navigation logic, API, and upload helpers
-├── test/                      # Frontend test coverage
-└── package.json               # Root dependencies and workspace scripts
+<div align="center">
+
+<img height="180" src="https://github-readme-stats.vercel.app/api?username=prabhatbhusal&show_icons=true&locale=en&theme=gruvbox&hide_border=true" alt="prabhatbhusal stats" />
+<img height="180" src="https://github-readme-stats.vercel.app/api/top-langs?username=prabhatbhusal&locale=en&layout=compact&theme=gruvbox&hide_border=true&langs_count=8" alt="top langs" />
+
+<img src="https://streak-stats.demolab.com/?user=prabhatbhusal&theme=gruvbox&hide_border=true" alt="streak stats" />
+
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=prabhatbhusal&theme=gruvbox&hide_border=true&area=true" alt="contribution activity graph" width="100%" />
+
+</div>
+
+<div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:FABD2F,25:D65D0E,60:3C3836,100:282828&height=120&section=footer" alt="footer" width="100%" />
+
+</div>
