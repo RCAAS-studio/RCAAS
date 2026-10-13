@@ -250,7 +250,7 @@ const TeamCard: React.FC<{ member: TeamMember }> = ({ member }) => {
         </p>
 
         <div className="mt-auto pt-4 flex items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             {member.linkedin ? (
               <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className={contactLink}>
                 LinkedIn <span aria-hidden="true">↗</span>
