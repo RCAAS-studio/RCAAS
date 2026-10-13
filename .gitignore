@@ -43,3 +43,6 @@ server/src/data/reservations/
 # Footage masters (4K, hundreds of MB). The web cuts made from them live in
 # public/media/ and are committed; see public/media/README.md.
 media-src/
+
+# The rcaas.tech pages' compiled Tailwind (npm run css:rcaas; built before dev and build)
+src/features/marketing/rcaas.out.css

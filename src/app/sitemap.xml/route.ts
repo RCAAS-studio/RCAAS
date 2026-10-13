@@ -7,9 +7,21 @@ import { SITE_URL } from '../../lib/shareMeta';
  *  route rather than app/sitemap.ts for the reason in robots.txt/route.ts. */
 export const revalidate = 3600;
 
-const PAGES = ['/', '/services', '/work', '/how-it-works', '/gaussian-splatting', '/gallery', '/about', '/contact', '/terms', '/privacy', '/security', '/cookies'];
+// The rcaas.tech pages (src/features/marketing): their own sitemap's list, plus the live tours and two policies.
+// Their privacy and terms pages are drafts marked noindex, so they're left out, as in their sitemap.
+const PAGES = [
+  '/', '/services', '/industries', '/work', '/platform', '/how-we-work', '/learn', '/about', '/faq', '/contact', '/gallery',
+  '/industries/education', '/industries/filmmaking', '/industries/gaming', '/industries/government-municipalities',
+  '/industries/heritage-culture', '/industries/hospitality-tourism', '/industries/nonprofit-international-development',
+  '/industries/real-estate-architecture',
+  '/learn/3d-virtual-tour-vs-360-tour-vs-video', '/learn/planning-a-3d-experience-cost-and-timeline', '/learn/what-is-gaussian-splatting',
+  '/services/digital-twins', '/services/digital-twins/3d-laser-scanning', '/services/digital-twins/drone-mapping',
+  '/services/game-worlds-assets', '/services/immersive-experiences', '/services/immersive-experiences/3d-virtual-tours',
+  '/services/visual-storytelling',
+  '/cookies', '/security'
+];
 // when the pages' words last changed: bump it with a copy edit (a search engine uses it to decide when to re-read)
-const PAGES_MODIFIED = '2026-10-06';
+const PAGES_MODIFIED = '2026-10-13';
 
 async function get<T>(path: string): Promise<T[]> {
   try {
@@ -34,7 +46,7 @@ export async function GET() {
     if (!prev || s.publishedAt > prev) hubs.set(s.propertyId, s.publishedAt);
   }
   const urls: { loc: string; lastmod?: string | null; priority: number }[] = [
-    ...PAGES.map((p) => ({ loc: `${SITE_URL}${p === '/' ? '' : p}`, lastmod: PAGES_MODIFIED, priority: p === '/' ? 1 : p === '/gaussian-splatting' ? 0.9 : 0.7 })),
+    ...PAGES.map((p) => ({ loc: `${SITE_URL}${p === '/' ? '' : p}`, lastmod: PAGES_MODIFIED, priority: p === '/' ? 1 : p === '/learn/what-is-gaussian-splatting' ? 0.9 : 0.7 })),
     ...sites.map((s) => ({ loc: `${SITE_URL}/s/${encodeURIComponent(s.id)}`, lastmod: s.publishedAt, priority: 0.8 })),
     ...[...hubs].map(([id, d]) => ({ loc: `${SITE_URL}/t/${encodeURIComponent(id)}`, lastmod: d, priority: 0.6 }))
   ];

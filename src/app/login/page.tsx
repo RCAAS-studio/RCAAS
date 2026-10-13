@@ -1,43 +1,17 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Suspense } from 'react';
-import { AuthPanel } from '../../features/auth/AuthPanel';
-import { SplatField } from '../../features/marketing/SplatField';
-import '../../features/marketing/site.css';
+import { LoginScreen } from '../../features/marketing/components/LoginScreen';
+import '../../features/marketing/rcaas.out.css';
 import { NOINDEX } from '../../lib/shareMeta';
 
-export const metadata: Metadata = { title: 'Sign in', robots: NOINDEX };
+export const metadata: Metadata = {
+  title: { absolute: 'Sign in | RCAAS Studio' },
+  robots: NOINDEX,
+  icons: { icon: '/favicon.png', apple: '/apple-touch-icon.png' }
+};
 
-/** Fully static now — AuthPanel reads ?mode=/?next= itself via
- *  useSearchParams(), which is what lets this page prerender at build time
- *  instead of
- *  requiring the request's query string up front. useSearchParams() requires
- *  a Suspense boundary; the fallback only shows for the instant before
- *  hydration reads the real URL. */
+/** Sign in, create an account or reset a password (AuthPanel, unchanged), in
+ *  the rcaas.tech look (LoginScreen). Static: AuthPanel reads ?mode=/?next=
+ *  itself via useSearchParams() inside LoginScreen's Suspense. */
 export default function LoginPage() {
-  return (
-    <main className="site auth">
-      <aside className="auth-art">
-        <SplatField className="auth-canvas" />
-        <div className="auth-art-copy">
-          <Link href="/" className="site-brand">
-            <span className="site-mark" aria-hidden />
-            <span>RCAAS<span className="site-brand-tld">.tech</span></span>
-          </Link>
-          <blockquote>
-            The model is how we get there.
-            <br />
-            <em>The enquiry is the point.</em>
-          </blockquote>
-        </div>
-      </aside>
-
-      <section className="auth-side">
-        <Link href="/" className="auth-back">Back to home</Link>
-        <Suspense fallback={null}>
-          <AuthPanel />
-        </Suspense>
-      </section>
-    </main>
-  );
+  return <LoginScreen />;
 }

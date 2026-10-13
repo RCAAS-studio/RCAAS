@@ -119,6 +119,13 @@ function run(name, color, cmd, args, opts) {
   return child;
 }
 
+// The rcaas.tech pages' Tailwind (src/features/marketing/rcaas.css): built once
+// before Next asks for it, then rebuilt on every change to that folder.
+const TAILWIND = [path.join(ROOT, 'node_modules', '@tailwindcss', 'cli', 'dist', 'index.mjs'),
+  '-i', 'src/features/marketing/rcaas.css', '-o', 'src/features/marketing/rcaas.out.css'];
+execFileSync(process.execPath, TAILWIND, { cwd: ROOT, stdio: 'ignore' });
+run('css', 33, process.execPath, [...TAILWIND, '--watch'], { cwd: ROOT, env: {} });
+
 run('api', 35, process.execPath, ['--watch', 'src/index.js'], {
   cwd: SERVER, env: { PORT: String(apiPort), CLIENT_ORIGIN: `http://localhost:${webPort}` }
 });

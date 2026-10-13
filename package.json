@@ -5,12 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "predev:web": "npm run css:rcaas",
     "dev:web": "next dev --webpack",
+    "prebuild": "npm run css:rcaas",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "test": "node --test test/*.test.mjs && cd server && npm test",
-    "docs:dev-guide": "node scripts/dev-guide.mjs"
+    "docs:dev-guide": "node scripts/dev-guide.mjs",
+    "css:rcaas": "tailwindcss -i src/features/marketing/rcaas.css -o src/features/marketing/rcaas.out.css --minify"
   },
   "dependencies": {
     "@gltf-transform/core": "^4.5.0",
@@ -19,6 +22,7 @@
     "@react-three/fiber": "^9.6.1",
     "framer-motion": "^13.4.0",
     "gsap": "^3.15.0",
+    "lucide-react": "^0.546.0",
     "meshoptimizer": "^1.2.0",
     "next": "^16.3.5",
     "react": "19.2.7",
@@ -29,12 +33,14 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
+    "@tailwindcss/cli": "^4.3.3",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.164.0",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.1.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   }
 }

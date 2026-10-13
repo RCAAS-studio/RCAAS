@@ -1,60 +1,9 @@
-import { SITE_URL } from '../../lib/shareMeta';
-import { COMPANY, FAQ, SERVICES, STEPS } from '../../features/marketing/siteContent';
-import { GUIDE } from '../../features/marketing/guide';
-
-/** /llms.txt (llmstxt.org): the site in plain Markdown for AI assistants and
- *  answer engines, built from the same content as the pages so it never drifts. */
+/** /llms.txt (llmstxt.org): the rcaas.tech site's own (public/llms.txt in
+ *  github.com/meshuman/rcaas), served as written. */
 export const dynamic = 'force-static';
 
+const BODY = "# RCAAS Technology\nRCAAS (Reality Capture as a Service) turns real places into 3D tours, VR, AR and stories that help hotels, schools, developers and heritage sites attract visitors and make lasting impact in Nepal and beyond.\n\n## Services\n- Virtual Tours & Immersive Experiences\n- 3D Laser Scanning (LiDAR)\n- Digital Twins for Architecture, Engineering & Construction\n- Drone Mapping\n- Visual Storytelling\n- Game Worlds & Assets (Gaussian splat assets, game environments, real-time scenes)\n\n## Key Links\n- Home: https://rcaas.tech/\n- Services: https://rcaas.tech/services/\n- Work/Case Studies: https://rcaas.tech/work/\n- Learn & Blog: https://rcaas.tech/learn/\n\n## Target Audience\nHotels, real estate developers, educational institutions, construction firms, game studios, filmmakers, nonprofits and development organisations, banks and financial institutions, and heritage sites seeking to digitize physical spaces.\n\n## Positioning\nRCAAS is the leading reality capture and 3D immersive experience provider in Nepal. We don't just capture photos; we create digital twins and interactive 3D spaces that allow users to walk through and experience locations remotely.\n";
+
 export function GET() {
-  const page = (path: string, title: string, about: string) => `- [${title}](${SITE_URL}${path}): ${about}`;
-  const body = `# ${COMPANY.brand}
-
-> ${COMPANY.summary} Based in ${COMPANY.city}, Nepal, an authorised XGRIDS partner.
-
-${GUIDE.answer}
-
-A longer version of everything here: ${SITE_URL}/llms-full.txt
-
-## Services
-
-${SERVICES.map((s) => `- **${s.title}**: ${s.body}`).join('\n')}
-
-## How it works
-
-${STEPS.map((s, i) => `${i + 1}. **${s.t}**: ${s.b}`).join('\n')}
-
-## Questions
-
-${FAQ.map((f) => `### ${f.q}\n\n${f.a}`).join('\n\n')}
-
-## Pages
-
-${[
-    page(GUIDE.path, GUIDE.title, 'the definition, how it compares with 360° tours and meshes, a glossary and common questions'),
-    page('/', 'Home', 'what a walkable 3D tour does for a business'),
-    page('/services', 'Services', 'tours, point clouds, drawings, heritage and infrastructure records'),
-    page('/how-it-works', 'How it works', 'capture, process, author, publish, and the FAQ'),
-    page('/work', 'Work', 'projects and case studies'),
-    page('/gallery', 'Live tours', 'every published tour, open to walk'),
-    page('/about', 'About', 'who we are: RCAAS.tech'),
-    page('/contact', 'Contact', 'book a capture')
-  ].join('\n')}
-
-## Contact
-
-- Phone: ${COMPANY.phone}
-- Email: ${COMPANY.email}
-- Address: ${COMPANY.locality}, ${COMPANY.city}, Nepal (${COMPANY.hours})
-
-## Optional
-
-${[
-    page('/privacy', 'Privacy Policy', 'what visitors’ data is collected and who sees it'),
-    page('/security', 'Security Policy', 'how accounts and data are protected'),
-    page('/terms', 'Terms of Service', 'terms for visitors and clients'),
-    page('/cookies', 'Cookie Policy', 'the one cookie we set, and what stays in the browser')
-  ].join('\n')}
-`;
-  return new Response(body, { headers: { 'Content-Type': 'text/markdown; charset=utf-8' } });
+  return new Response(BODY, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 }

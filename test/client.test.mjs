@@ -9,7 +9,6 @@ import { safeUrl, resolveAsset, assetUrl } from '../src/lib/api.ts';
 import { bookingHref, stayProblem, nightsBetween, isoDay, venueDay, freeForStay, roomsNeeded } from '../src/features/booking/booking.ts';
 import { resolveInitialTier } from '../src/features/scene/deviceTier.ts';
 import { pageMeta } from '../src/lib/shareMeta.ts';
-import { GUIDE } from '../src/features/marketing/guide.ts';
 
 test('booking link carries the visitor\'s dates and guests', () => {
   const t = 'https://basera.com/book?arrive={checkin}&depart={checkout}&adults={guests}&n={nights}';
@@ -467,8 +466,4 @@ test('page metadata: one canonical link, brand suffix, a description a search re
   assert.equal(m.openGraph.title, 'Work | RCAAS.tech');
   assert.equal(m.openGraph.images[0].url, '/og.jpg');
   assert.deepEqual(pageMeta('/', 'Home', 'd', true).title, { absolute: 'Home' }, 'the home page keeps its own full title');
-  // the explainer's copy: a meta description fits a result, the answer fits a spoken reply, every question is answered
-  assert.ok(GUIDE.short.length <= 160, 'meta description under 160 characters');
-  assert.ok(GUIDE.answer.split(/\s+/).length <= 60, 'the definition stays answer-sized');
-  for (const f of GUIDE.faq) assert.ok(f.q.trim() && f.a.trim(), `answered: ${f.q}`);
 });
