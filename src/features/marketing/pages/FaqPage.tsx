@@ -264,7 +264,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
                     href={`#${link.id}`}
                     onClick={jumpTo(link.id)}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
-                      isActive ? 'bg-accent/[0.06] text-zinc-900 font-semibold' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+                      isActive ? 'bg-accent/6 text-zinc-900 font-semibold' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
                     } ${count === 0 ? 'opacity-40' : ''}`}
                   >
                     <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-zinc-400'}`} aria-hidden="true" />

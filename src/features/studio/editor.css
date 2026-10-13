@@ -145,8 +145,6 @@
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25)); transition: transform 0.25s;
 }
 .ed2-home:hover svg { transform: translateY(-1px) scale(1.08); }
-/* the door: a warm light, like someone's home */
-.ed2-home .ed2-home-door { fill: #FFE7A8; stroke: none; }
 @media (prefers-reduced-motion: reduce) {
   .ed2-home, .ed2-home svg { transition: none; }
 }
@@ -677,6 +675,22 @@
   background: var(--ed-panel); border: 1px solid var(--ed-line);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
   color: var(--ed-text-dim); font-size: 10.5px; white-space: nowrap;
+}
+
+/* the hint strip's ? and the shortcut list it opens (ShortcutSheet.tsx) */
+.ed2-keys-btn {
+  pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; cursor: pointer;
+  font: 700 10.5px/1 var(--sans); color: var(--ed-text); background: var(--ed-raise); border: 1px solid var(--ed-line-lit);
+}
+.ed2-keys-btn:hover { background: var(--ed-signal); color: var(--ed-signal-ink); }
+.ed2-keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 28px; }
+.ed2-keys h3 { margin: 0 0 8px; font: 600 11px var(--mono, monospace); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ed-text-dim); }
+.ed2-keys dl { margin: 0; display: grid; gap: 6px; }
+.ed2-keys dl > div { display: grid; grid-template-columns: 9.5em 1fr; gap: 10px; align-items: baseline; }
+.ed2-keys dt, .ed2-keys dd { margin: 0; font-size: 12.5px; }
+.ed2-keys kbd {
+  display: inline-block; padding: 2px 6px; border-radius: 5px; font: 600 11px var(--mono, monospace);
+  color: var(--ed-text); background: var(--ed-well); border: 1px solid var(--ed-line-lit); border-bottom-width: 2px;
 }
 
 @media (max-width: 1100px) {
@@ -1363,7 +1377,6 @@ a.ed2-switch-item:hover { background: var(--ed-raise); }
 }
 .ed2-home:focus-visible { outline-color: var(--ed-signal); }
 .ed2-home svg { filter: none; }
-.ed2-home .ed2-home-door { fill: #161616; }
 
 .pl-brand-word { font-weight: 700; letter-spacing: -0.02em; }
 .pl-brand-word span { color: var(--ed-text-dim); font-weight: 450; margin-right: 0.35em; }
@@ -1376,11 +1389,38 @@ a.ed2-switch-item:hover { background: var(--ed-raise); }
   transition: filter 0.3s;
 }
 .pl-card:hover .pl-card-pic { filter: none; }
-/* above the title link that stretches over the card, so each is its own click */
-.pl-card-go { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
-.pl-card-go a {
-  font: 500 11.5px/1.4 var(--sans); color: var(--ed-text-dim); text-decoration: none;
-  background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
-  transition: color 0.2s, background-size 0.3s;
-}
-.pl-card-go a:hover, .pl-card-go a:focus-visible { color: var(--ed-text); background-size: 100% 1px; outline: none; }
+/* where the project stands (2026-10-13): a hollow dot in progress, a full one delivered */
+.pl-status { display: flex; align-items: center; gap: 6px; margin-top: 6px; font: 500 11.5px/1.4 var(--sans); color: var(--ed-text-dim); }
+.pl-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid currentColor; }
+.pl-status.is-delivered { color: var(--ed-text); }
+.pl-status.is-delivered::before { background: currentColor; }
+.pl-status.is-archived::before { border-style: dashed; }
+/* what waits on it: booking requests to answer, this week's enquiries */
+.pl-card-wait { margin-top: 4px; font: 600 11.5px/1.4 var(--sans); color: var(--ed-text); }
+.pl-card-wait::before { content: '● '; color: var(--ed-signal); }
+.pl-card.is-archived { opacity: 0.75; }
+.pl-card.is-archived:hover { opacity: 1; }
+/* the archive: on record, folded away under the active projects */
+.pl-archived { margin-top: 44px; }
+.pl-archived > summary { display: flex; align-items: baseline; gap: 10px; cursor: pointer; list-style: none; }
+.pl-archived > summary::-webkit-details-marker { display: none; }
+.pl-archived > summary::before { content: '▸'; color: var(--ed-text-dim); transition: transform 0.2s; }
+.pl-archived[open] > summary::before { transform: rotate(90deg); }
+.pl-archived > summary h2 { margin: 0; }
+.pl-archived > .pl-sub { margin: 6px 0 14px; }
+
+/* ================================================================= */
+/*  The site's mark and accent in the studio's top bars (2026-10-13): */
+/*  the home button is the RCAAS viewfinder in the site's rose        */
+/*  (marketing rcaas.css --color-accent), and the top bars' main      */
+/*  actions, Publish and New project, wear it. The rest of the studio */
+/*  keeps its own monochrome signal.                                  */
+/* ================================================================= */
+.ed2-home { color: #E11D48; background: var(--ed-raise); border: 1px solid var(--ed-line-lit); box-shadow: none; }
+.ed2-home:hover { background: var(--ed-raise); border-color: #E11D48; box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.2); }
+.ed2-home:focus-visible { outline-color: #E11D48; }
+.ed2-home svg { width: 18px; height: 18px; stroke-width: 2.2; }
+.ed2-home circle { fill: currentColor; stroke: none; }
+.pl-brand-word span { margin-right: 0; }
+.ed2-pubbtn, .pl-head .pl-btn-main { color: #fff; background: #E11D48; border-color: #E11D48; }
+.ed2-pubbtn:hover, .pl-head .pl-btn-main:hover:not(:disabled) { background: #BE123C; border-color: #BE123C; filter: none; }

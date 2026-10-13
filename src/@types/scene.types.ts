@@ -52,6 +52,8 @@ export interface ApiScene {
 /** A client (§5.1): one hotel, college or campus. Spaces point at it.
  *  Ownership (2026-09-24): `ownerId: null` means every studio account can
  *  see and manage it (every project made before ownership existed). */
+export type ProjectStatus = 'in-progress' | 'delivered' | 'archived';
+
 export interface Property {
   id: string;
   version: 1;
@@ -69,8 +71,14 @@ export interface Property {
   info?: import('./config.types').ProjectInfo;
   /** Which parts of the platform it uses; the server fills every one in. */
   features?: import('./config.types').ProjectFeatures;
+  /** Where it stands (2026-10-13); older projects are in progress. Set by its owner. */
+  status?: ProjectStatus;
+  /** When the status last changed; absent until it first does. */
+  statusAt?: string;
   /** Only on GET /api/properties. */
   spaceCount?: number;
+  /** Only on GET /api/properties: booking requests needing a reply, enquiries in the last 7 days. */
+  waiting?: { bookings: number; enquiries: number };
   /** Only on GET /api/properties: a project from before accounts, listed by name only, to claim. */
   claimable?: boolean;
   /** Only on GET /api/properties/:id (the share panel). */

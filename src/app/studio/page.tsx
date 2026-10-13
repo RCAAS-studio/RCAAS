@@ -3,19 +3,36 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   createProperty, deleteProperty, claimProperty, getProperties, getScenes, moveSceneToProperty, renameProperty,
-  getSession, LAST_PROJECT_KEY, getGallery, apiUrl, type SessionUser
+  setProjectStatus, getSession, LAST_PROJECT_KEY, getGallery, apiUrl, type SessionUser
 } from '../../lib/api';
 import { useStudioSession } from '../../features/auth/useStudioSession';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { NewProjectDialog } from '../../features/studio/NewProjectDialog';
 import { TeamDialog } from '../../features/studio/TeamDialog';
-import { ShareDialog, BrandingDialog, EnquiriesDialog, ActivityDialog } from '../../features/studio/ProjectDialogs';
-import type { ApiScene, Property } from '../../@types/scene.types';
+import { ShareDialog, BrandingDialog, EnquiriesDialog } from '../../features/studio/ProjectDialogs';
+import type { ApiScene, ProjectStatus, Property } from '../../@types/scene.types';
 import '../../features/studio/editor.css';
 
 /** Only its owner can rename, delete, rebrand or share it (an admin too sees
  *  only their own projects). The shared team password, with no account, can. */
 const canManage = (p: Property, me: SessionUser | null) => !me || p.ownerId === me.id;
+
+const day = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+/** "In progress since 3 Oct 2026", "Delivered 12 Oct 2026", "Archived …" (store.js PROJECT_STATUSES). */
+function statusLine(p: Property) {
+  const status = p.status ?? 'in-progress';
+  const at = p.statusAt ?? p.createdAt;
+  const word = { 'in-progress': 'In progress', delivered: 'Delivered', archived: 'Archived' }[status];
+  return !at ? word : status === 'in-progress' ? `${word} since ${day(at)}` : `${word} ${day(at)}`;
+}
+/** "2 booking requests · 1 enquiry this week", or nothing when nothing waits. */
+function waitingLine(p: Property) {
+  const { bookings = 0, enquiries = 0 } = p.waiting ?? {};
+  return [
+    bookings && `${bookings} booking ${bookings === 1 ? 'request' : 'requests'}`,
+    enquiries && `${enquiries} ${enquiries === 1 ? 'enquiry' : 'enquiries'} this week`
+  ].filter(Boolean).join(' · ');
+}
 
 /**
  * The studio's front door: one card per client project (a "property" in the
@@ -74,6 +91,9 @@ export default function StudioPage() {
   const loose = scenes.filter((s) => !s.propertyId || !known.has(s.propertyId));
   // Last opened first, so the project you're working on is the first card.
   const ordered = [...(properties ?? [])].sort((a, b) => Number(b.id === last) - Number(a.id === last));
+  // Archived projects stay on record, folded away at the foot of the list.
+  const active = ordered.filter((p) => p.status !== 'archived');
+  const archived = ordered.filter((p) => p.status === 'archived');
 
   return (
     <div className="ed2">
@@ -82,9 +102,10 @@ export default function StudioPage() {
           <span className="pl-brand">
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- the studio’s 3D renderer is a page singleton: leave with a full page load */}
             <a href="/" className="ed2-home" aria-label="Home" title="Home">
-              <svg viewBox="0 0 24 24" aria-hidden><path d="M3 11 12 4l9 7" /><path d="M5 10v10h5v-6h4v6h5V10" /><rect className="ed2-home-door" x="10.6" y="14.6" width="2.8" height="5" rx="0.6" /></svg>
+              {/* the RCAAS mark: a viewfinder with a dot, as in the site's logo */}
+              <svg viewBox="0 0 24 24" aria-hidden><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15" /><circle cx="12" cy="12" r="3.4" /></svg>
             </a>
-            <span className="pl-brand-word">RCAAS<span>.tech</span> Studio</span>
+            <span className="pl-brand-word">RCAAS <span>Studio</span></span>
           </span>
           <span className="pl-top-actions">
             {me?.role === 'admin' && <button className="pl-btn" onClick={() => setTeam(true)}>Team</button>}
@@ -116,12 +137,24 @@ export default function StudioPage() {
             </div>
           )}
 
-          {properties && properties.length > 0 && (
+          {active.length > 0 && (
             <div className="pl-grid">
-              {ordered.map((p) => (
+              {active.map((p) => (
                 <ProjectCard key={p.id} project={p} current={p.id === last} me={me} onChanged={load} pic={pics[p.id]} />
               ))}
             </div>
+          )}
+
+          {archived.length > 0 && (
+            <details className="pl-archived">
+              <summary><h2>Archived</h2><span className="pl-card-meta">{archived.length}</span></summary>
+              <p className="pl-sub">Finished or dropped projects, kept with their spaces, website and history. Their published tours stay up. Restore one from its ⋯ menu.</p>
+              <div className="pl-grid">
+                {archived.map((p) => (
+                  <ProjectCard key={p.id} project={p} current={false} me={me} onChanged={load} pic={pics[p.id]} />
+                ))}
+              </div>
+            </details>
           )}
 
           {/* Always shown when there are unfiled spaces — with no projects at
@@ -149,13 +182,13 @@ export default function StudioPage() {
   );
 }
 
-/** One project: open it, or rename / delete / share it from the ⋯ menu — the
- *  menu only offers actions its owner or an admin can actually do. */
+/** One project: its picture, name, where it stands and what waits on it; the
+ *  card opens its home, where its tools are. The ⋯ menu (its owner only) holds
+ *  what changes the project itself: rename, share, branding, status, delete. */
 function ProjectCard({ project, current, me, onChanged, pic }: { project: Property; current: boolean; me: SessionUser | null; onChanged: () => void; pic?: string }) {
   const [menu, setMenu] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [sharing, setSharing] = useState(false);
-  const [showLog, setShowLog] = useState(false);
   const [branding, setBranding] = useState(false);
   const [leads, setLeads] = useState(false);
   const [draft, setDraft] = useState(project.title);
@@ -230,7 +263,7 @@ It becomes yours: from then on only you, and whoever you share it with, can see 
   const remove = async () => {
     setMenu(false);
     const spaces = count === 1 ? 'Its 1 space moves' : `Its ${count} spaces move`;
-    if (!window.confirm(`Delete the project "${project.title}"?\n\n${count ? `${spaces} to "Not in a project yet". ` : ''}No space is deleted and published tours keep working.`)) return;
+    if (!window.confirm(`Delete the project "${project.title}"?\n\n${count ? `${spaces} to "Not in a project yet" and published tours keep working, but ` : ''}its website, photos and logo are deleted. To keep it on record, archive it instead.`)) return;
     try {
       await deleteProperty(project.id);
       try { if (localStorage.getItem(LAST_PROJECT_KEY) === project.id) localStorage.removeItem(LAST_PROJECT_KEY); } catch { /* private mode */ }
@@ -240,8 +273,16 @@ It becomes yours: from then on only you, and whoever you share it with, can see 
     }
   };
 
+  const status = project.status ?? 'in-progress';
+  const setStatus = async (next: ProjectStatus) => {
+    setMenu(false);
+    setError('');
+    try { await setProjectStatus(project.id, next); onChanged(); } catch (e) { setError(e instanceof Error ? e.message : 'Could not change it. Try again.'); }
+  };
+  const waiting = waitingLine(project);
+
   return (
-    <div className={`pl-card ${current ? 'is-current' : ''}`}>
+    <div className={`pl-card ${current ? 'is-current' : ''} ${status === 'archived' ? 'is-archived' : ''}`}>
       {pic
         // a published space's picture, from the API (next/image isn't set up for it)
         // eslint-disable-next-line @next/next/no-img-element
@@ -267,35 +308,30 @@ It becomes yours: from then on only you, and whoever you share it with, can see 
           {count === 1 ? '1 space' : `${count} spaces`}
           {current && <span className="pl-tag">Last opened</span>}
         </span>
-        {/* the places a project's work happens, one click each (also in the ⋯ menu) */}
-        <span className="pl-card-go">
-          <a href={`/studio/${encodeURIComponent(project.id)}/edit`}>Editor</a>
-          {f.website && <a href={`/studio/${encodeURIComponent(project.id)}/site`}>Website</a>}
-          {f.reservations && <a href={`/studio/${encodeURIComponent(project.id)}/reservations`}>Reservations</a>}
-          {f.report && <a href={`/studio/${encodeURIComponent(project.id)}/report`} target="_blank" rel="noopener">Report ↗</a>}
-        </span>
+        <span className={`pl-status is-${status}`}>{statusLine(project)}</span>
+        {waiting && <span className="pl-card-wait">{waiting}</span>}
         {error && <span className="ed2-warn ed2-fine">{error}</span>}
       </span>
 
-      <div className="pl-menu" ref={menuRef}>
-        <button className="pl-menu-btn" aria-label={`More actions for ${project.title}`} aria-expanded={menu} onClick={() => setMenu((v) => !v)}>⋯</button>
-        {menu && (
-          <div className="pl-menu-list" role="menu">
-            {f.enquiries && <button role="menuitem" onClick={() => { setMenu(false); setLeads(true); }}>Enquiries…</button>}
-            {f.activity && <button role="menuitem" onClick={() => { setMenu(false); setShowLog(true); }}>Activity</button>}
-            {f.website && <a role="menuitem" href={`/studio/${encodeURIComponent(project.id)}/site`} onClick={() => setMenu(false)}>Website…</a>}
-            {f.reservations && <a role="menuitem" href={`/studio/${encodeURIComponent(project.id)}/reservations`} onClick={() => setMenu(false)}>Reservations…</a>}
-            {f.report && <a role="menuitem" href={`/studio/${encodeURIComponent(project.id)}/report`} target="_blank" rel="noopener" onClick={() => setMenu(false)}>Monthly report ↗</a>}
-            {mine && <button role="menuitem" onClick={() => { setMenu(false); setError(''); setDraft(project.title); setRenaming(true); }}>Rename</button>}
-            {mine && <button role="menuitem" onClick={() => { setMenu(false); setSharing(true); }}>Share…</button>}
-            {mine && <button role="menuitem" onClick={() => { setMenu(false); setBranding(true); }}>Branding…</button>}
-            {mine && <button role="menuitem" className="is-danger" onClick={remove}>Delete project</button>}
-          </div>
-        )}
-      </div>
+      {mine && (
+        <div className="pl-menu" ref={menuRef}>
+          <button className="pl-menu-btn" aria-label={`More actions for ${project.title}`} aria-expanded={menu} onClick={() => setMenu((v) => !v)}>⋯</button>
+          {menu && (
+            <div className="pl-menu-list" role="menu">
+              <button role="menuitem" onClick={() => { setMenu(false); setError(''); setDraft(project.title); setRenaming(true); }}>Rename</button>
+              <button role="menuitem" onClick={() => { setMenu(false); setSharing(true); }}>Share…</button>
+              <button role="menuitem" onClick={() => { setMenu(false); setBranding(true); }}>Branding…</button>
+              {status === 'in-progress' && <button role="menuitem" onClick={() => setStatus('delivered')}>Mark delivered</button>}
+              {status === 'delivered' && <button role="menuitem" onClick={() => setStatus('in-progress')}>Mark in progress</button>}
+              {status === 'archived'
+                ? <button role="menuitem" onClick={() => setStatus('in-progress')}>Restore</button>
+                : <button role="menuitem" onClick={() => setStatus('archived')}>Archive</button>}
+              <button role="menuitem" className="is-danger" onClick={remove}>Delete project</button>
+            </div>
+          )}
+        </div>
+      )}
       {sharing && <ShareDialog project={project} onClose={() => setSharing(false)} />}
-      {showLog && <ActivityDialog project={project} onClose={() => setShowLog(false)} />}
-      {leads && <EnquiriesDialog project={project} canEdit={mine} onClose={() => setLeads(false)} />}
       {branding && <BrandingDialog project={project} onClose={() => { setBranding(false); onChanged(); }} />}
     </div>
   );

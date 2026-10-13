@@ -5,7 +5,7 @@
  * the scenes baked into lib/scenes.js if the API is unreachable, because
  * "time to first frame under 5s" (CLAUDE.md) can't wait on a second server.
  */
-import type { ApiScene, Property, SceneDoc } from '../@types/scene.types';
+import type { ApiScene, ProjectStatus, Property, SceneDoc } from '../@types/scene.types';
 import type { AudioUploadResult, UploadResult } from '../@types/upload.types';
 import type { BrandFont, ProjectFeatures, ProjectInfo, ProjectTheme } from '../@types/config.types';
 
@@ -81,6 +81,9 @@ export const removePropertyMember = (id: string, userId: string) =>
 /** A project's branding. Public: the tour reads it. */
 export const getProjectTheme = (id: string) =>
   request<{ title: string; theme: ProjectTheme; whatsapp?: string | null; features?: { enquiries: boolean; reservations: boolean } }>(`/api/properties/${encodeURIComponent(id)}/theme`);
+/** Owner only: in progress, delivered or archived; kept in its activity log. */
+export const setProjectStatus = (id: string, status: ProjectStatus) =>
+  request<Property>(`/api/properties/${encodeURIComponent(id)}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
 /** Owner only: switch parts of the platform on or off for the project. */
 export const setProjectFeatures = (id: string, patch: Partial<ProjectFeatures>) =>
   request<Property>(`/api/properties/${encodeURIComponent(id)}/features`, { method: 'PUT', body: JSON.stringify(patch) });

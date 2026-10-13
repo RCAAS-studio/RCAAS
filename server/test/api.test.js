@@ -1954,6 +1954,29 @@ test('a project chooses its features: off, its enquiries and bookings are refuse
   assert.equal((await api('POST', '/api/leads', { sceneId: 'hub', propertyId: pid, name: 'Asker', phone: '9800000004', formRenderedAt: Date.now() - 5000 })).status, 200);
 });
 
+test('a project keeps a status (in progress, delivered, archived) in its history, and its card counts what waits', async () => {
+  signIn();
+  const pid = (await api('POST', '/api/properties', { title: 'Status Inn' })).json.id;
+  const card = async () => (await api('GET', '/api/properties')).json.find((p) => p.id === pid);
+  assert.equal((await card()).status, 'in-progress', 'a new or older project is in progress');
+  assert.deepEqual((await card()).waiting, { bookings: 0, enquiries: 0 });
+  assert.equal((await api('PUT', `/api/properties/${pid}/status`, { status: 'gone' })).status, 400);
+  const done = await api('PUT', `/api/properties/${pid}/status`, { status: 'delivered' });
+  assert.equal(done.status, 200);
+  assert.ok(done.json.statusAt, 'dated');
+  await api('PUT', `/api/properties/${pid}/status`, { status: 'archived' });
+  await api('PUT', `/api/properties/${pid}/status`, { status: 'in-progress' });
+  const log = (await api('GET', `/api/properties/${pid}/activity`)).json.map((a) => a.action);
+  for (const said of ['marked the project delivered', 'archived the project', 'restored the project']) assert.ok(log.includes(said), said);
+  assert.equal((await card()).status, 'in-progress');
+
+  cookie = '';
+  await api('POST', '/api/leads', { sceneId: 'hub', propertyId: pid, name: 'Asker', phone: '9800000005', formRenderedAt: Date.now() - 5000 });
+  assert.equal((await api('PUT', `/api/properties/${pid}/status`, { status: 'archived' })).status, 401);
+  signIn();
+  assert.equal((await card()).waiting.enquiries, 1, 'an enquiry this week');
+});
+
 test('a test email goes where enquiries go, in the venue’s name, and a refusal says how to fix it', async () => {
   signIn();
   const pid = (await api('POST', '/api/properties', { title: 'Mail Lodge' })).json.id;

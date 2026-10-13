@@ -48,7 +48,8 @@ async function loadOccluder(sceneId: string): Promise<THREE.Group | null> {
  * withColliders). Each box is drawn in its colour, hidden behind the scan's
  * walls and floor like a real object (loadOccluder), with a faint outline
  * through them so a box behind a wall can still be found. The selected one
- * gets move arrows.
+ * gets move arrows. Clicking a box (a click, not a drag to look) selects it
+ * (colliderUi.onPick), the nearest one under the pointer, walls or not.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- vendor SDK renderer handle
 export function ColliderBoxes({ sceneId, renderer }: { sceneId: string; renderer: any }) {
@@ -99,7 +100,9 @@ export function ColliderBoxes({ sceneId, renderer }: { sceneId: string; renderer
     tc.attach(pivot);
     scene.add(group, pivot, tc);
 
+    let fills: THREE.Mesh[] = []; // what a click can hit
     const clear = () => {
+      fills = [];
       for (const g of [...group.children]) {
         g.traverse((o) => ((o as THREE.Mesh).material as THREE.Material | undefined)?.dispose());
         group.remove(g);
@@ -121,6 +124,8 @@ export function ColliderBoxes({ sceneId, renderer }: { sceneId: string; renderer
         }));
         const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: c.color, transparent: true }));
         const ghost = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: c.color, depthTest: false, transparent: true, opacity: 0.3 }));
+        fill.userData.colliderId = c.id;
+        fills.push(fill);
         fill.renderOrder = line.renderOrder = 999;
         ghost.renderOrder = 1000;
         g.add(fill, line, ghost);
@@ -146,8 +151,24 @@ export function ColliderBoxes({ sceneId, renderer }: { sceneId: string; renderer
     tc.addEventListener('dragging-changed', onDragging);
     tc.addEventListener('objectChange', onChange);
 
+    // A click on a box selects it; a drag (looking around) or a click on the arrows doesn't.
+    const ray = new THREE.Raycaster();
+    let down: { x: number; y: number } | null = null;
+    const onDown = (e: PointerEvent) => { down = e.button === 0 && tc.axis === null ? { x: e.clientX, y: e.clientY } : null; };
+    const onUp = (e: PointerEvent) => {
+      if (!down || gizmo.dragging || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) return;
+      const r = gl.domElement.getBoundingClientRect();
+      ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+      const id = ray.intersectObjects(fills, false)[0]?.object.userData.colliderId as string | undefined;
+      if (id) colliderUi.onPick?.(id);
+    };
+    gl.domElement.addEventListener('pointerdown', onDown);
+    gl.domElement.addEventListener('pointerup', onUp);
+
     return () => {
       off();
+      gl.domElement.removeEventListener('pointerdown', onDown);
+      gl.domElement.removeEventListener('pointerup', onUp);
       tc.removeEventListener('dragging-changed', onDragging);
       tc.removeEventListener('objectChange', onChange);
       tc.detach();

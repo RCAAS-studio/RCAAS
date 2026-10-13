@@ -183,7 +183,7 @@ const TeamCard: React.FC<{ member: TeamMember }> = ({ member }) => {
       className="group h-full flex flex-col rounded-2xl border border-line bg-white overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_16px_32px_-12px_rgba(0,0,0,0.18)] scroll-mt-24"
     >
       {/* Portrait */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-surface-sunken">
+      <div className="relative aspect-4/5 overflow-hidden bg-surface-sunken">
         {member.photo && (
           <img loading="lazy" decoding="async"
             src={member.photo}
@@ -376,7 +376,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             {...fadeUp}
             className="grid grid-cols-1 lg:grid-cols-12 gap-0 rounded-2xl border border-line bg-surface overflow-hidden"
           >
-            <div className="lg:col-span-5 relative min-h-[260px] bg-zinc-900">
+            <div className="lg:col-span-5 relative min-h-65 bg-zinc-900">
               <img loading="lazy" decoding="async"
                 src={IMG['about/a-heritage-courtyard-during-restoration-and-the']}
                 alt="A heritage courtyard during restoration, and the same courtyard being scanned"

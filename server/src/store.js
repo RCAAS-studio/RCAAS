@@ -315,7 +315,7 @@ export function propertyIdFor(title) {
 /** `ownerId`/`members` arrived 2026-09-24; a property saved before then has
  *  neither. `ownerId: null` means "no owner yet": nobody's work to see, only
  *  to claim (propertyIsClaimable, POST /api/properties/:id/claim). */
-const fillPropertyDefaults = (doc) => (doc ? { ownerId: null, members: [], staff: [], ...doc, features: featuresOf(doc) } : doc);
+const fillPropertyDefaults = (doc) => (doc ? { ownerId: null, members: [], staff: [], status: 'in-progress', ...doc, features: featuresOf(doc) } : doc);
 
 /** The parts of the platform a project uses (2026-10-06): a café takes no room
  *  bookings, a heritage site or a college no bookings at all. Each is on unless
@@ -331,6 +331,21 @@ export async function setPropertyFeatures(id, patch) {
   const features = { ...p.features };
   for (const k of FEATURES) if (typeof patch?.[k] === 'boolean') features[k] = patch[k];
   const next = { ...p, features };
+  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  return next;
+}
+
+/** Where a project stands (2026-10-13), so the studio keeps a record of every
+ *  client: in progress, delivered, or archived (finished or dropped; kept with
+ *  its spaces, website and history, and restorable). Nothing public changes:
+ *  an archived project's published tours and website stay up. A project from
+ *  before has none, so it is in progress; `statusAt` is when it last changed. */
+export const PROJECT_STATUSES = ['in-progress', 'delivered', 'archived'];
+export async function setPropertyStatus(id, status) {
+  if (!PROJECT_STATUSES.includes(status)) throw badRequest('Unknown status.');
+  const p = await getProperty(id);
+  if (!p) return null;
+  const next = { ...p, status, statusAt: new Date().toISOString() };
   await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }

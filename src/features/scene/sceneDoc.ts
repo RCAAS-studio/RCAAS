@@ -137,7 +137,8 @@ const colliders: Record<string, Collider[]> = {};
 export const collidersFor = (sceneId: string): Collider[] => colliders[sceneId] ?? [];
 
 /** Which box the studio has selected, for the move handle in the view (ColliderBoxes). */
-export const colliderUi: { selected: string | null } = { selected: null };
+/** `onPick`: the studio's handler for a box clicked in the 3D view (ColliderBoxes), so it opens that box. */
+export const colliderUi: { selected: string | null; onPick?: (id: string) => void } = { selected: null };
 export function selectCollider(id: string | null) {
   if (colliderUi.selected === id) return;
   colliderUi.selected = id;

@@ -13,7 +13,7 @@
 import { Router } from 'express';
 import {
   listProperties, getProperty, createProperty, renameProperty, deleteProperty, listScenes,
-  addPropertyMember, removePropertyMember, propertyIsVisible, propertyStaffSees, propertyIsManageable, propertyIsClaimable, claimProperty, setPropertyTheme, setPropertyInfo, setLeadEmails, setPropertyFeatures, FEATURES
+  addPropertyMember, removePropertyMember, propertyIsVisible, propertyStaffSees, propertyIsManageable, propertyIsClaimable, claimProperty, setPropertyTheme, setPropertyInfo, setLeadEmails, setPropertyFeatures, FEATURES, setPropertyStatus
 } from '../store.js';
 import { listLeads, leadsCsv } from '../leadsStore.js';
 import { monthStats, monthOf } from '../stats.js';
@@ -28,7 +28,7 @@ import { freshSession as fresh, refuseStaff } from '../access.js';
 import { createStaffAccount } from '../usersStore.js';
 import { record, recent } from '../activity.js';
 import { removeSite } from './sites.js';
-import { readReservations } from '../reservations.js';
+import { readReservations, nowIn } from '../reservations.js';
 import { sendMail, teamRecipients, venueMail } from '../mailer.js';
 
 export const propertiesRouter = Router();
@@ -174,6 +174,34 @@ propertiesRouter.put('/:id/features', requireEditorSession, wrap(async (req, res
   res.json(next);
 }));
 
+/** In progress, delivered or archived (store.js PROJECT_STATUSES), kept in its
+ *  activity log. Owner only. */
+propertiesRouter.put('/:id/status', requireEditorSession, wrap(async (req, res) => {
+  const p = await manageable(req, res);
+  if (!p) return;
+  const next = await setPropertyStatus(p.id, req.body?.status);
+  if (next.status !== p.status) {
+    const did = next.status === 'archived' ? 'archived the project'
+      : p.status === 'archived' ? 'restored the project'
+      : `marked the project ${next.status === 'delivered' ? 'delivered' : 'in progress'}`;
+    await record(req, p.id, did, p.title);
+  }
+  res.json(next);
+}));
+
+/** What waits on a project, for its card in the list: booking requests needing
+ *  a reply (counted as its home counts them) and enquiries in the last 7 days. */
+const WEEK = 7 * 24 * 3600 * 1000;
+async function waitingOn(p, leads) {
+  // ponytail: Kathmandu's day, not each venue's timezone; a request can count a day late near midnight elsewhere.
+  const today = nowIn('Asia/Kathmandu').date;
+  const bookings = p.features.reservations
+    ? (await readReservations(p.id)).filter((r) => r.kind !== 'wait' && r.status === 'requested' && (r.checkout ?? r.date) >= today).length
+    : 0;
+  const enquiries = p.features.enquiries ? leads.filter((l) => l.propertyId === p.id && Date.now() - Date.parse(l.createdAt) < WEEK).length : 0;
+  return { bookings, enquiries };
+}
+
 /** Anyone who can see the project: a test email to where its enquiries go, to
  *  check the email set-up. Says why when it can't send (mailer.js resendReason). */
 propertiesRouter.post('/:id/lead-emails/test', requireEditorSession, wrap(async (req, res) => {
@@ -249,10 +277,10 @@ propertiesRouter.put('/:id/info', requireEditorSession, wrap(async (req, res) =>
  *  from before accounts (no owner) come too, but only as a name to claim. */
 propertiesRouter.get('/', requireEditorSession, wrap(async (req, res) => {
   const session = await freshSession(req);
-  const [properties, scenes] = await Promise.all([listProperties(), listScenes()]);
+  const [properties, scenes, leads] = await Promise.all([listProperties(), listScenes(), listLeads()]);
   const count = (id) => scenes.filter((s) => s.propertyId === id).length;
-  const mine = properties.filter((p) => propertyIsVisible(p, session))
-    .map((p) => ({ ...p, access: propertyIsManageable(p, session) ? 'owner' : 'member', spaceCount: count(p.id) }));
+  const mine = await Promise.all(properties.filter((p) => propertyIsVisible(p, session))
+    .map(async (p) => ({ ...p, access: propertyIsManageable(p, session) ? 'owner' : 'member', spaceCount: count(p.id), waiting: await waitingOn(p, leads) })));
   const staffed = properties.filter((p) => !propertyIsVisible(p, session) && propertyStaffSees(p, session)).map(staffView);
   const unclaimed = properties.filter((p) => session.role !== 'staff' && !propertyIsVisible(p, session) && !propertyStaffSees(p, session) && propertyIsClaimable(p, session))
     .map((p) => ({ id: p.id, title: p.title, ownerId: null, members: [], claimable: true, spaceCount: count(p.id) }));

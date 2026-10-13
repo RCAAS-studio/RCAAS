@@ -10,7 +10,7 @@ import { subscribeViewpoints, loadTracks, updateSessionViewpoint } from '../scen
 import { canRedo, canUndo, redo, subscribeHistory, undo, watchHistory } from './history';
 import {
   hotspotsFor, subscribeDoc, sceneDocFor, loadSceneDoc, markSaved, hasUnsavedChanges, bookingFor, setBooking, setHotspots, copyHotspotId,
-  collidersFor, updateCollider, removeCollider, selectCollider
+  collidersFor, updateCollider, removeCollider, selectCollider, colliderUi
 } from '../scene/sceneDoc';
 import { uploadAudio } from './upload';
 import { isTypingTarget } from '../scene/useLccWalker';
@@ -24,6 +24,7 @@ import {
 import { forgetPlan } from '../tour/floorMapData';
 import type { PublishState, EmbedSettings, SceneVersion } from '../../lib/api';
 import { HotspotMarkers } from '../hotspots/HotspotMarkers';
+import { ShortcutSheet } from './ShortcutSheet';
 import { Uploader } from './Uploader';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { PasswordChange } from '../auth/PasswordChange';
@@ -85,6 +86,12 @@ export function EditorShell({ state, property, onPreview }: {
     selectCollider(id);
     if (id && gizmo.mode !== 'off') setGizmoMode('off');
   }, [sel]);
+
+  // A box clicked in the 3D view opens it, as picking it from the tree does.
+  useEffect(() => {
+    colliderUi.onPick = (id) => setSel({ type: 'collider', id });
+    return () => { colliderUi.onPick = undefined; };
+  }, []);
 
   // Esc (outside a text box) goes back to the Scene/Look panes.
   useEffect(() => {
@@ -198,7 +205,7 @@ export function EditorShell({ state, property, onPreview }: {
 
       <div className="ed2-aim" aria-hidden />
       <div className="ed2-hint-strip">
-        drag 3D to look · <b>WASD</b> move · <b>H</b> hotspot where the dot is · <b>N</b> fly · scroll = dolly
+        drag 3D to look · <b>WASD</b> move · <b>H</b> hotspot where the dot is · <b>N</b> fly · scroll = dolly · <ShortcutSheet />
       </div>
     </div>
   );
@@ -221,7 +228,8 @@ function TopBar({ onPreview, sceneId, property }: { onPreview: () => void; scene
       )}
       <div className="ed2-brand">
         <a href={property ? `/studio/${encodeURIComponent(property.id)}` : '/studio'} className="ed2-home" aria-label="Project home" title="Project home">
-          <svg viewBox="0 0 24 24" aria-hidden><path d="M3 11 12 4l9 7" /><path d="M5 10v10h5v-6h4v6h5V10" /><rect className="ed2-home-door" x="10.6" y="14.6" width="2.8" height="5" rx="0.6" /></svg>
+          {/* the RCAAS mark: a viewfinder with a dot, as in the site's logo */}
+          <svg viewBox="0 0 24 24" aria-hidden><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15" /><circle cx="12" cy="12" r="3.4" /></svg>
         </a>
         <input
           className="ed2-proj"
