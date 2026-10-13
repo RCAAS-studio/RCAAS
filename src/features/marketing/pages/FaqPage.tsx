@@ -132,7 +132,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
   return (
     <div className={pageShellClass}>
       {/* FAQ Schema for AI SEO */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }} />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
