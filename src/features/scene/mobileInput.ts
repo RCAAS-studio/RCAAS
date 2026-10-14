@@ -25,9 +25,10 @@ export const touch: TouchState = {
 
 export function isTouchDevice(): boolean {
   if (typeof window === 'undefined') return false;
-  return !!(
-    window.matchMedia?.('(pointer: coarse)').matches ||
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0
-  );
+  const mq = (q: string) => !!window.matchMedia?.(q).matches;
+  // A phone or tablet: its main pointer is a finger, or it has no mouse or
+  // trackpad at all. Merely supporting touch isn't enough (2026-10-14): touch
+  // laptops, and many Windows PCs that report touch, have a mouse, and got the
+  // joystick and touch hints instead of the mouse's controls.
+  return mq('(pointer: coarse)') || (!mq('(any-pointer: fine)') && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
 }

@@ -20,7 +20,10 @@ const KEYS: [group: string, rows: [keys: string, what: string][]][] = [
     ['V', 'Save the dropped waypoints as a camera track'],
   ]],
   ['Measuring', [
-    ['M', 'Measure between two points (Esc to stop)'],
+    ['M', 'Measure: click two points for a line, again for more'],
+    ['Drag', 'A point of a line to move it'],
+    ['Delete', 'Remove the selected line'],
+    ['Esc', 'Drop a half-made line, then stop measuring'],
   ]],
   ['Selecting', [
     ['Click', 'A hotspot or a collision box in the 3D view'],

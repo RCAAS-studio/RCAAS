@@ -10,7 +10,7 @@ import { subscribeViewpoints, loadTracks, updateSessionViewpoint } from '../scen
 import { canRedo, canUndo, redo, subscribeHistory, undo, watchHistory } from './history';
 import {
   hotspotsFor, subscribeDoc, sceneDocFor, loadSceneDoc, markSaved, hasUnsavedChanges, bookingFor, setBooking, setHotspots, copyHotspotId,
-  collidersFor, updateCollider, removeCollider, selectCollider, colliderUi,
+  collidersFor, updateCollider, removeCollider, selectCollider, colliderUi, hotspotUi,
   lookFor, setLook, DEFAULT_LOOK, setUnitScale
 } from '../scene/sceneDoc';
 import { MeasureTool } from '../scene/MeasureTool';
@@ -105,10 +105,12 @@ export function EditorShell({ state, property, onPreview }: {
     if (id && gizmo.mode !== 'off') setGizmoMode('off');
   }, [sel]);
 
-  // A box clicked in the 3D view opens it, as picking it from the tree does.
+  // A box clicked in the 3D view opens it, as picking it from the tree does;
+  // a hotspot added with H opens like one added from the tree.
   useEffect(() => {
     colliderUi.onPick = (id) => setSel({ type: 'collider', id });
-    return () => { colliderUi.onPick = undefined; };
+    hotspotUi.onAdd = (id) => setSel({ type: 'hotspot', id });
+    return () => { colliderUi.onPick = undefined; hotspotUi.onAdd = undefined; };
   }, []);
 
   // Esc (outside a text box) goes back to the Scene/Look panes.

@@ -386,8 +386,10 @@ function Stage({ onState, viewerMode }: StageProps) {
         const rect = gl.domElement.getBoundingClientRect();
         const dir = new THREE.Vector3(((x / rect.width) * 2) - 1, 1 - ((y / rect.height) * 2), 0.5).unproject(camera).sub(camera.position).normalize();
         const u = walkerCfg.unitScale || 1;
-        const d = surfaceDistance(r, camera.position, dir, 60 * u, 0.02 * u);
-        if (d === null) return null;
+        const rad = 0.004 * u;
+        const hit = surfaceDistance(r, camera.position, dir, 60 * u, rad);
+        if (hit === null) return null;
+        const d = hit + rad; // the probe ball touches one radius short of the surface
         const p = camera.position;
         return [p.x + dir.x * d, p.y + dir.y * d, p.z + dir.z * d];
       },

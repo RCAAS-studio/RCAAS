@@ -255,13 +255,29 @@ export function surfaceDistance(
   radius: number
 ): number | null {
   if (!r?.intersectsCapsule) return null;
-  const hit = (s: number) => touches(r, from.x + dir.x * s, from.y + dir.y * s, from.z + dir.z * s, radius);
-  const step = Math.max(radius * 1.5, max / 800);
-  for (let s = radius * 2; s <= max; s += step) {
-    if (!hit(s)) continue;
-    let lo = Math.max(0, s - step), hi = s;
-    for (let k = 0; k < 12; k++) { const m = (lo + hi) / 2; if (hit(m)) hi = m; else lo = m; }
-    return hi;
+  const hit = (s: number, rad: number) => touches(r, from.x + dir.x * s, from.y + dir.y * s, from.z + dir.z * s, rad);
+  // A ball stepped by 1.5× its radius touches a surface over at least 2× its
+  // radius of the ray, so a wall seen head-on can't be stepped over.
+  const scan = (a: number, b: number, rad: number) => {
+    const step = rad * 1.5;
+    for (let s = a; s <= b; s += step) {
+      if (!hit(s, rad)) continue;
+      let lo = Math.max(0, s - step), hi = s;
+      for (let k = 0; k < 12; k++) { const m = (lo + hi) / 2; if (hit(m, rad)) hi = m; else lo = m; }
+      return hi;
+    }
+    return null;
+  };
+  // A long reach with a small ball (measuring: 60 m, 4 mm) would take
+  // thousands of probes: a bigger ball finds where something is near the ray,
+  // and the small one looks along that stretch. (Before 2026-10-14 the steps
+  // were wider than the ball and a pick could pass through a wall.)
+  const big = Math.max(radius, max / 600);
+  if (big === radius) return scan(radius * 2, max, radius);
+  for (let s = big; s <= max; s += big * 1.5) {
+    if (!hit(s, big)) continue;
+    const d = scan(Math.max(radius * 2, s - big * 2.5), s + big, radius);
+    if (d !== null) return d;
   }
   return null;
 }

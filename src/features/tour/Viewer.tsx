@@ -729,7 +729,7 @@ function LayersRail({ state }: { state: ViewerState }) {
 }
 
 /**
- * The scene tray and, under it, the tour bar: ‹ Scenes, start over | play ›.
+ * The views tray (the camera tracks) and, under it, the tour bar: ‹ Views, start over | play ›.
  */
 function BottomChrome({ state, showLabels, mode, trayOpen, onToggleTray }: {
   state: ViewerState; showLabels: boolean; mode: string; trayOpen: boolean; onToggleTray: () => void;
@@ -789,11 +789,11 @@ function BottomChrome({ state, showLabels, mode, trayOpen, onToggleTray }: {
         </div>
       )}
 
-      {/* The tour bar: ‹ Scenes, start over | play/pause › */}
+      {/* The tour bar: ‹ Views (the camera tracks), start over | play/pause › */}
       <div className={`vw-tourbar ${playing ? 'is-playing' : ''}`} role="toolbar" aria-label={t('Tour')}>
-        <button className="vw-tourbar-btn" onClick={() => go(idx < 0 ? vps.length - 1 : idx - 1)} aria-label={t('Previous scene')} title={t('Previous scene')}>{Icon.chevL}</button>
-        <button className={`vw-tourbar-views ${trayOpen ? 'on' : ''}`} onClick={onToggleTray} aria-pressed={trayOpen} title={t('Scenes')}>
-          {Icon.views}<span>{t('Scenes')}</span>
+        <button className="vw-tourbar-btn" onClick={() => go(idx < 0 ? vps.length - 1 : idx - 1)} aria-label={t('Previous view')} title={t('Previous view')}>{Icon.chevL}</button>
+        <button className={`vw-tourbar-views ${trayOpen ? 'on' : ''}`} onClick={onToggleTray} aria-pressed={trayOpen} title={t('Views')}>
+          {Icon.views}<span>{t('Views')}</span>
         </button>
         <button className="vw-tourbar-btn" onClick={() => go(0)} aria-label={t('Start over')} title={t('Start over')}>{Icon.restart}</button>
         <span className="vw-tourbar-sep" aria-hidden />
@@ -801,7 +801,7 @@ function BottomChrome({ state, showLabels, mode, trayOpen, onToggleTray }: {
           aria-label={playing ? t('Pause') : t('Play the tour')} title={playing ? t('Pause') : t('Play the tour')}>
           {playing ? Icon.pause : Icon.play}
         </button>
-        <button className="vw-tourbar-btn" onClick={() => go(idx + 1)} aria-label={t('Next scene')} title={t('Next scene')}>{Icon.chevR}</button>
+        <button className="vw-tourbar-btn" onClick={() => go(idx + 1)} aria-label={t('Next view')} title={t('Next view')}>{Icon.chevR}</button>
       </div>
     </div>
   );

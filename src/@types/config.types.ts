@@ -3,8 +3,6 @@ export type WalkerMode = 'walk' | 'fly' | 'orbit';
 /** Live, tunable walker + camera settings — see lib/walkerConfig.js. */
 export interface WalkerConfig {
   mode: WalkerMode;
-  /** The measure tool is open (MeasureTool.tsx): a click picks a point, so the tour drags to look instead of capturing the mouse. */
-  measuring?: boolean;
   unitScale: number;
   eyeHeight: number;
   radius: number;

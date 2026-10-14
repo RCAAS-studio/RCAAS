@@ -685,8 +685,9 @@
 .ed2-keys-btn:hover { background: var(--ed-signal); color: var(--ed-signal-ink); }
 .ed2-keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 28px; }
 .ed2-keys h3 { margin: 0 0 8px; font: 600 11px var(--mono, monospace); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ed-text-dim); }
-.ed2-keys dl { margin: 0; display: grid; gap: 6px; }
-.ed2-keys dl > div { display: grid; grid-template-columns: 9.5em 1fr; gap: 10px; align-items: baseline; }
+/* one grid for the whole list, so every key column lines up however long a key is */
+.ed2-keys dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; align-items: baseline; }
+.ed2-keys dl > div { display: contents; }
 .ed2-keys dt, .ed2-keys dd { margin: 0; font-size: 12.5px; }
 .ed2-keys kbd {
   display: inline-block; padding: 2px 6px; border-radius: 5px; font: 600 11px var(--mono, monospace);
@@ -1459,3 +1460,5 @@ a.ed2-switch-item:hover { background: var(--ed-raise); }
 .ed2-suggest label b { display: block; }
 .ed2-i18n-lang { margin-top: 10px; }
 .ed2-i18n-lang .ed2-name + .ed2-name { margin-top: 6px; }
+/* the measure tool (scene/measure.css): at the top of the view, clear of the lines below and the filmstrip */
+.ed2 .ms-panel { top: 58px; }

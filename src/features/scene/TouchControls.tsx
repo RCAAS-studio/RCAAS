@@ -69,6 +69,7 @@ export function TouchControls({ visible }: { visible: boolean }) {
         onPointerMove={onMove}
         onPointerUp={onUp}
         onPointerCancel={onUp}
+        onLostPointerCapture={onUp}
       >
         {knob && (
           <>

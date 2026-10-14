@@ -72,6 +72,9 @@ function spotInView(camera: THREE.Camera, renderer: any): [number, number, numbe
   return [r3(p.x + _f.x * k), r3(p.y + _f.y * k), r3(p.z + _f.z * k)];
 }
 
+/** `onAdd`: the studio opens a new hotspot however it was made (the tree's ＋, or H). */
+export const hotspotUi: { onAdd?: (id: string) => void } = {};
+
 /** A new hotspot, on what the middle of the view rests on (spotInView). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- vendor SDK renderer handle
 export function addHotspot(sceneId: string, camera: THREE.Camera, type: HotspotType = 'text', renderer: any = null): Hotspot {
@@ -87,6 +90,7 @@ export function addHotspot(sceneId: string, camera: THREE.Camera, type: HotspotT
   };
   (doc[sceneId] ??= { hotspots: [] }).hotspots.push(hs);
   emit();
+  hotspotUi.onAdd?.(hs.id);
   return hs;
 }
 

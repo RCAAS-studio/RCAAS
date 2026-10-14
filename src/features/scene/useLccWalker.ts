@@ -65,7 +65,7 @@ interface UseLccWalkerOptions {
   renderer: any;
   enabled?: boolean;
   sceneId: string;
-  pointerLock?: boolean; // visitor: click captures the mouse. editor: false.
+  pointerLock?: boolean; // visitor (the tour): right-drag looks in Orbit/Fly. editor: false. (Named for the mouse capture the tour had until 2026-10-14.)
   alwaysControl?: boolean; // editor: WASD works without holding the mouse
 }
 
@@ -124,6 +124,10 @@ export function useLccWalker({
       keys.current.add(e.code);
       if (e.code === 'Space') e.preventDefault();
 
+      // The studio's authoring keys (2026-10-14: they worked in the public tour
+      // too, so a visitor pressing H got a "New hotspot" on screen). Not with
+      // Ctrl/Cmd/Alt, so Ctrl+V and friends don't make a track.
+      if (pointerLockRef.current || e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.code === 'KeyB') dropWaypoint(camera);
       if (e.code === 'KeyH') addHotspot(sceneRef.current, camera, 'text', rendererRef.current);
       if (e.code === 'KeyV') {
@@ -166,25 +170,23 @@ export function useLccWalker({
       if (navMode.flyEnabled || navMode.orbitEnabled) e.preventDefault();
     };
 
-    // Visitor: click captures the pointer. Editor (pointerLock=false): press-drag
-    // to look, like an orbit tool — no capture, panels stay clickable.
+    // Press-drag to look, like an orbit tool — no capture, panels stay clickable.
+    // A device that CAN touch still has a mouse (touchscreen laptops, and many
+    // Windows PCs report touch support anyway), so the mouse always works; only
+    // the mouse events a browser makes up right after a finger tap are ignored,
+    // since the touch handlers below already turned the view (2026-10-14: the
+    // studio's mouse look was dead on such machines).
+    let lastTouchAt = 0;
     const onMouseDown = (e: MouseEvent) => {
       const aerialOrFly = navMode.flyEnabled || navMode.orbitEnabled;
       // Left drags to look everywhere; right drags too in Orbit/Fly, like Unreal.
-      if ((e.button !== 0 && !(e.button === 2 && aerialOrFly)) || touch.enabled) return;
+      if ((e.button !== 0 && !(e.button === 2 && aerialOrFly)) || performance.now() - lastTouchAt < 800) return;
       // The gizmo's pointerdown runs first and has already claimed this drag.
       if (gizmo.dragging) return;
-      // Orbit and Fly turn by dragging, like any orbit view; everything else
-      // in the tour captures the mouse. Some browsers and embeds refuse the
-      // capture — that must not throw, and must not leave the view stuck.
-      const aerialNow = navMode.flyEnabled || navMode.orbitEnabled;
-      if (pointerLockRef.current && !aerialNow && !walkerCfg.measuring) {
-        try {
-          const p = el.requestPointerLock() as unknown as Promise<void> | undefined;
-          p?.catch?.(() => {});
-        } catch { /* refused: nothing to do */ }
-        return;
-      }
+      // Drag to look, in the tour as in the studio (2026-10-14; the tour's help
+      // always said "Drag"). It used to capture the mouse on a click, so the
+      // pointer vanished and every move on the way to a button turned the view
+      // until Esc. Walk and Fly keys work without the mouse held (canControl).
       dragging.current = true;
       dragX = e.clientX; dragY = e.clientY;
       el.style.cursor = 'grabbing';
@@ -199,6 +201,7 @@ export function useLccWalker({
     };
 
     const onTouchStart = (e: TouchEvent) => {
+      lastTouchAt = performance.now();
       if (touchLook.current) return;
       const t = e.changedTouches[0];
       touchLook.current = { id: t.identifier, x: t.clientX, y: t.clientY };
@@ -216,12 +219,19 @@ export function useLccWalker({
       }
     };
     const onTouchEnd = (e: TouchEvent) => {
+      lastTouchAt = performance.now();
       const tl = touchLook.current;
       if (tl && Array.from(e.changedTouches).some((t) => t.identifier === tl.id)) {
         touchLook.current = null;
       }
     };
 
+    // A key held as the page loses focus (a confirm box, another window, another
+    // app) never sends its key-up: let go of everything, or the camera keeps moving.
+    const letGo = () => { keys.current.clear(); dragging.current = false; el.style.cursor = ''; };
+    const onHidden = () => { if (document.visibilityState === 'hidden') letGo(); };
+    window.addEventListener('blur', letGo);
+    document.addEventListener('visibilitychange', onHidden);
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
     window.addEventListener('mousemove', onMouseMove);
@@ -236,6 +246,8 @@ export function useLccWalker({
     el.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
     return () => {
+      window.removeEventListener('blur', letGo);
+      document.removeEventListener('visibilitychange', onHidden);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('mousemove', onMouseMove);
@@ -390,7 +402,7 @@ export function useLccWalker({
     // Fly takes the keys at any time — like Unreal, WASD needs no mouse held.
     const canControl =
       enabledRef.current &&
-      (alwaysRef.current || locked.current || dragging.current || touch.enabled || (!alwaysRef.current && navMode.flyEnabled));
+      (alwaysRef.current || locked.current || dragging.current || touch.enabled || (!alwaysRef.current && (navMode.flyEnabled || navMode.walkEnabled)));
 
     const r = rendererRef.current;
     const hasColl = !!r?.hasCollision?.();
