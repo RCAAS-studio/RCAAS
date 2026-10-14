@@ -271,7 +271,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                   className="group flex flex-col sm:flex-row gap-5 sm:gap-7 rounded-[1.75rem] bg-surface p-3 sm:p-4 transition-shadow duration-500 hover:shadow-[0_18px_50px_-24px_rgba(9,9,11,0.25)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                 >
                   {/* Image panel */}
-                  <div className="relative shrink-0 overflow-hidden rounded-[1.25rem] bg-zinc-200 aspect-[16/10] sm:aspect-auto sm:w-[44%] sm:min-h-[22rem]">
+                  <div className="relative shrink-0 overflow-hidden rounded-[1.25rem] bg-zinc-200 aspect-16/10 sm:aspect-auto sm:w-[44%] sm:min-h-88">
                     <img
                       src={visual?.image}
                       alt={visual?.alt ?? ''}
@@ -283,7 +283,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                     />
                     {/* Mask: mutes the busy photography so the pillar title stays the focus; it lifts on hover. */}
                     <div className="absolute inset-0 bg-ink/40 transition-opacity duration-500 group-hover:opacity-0" aria-hidden="true" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-ink/10 to-transparent" aria-hidden="true" />
+                    <div className="absolute inset-0 bg-linear-to-t from-ink/60 via-ink/10 to-transparent" aria-hidden="true" />
                     <span className="absolute left-4 bottom-4 font-mono text-[11px] font-semibold tracking-[0.2em] text-white/90">
                       {String(i + 1).padStart(2, '0')}
                     </span>
@@ -347,7 +347,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                   className="group flex overflow-hidden rounded-2xl bg-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.6)] sm:block transition-transform duration-500 hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                 >
                   {image && (
-                    <div className={`relative w-24 shrink-0 overflow-hidden bg-zinc-200 sm:w-auto ${image.tall ? 'sm:aspect-[4/3]' : 'sm:aspect-[2/1]'}`}>
+                    <div className={`relative w-24 shrink-0 overflow-hidden bg-zinc-200 sm:w-auto ${image.tall ? 'sm:aspect-4/3' : 'sm:aspect-2/1'}`}>
                       <img
                         src={image.src}
                         alt=""
