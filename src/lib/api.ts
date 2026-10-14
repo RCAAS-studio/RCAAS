@@ -479,6 +479,16 @@ export const removeFloorPlan = (assetId: string) =>
 export const renameFloorPlanRooms = (assetId: string, names: Record<string, string>) =>
   request<{ rooms: { id: string; name: string; area: number }[] }>(
     `/api/assets/${assetId}/floorplan/rooms`, { method: 'PATCH', body: JSON.stringify({ names }) });
+/** The author's marks for a drawn plan, in the scan's own frame (server
+ *  floorplan.js cleanMarks): rooms traced corner by corner, doors and windows
+ *  side to side. Saved whole; the next redraw follows them. */
+export type ScanPoint = [number, number, number];
+export interface PlanMarks {
+  rooms: { corners: ScanPoint[] }[];
+  openings: { kind: 'door' | 'window'; a: ScanPoint; b: ScanPoint }[];
+}
+export const saveFloorPlanMarks = (assetId: string, marks: PlanMarks) =>
+  request<PlanMarks>(`/api/assets/${assetId}/floorplan/marks`, { method: 'PUT', body: JSON.stringify(marks) });
 /** For server components, which have no browser cookies or CORS to worry about. */
 export const API_BASE_URL = API_BASE;
 

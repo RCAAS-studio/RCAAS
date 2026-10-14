@@ -45,6 +45,10 @@ export interface EditorApi {
   surfaceAt: (x: number, y: number) => [number, number, number] | null;
   /** Where a point in the space shows on screen (px), and whether it is in front of the camera. */
   toScreen: (p: [number, number, number]) => { x: number; y: number; front: boolean };
+  /** A point in the space ↔ the scan's own frame (Z-up metres, the floor plan's), through the
+   *  scan's root, so marks stay put when the model is moved. Null with no scan loaded. */
+  toScan: (p: [number, number, number]) => [number, number, number] | null;
+  fromScan: (p: [number, number, number]) => [number, number, number] | null;
   /** Fly to stand in front of a hotspot, facing it (the concierge's "take me there"). */
   goToHotspot: (id: string) => void;
 }

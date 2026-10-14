@@ -25,6 +25,12 @@ const KEYS: [group: string, rows: [keys: string, what: string][]][] = [
     ['Delete', 'Remove the selected line'],
     ['Esc', 'Drop a half-made line, then stop measuring'],
   ]],
+  ['Marking the floor plan (Floor plan → Help the plan)', [
+    ['Click', 'A corner, or a side of a door or window'],
+    ['Enter', 'The point under the centre dot'],
+    ['Backspace', 'Undo the last point'],
+    ['Esc', 'Drop the mark being made, then stop'],
+  ]],
   ['Selecting', [
     ['Click', 'A hotspot or a collision box in the 3D view'],
     ['Esc', 'Back to the scene'],

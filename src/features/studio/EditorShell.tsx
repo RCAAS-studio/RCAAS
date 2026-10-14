@@ -14,6 +14,8 @@ import {
   lookFor, setLook, DEFAULT_LOOK, setUnitScale
 } from '../scene/sceneDoc';
 import { MeasureTool } from '../scene/MeasureTool';
+import { PlanMarker, type PlanTool } from './PlanMarker';
+import { loadPlanMarks, planMarks, planMarksDrawn, setPlanMarks, subscribePlanMarks } from './planMarks';
 import { ClaudeSection, TranslationsSection } from './ClaudeTools';
 import { uploadAudio } from './upload';
 import { isTypingTarget } from '../scene/useLccWalker';
@@ -74,6 +76,11 @@ export function EditorShell({ state, property, onPreview }: {
   // Measure (MeasureTool): the top bar's ruler, or M outside a text box
   const [measuring, setMeasuring] = useState(false);
   const closeMeasure = useCallback(() => setMeasuring(false), []);
+  // Marks for the floor plan (PlanMarker): one click tool at a time, so measuring ends it
+  const [planTool, setPlanTool] = useState<PlanTool | null>(null);
+  const closePlanTool = useCallback(() => setPlanTool(null), []);
+  useEffect(() => { if (measuring) setPlanTool(null); }, [measuring]);
+  useEffect(() => { if (planTool) setMeasuring(false); }, [planTool]);
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       if (e.code === 'KeyM' && !e.ctrlKey && !e.metaKey && !e.altKey && !isTypingTarget(e.target)) setMeasuring((v) => !v);
@@ -155,6 +162,7 @@ export function EditorShell({ state, property, onPreview }: {
           onCalibrate={(u) => setUnitScale(state.activeId, u)}
         />
       )}
+      {planTool && <PlanMarker editor={state.editor} mode={planTool} onMode={setPlanTool} onClose={closePlanTool} />}
 
       <SceneTree
         state={state} tracks={tracks} hotspots={hotspots} colliders={colliders} sel={sel}
@@ -211,7 +219,7 @@ export function EditorShell({ state, property, onPreview }: {
                 </button>
               ))}
             </div>
-            {pane === 'scene' && <WorldInspector state={state} pose={pose} onBump={bump} />}
+            {pane === 'scene' && <WorldInspector state={state} pose={pose} onBump={bump} onPlanTool={setPlanTool} />}
             {pane === 'look' && <CustomizeInspector onBump={bump} />}
           </>
         )}
@@ -931,7 +939,7 @@ function ColourSection({ sceneId }: { sceneId: string }) {
   );
 }
 
-function WorldInspector({ state, pose, onBump }: { state: ViewerState; pose: Pose | null; onBump: () => void }) {
+function WorldInspector({ state, pose, onBump, onPlanTool }: { state: ViewerState; pose: Pose | null; onBump: () => void; onPlanTool: (t: PlanTool) => void }) {
   const u = walkerCfg.unitScale || 1;
   const fmt = (n?: number) => (n ?? 0).toFixed(2);
 
@@ -950,7 +958,7 @@ function WorldInspector({ state, pose, onBump }: { state: ViewerState; pose: Pos
       <BookingSection sceneId={state.activeId} />
       <NightSection sceneId={state.activeId} onBump={onBump} />
       <PlaceSection sceneId={state.activeId} onBump={onBump} />
-      <FloorPlanSection sceneId={state.activeId} />
+      <FloorPlanSection sceneId={state.activeId} onPlanTool={onPlanTool} />
       <ColourSection sceneId={state.activeId} />
       <ClaudeSection ed={state.editor} sceneId={state.activeId} pose={pose} onRename={(t) => { if (renameScene(state.activeId, t)) onBump(); }} />
 
@@ -1488,7 +1496,7 @@ function AudioSection({ hs, setPayload }: { hs: Hotspot; setPayload: (patch: Hot
  * image (PNG, JPEG or WebP). Uploading again replaces yours; the drawn one
  * always stays.
  */
-function FloorPlanSection({ sceneId }: { sceneId: string }) {
+function FloorPlanSection({ sceneId, onPlanTool }: { sceneId: string; onPlanTool: (t: PlanTool) => void }) {
   const assetId = SCENE_BY_ID[sceneId]?.assetId;
   const [view, setView] = useState<'plan' | '3d' | 'mine'>('3d');
   const [status, setStatus] = useState<'loading' | 'ready' | 'none' | 'building'>('loading');
@@ -1498,6 +1506,8 @@ function FloorPlanSection({ sceneId }: { sceneId: string }) {
   const [sending, setSending] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => { setStatus('loading'); setError(''); }, [assetId]);
+  const [marksChanged, setMarksChanged] = useState(false);
+  useEffect(() => subscribePlanMarks(() => setMarksChanged(planMarks().changed)), []);
   // Yours, if this space has one — its type is in its name, so try each.
   useEffect(() => {
     setMine(null);
@@ -1531,6 +1541,7 @@ function FloorPlanSection({ sceneId }: { sceneId: string }) {
     setError('');
     try {
       await buildFloorPlan(assetId, SCENE_BY_ID[sceneId]?.name || 'Floor plan');
+      planMarksDrawn();
       forgetPlan(assetId);
       setBust(Date.now());
       setStatus('loading');
@@ -1587,6 +1598,7 @@ function FloorPlanSection({ sceneId }: { sceneId: string }) {
       {status === 'ready' && view !== 'mine' && (
         <RoomNames assetId={assetId} bust={bust} onSaved={() => { forgetPlan(assetId); setBust(Date.now()); }} />
       )}
+      {status === 'ready' && view !== 'mine' && <PlanMarksBlock assetId={assetId} onPlanTool={onPlanTool} />}
       {showing && (view === 'mine' || status === 'ready') && (
         // the client deliverable: a title sheet around the plan shown above, saved from the print dialog
         <button className="ed2-export" onClick={() => window.open(
@@ -1598,7 +1610,7 @@ function FloorPlanSection({ sceneId }: { sceneId: string }) {
       {status === 'none' && !mine && <p className="ed2-muted ed2-fine">No plan yet for this space.</p>}
       {error && <p className="ed2-muted ed2-fine" role="alert">{error}</p>}
       <button className="ed2-export" onClick={build} disabled={status === 'building'}>
-        {status === 'building' ? 'Drawing the plan…' : status === 'ready' ? 'Redraw from the scan' : 'Draw from the scan'}
+        {status === 'building' ? 'Drawing the plan…' : status === 'ready' ? (marksChanged ? 'Redraw with your marks' : 'Redraw from the scan') : 'Draw from the scan'}
       </button>
       <input
         ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" hidden
@@ -1613,6 +1625,46 @@ function FloorPlanSection({ sceneId }: { sceneId: string }) {
         {(status === 'ready' || mine) && ' Click a plan to open it full size, to save or print.'}
       </p>
     </Section>
+  );
+}
+
+/** Help the plan (2026-10-14): what the scan can't tell, marked in the 3D
+ *  view (PlanMarker): rooms traced by their corners, doors and windows by
+ *  both sides. Listed here to remove; the next redraw follows them, snapped
+ *  to the scanned walls (server floorplan.js markUp). */
+function PlanMarksBlock({ assetId, onPlanTool }: { assetId: string; onPlanTool: (t: PlanTool) => void }) {
+  const [, bump] = useState(0);
+  useEffect(() => subscribePlanMarks(() => bump((n) => n + 1)), []);
+  useEffect(() => { loadPlanMarks(assetId); }, [assetId]);
+  const { marks, error, changed } = planMarks();
+  const areaOf = (c: [number, number, number][]) => Math.abs(c.reduce((t, p, i) => { const q = c[(i + 1) % c.length]; return t + p[0] * q[1] - q[0] * p[1]; }, 0)) / 2;
+  return (
+    <div style={{ marginTop: 12 }}>
+      <div className="ed2-lbl">Help the plan</div>
+      <p className="ed2-muted ed2-fine">
+        Where the scan can&apos;t tell: in the 3D view, trace a room by its corners and mark doors and windows by both
+        sides. The next redraw follows them, snapped onto the scanned walls.
+      </p>
+      <div className="ed2-row">
+        <button onClick={() => onPlanTool('room')}>Trace a room</button>
+        <button onClick={() => onPlanTool('door')}>Mark a door</button>
+        <button onClick={() => onPlanTool('window')}>Mark a window</button>
+      </div>
+      {marks.rooms.map((r, i) => (
+        <div key={`r${i}`} className="ed2-row" style={{ flexWrap: 'nowrap', marginTop: 6 }}>
+          <span style={{ flex: 1 }}>Room {i + 1} · {r.corners.length} corners · {areaOf(r.corners).toFixed(1)} m²</span>
+          <button aria-label={`Remove traced room ${i + 1}`} onClick={() => setPlanMarks({ ...marks, rooms: marks.rooms.filter((_, j) => j !== i) })}>✕</button>
+        </div>
+      ))}
+      {marks.openings.map((o, i) => (
+        <div key={`o${i}`} className="ed2-row" style={{ flexWrap: 'nowrap', marginTop: 6 }}>
+          <span style={{ flex: 1 }}>{o.kind === 'door' ? 'Door' : 'Window'} · {Math.hypot(o.a[0] - o.b[0], o.a[1] - o.b[1]).toFixed(2)} m</span>
+          <button aria-label={`Remove ${o.kind} ${i + 1}`} onClick={() => setPlanMarks({ ...marks, openings: marks.openings.filter((_, j) => j !== i) })}>✕</button>
+        </div>
+      ))}
+      {error && <p className="ed2-muted ed2-fine" role="alert">{error}</p>}
+      {changed && <p className="ed2-muted ed2-fine" role="status">Saved. Redraw the plan to use your marks.</p>}
+    </div>
   );
 }
 

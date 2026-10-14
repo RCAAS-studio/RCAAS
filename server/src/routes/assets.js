@@ -24,7 +24,7 @@ import { requireEditorSession } from '../middleware/auth.js';
 import { assetGuard, refuseStaff } from '../access.js';
 import { recordAsset } from '../activity.js';
 import * as storage from '../storage.js';
-import { buildFloorPlan, renameRooms } from '../floorplan.js';
+import { buildFloorPlan, renameRooms, saveMarks } from '../floorplan.js';
 import { DATA_DIR } from '../dataDir.js';
 
 export const assetsRouter = Router();
@@ -542,6 +542,24 @@ assetsRouter.post('/:assetId/floorplan', requireEditorSession, assetGuard, async
     if (!plan) return res.status(422).json({ error: 'This space has no collision mesh to draw a plan from. Upload the full Lixel Studio export.' });
     await recordAsset(req, req.params.assetId, 'redrew the floor plan', `${plan.size[0]} × ${plan.size[1]} m`);
     res.json(plan);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/** The author's marks for a drawn plan: rooms traced corner by corner and
+ *  doors and windows marked side to side in the studio's 3D view, in the
+ *  scan's own frame ({ rooms: [{ corners: [[x, y, z], …] }], openings:
+ *  [{ kind: 'door' | 'window', a, b }] }, floorplan.js cleanMarks). The
+ *  whole set each time; the next redraw follows them. */
+assetsRouter.put('/:assetId/floorplan/marks', requireEditorSession, assetGuard, async (req, res, next) => {
+  try {
+    if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+      return res.status(400).json({ error: 'Send { rooms: [...], openings: [...] }.' });
+    }
+    const marks = await saveMarks(req.params.assetId, req.body);
+    if (!marks) return res.status(404).json({ error: 'This space has no plan drawn from its scan yet.' });
+    res.json(marks);
   } catch (err) {
     next(err);
   }

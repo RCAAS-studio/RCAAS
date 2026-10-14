@@ -9,7 +9,7 @@ import path from 'node:path';
 const dir = await mkdtemp(path.join(os.tmpdir(), 'rcaas-plan-'));
 process.env.ASSET_DIR = dir;
 process.env.ASSET_DRIVER = 'local';
-const { buildFloorPlan, renameRooms } = await import('../src/floorplan.js');
+const { buildFloorPlan, renameRooms, saveMarks } = await import('../src/floorplan.js');
 const storage = await import('../src/storage.js');
 
 // two rooms under one ceiling, parted by a wall with a doorway
@@ -62,4 +62,15 @@ test('rooms can be named, and the names survive a redraw', async () => {
   await renameRooms('ast_plan', { [big]: '' });
   assert.ok(!JSON.parse(await read('plan.json')).rooms.some((x) => x.name === 'Banquet hall'), 'an empty name puts the number back');
   assert.equal(await renameRooms('ast_none', { r1: 'x' }), null, 'no plan, nothing to rename');
+});
+
+test('the author\'s marks are kept with the plan and followed on the next redraw', async () => {
+  // a window marked in the solid east wall, in the scan's own frame
+  const marks = await saveMarks('ast_plan', { openings: [{ kind: 'window', a: [6.02, 0.8, 1.4], b: [5.97, 2.2, 1.4] }, { kind: 'roof', a: [0, 0], b: [1, 1] }] });
+  assert.deepEqual(marks.openings.map((m) => m.kind), ['window'], 'only doors and windows');
+  await buildFloorPlan('ast_plan', 'Ground floor');
+  const plan = JSON.parse(await read('plan.json'));
+  const win = plan.windows.find((g) => g.o === 'v' && Math.abs(g.c - 6) < 0.05);
+  assert.ok(win && Math.abs(win.a0 - 0.8) < 0.05 && Math.abs(win.a1 - 2.2) < 0.05, JSON.stringify(plan.windows));
+  assert.equal(await saveMarks('ast_none', { openings: [] }), null, 'no plan, nothing to mark');
 });

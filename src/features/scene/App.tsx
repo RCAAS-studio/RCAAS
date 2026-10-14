@@ -398,6 +398,15 @@ function Stage({ onState, viewerMode }: StageProps) {
         const v = new THREE.Vector3(...p).project(camera);
         return { x: ((v.x + 1) / 2) * rect.width, y: ((1 - v.y) / 2) * rect.height, front: v.z < 1 };
       },
+      // the same bridge as the tour's floor map (mapPose): the scan root's own frame
+      toScan: (p) => {
+        const root: THREE.Object3D | undefined = mgr.renderer?.root;
+        return root ? root.worldToLocal(new THREE.Vector3(...p)).toArray() : null;
+      },
+      fromScan: (p) => {
+        const root: THREE.Object3D | undefined = mgr.renderer?.root;
+        return root ? root.localToWorld(new THREE.Vector3(...p)).toArray() : null;
+      },
       goToHotspot: (id) => {
         const h = hotspotsFor(mgr.activeId).find((x) => x.id === id);
         const r = scanOf(mgr.renderer);

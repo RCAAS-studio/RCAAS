@@ -1,0 +1,45 @@
+/* Marks for the floor plan (PlanMarker.tsx), drawn over the studio's 3D
+   view: traced rooms in white, doors in blue, windows in pale cyan, the
+   mark being made dashed; a grip round every point to drag it; the panel
+   in the measure tool's dark glass, at the top of the view. */
+.pm-layer {
+  position: fixed; inset: 0; width: 100%; height: 100%; z-index: 40; pointer-events: none; overflow: visible;
+}
+.pm-layer line { stroke-width: 2.5; filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8)); }
+.pm-layer line.pm-room { stroke: #fff; }
+.pm-layer line.pm-door { stroke: #7c9cff; stroke-width: 4; }
+.pm-layer line.pm-window { stroke: #9be7ff; stroke-width: 4; }
+.pm-layer line.pm-draft { stroke-dasharray: 7 5; }
+.pm-layer line.pm-draft.pm-room { stroke: #fff; }
+.pm-dot { fill: #fff; stroke: rgba(0, 0, 0, 0.7); stroke-width: 2; }
+.pm-dot.pm-door { fill: #7c9cff; }
+.pm-dot.pm-window { fill: #9be7ff; }
+.pm-dot.is-first { r: 7px; fill: #e11d48; }
+.pm-grip { fill: transparent; pointer-events: all; cursor: grab; touch-action: none; }
+.pm-grip:hover { fill: rgba(255, 255, 255, 0.18); }
+.pm-layer.is-grabbing .pm-grip { cursor: grabbing; }
+.pm-tag {
+  position: fixed; z-index: 41; translate: -50% -140%; pointer-events: none;
+  padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+  font: 600 12px/1.2 var(--sans, system-ui), system-ui; font-variant-numeric: tabular-nums;
+  color: #fff; background: rgba(14, 14, 16, 0.86);
+}
+.pm-panel {
+  position: fixed; left: 50%; top: 58px; translate: -50% 0; z-index: 42;
+  width: min(440px, calc(100vw - 32px)); padding: 10px 14px; border-radius: 14px;
+  color: #f2f2f2; background: rgba(14, 14, 16, 0.88); border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); backdrop-filter: blur(10px);
+  font: 400 13px/1.45 var(--sans, system-ui), system-ui;
+}
+.pm-panel p { margin: 0 0 6px; }
+.pm-help { font-weight: 600; }
+.pm-note { color: rgba(242, 242, 242, 0.65); font-size: 12px; }
+.pm-modes { display: flex; gap: 4px; margin-bottom: 8px; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); width: fit-content; }
+.pm-panel button {
+  padding: 6px 12px; border-radius: 999px; cursor: pointer; font: 600 12px var(--sans, system-ui), system-ui;
+  color: #111; background: #fff; border: 0;
+}
+.pm-panel .pm-modes button { color: #f2f2f2; background: none; }
+.pm-panel .pm-modes button[aria-pressed="true"] { color: #111; background: #fff; }
+.pm-panel .pm-quiet { color: #f2f2f2; background: rgba(255, 255, 255, 0.1); }
+.pm-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
