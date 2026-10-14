@@ -164,11 +164,16 @@ export interface Collider {
   color: string;
 }
 
+/** A space's colour over the 3D view (2026-10-13; sceneDoc.ts lookFor): 1 = as scanned. */
+export interface SceneLook { brightness: number; contrast: number; saturation: number }
+
 export interface SceneDoc {
   id: string;
   version: 2;
   propertyId: string | null;
   title: string;
+  /** Absent or null in older docs: as scanned. */
+  look?: SceneLook | null;
   splat: {
     format: ModelFormat;
     // high is mandatory (CLAUDE.md §7.5 won't publish without it); medium/low

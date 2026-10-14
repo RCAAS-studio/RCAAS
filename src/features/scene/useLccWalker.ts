@@ -178,7 +178,7 @@ export function useLccWalker({
       // in the tour captures the mouse. Some browsers and embeds refuse the
       // capture — that must not throw, and must not leave the view stuck.
       const aerialNow = navMode.flyEnabled || navMode.orbitEnabled;
-      if (pointerLockRef.current && !aerialNow) {
+      if (pointerLockRef.current && !aerialNow && !walkerCfg.measuring) {
         try {
           const p = el.requestPointerLock() as unknown as Promise<void> | undefined;
           p?.catch?.(() => {});

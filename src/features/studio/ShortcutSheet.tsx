@@ -19,6 +19,9 @@ const KEYS: [group: string, rows: [keys: string, what: string][]][] = [
     ['B', 'Drop a waypoint at the camera'],
     ['V', 'Save the dropped waypoints as a camera track'],
   ]],
+  ['Measuring', [
+    ['M', 'Measure between two points (Esc to stop)'],
+  ]],
   ['Selecting', [
     ['Click', 'A hotspot or a collision box in the 3D view'],
     ['Esc', 'Back to the scene'],

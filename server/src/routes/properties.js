@@ -99,8 +99,10 @@ propertiesRouter.get('/:id/report', requireEditorSession, wrap(async (req, res) 
   const ids = new Set([...Object.keys(stats.spaces), ...leads.map((l) => l.sceneId).filter((id) => id !== 'hub'),
     ...(await listScenes()).filter((s) => s.propertyId === p.id).map((s) => s.id)]);
   const spaces = [];
+  const hsLabel = new Map(); // "<space>/<hotspot>" -> its name, for hotspots looked at but never opened
   for (const id of ids) {
     const doc = await getScene(id).catch(() => null);
+    for (const h of doc?.hotspots ?? []) hsLabel.set(`${id}/${h.id}`, h.label);
     const st = stats.spaces[id] ?? { visits: 0, seconds: 0 };
     spaces.push({ id, title: doc?.title || id, visits: st.visits, seconds: st.seconds, enquiries: leads.filter((l) => l.sceneId === id).length });
   }
@@ -115,10 +117,25 @@ propertiesRouter.get('/:id/report', requireEditorSession, wrap(async (req, res) 
   const events = made.filter((r) => r.kind === 'event' || asked('hall')(r));
   const confirmed = (list) => list.filter((r) => r.status === 'confirmed').length;
   const titleOf = new Map(spaces.map((s) => [s.id, s.title]));
-  const hotspots = Object.entries(stats.hotspots).flatMap(([space, byId]) => Object.entries(byId).map(([hid, h]) => ({
-    space, spaceTitle: titleOf.get(space) ?? space, id: hid, label: h.label, opens: h.opens,
-    enquiries: leads.filter((l) => l.sceneId === space && l.hotspotId === hid).length
-  }))).sort((a, b) => b.opens - a.opens || b.enquiries - a.enquiries).slice(0, 15);
+  // every hotspot opened or looked at (in the middle of the view), with both counts
+  const keys = new Set([
+    ...Object.entries(stats.hotspots).flatMap(([space, byId]) => Object.keys(byId).map((hid) => `${space}/${hid}`)),
+    ...Object.entries(stats.looked).flatMap(([space, byId]) => Object.keys(byId).map((hid) => `${space}/${hid}`))
+  ]);
+  const hotspots = [...keys].map((key) => {
+    const space = key.slice(0, key.indexOf('/')), hid = key.slice(key.indexOf('/') + 1);
+    const opened = stats.hotspots[space]?.[hid];
+    return {
+      space, spaceTitle: titleOf.get(space) ?? space, id: hid, label: opened?.label || hsLabel.get(key) || hid,
+      opens: opened?.opens ?? 0, looked: stats.looked[space]?.[hid] ?? 0,
+      enquiries: leads.filter((l) => l.sceneId === space && l.hotspotId === hid).length
+    };
+  }).sort((a, b) => b.opens - a.opens || b.looked - a.looked || b.enquiries - a.enquiries).slice(0, 15);
+  // where visitors came from, and the enquiries each source brought
+  const sourceNames = new Set([...Object.keys(stats.sources), ...leads.map((l) => l.source || 'direct')]);
+  const sources = [...sourceNames].map((name) => ({
+    name, visits: stats.sources[name] ?? 0, enquiries: leads.filter((l) => (l.source || 'direct') === name).length
+  })).sort((a, b) => b.visits - a.visits || b.enquiries - a.enquiries);
   const intents = Object.values(stats.intent).reduce((a, n) => a + n, 0);
   res.json({
     project: { id: p.id, title: p.title, theme: p.theme ?? {} },
@@ -135,7 +152,8 @@ propertiesRouter.get('/:id/report', requireEditorSession, wrap(async (req, res) 
       requests: { tables: tables.length, rooms: rooms.length, events: events.length },
       confirmed: { tables: confirmed(tables), rooms: confirmed(rooms), events: confirmed(events) }
     },
-    hotspots
+    hotspots,
+    sources
   });
 }));
 

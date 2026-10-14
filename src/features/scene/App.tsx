@@ -8,7 +8,7 @@ import { Gizmo, useSceneTransform } from '../studio/Gizmo';
 import { ColliderBoxes } from '../studio/ColliderBoxes';
 import { transformFor, setTransform, IDENTITY } from './transform';
 import { walkerCfg } from './walkerConfig';
-import { clearOrbitDistance, findFloorBelow, findStandingSpot, scanOf } from './collision';
+import { clearOrbitDistance, findFloorBelow, findStandingSpot, scanOf, surfaceDistance } from './collision';
 import { useCameraDirector } from './useCameraDirector';
 import { useLccWalker } from './useLccWalker';
 import { spawnFor, setSessionSpawn, hydrateScenes, SCENE_BY_ID, firstScene, isPublicTour } from './scenes';
@@ -24,7 +24,8 @@ import {
 } from './viewpoints';
 import {
   hotspotsFor, addHotspot, updateHotspot, removeHotspot,
-  placeHotspotAtCamera, exportSceneJSON, loadSceneDoc, addCollider, placeColliderAtCamera
+  placeHotspotAtCamera, exportSceneJSON, loadSceneDoc, addCollider, placeColliderAtCamera,
+  lookFor, lookFilter, subscribeDoc
 } from './sceneDoc';
 import { projected } from '../hotspots/hotspotProjector';
 import { resetNavMode, navMode, useNavMode } from './navMode';
@@ -100,6 +101,13 @@ function Stage({ onState, viewerMode }: StageProps) {
   }, [mgr.renderer]);
 
   useEffect(() => subscribeViewpoints(bumpVp), []);
+
+  // The space's colour (sceneDoc lookFor): a CSS filter on the canvas, so it costs the SDK nothing.
+  useEffect(() => {
+    const apply = () => { gl.domElement.style.filter = lookFilter(lookFor(mgr.activeId)); };
+    apply();
+    return subscribeDoc(apply);
+  }, [gl, mgr.activeId]);
 
   /**
    * Fly mode: circle the middle of the space, looking down on it. The middle
@@ -279,8 +287,18 @@ function Stage({ onState, viewerMode }: StageProps) {
 
   const editor = useMemo((): EditorApi => {
     const yaw = () => walkerRef.current?.yaw?.() ?? 0;
+    // a view's picture, with the space's colour on it as visitors see it
     const snapshot = () => {
-      try { return gl.domElement.toDataURL('image/jpeg', 0.55); } catch { return undefined; }
+      try {
+        const src = gl.domElement, filter = src.style.filter;
+        if (!filter) return src.toDataURL('image/jpeg', 0.55);
+        const c = document.createElement('canvas');
+        c.width = src.width; c.height = src.height;
+        const g = c.getContext('2d')!;
+        g.filter = filter;
+        g.drawImage(src, 0, 0);
+        return c.toDataURL('image/jpeg', 0.55);
+      } catch { return undefined; }
     };
     return {
       snapshot,
@@ -360,6 +378,40 @@ function Stage({ onState, viewerMode }: StageProps) {
         setTransform(mgr.activeId, { position: [t.position[0], t.position[1] - floorY, t.position[2]] });
         camera.position.y -= floorY; // keep the same view of the model
         return `Floor moved to 0 m (it was at ${floorY.toFixed(2)} m).`;
+      },
+      // --- measuring and "take me there" (2026-10-13) ---
+      surfaceAt: (x, y) => {
+        const r = scanOf(mgr.renderer);
+        if (!r) return null;
+        const rect = gl.domElement.getBoundingClientRect();
+        const dir = new THREE.Vector3(((x / rect.width) * 2) - 1, 1 - ((y / rect.height) * 2), 0.5).unproject(camera).sub(camera.position).normalize();
+        const u = walkerCfg.unitScale || 1;
+        const d = surfaceDistance(r, camera.position, dir, 60 * u, 0.02 * u);
+        if (d === null) return null;
+        const p = camera.position;
+        return [p.x + dir.x * d, p.y + dir.y * d, p.z + dir.z * d];
+      },
+      toScreen: (p) => {
+        const rect = gl.domElement.getBoundingClientRect();
+        const v = new THREE.Vector3(...p).project(camera);
+        return { x: ((v.x + 1) / 2) * rect.width, y: ((1 - v.y) / 2) * rect.height, front: v.z < 1 };
+      },
+      goToHotspot: (id) => {
+        const h = hotspotsFor(mgr.activeId).find((x) => x.id === id);
+        const r = scanOf(mgr.renderer);
+        if (!h) return;
+        const u = walkerCfg.unitScale || 1;
+        const at = new THREE.Vector3(...h.position);
+        // stand back from it towards where the camera is now, short of any wall in between
+        const back = new THREE.Vector3(camera.position.x - at.x, 0, camera.position.z - at.z);
+        if (back.lengthSq() < 1e-6) back.set(0, 0, 1);
+        back.normalize();
+        const room = r ? surfaceDistance(r, at, back, 1.8 * u, 0.25 * u) : null;
+        const step = room === null ? 1.8 * u : Math.max(0.4 * u, room - 0.3 * u);
+        const stand = at.clone().addScaledVector(back, step);
+        const floor = r ? findFloorBelow(r, stand.x, stand.z, at.y + 1.5 * u, at.y - 6 * u, { eyeHeight: walkerCfg.eyeHeight, radius: walkerCfg.radius }) : null;
+        stand.y = floor ? floor.y : at.y;
+        playViewport({ id: `go-${id}`, label: h.label, seconds: 2, path: [{ pos: [stand.x, stand.y, stand.z], look: [at.x, at.y, at.z] }] });
       }
     };
   }, [camera, gl, scene, mgr.activeId, mgr.renderer, playViewport, playSequence, stop]);
@@ -451,7 +503,8 @@ export default function App({ property }: { property?: Property } = {}) {
   const [state, setState] = useState<ViewerState | null>(null);
   const [isTouch] = useState(() => isTouchDevice());
   const editing = editorActive();
-  const [previewing, setPreviewing] = useState(false);
+  // ?preview=phone: the studio's phone-size window opens straight into Preview (EditorShell openPhonePreview)
+  const [previewing, setPreviewing] = useState(() => editing && new URLSearchParams(location.search).get('preview') === 'phone');
   // CLAUDE.md §3 constraint 5 / §8.1 rule 1: no WebGL2, no splat attempt at
   // all — checked once, synchronously, before the SDK gets anywhere near it.
   const [webgl2] = useState(() => hasWebGL2());

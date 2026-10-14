@@ -467,3 +467,14 @@ test('page metadata: one canonical link, brand suffix, a description a search re
   assert.equal(m.openGraph.images[0].url, '/og.jpg');
   assert.deepEqual(pageMeta('/', 'Home', 'd', true).title, { absolute: 'Home' }, 'the home page keeps its own full title');
 });
+
+test('a hotspot reads in the visitor’s language where the studio translated it, else as written', async () => {
+  const { localized } = await import('../src/features/hotspots/localized.ts');
+  const h = { id: 'h', type: 'text', label: 'Spa', position: [0, 0, 0], radius: 0.4, occludedBy: 'none',
+    payload: { text: 'Open 9 to 6.' }, i18n: { ne: { label: 'स्पा', text: '' }, zh: { label: '水疗', text: '营业时间 9 点至 6 点。' } } };
+  assert.equal(localized(h, 'en'), h, 'English: unchanged');
+  assert.deepEqual([localized(h, 'ne').label, localized(h, 'ne').payload.text], ['स्पा', 'Open 9 to 6.'], 'an empty translation falls back to the English');
+  assert.deepEqual([localized(h, 'zh').label, localized(h, 'zh').payload.text], ['水疗', '营业时间 9 点至 6 点。']);
+  assert.equal(localized({ ...h, i18n: undefined }, 'zh').label, 'Spa', 'an older hotspot with no translations');
+  assert.equal(localized(h, 'zh').payload.caption, undefined, 'never adds a field the hotspot does not have');
+});

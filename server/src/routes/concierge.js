@@ -3,11 +3,10 @@
  * their own words and gets an answer from what the project has published —
  * its brand information, its website (story, rooms, menu, booking hours) and
  * its spaces (their hotspots and views) — and, where it helps, the tour goes
- * to the place the answer is about. Claude through Anthropic's Messages API,
- * Node's own fetch, no SDK. Off until ANTHROPIC_API_KEY is set in server/.env.
+ * to the place the answer is about. Claude through ../claude.js (structured
+ * output). Off until ANTHROPIC_API_KEY is set in server/.env.
  *
- *   ANTHROPIC_API_KEY=sk-ant-...     from console.anthropic.com
- *   CONCIERGE_MODEL=claude-opus-5-5  the default; claude-haiku-4-5-20251001 costs less
+ *   CONCIERGE_MODEL=claude-opus-5-5  the default (else CLAUDE_MODEL); claude-haiku-5-5 costs less
  *
  *   GET  /api/concierge/:project   public: { on }
  *   POST /api/concierge/:project   public: { question, history?: [{ role, text }], space?, lang? }
@@ -19,12 +18,12 @@
 import { Router } from 'express';
 import { getProperty, getPublishedScene, listPublished } from '../store.js';
 import { readSite, liveBooking, liveStays } from './sites.js';
+import { askJson, claudeOn } from '../claude.js';
 
 export const conciergeRouter = Router();
 const wrap = (fn) => (req, res, next) => fn(req, res).catch(next);
 
-const API = () => process.env.ANTHROPIC_API_URL || 'https://api.anthropic.com/v1/messages';
-const on = () => !!process.env.ANTHROPIC_API_KEY;
+const on = claudeOn;
 const LANG = { en: 'English', ne: 'Nepali', zh: 'Simplified Chinese' };
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -92,18 +91,16 @@ export async function knowledgeOf(p) {
   return { text: parts.filter(Boolean).join('\n\n').slice(0, 40000), places };
 }
 
-const REPLY_TOOL = {
-  name: 'reply',
-  description: 'Answer the visitor. Optionally take them to the place in the 3D tour the answer is about.',
-  input_schema: {
-    type: 'object',
-    properties: {
-      answer: { type: 'string', description: 'The answer, short and friendly: at most 3 sentences.' },
-      space: { type: 'string', description: 'A space id from the brackets, if the answer is about a place they can see.' },
-      view: { type: 'string', description: 'A view id in that space that shows it, if there is one.' },
-      hotspot: { type: 'string', description: 'A hotspot id in that space to open, if one is about exactly this.' }
-    },
-    required: ['answer']
+// The answer, and optionally the place in the 3D tour it is about.
+const REPLY = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['answer'],
+  properties: {
+    answer: { type: 'string', description: 'The answer, short and friendly: at most 3 sentences.' },
+    space: { type: 'string', description: 'A space id from the brackets, if the answer is about a place they can see.' },
+    view: { type: 'string', description: 'A view id in that space that shows it, if there is one.' },
+    hotspot: { type: 'string', description: 'A hotspot id in that space to open, if one is about exactly this.' }
   }
 };
 
@@ -133,35 +130,22 @@ conciergeRouter.post('/:project', wrap(async (req, res) => {
     'Answer only from the information below. If it isn’t there, say you don’t know and suggest the enquiry form ("Ask about this space") or the phone number; never guess prices, availability, opening times or facts.',
     'You can’t take bookings or check what’s free. For a table or a room, point them to the "Reserve a table" or "Book a room" buttons if they exist below; otherwise to an enquiry.',
     'When the answer is about something they can see in the tour, set space (and a view or hotspot that shows it) so the tour takes them there. Use only ids from the brackets below.',
-    `Reply in ${lang}. Keep it short and warm. Always answer through the reply tool.`,
+    `Reply in ${lang}. Keep it short and warm: answer in at most 3 sentences.`,
     here ? `The visitor is in the space [space: ${here}] now.` : '',
     '',
     '<information>', text, '</information>'
   ].filter((x) => x !== '').join('\n');
 
-  let r;
+  let out;
   try {
-    r = await fetch(API(), {
-      method: 'POST',
-      headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model: process.env.CONCIERGE_MODEL || 'claude-opus-5-5',
-        max_tokens: 600,
-        system,
-        tools: [REPLY_TOOL],
-        tool_choice: { type: 'tool', name: 'reply' },
-        messages: [...history, { role: 'user', content: question }]
-      }),
-      signal: AbortSignal.timeout(30000)
+    out = await askJson({
+      model: process.env.CONCIERGE_MODEL, system, schema: REPLY, history, content: question, maxTokens: 1500
     });
-  } catch {
-    return res.status(502).json({ error: 'The concierge didn’t answer. Try again, or send an enquiry.' });
+  } catch (err) {
+    return res.status(502).json({ error: err.message === 'Claude didn’t answer.'
+      ? 'The concierge didn’t answer. Try again, or send an enquiry.'
+      : 'The concierge couldn’t answer just now. Try again, or send an enquiry.' });
   }
-  if (!r.ok) {
-    console.warn('[concierge] the model said', r.status);
-    return res.status(502).json({ error: 'The concierge couldn’t answer just now. Try again, or send an enquiry.' });
-  }
-  const out = (await r.json()).content?.find((c) => c.type === 'tool_use' && c.name === 'reply')?.input ?? {};
   const answer = String(out.answer ?? '').trim().slice(0, 1200) || 'Sorry, I don’t know that. Try the enquiry form, and the team will answer.';
   // Where to go: only a published space of this project, and only its own views and hotspots.
   const place = places.find((x) => x.id === out.space);

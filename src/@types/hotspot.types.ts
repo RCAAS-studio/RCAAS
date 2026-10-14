@@ -43,7 +43,12 @@ export interface Hotspot {
   label: string;
   payload: HotspotPayload;
   occludedBy: 'geometry' | 'none';
+  /** Its words in the tour's other languages (2026-10-13, the studio's Translate): absent = English for everyone. */
+  i18n?: Partial<Record<'ne' | 'zh', HotspotWords>>;
 }
+
+/** What a visitor reads on a hotspot, in one language. */
+export interface HotspotWords { label?: string; text?: string; caption?: string }
 
 /** One projected hotspot, written by hotspotProjector.js every frame. */
 export interface ProjectedHotspot {

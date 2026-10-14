@@ -14,6 +14,7 @@ import { saveLead, listLeads, setLeadDelivery } from '../leadsStore.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { getScene, getProperty } from '../store.js';
 import { sendLeadEmail } from '../mailer.js';
+import { cleanSource } from '../stats.js';
 
 export const leadsRouter = Router();
 
@@ -90,6 +91,8 @@ leadsRouter.post('/', async (req, res, next) => {
       // what they were looking at before asking (the tour's last hotspot)
       hotspotId: clean(body.hotspotId),
       hotspotLabel: clean(body.hotspotLabel),
+      // where the visitor came from (stats.js cleanSource): the report counts enquiries per source
+      source: cleanSource(body.source),
       ip
     });
 

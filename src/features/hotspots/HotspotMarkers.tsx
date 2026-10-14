@@ -11,6 +11,7 @@ import { playClip, setMuted, stopClip, unlockAudio, useSound } from '../../lib/a
 import type { Hotspot, ProjectedHotspot } from '../../@types/hotspot.types';
 import { useT } from '../../lib/i18n';
 import { HotspotIcon } from './HotspotIcon';
+import { localized } from './localized';
 import './hotspots.css';
 
 /** How many hotspots show their card at once; the rest are rings until hovered. */
@@ -52,6 +53,7 @@ export function HotspotMarkers({ sceneId, mode = 'view', selId, onSelect, onOpen
   const [hover, setHover] = useState<string | null>(null);
   const [, bump] = useReducer((n) => n + 1, 0);
   useEffect(() => subscribeDoc(bump), []); // a label or image edited in the studio
+  const lang = useT().lang; // visitors read a hotspot's translation; the studio edits the words as written
 
   useEffect(() => {
     let raf: number, last = 0, prevSig = '';
@@ -71,7 +73,7 @@ export function HotspotMarkers({ sceneId, mode = 'view', selId, onSelect, onOpen
 
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const byId = new Map(hotspotsFor(sceneId).map((x) => [x.id, x]));
+  const byId = new Map(hotspotsFor(sceneId).map((x) => [x.id, mode === 'view' ? localized(x, lang) : x]));
   const carded = nearestIds(marks, CARDS_AT_ONCE);
   const activate = (id: string) => {
     if (mode === 'edit') { onSelect?.(id); return; }
@@ -106,7 +108,7 @@ export function HotspotMarkers({ sceneId, mode = 'view', selId, onSelect, onOpen
               onClick={() => activate(m.id)}
               onMouseEnter={() => setHover(m.id)}
               onMouseLeave={() => setHover((v) => (v === m.id ? null : v))}
-              aria-label={m.label}
+              aria-label={hs?.label ?? m.label}
             >
               <span className="hs-ring-dot"><HotspotIcon type={m.type} /></span>
             </button>
@@ -123,7 +125,7 @@ export function HotspotMarkers({ sceneId, mode = 'view', selId, onSelect, onOpen
                   ? <img className="hs-card-img" src={thumb} alt="" loading="lazy" decoding="async" />
                   : <span className="hs-card-ic"><HotspotIcon type={m.type} /></span>}
                 <span className="hs-card-txt">
-                  <span className="hs-card-title">{m.label}{p.audio && <Speaker />}</span>
+                  <span className="hs-card-title">{hs?.label ?? m.label}{p.audio && <Speaker />}</span>
                   {blurb && <span className="hs-card-blurb">{blurb}</span>}
                 </span>
               </button>
@@ -167,7 +169,8 @@ export function HotspotPanel({ sceneId, id, onClose, onPortal, onReserve, places
   const sound = useSound();
   const t = useT();
 
-  const hs = hotspotsFor(sceneId).find((h) => h.id === id);
+  const found = hotspotsFor(sceneId).find((h) => h.id === id);
+  const hs = found && localized(found, t.lang);
   const pl = hs?.payload ?? {};
   const audioUrl = resolveAsset(pl.audio);
 

@@ -8,6 +8,7 @@
 import type { ApiScene, ProjectStatus, Property, SceneDoc } from '../@types/scene.types';
 import type { AudioUploadResult, UploadResult } from '../@types/upload.types';
 import type { BrandFont, ProjectFeatures, ProjectInfo, ProjectTheme } from '../@types/config.types';
+import type { HotspotWords } from '../@types/hotspot.types';
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000').replace(/\/$/, '');
 
@@ -47,6 +48,13 @@ export const getScene = (id: string) => request<SceneDoc>(`/api/scenes/${id}`);
 /** Editor-only — requires a signed-in session (see login()). */
 export const saveScene = (id: string, doc: SceneDoc) =>
   request(`/api/scenes/${id}`, { method: 'PUT', body: JSON.stringify(doc) });
+
+/** Claude in the studio (server routes/studioAi.js): hotspot words in Nepali and Chinese. */
+export const translateHotspots = (sceneId: string, items: { id: string; label: string; text?: string; caption?: string }[]) =>
+  request<{ items: { id: string; ne: HotspotWords; zh: HotspotWords }[] }>(`/api/scenes/${encodeURIComponent(sceneId)}/translate`, { method: 'POST', body: JSON.stringify({ items }) });
+/** Hotspots worth adding, from a picture of the view (x, y: fractions of the picture). */
+export const suggestHotspots = (sceneId: string, image: string) =>
+  request<{ title: string; tagline: string; hotspots: { label: string; text: string; x: number; y: number }[] }>(`/api/scenes/${encodeURIComponent(sceneId)}/suggest`, { method: 'POST', body: JSON.stringify({ image }) });
 
 /* ---- properties (§5.1) — studio-only ---- */
 
@@ -127,7 +135,9 @@ export interface ProjectReport {
     enquiries: number; requests: { tables: number; rooms: number; events?: number }; confirmed: { tables: number; rooms: number; events?: number };
   };
   /** The most-opened hotspots, with the enquiries sent after looking at each. */
-  hotspots: { space: string; spaceTitle: string; id: string; label: string; opens: number; enquiries: number }[];
+  hotspots: { space: string; spaceTitle: string; id: string; label: string; opens: number; looked: number; enquiries: number }[];
+  /** Where visitors came from (a link's ?src=, else the site that linked; "direct"), with the enquiries each brought. */
+  sources: { name: string; visits: number; enquiries: number }[];
 }
 export const getProjectReport = (id: string, month: string) =>
   request<ProjectReport>(`/api/properties/${encodeURIComponent(id)}/report?month=${month}`);
@@ -507,8 +517,35 @@ export const checkEmbed = (space: string, key: string, from: string) =>
 /** Public — no session needed. `payload` must include `sceneId` and
  *  `formRenderedAt` (Date.now() when the form first appeared — the backend's
  *  bot-timing check needs it, see server/src/routes/leads.js). */
+/**
+ * Where this visitor came from (2026-10-13), for the monthly report's sources:
+ * the link's ?src= or utm_source (QR codes and campaign links carry one), else
+ * the site that linked here, else null ("direct"). A tour inside one of our own
+ * pages (a client website's frame) reads that page's link and referrer instead,
+ * so the website's visitors keep their source. The server tidies the name.
+ */
+let cached: string | null | undefined;
+
+export function visitSource(): string | null {
+  if (cached !== undefined || typeof window === 'undefined') return cached ?? null;
+  let page: Window = window;
+  try { if (window.parent !== window && window.parent.location.host === location.host) page = window.parent; } catch { /* another site's frame */ }
+  const q = new URLSearchParams(page.location.search);
+  const named = q.get('src') || q.get('utm_source');
+  if (named) return (cached = named.slice(0, 40));
+  try {
+    const ref = page.document.referrer ? new URL(page.document.referrer) : null;
+    if (ref && ref.host !== location.host) return (cached = ref.hostname);
+    if (ref) return (cached = 'rcaas'); // from our own pages: Live tours, a project page
+    return (cached = page !== window ? 'website' : null);
+  } catch {
+    return (cached = null);
+  }
+}
+
+/** Every enquiry carries where its visitor came from (visitSource), for the report. */
 export const submitLead = (payload: Record<string, unknown>) =>
-  request('/api/leads', { method: 'POST', body: JSON.stringify(payload) });
+  request('/api/leads', { method: 'POST', body: JSON.stringify({ source: visitSource(), ...payload }) });
 
 /* ------------------------------------------------------------------ */
 /* Asset upload (CLAUDE.md §7.1, §9). Editor-only.                     */

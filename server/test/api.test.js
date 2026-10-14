@@ -49,14 +49,14 @@ const mailServer = http.createServer((req, res) => {
 
 // And for SMS (Sparrow) and WhatsApp (Meta): records each message's path, headers and body.
 const texts = [];
-// ...and Anthropic's Messages API for the concierge: answers with `modelReply`.
+// ...and Anthropic's Messages API (concierge, translation, suggestions): answers `modelReply` as structured JSON.
 let modelReply = { answer: '' };
 const textServer = http.createServer((req, res) => {
   let body = '';
   req.on('data', (c) => { body += c; });
   req.on('end', () => {
     texts.push({ url: req.url, auth: req.headers.authorization, key: req.headers['x-api-key'], body: req.headers['content-type']?.includes('json') ? JSON.parse(body) : Object.fromEntries(new URLSearchParams(body)) });
-    const reply = req.url === '/anthropic' ? { content: [{ type: 'tool_use', name: 'reply', input: modelReply }] } : {};
+    const reply = req.url === '/anthropic' ? { stop_reason: 'end_turn', content: [{ type: 'text', text: JSON.stringify(modelReply) }] } : {};
     res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify(reply));
   });
 });
@@ -678,6 +678,51 @@ test('tour visits and time are counted per space, and the monthly report adds en
   assert.equal((await api('GET', `/api/properties/${pid}/report?month=2026-13`)).status, 400);
   cookie = '';
   assert.equal((await api('GET', `/api/properties/${pid}/report`)).status, 401);
+});
+
+test('the report shows where visitors came from and what they looked at; Claude translates and suggests in the studio', async () => {
+  signIn();
+  const pid = (await api('POST', '/api/properties', { title: 'Source Inn' })).json.id;
+  const hs = (id, label) => ({ id, type: 'text', label, position: [0, 1, 0], payload: { text: 'Open daily.' } });
+  await api('PUT', '/api/scenes/source-hall', sceneDoc('source-hall', { propertyId: pid, title: 'Hall', hotspots: [hs('hs-stage', 'Stage'), hs('hs-bar', 'Bar')] }));
+  await api('POST', '/api/scenes/source-hall/publish');
+  const beacon = (body) => fetch(`${BASE}/api/stats`, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body) });
+  await Promise.all([
+    beacon({ space: 'source-hall', visit: true, src: 'l.facebook.com' }), // one source, whichever Facebook host linked
+    beacon({ space: 'source-hall', visit: true, src: 'qr' }),
+    beacon({ space: 'source-hall', visit: true }),
+    // looked at: capped at the beacon's own 40 s, and only this space's hotspots
+    beacon({ space: 'source-hall', seconds: 40, looked: { 'hs-stage': 30, 'hs-bar': 99, 'made-up': 5 } })
+  ]);
+  cookie = '';
+  await api('POST', '/api/leads', { sceneId: 'source-hall', name: 'Asha', phone: '9800000006', source: 'facebook', formRenderedAt: Date.now() - 5000 });
+  await new Promise((r) => setTimeout(r, 150)); // beacons are counted after the reply
+
+  signIn();
+  const r = (await api('GET', `/api/properties/${pid}/report`)).json;
+  const byName = (a, b) => a.name.localeCompare(b.name);
+  assert.deepEqual([...r.sources].sort(byName), [
+    { name: 'direct', visits: 1, enquiries: 0 }, { name: 'facebook', visits: 1, enquiries: 1 }, { name: 'qr', visits: 1, enquiries: 0 }
+  ]);
+  assert.deepEqual(r.hotspots.map((h) => [h.label, h.opens, h.looked]).sort(), [['Bar', 0, 40], ['Stage', 0, 30]], 'looked at, though never opened');
+
+  // Claude in the studio: answers are kept to what was sent, nothing saved
+  modelReply = { items: [
+    { id: 'hs-stage', ne: { label: 'मञ्च', text: 'दैनिक खुला।', caption: 'not sent' }, zh: { label: '舞台', text: '每天开放。' } },
+    { id: 'made-up', ne: { label: 'x' }, zh: { label: 'y' } }
+  ] };
+  const t = await api('POST', '/api/scenes/source-hall/translate', { items: [{ id: 'hs-stage', label: 'Stage', text: 'Open daily.' }] });
+  assert.deepEqual(t.json, { items: [{ id: 'hs-stage', ne: { label: 'मञ्च', text: 'दैनिक खुला।' }, zh: { label: '舞台', text: '每天开放。' } }] });
+  assert.equal(texts.findLast((x) => x.url === '/anthropic').body.output_config.format.type, 'json_schema');
+  assert.equal((await api('POST', '/api/scenes/source-hall/translate', { items: [] })).status, 400);
+
+  modelReply = { title: 'Hall', tagline: 'A hall for events', hotspots: [{ label: 'Stage', text: 'A raised stage.', x: 1.7, y: 0.4 }] };
+  const sg = await api('POST', '/api/scenes/source-hall/suggest', { image: 'data:image/jpeg;base64,/9j/AAAA' });
+  assert.deepEqual(sg.json, { title: 'Hall', tagline: 'A hall for events', hotspots: [{ label: 'Stage', text: 'A raised stage.', x: 0.98, y: 0.4 }] });
+  assert.deepEqual(texts.findLast((x) => x.url === '/anthropic').body.messages[0].content[0].source, { type: 'base64', media_type: 'image/jpeg', data: '/9j/AAAA' });
+  assert.equal((await api('POST', '/api/scenes/source-hall/suggest', { image: 'https://example.test/view.jpg' })).status, 400);
+  cookie = '';
+  assert.equal((await api('POST', '/api/scenes/source-hall/suggest', { image: 'data:image/jpeg;base64,/9j/AAAA' })).status, 401);
 });
 
 test('every published version is listed, and any one can be put live again', async () => {
@@ -1693,7 +1738,8 @@ test('the concierge answers from what the project published, and only sends visi
   const sent = texts.find((t) => t.url === '/anthropic');
   assert.equal(sent.key, 'test-anthropic-key');
   assert.equal(sent.body.model, 'test-model');
-  assert.deepEqual(sent.body.tool_choice, { type: 'tool', name: 'reply' });
+  assert.equal(sent.body.output_config.format.type, 'json_schema', 'structured output: Opus 5.5 refuses a forced tool');
+  assert.equal(sent.body.tool_choice, undefined);
   assert.match(sent.body.system, /A garden hotel in Patan/);
   assert.ok(sent.body.system.includes('Dal bhat (Rs 450)'));
   assert.ok(sent.body.system.includes('Hotspot "Spa" [hotspot: hs-spa]: Open 9 to 6'));

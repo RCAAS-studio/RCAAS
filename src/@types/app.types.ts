@@ -41,6 +41,12 @@ export interface EditorApi {
   /** Moves the model so the floor under the camera sits at y = 0. Returns a
    *  sentence for the inspector to show. */
   dropToFloor: () => string;
+  /** The point of the scan under a spot on screen (px from the canvas's top left), or null. */
+  surfaceAt: (x: number, y: number) => [number, number, number] | null;
+  /** Where a point in the space shows on screen (px), and whether it is in front of the camera. */
+  toScreen: (p: [number, number, number]) => { x: number; y: number; front: boolean };
+  /** Fly to stand in front of a hotspot, facing it (the concierge's "take me there"). */
+  goToHotspot: (id: string) => void;
 }
 
 /** The state object App.jsx's <Stage> reports up to Viewer / EditorShell. */

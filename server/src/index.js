@@ -11,6 +11,7 @@ import { propertiesRouter } from './routes/properties.js';
 import { teamRouter } from './routes/team.js';
 import { statsRouter } from './routes/stats.js';
 import { conciergeRouter } from './routes/concierge.js';
+import { studioAiRouter } from './routes/studioAi.js';
 import { sitesRouter, publishDue } from './routes/sites.js';
 import { reservationsRouter } from './routes/reservations.js';
 import { fileURLToPath } from 'url';
@@ -64,6 +65,7 @@ app.get('/api/health', async (req, res) => {
   res.status(ok ? 200 : 503).json(DEV ? { ok, service: 'rcaas-api', pid: process.pid, dir: HERE } : { ok });
 });
 app.use('/api/scenes', scenesRouter);
+app.use('/api/scenes', studioAiRouter); // translate and suggest, with Claude
 app.use('/api/gallery', galleryRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/embed', embedRouter);

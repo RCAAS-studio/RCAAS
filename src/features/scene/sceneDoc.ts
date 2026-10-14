@@ -13,10 +13,10 @@ import { spawnFor, SCENE_BY_ID } from './scenes';
 import { getScene, getPublishedScene } from '../../lib/api';
 import { liveViewpoints, loadTracks } from './viewpoints';
 import { transformFor, loadTransform } from './transform';
-import { walkerCfg } from './walkerConfig';
+import { walkerCfg, scaleWalkerCfg } from './walkerConfig';
 import { surfaceDistance, boxSpotInView } from './collision';
 import type { Hotspot, HotspotPayload, HotspotType } from '../../@types/hotspot.types';
-import type { Booking, Collider, ModelFormat, SceneDoc, SplatVariant, Track } from '../../@types/scene.types';
+import type { Booking, Collider, ModelFormat, SceneDoc, SceneLook, SplatVariant, Track } from '../../@types/scene.types';
 
 const doc: Record<string, { hotspots: Hotspot[] }> = {};
 /** Book now per space (§7.6). Loaded with the doc, so the public tour reads
@@ -214,6 +214,42 @@ export function placeColliderAtCamera(sceneId: string, id: string, camera: THREE
 }
 
 /* ------------------------------------------------------------------ */
+/* Colour and scale (2026-10-13)                                      */
+/* ------------------------------------------------------------------ */
+
+/** A space's colour: brightness, contrast and saturation over the 3D view (a
+ *  CSS filter on the canvas, App.tsx), for a dull or yellow capture. null = as
+ *  scanned. Absent in older docs. */
+const looks: Record<string, SceneLook | null> = {};
+export const DEFAULT_LOOK: SceneLook = { brightness: 1, contrast: 1, saturation: 1 };
+const clampTo = (v: unknown, lo: number, hi: number) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(hi, Math.max(lo, Math.round(v * 100) / 100)) : 1);
+function cleanLook(l: Partial<SceneLook> | null | undefined): SceneLook | null {
+  if (!l || typeof l !== 'object') return null;
+  const out = { brightness: clampTo(l.brightness, 0.5, 1.6), contrast: clampTo(l.contrast, 0.5, 1.6), saturation: clampTo(l.saturation, 0, 2) };
+  return out.brightness === 1 && out.contrast === 1 && out.saturation === 1 ? null : out;
+}
+export const lookFor = (sceneId: string): SceneLook | null => looks[sceneId] ?? null;
+export function setLook(sceneId: string, patch: Partial<SceneLook>) {
+  looks[sceneId] = cleanLook({ ...DEFAULT_LOOK, ...looks[sceneId], ...patch });
+  emit();
+}
+/** The CSS filter for a space's colour ('' as scanned). */
+export const lookFilter = (l: SceneLook | null) => (l ? `brightness(${l.brightness}) contrast(${l.contrast}) saturate(${l.saturation})` : '');
+
+/** A scale corrected in the studio by measuring something of known length
+ *  (MeasureTool): scene units per metre, saved as the doc's unitScale. It moves
+ *  eye height and speeds at once; the near plane follows on the next load. */
+const scaleFix: Record<string, number> = {};
+export function setUnitScale(sceneId: string, u: number) {
+  if (!(u > 0) || !Number.isFinite(u)) return;
+  scaleFix[sceneId] = Math.round(u * 10000) / 10000;
+  const conf = SCENE_BY_ID[sceneId];
+  if (conf) conf.unitScale = scaleFix[sceneId];
+  scaleWalkerCfg(scaleFix[sceneId]);
+  emit();
+}
+
+/* ------------------------------------------------------------------ */
 /* Load / save bookkeeping                                            */
 /* ------------------------------------------------------------------ */
 
@@ -248,6 +284,8 @@ export function loadSceneDoc(
       doc[sceneId] = { hotspots: [...(saved.hotspots ?? []), ...localOnly] };
       booking[sceneId] = saved.booking ?? null;
       colliders[sceneId] = (Array.isArray(saved.colliders) ? saved.colliders : []).map(cleanCollider);
+      looks[sceneId] = cleanLook(saved.look);
+      if (force) delete scaleFix[sceneId];
       if (source === 'draft') {
         serverDocs[sceneId] = saved as SavedDoc;
         savedJson[sceneId] = JSON.stringify(sceneDocFor(sceneId));
@@ -349,6 +387,8 @@ export function sceneDocFor(sceneId: string): SceneDoc {
     colliders: collidersFor(sceneId),
     tracks,
     booking: bookingFor(sceneId),
+    look: lookFor(sceneId),
+    ...(scaleFix[sceneId] ? { unitScale: scaleFix[sceneId] } : {}),
     night: conf?.night ?? null,
     building: conf?.building ?? '',
     floor: conf?.floor ?? ''

@@ -12,6 +12,7 @@ import { ActivityDialog, EnquiriesDialog } from '../../../features/studio/Projec
 import { ThemeToggle } from '../../../components/ui/ThemeToggle';
 import type { ApiScene, Property } from '../../../@types/scene.types';
 import type { ProjectFeatures } from '../../../@types/config.types';
+import { QrCode } from '../../../features/studio/QrCode';
 import '../../../features/studio/editor.css';
 import '../../../features/studio/home.css';
 
@@ -212,6 +213,13 @@ export default function ProjectHomePage({ params }: { params: Promise<{ property
                     <a className="pl-btn" href={`${base}/site`}>Edit the website</a>
                     {home.site?.publishedAt && <a className="pl-btn" href={`/s/${encodeURIComponent(p.id)}`} target="_blank" rel="noopener">Open it ↗</a>}
                   </span>
+                  {/* the website's QR code, for print: its visits count as "qr" in the report */}
+                  {home.site?.publishedAt && (
+                    <details className="ph-qr">
+                      <summary>QR code for the website</summary>
+                      <QrCode url={`${location.origin}/s/${encodeURIComponent(p.id)}?src=qr`} name={p.id} />
+                    </details>
+                  )}
                 </section>
               )}
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { transformFor, setTransform, subscribeTransform, gizmo, setGizmoMode } from '../scene/transform';
 import { SCENE_BY_ID, renameScene, setNight, setPlace, setSessionSpawn, visibleScenes } from '../scene/scenes';
@@ -10,8 +10,11 @@ import { subscribeViewpoints, loadTracks, updateSessionViewpoint } from '../scen
 import { canRedo, canUndo, redo, subscribeHistory, undo, watchHistory } from './history';
 import {
   hotspotsFor, subscribeDoc, sceneDocFor, loadSceneDoc, markSaved, hasUnsavedChanges, bookingFor, setBooking, setHotspots, copyHotspotId,
-  collidersFor, updateCollider, removeCollider, selectCollider, colliderUi
+  collidersFor, updateCollider, removeCollider, selectCollider, colliderUi,
+  lookFor, setLook, DEFAULT_LOOK, setUnitScale
 } from '../scene/sceneDoc';
+import { MeasureTool } from '../scene/MeasureTool';
+import { ClaudeSection, TranslationsSection } from './ClaudeTools';
 import { uploadAudio } from './upload';
 import { isTypingTarget } from '../scene/useLccWalker';
 import { playClip, setMuted, stopClip, useSound } from '../../lib/audio';
@@ -25,6 +28,11 @@ import { forgetPlan } from '../tour/floorMapData';
 import type { PublishState, EmbedSettings, SceneVersion } from '../../lib/api';
 import { HotspotMarkers } from '../hotspots/HotspotMarkers';
 import { ShortcutSheet } from './ShortcutSheet';
+import { QrCode } from './QrCode';
+
+/** Where a link will be shared: each gets its own ?src=, so the monthly report
+ *  shows which brought each visit and enquiry (api.ts visitSource). */
+const CAMPAIGNS = ['Facebook', 'Instagram', 'Google', 'WhatsApp', 'Email', 'Print'];
 import { Uploader } from './Uploader';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { PasswordChange } from '../auth/PasswordChange';
@@ -63,6 +71,16 @@ export function EditorShell({ state, property, onPreview }: {
   const activeId = state?.activeId;
   useEffect(() => (activeId ? watchHistory(activeId) : undefined), [activeId]);
   const [copying, setCopying] = useState(false);
+  // Measure (MeasureTool): the top bar's ruler, or M outside a text box
+  const [measuring, setMeasuring] = useState(false);
+  const closeMeasure = useCallback(() => setMeasuring(false), []);
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (e.code === 'KeyM' && !e.ctrlKey && !e.metaKey && !e.altKey && !isTypingTarget(e.target)) setMeasuring((v) => !v);
+    };
+    window.addEventListener('keydown', key);
+    return () => window.removeEventListener('keydown', key);
+  }, []);
 
   useEffect(() => {
     if (!state?.editor) return;
@@ -128,7 +146,13 @@ export function EditorShell({ state, property, onPreview }: {
   return (
     <div className="ed2">
       <LeaveGuard dirty={dirty} />
-      <TopBar onPreview={onPreview} sceneId={state.activeId} property={property} />
+      <TopBar onPreview={onPreview} onMeasure={() => setMeasuring(true)} sceneId={state.activeId} property={property} />
+      {measuring && (
+        <MeasureTool
+          editor={state.editor} unitScale={walkerCfg.unitScale || 1} onClose={closeMeasure}
+          onCalibrate={(u) => setUnitScale(state.activeId, u)}
+        />
+      )}
 
       <SceneTree
         state={state} tracks={tracks} hotspots={hotspots} colliders={colliders} sel={sel}
@@ -213,7 +237,18 @@ export function EditorShell({ state, property, onPreview }: {
 
 /* ----------------------------- top bar ---------------------------- */
 
-function TopBar({ onPreview, sceneId, property }: { onPreview: () => void; sceneId: string; property?: Property }) {
+/** The tour at a phone's size (2026-10-13): this editor page in a 390×844 window,
+ *  opened straight into Preview (App reads ?preview=phone), so the phone layout's
+ *  media queries apply. It loads the saved draft, so unsaved edits aren't in it. */
+function openPhonePreview(sceneId: string) {
+  if (hasUnsavedChanges(sceneId) && !confirm('The phone preview opens the saved version of this space, so your unsaved changes won’t be in it. Open it anyway?')) return;
+  const u = new URL(location.href);
+  u.searchParams.set('space', sceneId);
+  u.searchParams.set('preview', 'phone');
+  window.open(u.toString(), 'rcaas-phone-preview', 'popup,width=390,height=844');
+}
+
+function TopBar({ onPreview, onMeasure, sceneId, property }: { onPreview: () => void; onMeasure: () => void; sceneId: string; property?: Property }) {
   return (
     <div className="ed2-top">
       {/* A plain <a>, not <Link>: leaving the editor must tear the renderer
@@ -238,6 +273,12 @@ function TopBar({ onPreview, sceneId, property }: { onPreview: () => void; scene
         />
       </div>
       <button className="ed2-preview" onClick={onPreview}>▶ Preview</button>
+      <button className="ed2-phone" onClick={() => openPhonePreview(sceneId)} title="Preview at phone size, in its own window (the saved version)" aria-label="Preview at phone size">
+        <svg viewBox="0 0 24 24" aria-hidden><rect x="6.5" y="2.5" width="11" height="19" rx="2.5" /><path d="M10.5 18.5h3" /></svg>
+      </button>
+      <button className="ed2-phone" onClick={onMeasure} title="Measure a distance (M); correct the space's scale" aria-label="Measure">
+        <svg viewBox="0 0 24 24" aria-hidden><path d="M3 15.5 15.5 3l5.5 5.5L8.5 21z" /><path d="M7 12l2 2M10 9l2 2M13 6l2 2" /></svg>
+      </button>
       <span className="ed2-undo">
         <button onClick={() => undo(sceneId)} disabled={!canUndo(sceneId)} title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
         <button onClick={() => redo(sceneId)} disabled={!canRedo(sceneId)} title="Redo (Ctrl+Y)" aria-label="Redo">↷</button>
@@ -522,6 +563,23 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
               <input readOnly value={url} onFocus={(e) => e.target.select()} />
               <button onClick={() => copy('link', url)}>{copied === 'link' ? 'Copied' : 'Copy'}</button>
               <a href={url} target="_blank" rel="noreferrer">Open</a>
+            </div>
+
+            <p className="pub-label">QR code and campaign links</p>
+            <div className="pub-qr">
+              <QrCode url={`${url}&src=qr`} name={sceneId} />
+              <div>
+                <p className="up-slot-hint">
+                  Print the code at reception, on table cards or brochures. Each link below opens the same tour, marked with
+                  where you shared it, so the monthly report shows which one brought each visit and enquiry.
+                </p>
+                <div className="pub-sizes">
+                  {CAMPAIGNS.map((c) => {
+                    const link = `${url}&src=${c.toLowerCase()}`;
+                    return <button key={c} onClick={() => copy(c, link)} title={link}>{copied === c ? 'Copied' : c}</button>;
+                  })}
+                </div>
+              </div>
             </div>
 
             <p className="pub-label">Embed on a website</p>
@@ -856,6 +914,21 @@ function SceneTree({ state, tracks, hotspots, colliders, sel, onSelect, onAddTra
 
 /* --------------------------- Scene pane -------------------------- */
 
+/** The space's colour (sceneDoc lookFor): for a dull or yellow capture. Saved and published with it. */
+function ColourSection({ sceneId }: { sceneId: string }) {
+  const l = lookFor(sceneId) ?? DEFAULT_LOOK;
+  return (
+    <details className="ed2-adv">
+      <summary>Colour{lookFor(sceneId) ? ' (adjusted)' : ''}</summary>
+      <Slider label="Brightness" value={l.brightness} min={0.5} max={1.6} step={0.01} onChange={(x) => setLook(sceneId, { brightness: x })} />
+      <Slider label="Contrast" value={l.contrast} min={0.5} max={1.6} step={0.01} onChange={(x) => setLook(sceneId, { contrast: x })} />
+      <Slider label="Saturation" value={l.saturation} min={0} max={2} step={0.01} onChange={(x) => setLook(sceneId, { saturation: x })} />
+      <div className="ed2-row"><button onClick={() => setLook(sceneId, DEFAULT_LOOK)} disabled={!lookFor(sceneId)}>As scanned</button></div>
+      <p className="ed2-muted ed2-fine">Visitors see it once you save and publish. It colours the whole view, view pictures included; hotspots and the tour&apos;s buttons stay as they are.</p>
+    </details>
+  );
+}
+
 function WorldInspector({ state, pose, onBump }: { state: ViewerState; pose: Pose | null; onBump: () => void }) {
   const u = walkerCfg.unitScale || 1;
   const fmt = (n?: number) => (n ?? 0).toFixed(2);
@@ -876,6 +949,8 @@ function WorldInspector({ state, pose, onBump }: { state: ViewerState; pose: Pos
       <NightSection sceneId={state.activeId} onBump={onBump} />
       <PlaceSection sceneId={state.activeId} onBump={onBump} />
       <FloorPlanSection sceneId={state.activeId} />
+      <ColourSection sceneId={state.activeId} />
+      <ClaudeSection ed={state.editor} sceneId={state.activeId} pose={pose} onRename={(t) => { if (renameScene(state.activeId, t)) onBump(); }} />
 
       <Section title="Movement mode">
         <Segmented
@@ -1173,6 +1248,7 @@ function HotspotInspector({ ed, hs, activeId, onDelete, onAddTable }: HotspotIns
       </Section>}
 
       <AudioSection key={hs.id} hs={hs} setPayload={setPayload} />
+      <TranslationsSection hs={hs} set={set} />
 
       <div className="ed2-row ed2-viewactions">
         <button className="ed2-del" onClick={onDelete}>🗑 Delete hotspot</button>

@@ -25,6 +25,7 @@
     "lucide-react": "^0.546.0",
     "meshoptimizer": "^1.2.0",
     "next": "^16.3.5",
+    "qrcode-generator": "^2.0.4",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-icons": "^5.7.0",

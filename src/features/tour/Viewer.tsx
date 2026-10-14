@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { tourSpaces, visibleScenes, dayNightPair, sameTimeOfDay, SCENE_BY_ID, isPublicTour, hasPlaces, placesMap } from '../scene/scenes';
 import { useUiConfig, setUiConfig } from '../../lib/uiConfig';
 import { useNavMode, setVisitorMode, visitorMode } from '../scene/navMode';
@@ -27,6 +27,7 @@ import { useT, setLang, LANGS, type Lang } from '../../lib/i18n';
 import type { ViewerState } from '../../@types/app.types';
 import { DotVeil } from './DotVeil';
 import { withBase } from '../../lib/basePath';
+import { MeasureTool } from '../scene/MeasureTool';
 import './viewer.css';
 
 interface ViewerProps {
@@ -56,6 +57,8 @@ export function Viewer({ state, isTouch, autoStart = false, tour = false }: View
   // 'event': Plan an event (EventBooking), its hall picked when this space is one.
   // 'here': Book now on a room, hall or table hotspot itself (HotspotBookCard).
   const [sheet, setSheet] = useState<'book' | 'ask' | 'table' | 'plan' | 'room' | 'rooms' | 'event' | 'here' | 'concierge' | null>(null);
+  const [measuring, setMeasuring] = useState(false);
+  const closeMeasure = useCallback(() => setMeasuring(false), []);
   const [hereHs, setHereHs] = useState('');
   const [concierge, setConcierge] = useState(false); // the AI concierge is on for this project
   // Table and room booking from the project's website: the published setup on
@@ -93,9 +96,11 @@ export function Viewer({ state, isTouch, autoStart = false, tour = false }: View
   const pickPlace = (id: string) => { setOutlet(id); setTableId(''); };
   const showPlace = (s: ConciergeShow) => {
     if (!state) return;
-    if (s.space !== state.activeId) { wanted.current = { space: s.space, view: s.view }; bumpWanted(); return; }
+    if (s.space !== state.activeId) { wanted.current = { space: s.space, view: s.view, hotspot: s.hotspot }; bumpWanted(); return; }
     const vp = s.view ? state.viewpoints?.find((v) => v.id === s.view) : undefined;
+    // a view that shows it, else fly to stand in front of the hotspot itself
     if (vp) state.playViewport(vp);
+    else if (s.hotspot) state.editor.goToHotspot(s.hotspot);
     if (s.hotspot) setOpenHs(s.hotspot);
   };
   // The path to a booking (monthly report): which card a visitor opened, in which space.
@@ -175,7 +180,7 @@ export function Viewer({ state, isTouch, autoStart = false, tour = false }: View
   // A project's website (/s/<project>) embeds this tour and can send it to a
   // room: { type: 'rcaas:view', space?, view? }. Only our own pages may. It
   // enters the tour if need be, opens the space, then flies to the view.
-  const wanted = useRef<{ space?: string; view?: string } | null>(null);
+  const wanted = useRef<{ space?: string; view?: string; hotspot?: string } | null>(null);
   const [, bumpWanted] = useReducer((n: number) => n + 1, 0);
   useEffect(() => {
     const on = (e: MessageEvent) => {
@@ -187,6 +192,7 @@ export function Viewer({ state, isTouch, autoStart = false, tour = false }: View
     window.addEventListener('message', on);
     return () => window.removeEventListener('message', on);
   }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- runs every render on purpose; wanted.current is cleared before setOpenHs, so it fires once
   useEffect(() => {
     const w = wanted.current;
     if (!w || !state) return;
@@ -200,6 +206,8 @@ export function Viewer({ state, isTouch, autoStart = false, tour = false }: View
     wanted.current = null;
     const vp = w.view ? state.viewpoints?.find((v) => v.id === w.view) : undefined;
     if (vp) state.playViewport(vp);
+    else if (w.hotspot) state.editor.goToHotspot(w.hotspot);
+    if (w.hotspot) setOpenHs(w.hotspot);
   });
 
   return (
@@ -236,7 +244,9 @@ export function Viewer({ state, isTouch, autoStart = false, tour = false }: View
             stayOpen={sheet === 'room' || sheet === 'rooms'} stayHere={!!hereRoom}
             onStay={stays ? () => (sheet === 'room' || sheet === 'rooms' ? setSheet(null) : bookRoom()) : undefined}
             eventOpen={sheet === 'event'} eventHere={!!hereHall}
-            onEvent={events ? () => { setHallPick(''); setSheet(sheet === 'event' ? null : 'event'); } : undefined} />
+            onEvent={events ? () => { setHallPick(''); setSheet(sheet === 'event' ? null : 'event'); } : undefined}
+            measureOpen={measuring} onMeasure={() => setMeasuring(!measuring)} />
+          {measuring && <MeasureTool editor={state.editor} unitScale={state.unitScale} onClose={closeMeasure} />}
           {sheet === 'table' && tables && place && (
             <TableCard key={`${outlet}/${tableId}`} project={tables.pid} booking={place} venue={place.name || ui.brand}
               places={placeList} onPlace={pickPlace}
@@ -435,6 +445,7 @@ const isEmbed = () => typeof location !== 'undefined' && new URLSearchParams(loc
 type Panel = 'views' | 'spaces' | 'help' | null;
 
 const Icon = {
+  ruler: <svg viewBox="0 0 24 24"><path d="M3 15.5 15.5 3l5.5 5.5L8.5 21z" /><path d="M7 12l2 2M10 9l2 2M13 6l2 2" /></svg>,
   spaces: <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2" /><path d="M8 21h8M12 17v4" /></svg>,
   views: <svg viewBox="0 0 24 24"><path d="M12 3 3 8l9 5 9-5-9-5Z" /><path d="m3 13 9 5 9-5" /></svg>,
   walk: <svg viewBox="0 0 24 24"><circle cx="13" cy="4" r="2" /><path d="m9 21 2-6 3 3v4M7 12l3-4 4 1 2 4M11 8l-1 7" /></svg>,
@@ -470,7 +481,7 @@ function IconBtn({ label, on, onClick, children }: { label: string; on?: boolean
   );
 }
 
-function TopChrome({ state, showBrand, brand, hd, canExit, panel, setPanel, bookOpen, onBook, reserveOpen, onReserve, stayOpen, stayHere, onStay, eventOpen, eventHere, onEvent, conciergeOpen, onConcierge }: {
+function TopChrome({ state, showBrand, brand, hd, canExit, panel, setPanel, bookOpen, onBook, reserveOpen, onReserve, stayOpen, stayHere, onStay, eventOpen, eventHere, onEvent, conciergeOpen, onConcierge, measureOpen, onMeasure }: {
   state: ViewerState; showBrand: boolean; brand: string; hd: boolean; canExit: boolean;
   panel: Panel; setPanel: (p: Panel) => void; bookOpen: boolean; onBook: () => void;
   reserveOpen: boolean; onReserve?: () => void;
@@ -480,6 +491,8 @@ function TopChrome({ state, showBrand, brand, hd, canExit, panel, setPanel, book
   eventOpen: boolean; eventHere: boolean; onEvent?: () => void;
   /** The AI concierge, when it's on for this project. */
   conciergeOpen: boolean; onConcierge?: () => void;
+  /** Measure between two points (scene/MeasureTool.tsx). */
+  measureOpen: boolean; onMeasure: () => void;
 }) {
   const [full, setFull] = useState(false);
   const { logo } = useUiConfig();
@@ -526,6 +539,7 @@ function TopChrome({ state, showBrand, brand, hd, canExit, panel, setPanel, book
           </IconBtn>
         )}
         {onConcierge && <IconBtn label={t('Ask the concierge')} on={conciergeOpen} onClick={onConcierge}>{Icon.chat}</IconBtn>}
+        <IconBtn label={t('Measure')} on={measureOpen} onClick={onMeasure}>{Icon.ruler}</IconBtn>
         <LangPicker className="vw-hd" />
         <button className={`vw-hd ${hd ? 'on' : ''}`} onClick={() => setHd(!hd)} aria-pressed={hd}
           title={hd ? t('Full resolution. Tap for a lighter view.') : t('Lighter view. Tap for full resolution.')}>HD</button>

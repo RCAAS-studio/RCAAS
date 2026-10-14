@@ -9,7 +9,11 @@
  * opened, how many visits opened any hotspot ("engaged"), and how many
  * opened each booking or enquiry card ("intent"). Enquiries and booking
  * requests themselves are counted from what was saved, not from here.
- */
+ *
+ * Where visitors came from (2026-10-13): each visit's source (a ?src= or
+ * utm_source on the link, else the site that linked to it, else "direct"), and
+ * how long each hotspot was in the middle of the view ("looked at"), per space. */
+const MAX_SOURCES = 40; // a month keeps at most this many names; the rest count as "other"
 export const INTENTS = ['enquire', 'book', 'table', 'room', 'whatsapp', 'event'];
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -20,7 +24,21 @@ const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 const monthOf = (d = new Date()) => d.toISOString().slice(0, 7);
 const fileFor = (propertyId, month) => path.join(DIR, propertyId, `${month}.json`);
 
-const empty = () => ({ visits: 0, seconds: 0, days: {}, spaces: {}, engaged: 0, intent: {}, hotspots: {} });
+const empty = () => ({ visits: 0, seconds: 0, days: {}, spaces: {}, engaged: 0, intent: {}, hotspots: {}, sources: {}, looked: {} });
+
+// A site that links from several hosts counts as one source (l.facebook.com, m.facebook.com…).
+const KNOWN = [
+  ['facebook', /(^|.)(facebook.com|fb.me|fb.com)$/], ['instagram', /(^|.)instagram.com$/], ['google', /(^|.)google.[a-z.]+$/],
+  ['whatsapp', /(^|.)whatsapp.(com|net)$/], ['youtube', /(^|.)(youtube.com|youtu.be)$/], ['tiktok', /(^|.)tiktok.com$/],
+  ['linkedin', /(^|.)(linkedin.com|lnkd.in)$/], ['x', /(^|.)(t.co|x.com|twitter.com)$/], ['bing', /(^|.)bing.com$/]
+];
+
+/** "Facebook", "www.google.com", "utm source" -> facebook, google, utm-source; nonsense -> null. */
+export function cleanSource(v) {
+  if (typeof v !== 'string') return null;
+  const s = v.trim().toLowerCase().replace(/^www\./, '').replace(/[^a-z0-9.-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+  return KNOWN.find(([, re]) => re.test(s))?.[0] ?? (s || null);
+}
 
 async function read(propertyId, month) {
   try {
@@ -38,10 +56,10 @@ function queued(key, fn) {
   return run;
 }
 
-/** One visit to a space, or `seconds` more spent in it; or a hotspot opened
- *  (`hotspot`: { id, label }, `first` for a visit's first), or a card opened
- *  (`intent`: one of INTENTS). */
-export function count(propertyId, sceneId, { visit = false, seconds = 0, hotspot = null, first = false, intent = null }) {
+/** One visit to a space (with its `source`), or `seconds` more spent in it and
+ *  `looked` ({ hotspotId: seconds }); or a hotspot opened (`hotspot`: { id, label },
+ *  `first` for a visit's first), or a card opened (`intent`: one of INTENTS). */
+export function count(propertyId, sceneId, { visit = false, seconds = 0, hotspot = null, first = false, intent = null, source = null, looked = null }) {
   const month = monthOf();
   return queued(`${propertyId}/${month}`, async () => {
     const s = { ...empty(), ...(await read(propertyId, month)) };
@@ -59,6 +77,13 @@ export function count(propertyId, sceneId, { visit = false, seconds = 0, hotspot
       sp.visits += 1;
       const day = new Date().toISOString().slice(0, 10);
       s.days[day] = (s.days[day] ?? 0) + 1;
+      const src = source ?? 'direct';
+      const key = src in s.sources || Object.keys(s.sources).length < MAX_SOURCES ? src : 'other';
+      s.sources[key] = (s.sources[key] ?? 0) + 1;
+    }
+    if (looked) {
+      const bySpace = (s.looked[sceneId] ??= {});
+      for (const [id, secs] of Object.entries(looked)) bySpace[id] = (bySpace[id] ?? 0) + secs;
     }
     if (seconds > 0) {
       s.seconds += seconds;

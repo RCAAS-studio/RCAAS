@@ -1424,3 +1424,38 @@ a.ed2-switch-item:hover { background: var(--ed-raise); }
 .pl-brand-word span { margin-right: 0; }
 .ed2-pubbtn, .pl-head .pl-btn-main { color: #fff; background: #E11D48; border-color: #E11D48; }
 .ed2-pubbtn:hover, .pl-head .pl-btn-main:hover:not(:disabled) { background: #BE123C; border-color: #BE123C; filter: none; }
+
+/* ================================================================= */
+/*  2026-10-13: QR codes and campaign links (QrCode.tsx), the phone   */
+/*  preview and measure buttons, Claude's suggestions and the         */
+/*  hotspots' other languages (ClaudeTools.tsx).                      */
+/* ================================================================= */
+.qr { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.qr svg { width: 132px; height: 132px; border-radius: 6px; border: 1px solid var(--ed-line); }
+.qr-actions { display: flex; gap: 6px; }
+.qr-actions button, .ed2-linkbtn {
+  appearance: none; cursor: pointer; padding: 4px 10px; border-radius: 999px;
+  font: 600 11px var(--sans); color: var(--ed-text); background: var(--ed-raise); border: 1px solid var(--ed-line-lit);
+}
+.qr-actions button:hover, .ed2-linkbtn:hover { border-color: var(--ed-signal); }
+.pub-qr { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; margin-bottom: 12px; }
+.pub-qr .pub-sizes { flex-wrap: wrap; }
+@media (max-width: 560px) { .pub-qr { grid-template-columns: 1fr; } }
+.ph-qr { margin-top: 10px; }
+.ph-qr > summary { cursor: pointer; font: 600 12px var(--sans); color: var(--ed-text-dim); }
+.ph-qr .qr { margin-top: 8px; }
+
+.ed2-phone {
+  appearance: none; cursor: pointer; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 999px;
+  color: var(--ed-text); background: var(--ed-raise); border: 1px solid var(--ed-line-lit);
+}
+.ed2-phone:hover { border-color: var(--ed-signal); }
+.ed2-phone svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.ed2-claude .ed2-row { flex-wrap: wrap; }
+.ed2-suggest { margin: 10px 0; padding: 10px; border-radius: 10px; background: var(--ed-raise); border: 1px solid var(--ed-line); }
+.ed2-suggest ul { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 8px; }
+.ed2-suggest label { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; font-size: 12px; line-height: 1.45; cursor: pointer; }
+.ed2-suggest label b { display: block; }
+.ed2-i18n-lang { margin-top: 10px; }
+.ed2-i18n-lang .ed2-name + .ed2-name { margin-top: 6px; }

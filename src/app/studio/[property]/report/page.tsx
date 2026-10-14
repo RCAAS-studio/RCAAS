@@ -15,6 +15,12 @@ const pct = (n: number, of: number) => (of ? `${Math.round((n / of) * 100)}%` : 
  * first three steps are counted in the tour; the rest are what was saved,
  * so they include enquiries and bookings made on the website too.
  */
+/** How the report names a source (api.ts visitSource): the studio's campaign links, and our own pages. */
+const SOURCE_NAMES: Record<string, string> = {
+  direct: 'Direct', qr: 'QR code', facebook: 'Facebook', instagram: 'Instagram', google: 'Google', whatsapp: 'WhatsApp',
+  email: 'Email', print: 'Print', website: 'Its website', rcaas: 'RCAAS pages', other: 'Other'
+};
+
 function Funnel({ report }: { report: ProjectReport }) {
   const f = report.funnel;
   const requests = f.requests.tables + f.requests.rooms + (f.requests.events ?? 0);
@@ -135,19 +141,39 @@ export default function ReportPage({ params }: { params: Promise<{ property: str
           <section>
             <h2>What visitors looked at</h2>
             <table className="rp-table">
-              <thead><tr><th>Hotspot</th><th>Space</th><th>Opened</th><th>Enquiries after</th></tr></thead>
+              <thead><tr><th>Hotspot</th><th>Space</th><th>In view</th><th>Opened</th><th>Enquiries after</th></tr></thead>
               <tbody>
                 {report.hotspots.map((h) => (
                   <tr key={`${h.space}/${h.id}`}>
                     <td>{h.label}</td>
                     <td className="rp-dim">{h.spaceTitle}</td>
+                    <td>{h.looked ? duration(h.looked) : '—'}</td>
                     <td>{h.opens}</td>
                     <td>{h.enquiries}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <p className="rp-muted">“Enquiries after”: enquiries sent from the tour when this was the last hotspot the visitor opened.</p>
+            <p className="rp-muted">“In view”: how long visitors had it in the middle of the screen, added up. “Enquiries after”: enquiries sent from the tour when this was the last hotspot the visitor opened.</p>
+          </section>
+        )}
+
+        {(report.sources?.length ?? 0) > 0 && (
+          <section>
+            <h2>Where visitors came from</h2>
+            <table className="rp-table">
+              <thead><tr><th>Source</th><th>Visits</th><th>Enquiries</th></tr></thead>
+              <tbody>
+                {report.sources.map((s) => (
+                  <tr key={s.name}>
+                    <td>{SOURCE_NAMES[s.name] ?? s.name}</td>
+                    <td>{s.visits}</td>
+                    <td>{s.enquiries}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="rp-muted">From the link a visitor followed: the studio&apos;s QR codes and campaign links name theirs (Publish), other links count by the site they came from. “Direct”: typed in, a bookmark, or an app that hides where it came from.</p>
           </section>
         )}
 

@@ -8,11 +8,12 @@
  *   POST /api/stats   { space, visit?: true, seconds?: number }
  *                     { space, hotspot: id, first?: true }   a hotspot opened (the first of the visit: first)
  *                     { space, intent: 'enquire' | 'book' | 'table' | 'room' | 'whatsapp' }   a card (or WhatsApp) opened, once per visit
+ *                     visit: + src (where the visitor came from); seconds: + looked: { hotspotId: seconds in view }
  */
 import { Router } from 'express';
 import express from 'express';
 import { getPublishedScene } from '../store.js';
-import { count, INTENTS } from '../stats.js';
+import { count, INTENTS, cleanSource } from '../stats.js';
 
 export const statsRouter = Router();
 
@@ -47,8 +48,15 @@ statsRouter.post('/', express.text({ type: () => true, limit: '2kb' }), async (r
     }
     if (INTENTS.includes(body.intent)) return void (await count(snap.propertyId, space, { intent: body.intent }));
     const seconds = Math.max(0, Math.min(1800, Math.round(Number(body.seconds) || 0))); // at most 30 min per beacon
-    if (body.visit !== true && !seconds) return;
-    await count(snap.propertyId, space, { visit: body.visit === true, seconds });
+    // looked at: only this published space's hotspots, at most as long as the beacon's time
+    const known = new Set((snap.hotspots ?? []).map((h) => h.id));
+    const looked = Object.fromEntries(Object.entries(body.looked && typeof body.looked === 'object' ? body.looked : {})
+      .filter(([id]) => known.has(id)).slice(0, 40)
+      .map(([id, n]) => [id, Math.max(0, Math.min(seconds || 1800, Math.round(Number(n) || 0)))])
+      .filter(([, n]) => n > 0));
+    const anyLooked = Object.keys(looked).length > 0;
+    if (body.visit !== true && !seconds && !anyLooked) return;
+    await count(snap.propertyId, space, { visit: body.visit === true, seconds, source: cleanSource(body.src), looked: anyLooked ? looked : null });
   } catch (err) {
     console.warn('[stats]', err.message);
   }
