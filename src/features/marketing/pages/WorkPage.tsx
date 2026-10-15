@@ -14,7 +14,7 @@ interface WorkPageProps {
   onOpenPlanner: () => void;
 }
 
-export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate, onOpenPlanner }) => {
+export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) => {
   const [filterTag, setFilterTag] = useState<string>('All');
   const [activeModalProject, setActiveModalProject] = useState<CaseStudy | null>(null);
 

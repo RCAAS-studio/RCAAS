@@ -47,6 +47,9 @@ function safeNext(value: string | null): string {
   }
 }
 
+const errorText = (err: unknown, fallback: string) =>
+  err instanceof Error && err.message ? err.message : fallback;
+
 /**
  * Authentication panel.
  *
@@ -172,13 +175,14 @@ export function AuthPanel() {
       setPassword('');
       setAccessCode('');
       router.replace(next);
-    } catch {
-      // Avoid exposing raw server errors to the browser.
-      setError(
+    } catch (err) {
+      // The API's errors are written for people (wrong code, too many tries);
+      // unexpected ones already arrive as a plain sentence (server/src/index.js).
+      setError(errorText(err,
         mode === 'signup'
           ? 'Unable to create your account. Check your details and try again.'
           : 'Unable to sign in with those credentials. Please try again.',
-      );
+      ));
       setBusy(false);
     }
   };
@@ -450,10 +454,10 @@ function ResetPanel({ token }: { token: string }) {
 
       // Assumes the API establishes a valid session on success.
       router.replace('/studio');
-    } catch {
-      setError(
+    } catch (err) {
+      setError(errorText(err,
         'Unable to reset your password. The link may have expired or already been used. Request a new link and try again.',
-      );
+      ));
       setBusy(false);
     }
   };
@@ -575,10 +579,11 @@ function ForgotPanel({
     try {
       await requestPasswordReset(normalizedEmail);
       setSent(true);
-    } catch {
-      setError(
+    } catch (err) {
+      // e.g. no email set up here: the API says to ask an admin for a link
+      setError(errorText(err,
         'Unable to process your request right now. Please try again later.',
-      );
+      ));
     } finally {
       setBusy(false);
     }

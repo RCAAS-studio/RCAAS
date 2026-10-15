@@ -7,6 +7,8 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
 import { collidersFor, colliderUi, subscribeDoc, updateCollider } from '../scene/sceneDoc';
 import { gizmo } from '../scene/transform';
+import { scanOf, surfaceDistance } from '../scene/collision';
+import { walkerCfg } from '../scene/walkerConfig';
 import { SCENE_BY_ID, metaPath } from '../scene/scenes';
 
 const DEG = Math.PI / 180;
@@ -49,7 +51,8 @@ async function loadOccluder(sceneId: string): Promise<THREE.Group | null> {
  * walls and floor like a real object (loadOccluder), with a faint outline
  * through them so a box behind a wall can still be found. The selected one
  * gets move arrows. Clicking a box (a click, not a drag to look) selects it
- * (colliderUi.onPick), the nearest one under the pointer, walls or not.
+ * (colliderUi.onPick), the nearest one under the pointer, unless the scan is
+ * in front of it.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- vendor SDK renderer handle
 export function ColliderBoxes({ sceneId, renderer }: { sceneId: string; renderer: any }) {
@@ -159,8 +162,15 @@ export function ColliderBoxes({ sceneId, renderer }: { sceneId: string; renderer
       if (!down || gizmo.dragging || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) return;
       const r = gl.domElement.getBoundingClientRect();
       ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
-      const id = ray.intersectObjects(fills, false)[0]?.object.userData.colliderId as string | undefined;
-      if (id) colliderUi.onPick?.(id);
+      const hit = ray.intersectObjects(fills, false)[0];
+      if (!hit) return;
+      // a wall or floor in front of the box takes the click (pick that box from the tree);
+      // the margin keeps a box plugging a hole, flush with the wall, clickable
+      const u = walkerCfg.unitScale || 1;
+      const reach = hit.distance - 0.1 * u;
+      const scan = scanOf(rendererRef.current);
+      if (reach > 0 && scan && surfaceDistance(scan, ray.ray.origin, ray.ray.direction, reach, 0.004 * u) !== null) return;
+      colliderUi.onPick?.(hit.object.userData.colliderId as string);
     };
     gl.domElement.addEventListener('pointerdown', onDown);
     gl.domElement.addEventListener('pointerup', onUp);

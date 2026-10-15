@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { RoutePath } from '../types';
-import { INDUSTRIES, CASE_STUDIES, SITE_METADATA } from '../data/siteData';
+import { INDUSTRIES, SITE_METADATA } from '../data/siteData';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { findIndustryContent } from '../content/industries';
 import { IndustryPage } from './IndustryPage';
@@ -13,7 +13,7 @@ interface IndustriesPageProps {
   onOpenPlanner: () => void;
 }
 
-export const IndustriesPage: React.FC<IndustriesPageProps> = ({ currentPath, onNavigate, onOpenPlanner }) => {
+export const IndustriesPage: React.FC<IndustriesPageProps> = ({ currentPath, onNavigate }) => {
   // Industries with final copy use the IndustryPage template (src/content/industries).
   const industryContent = findIndustryContent(currentPath.split(/[?#]/)[0]);
   if (industryContent) {

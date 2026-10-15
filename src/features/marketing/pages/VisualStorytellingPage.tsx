@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IMG } from '../data/images';
-import { motion } from 'framer-motion';
 import { RoutePath } from '../types';
-import { SITE_METADATA } from '../data/siteData';
 import { SplatEmbed } from '../components/SplatEmbed';
 import { FaqList } from '../components/GuideParts';
 import { buttonClass } from '../components/ui';

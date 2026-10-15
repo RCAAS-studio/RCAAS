@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IMG } from '../data/images';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { RoutePath } from '../types';
 import { SITE_METADATA, TOOLKIT } from '../data/siteData';
 import { SpotlightCard } from '../components/SpotlightCard';

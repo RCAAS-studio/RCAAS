@@ -86,14 +86,15 @@ export function PasswordChange({
       onSubmit={submit}
       aria-busy={state.busy}
     >
-      <h2>Change password</h2>
+      {/* h4 and <label><span> are what rcaas.css .site-pw and editor.css .ed2-pw style */}
+      <h4>Change password</h4>
 
-      <div>
-        <label htmlFor={`${cls}-current-password`}>
-          Current password
-        </label>
+      {/* lets password managers file the new password under the right account */}
+      <input type="email" autoComplete="username" value={email} readOnly hidden />
+
+      <label>
+        <span>Current password</span>
         <input
-          id={`${cls}-current-password`}
           name="currentPassword"
           type="password"
           autoComplete="current-password"
@@ -106,14 +107,11 @@ export function PasswordChange({
             setState(INITIAL_STATE);
           }}
         />
-      </div>
+      </label>
 
-      <div>
-        <label htmlFor={`${cls}-new-password`}>
-          New password
-        </label>
+      <label>
+        <span>New password</span>
         <input
-          id={`${cls}-new-password`}
           name="newPassword"
           type="password"
           autoComplete="new-password"
@@ -127,7 +125,7 @@ export function PasswordChange({
             setState(INITIAL_STATE);
           }}
         />
-      </div>
+      </label>
 
       <button type="submit" disabled={state.busy}>
         {state.busy ? 'Changing…' : 'Change password'}
@@ -140,7 +138,7 @@ export function PasswordChange({
         className={state.error ? 'is-error' : undefined}
       >
         {state.error ??
-          (state.done ? 'Password changed successfully.' : '')}
+          (state.done ? 'Password changed. Any other device signed in to this account is now signed out.' : '')}
       </p>
     </form>
   );

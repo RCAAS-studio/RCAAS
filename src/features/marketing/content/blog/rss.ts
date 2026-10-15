@@ -3,7 +3,7 @@ import { CATEGORIES, PUBLISHED_POSTS, postPath } from './index';
 const escapeXml = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
-// RSS 2.0 feed of published posts, newest first. Used by the blog-rss Vite plugin.
+// RSS 2.0 feed of published posts, newest first. Served by app/blog/rss.xml/route.ts.
 export const buildBlogRss = (siteUrl: string) => {
   const items = PUBLISHED_POSTS.map((post) => {
     const url = `${siteUrl}${postPath(post)}`;

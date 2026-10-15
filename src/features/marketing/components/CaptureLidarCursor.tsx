@@ -31,7 +31,6 @@ export const CaptureLidarCursor: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [hoverLabel, setHoverLabel] = useState<string>('');
   const [isCoarsePointer, setIsCoarsePointer] = useState(false);
 
   // Position references for smooth 60fps animation without re-render thrash
@@ -90,17 +89,7 @@ export const CaptureLidarCursor: React.FC = () => {
       const target = e.target as HTMLElement | null;
       if (target) {
         const interactive = target.closest('a, button, input, select, textarea, [role="button"], .loro-card, .interactive-hover');
-        if (interactive) {
-          setIsHovered(true);
-          const tag = interactive.getAttribute('data-cursor') || 
-                      interactive.getAttribute('aria-label') || 
-                      interactive.textContent?.trim().slice(0, 16) || 
-                      'TARGET';
-          setHoverLabel(tag);
-        } else {
-          setIsHovered(false);
-          setHoverLabel('');
-        }
+        setIsHovered(Boolean(interactive));
       }
     };
 

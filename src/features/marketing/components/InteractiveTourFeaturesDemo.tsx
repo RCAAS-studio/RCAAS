@@ -56,7 +56,6 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'hotspots' | 'measure' | 'floorplan' | 'autoplay'>('hotspots');
   const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(HOTSPOTS[0]);
   const [viewMode, setViewMode] = useState<'3d' | 'dollhouse'>('3d');
-  const [radarRotation, setRadarRotation] = useState(42);
   const [isPlayingReel, setIsPlayingReel] = useState(false);
   const [bookingToast, setBookingToast] = useState<string | null>(null);
 

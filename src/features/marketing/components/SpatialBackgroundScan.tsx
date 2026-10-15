@@ -28,7 +28,6 @@ export const SpatialBackgroundScan: React.FC = () => {
 
       // Subtle survey grid marks (crosshairs at 120px intervals)
       const step = 140;
-      const pulsePhase = (Math.sin(time * 0.8) + 1) * 0.5;
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.025)';
       for (let x = 40; x < width; x += step) {
