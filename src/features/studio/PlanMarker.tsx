@@ -80,6 +80,7 @@ export function PlanMarker({ editor, mode, onMode, onClose }: {
     const d = draftRef.current, m = modeRef.current;
     if (m === 'room') { setDraft([...d, p]); return; }
     if (!d.length) { setDraft([p]); return; }
+    if (Math.hypot(p[0] - d[0][0], p[1] - d[0][1]) < 0.2) return; // a double click, not the other side
     setPlanMarks({ ...marksRef.current, openings: [...marksRef.current.openings, { kind: m, a: d[0], b: p }] });
     setDraft([]);
   };

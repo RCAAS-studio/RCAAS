@@ -31,7 +31,7 @@ import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'crypto';
 import fs from 'fs/promises';
 import path from 'path';
 import { Readable } from 'stream';
-import { DATA_DIR } from '../dataDir.js';
+import { DATA_DIR, writeFileWhole } from '../dataDir.js';
 import * as storage from '../storage.js';
 import { getProperty, getPublishedScene, getEmbed, listScenes, listPublished } from '../store.js';
 import { requireEditorSession } from '../middleware/auth.js';
@@ -52,7 +52,7 @@ export async function readSite(pid) {
 }
 async function write(pid, data) {
   await fs.mkdir(SITES_DIR, { recursive: true });
-  await fs.writeFile(fileOf(pid), JSON.stringify(data, null, 2));
+  await writeFileWhole(fileOf(pid), JSON.stringify(data, null, 2));
 }
 export const removeSite = async (pid) => {
   await fs.rm(fileOf(pid), { force: true });

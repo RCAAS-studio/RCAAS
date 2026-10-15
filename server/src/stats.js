@@ -17,7 +17,7 @@ const MAX_SOURCES = 40; // a month keeps at most this many names; the rest count
 export const INTENTS = ['enquire', 'book', 'table', 'room', 'whatsapp', 'event'];
 import { promises as fs } from 'fs';
 import path from 'path';
-import { DATA_DIR } from './dataDir.js';
+import { DATA_DIR, writeFileWhole } from './dataDir.js';
 
 const DIR = path.join(DATA_DIR, 'stats');
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -90,7 +90,7 @@ export function count(propertyId, sceneId, { visit = false, seconds = 0, hotspot
       sp.seconds += seconds;
     }
     await fs.mkdir(path.dirname(fileFor(propertyId, month)), { recursive: true });
-    await fs.writeFile(fileFor(propertyId, month), JSON.stringify(s));
+    await writeFileWhole(fileFor(propertyId, month), JSON.stringify(s));
   });
 }
 

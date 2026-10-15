@@ -15,7 +15,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { randomUUID } from 'crypto';
-import { DATA_DIR } from './dataDir.js';
+import { DATA_DIR, writeFileWhole } from './dataDir.js';
 
 const DIR = path.join(DATA_DIR, 'reservations');
 const fileOf = (pid) => path.join(DIR, `${pid}.json`);
@@ -33,7 +33,7 @@ export function withReservations(pid, change) {
     const list = await listReservations(pid);
     const out = await change(list);
     await fs.mkdir(DIR, { recursive: true });
-    await fs.writeFile(fileOf(pid), JSON.stringify(list, null, 2));
+    await writeFileWhole(fileOf(pid), JSON.stringify(list, null, 2));
     return out;
   });
   queues.set(pid, run.catch(() => {}));

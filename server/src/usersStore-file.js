@@ -10,7 +10,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { randomUUID, randomBytes, scrypt, timingSafeEqual, createHash } from 'crypto';
 import { promisify } from 'util';
-import { DATA_DIR } from './dataDir.js';
+import { DATA_DIR, writeFileWhole } from './dataDir.js';
 
 const scryptAsync = promisify(scrypt);
 const USERS_DIR = path.join(DATA_DIR, 'users');
@@ -93,7 +93,7 @@ export async function setUserRole(id, role) {
     throw Object.assign(new Error('That is the only admin left — promote someone else first.'), { status: 409 });
   }
   record.role = role;
-  await fs.writeFile(fileFor(record.email), JSON.stringify(record, null, 2));
+  await writeFileWhole(fileFor(record.email), JSON.stringify(record, null, 2));
   return publicUser(record);
 }
 
@@ -114,7 +114,7 @@ export async function createUser({ name, email, password, role }) {
   };
   try {
     // 'wx' fails if the file exists — the uniqueness check and the write are one step.
-    await fs.writeFile(fileFor(email), JSON.stringify(record, null, 2), { flag: 'wx' });
+    await writeFileWhole(fileFor(email), JSON.stringify(record, null, 2), { flag: 'wx' });
   } catch (err) {
     if (err.code === 'EEXIST') return null;
     throw err;
@@ -156,7 +156,7 @@ export async function createResetToken(id) {
   if (!record) return null;
   const token = randomBytes(24).toString('base64url');
   record.reset = { hash: sha(token), expires: Date.now() + RESET_TTL };
-  await fs.writeFile(fileFor(record.email), JSON.stringify(record, null, 2));
+  await writeFileWhole(fileFor(record.email), JSON.stringify(record, null, 2));
   return { token, expires: new Date(record.reset.expires).toISOString(), user: publicUser(record) };
 }
 
@@ -168,7 +168,7 @@ export async function resetPassword(token, password) {
   record.passwordHash = await hashPassword(password);
   record.passwordChangedAt = Date.now();
   delete record.reset;
-  await fs.writeFile(fileFor(record.email), JSON.stringify(record, null, 2));
+  await writeFileWhole(fileFor(record.email), JSON.stringify(record, null, 2));
   return publicUser(record);
 }
 
@@ -180,7 +180,7 @@ export async function setPassword(id, password) {
   record.passwordHash = await hashPassword(password);
   record.passwordChangedAt = Date.now();
   delete record.reset;
-  await fs.writeFile(fileFor(record.email), JSON.stringify(record, null, 2));
+  await writeFileWhole(fileFor(record.email), JSON.stringify(record, null, 2));
   return publicUser(record);
 }
 

@@ -7,7 +7,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { randomUUID } from 'crypto';
-import { DATA_DIR } from './dataDir.js';
+import { DATA_DIR, writeFileWhole } from './dataDir.js';
 
 const LEADS_DIR = path.join(DATA_DIR, 'leads');
 
@@ -15,21 +15,11 @@ async function ensureDir() {
   await fs.mkdir(LEADS_DIR, { recursive: true });
 }
 
-/** A lead's file written whole: to a temporary name, then renamed over it,
- *  so a list read at that moment (listLeads skips *.tmp) never meets half a
- *  file. The email's outcome is written just after the visitor's reply, while
- *  the studio may be listing (2026-10-14: a test caught it failing that way). */
-async function writeLead(file, record) {
-  const tmp = `${file}.${randomUUID()}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(record, null, 2));
-  await fs.rename(tmp, file);
-}
-
 export async function saveLead(lead) {
   await ensureDir();
   const id = randomUUID();
   const record = { id, createdAt: new Date().toISOString(), ...lead };
-  await writeLead(path.join(LEADS_DIR, `${id}.json`), record);
+  await writeFileWhole(path.join(LEADS_DIR, `${id}.json`), JSON.stringify(record, null, 2));
   return record;
 }
 
@@ -37,7 +27,7 @@ export async function saveLead(lead) {
 export async function setLeadDelivery(id, delivery) {
   const file = path.join(LEADS_DIR, `${id}.json`);
   const lead = JSON.parse(await fs.readFile(file, 'utf8'));
-  await writeLead(file, { ...lead, delivery });
+  await writeFileWhole(file, JSON.stringify({ ...lead, delivery }, null, 2));
 }
 
 /** One CSV row, Excel-safe: quoted, and a cell a stranger started with

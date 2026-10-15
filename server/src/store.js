@@ -13,7 +13,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { migrateScene, CURRENT_VERSION } from './migrate.js';
-import { DATA_DIR } from './dataDir.js';
+import { DATA_DIR, writeFileWhole } from './dataDir.js';
 import { phoneOf } from './notify.js';
 
 const SCENES_DIR = path.join(DATA_DIR, 'scenes');
@@ -115,7 +115,7 @@ export async function saveScene(id, doc, { creator = null } = {}) {
   }
   withId.ownerId = existing ? existing.ownerId ?? null : creator;
   await fs.mkdir(SCENES_DIR, { recursive: true });
-  await fs.writeFile(sceneFile(id), JSON.stringify(withId, null, 2));
+  await writeFileWhole(sceneFile(id), JSON.stringify(withId, null, 2));
   return withId;
 }
 
@@ -198,10 +198,10 @@ export async function publishScene(id) {
   const publishedAt = new Date().toISOString();
   const snapshot = { ...draft, status: 'published', publishedVersion: version, publishedAt };
   // 'wx': a snapshot, once written, is never overwritten.
-  await fs.writeFile(sceneFile(id, version), JSON.stringify(snapshot, null, 2), { flag: 'wx' });
+  await writeFileWhole(sceneFile(id, version), JSON.stringify(snapshot, null, 2), { flag: 'wx' });
 
   const raw = await readRaw(sceneFile(id));
-  await fs.writeFile(sceneFile(id), JSON.stringify({ ...raw, status: 'published', publishedVersion: version, publishedAt }, null, 2));
+  await writeFileWhole(sceneFile(id), JSON.stringify({ ...raw, status: 'published', publishedVersion: version, publishedAt }, null, 2));
   return { published: true, version, publishedAt, warnings };
 }
 
@@ -210,7 +210,7 @@ export async function unpublishScene(id) {
   if (!raw) return null;
   // Snapshots stay on disk as history; the draft just stops pointing at one.
   const { publishedVersion, publishedAt, ...rest } = raw;
-  await fs.writeFile(sceneFile(id), JSON.stringify({ ...rest, status: 'draft' }, null, 2));
+  await writeFileWhole(sceneFile(id), JSON.stringify({ ...rest, status: 'draft' }, null, 2));
   return { published: false, lastVersion: publishedVersion ?? null };
 }
 
@@ -260,7 +260,7 @@ export async function restoreVersion(id, n) {
     if (k in draft) next[k] = draft[k];
     else delete next[k];
   }
-  await fs.writeFile(sceneFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(sceneFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -276,7 +276,7 @@ export async function setSceneProperty(id, propertyId, by = null) {
   if (!raw) return null;
   if (propertyId !== null && !(await getProperty(propertyId))) throw badRequest('That project does not exist.');
   const next = { ...raw, propertyId, ...(propertyId === null && by ? { ownerId: by } : {}) };
-  await fs.writeFile(sceneFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(sceneFile(id), JSON.stringify(next, null, 2));
   return { id, propertyId };
 }
 
@@ -292,7 +292,7 @@ export async function setEmbed(id, patch) {
   const raw = await readRaw(sceneFile(id));
   if (!raw) return null;
   const embed = { version: 0, sites: [], ...(raw.embed ?? {}), ...patch };
-  await fs.writeFile(sceneFile(id), JSON.stringify({ ...raw, embed }, null, 2));
+  await writeFileWhole(sceneFile(id), JSON.stringify({ ...raw, embed }, null, 2));
   return embed;
 }
 
@@ -331,7 +331,7 @@ export async function setPropertyFeatures(id, patch) {
   const features = { ...p.features };
   for (const k of FEATURES) if (typeof patch?.[k] === 'boolean') features[k] = patch[k];
   const next = { ...p, features };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -346,7 +346,7 @@ export async function setPropertyStatus(id, status) {
   const p = await getProperty(id);
   if (!p) return null;
   const next = { ...p, status, statusAt: new Date().toISOString() };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -386,7 +386,7 @@ export async function claimProperty(id, userId) {
   const doc = await getProperty(id);
   if (!doc || doc.ownerId !== null) return null;
   const next = { ...doc, ownerId: userId };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -428,7 +428,7 @@ export async function createProperty(title, ownerId = null) {
   await fs.mkdir(PROPERTIES_DIR, { recursive: true });
   try {
     // 'wx': never overwrite a property that already has this id.
-    await fs.writeFile(propertyFile(id), JSON.stringify(doc, null, 2), { flag: 'wx' });
+    await writeFileWhole(propertyFile(id), JSON.stringify(doc, null, 2), { flag: 'wx' });
   } catch (err) {
     if (err.code === 'EEXIST') {
       throw Object.assign(new Error(`There is already a project called "${clean}".`), { status: 409 });
@@ -447,7 +447,7 @@ export async function renameProperty(id, title) {
   const p = await getProperty(id);
   if (!p) return null;
   const next = { ...p, title: cleanTitle(title) };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -466,7 +466,7 @@ export async function deleteProperty(id, by = null) {
     const raw = await readRaw(path.join(SCENES_DIR, f));
     if (raw?.propertyId !== id) continue;
     const ownerId = by ?? raw.ownerId ?? p.ownerId ?? null;
-    await fs.writeFile(path.join(SCENES_DIR, f), JSON.stringify({ ...raw, propertyId: null, ownerId }, null, 2));
+    await writeFileWhole(path.join(SCENES_DIR, f), JSON.stringify({ ...raw, propertyId: null, ownerId }, null, 2));
     released += 1;
   }
   await fs.rm(propertyFile(id), { force: true });
@@ -483,7 +483,7 @@ export async function addPropertyMember(id, userId, as = 'member') {
   const members = p.members.filter((m) => m !== userId);
   const staff = p.staff.filter((m) => m !== userId);
   const next = { ...p, members: as === 'staff' ? members : [...members, userId], staff: as === 'staff' ? [...staff, userId] : staff };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -515,7 +515,7 @@ export async function setPropertyTheme(id, patch) {
     if (patch.logo) theme.logo = patch.logo; else delete theme.logo;
   }
   const next = { ...p, theme };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -553,7 +553,7 @@ export async function setPropertyInfo(id, patch) {
     info[k] = v;
   }
   const next = { ...p, info };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -566,7 +566,7 @@ export async function setLeadEmails(id, emails) {
   if (bad) throw badRequest(`“${bad}” isn’t an email address.`);
   if (clean.length > 10) throw badRequest('Ten addresses at most.');
   const next = { ...p, leadEmails: clean };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
@@ -584,7 +584,7 @@ export async function reassignProjects(userId, toId) {
       members: p.members.filter((m) => m !== userId && m !== (owned ? toId : null)),
       staff: p.staff.filter((m) => m !== userId && m !== (owned ? toId : null))
     };
-    await fs.writeFile(propertyFile(p.id), JSON.stringify(next, null, 2));
+    await writeFileWhole(propertyFile(p.id), JSON.stringify(next, null, 2));
   }
   return moved;
 }
@@ -593,7 +593,7 @@ export async function removePropertyMember(id, userId) {
   const p = await getProperty(id);
   if (!p) return null;
   const next = { ...p, members: p.members.filter((m) => m !== userId), staff: p.staff.filter((m) => m !== userId) };
-  await fs.writeFile(propertyFile(id), JSON.stringify(next, null, 2));
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
 }
 
