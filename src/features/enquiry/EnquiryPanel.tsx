@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { submitLead, whatsappHref } from '../../lib/api';
 import { useT } from '../../lib/i18n';
 import { countIntent } from '../../lib/stats';
+import { contactProblem } from '../../lib/contactRules';
 
 /**
  * The persistent CTA + enquiry panel (CLAUDE.md §6.4) — this is the product,
@@ -80,6 +81,8 @@ export function EnquiryPanel({ sceneId, sceneName, propertyId, label, hotspot, w
         return;
       }
     }
+    const problem = contactProblem(values);
+    if (problem) { setError(t(problem)); return; }
     setStatus('sending');
     setError('');
     try {

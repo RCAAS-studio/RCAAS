@@ -36,6 +36,12 @@ export function phoneOf(typed, country = process.env.PHONE_COUNTRY || '977') {
   return { intl, local };
 }
 
+/** A guest's phone and email as the forms send them. phoneOf alone drops every non-digit, so
+ *  "call 98-abc 1234567" would pass; the browser checks the same (src/lib/contactRules.ts). */
+export const validPhone = (typed) => /^\+?[\d\s().-]+$/.test(String(typed ?? '').trim()) && !!phoneOf(typed);
+export const PHONE_WRONG = 'That phone number doesn’t look right. Use digits, with + and the country code if it isn’t a Nepali number.';
+export const validEmail =(typed) => /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(String(typed ?? '').trim());
+
 export const smsOn = () => !!(process.env.SMS_TOKEN && process.env.SMS_FROM);
 export const whatsappOn = () => !!(process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_ID);
 

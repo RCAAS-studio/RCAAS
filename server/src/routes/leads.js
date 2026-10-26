@@ -15,11 +15,11 @@ import { requireAdmin } from '../middleware/auth.js';
 import { getScene, getProperty } from '../store.js';
 import { sendLeadEmail } from '../mailer.js';
 import { cleanSource } from '../stats.js';
+import { validPhone, validEmail, PHONE_WRONG } from '../notify.js';
 
 export const leadsRouter = Router();
 
 const FIELD_LIMITS = { name: 100, phone: 30, email: 200, requirement: 200, dates: 100, message: 2000, hotspotId: 100, hotspotLabel: 120 };
-const REQUIRED = ['name', 'phone'];
 const MIN_FILL_TIME_MS = 1200; // a bot fills the form instantly; a person doesn't
 
 // IP -> timestamps of recent submissions. Trimmed lazily on each hit.
@@ -54,16 +54,16 @@ leadsRouter.post('/', async (req, res, next) => {
     const renderedAt = Number(body.formRenderedAt);
     if (!renderedAt || Date.now() - renderedAt < MIN_FILL_TIME_MS) return res.json({ ok: true });
 
-    for (const field of REQUIRED) {
-      if (!clean(body[field])) {
-        return res.status(400).json({ error: `${field === 'name' ? 'Name' : 'Phone'} is required.` });
-      }
-    }
+    if (!clean(body.name)) return res.status(400).json({ error: 'Name is required.' });
+    // A phone, an email or both (a client website's form takes either in one box).
+    if (!clean(body.phone) && !clean(body.email)) return res.status(400).json({ error: 'Add a phone number or email so we can reach you.' });
     for (const [field, max] of Object.entries(FIELD_LIMITS)) {
       if (clean(body[field]).length > max) {
         return res.status(400).json({ error: `${field} is too long — keep it under ${max} characters.` });
       }
     }
+    if (clean(body.phone) && !validPhone(body.phone)) return res.status(400).json({ error: PHONE_WRONG });
+    if (clean(body.email) && !validEmail(body.email)) return res.status(400).json({ error: 'That email address doesn’t look right.' });
     if (!body.sceneId) return res.status(400).json({ error: 'Missing which space this enquiry is about.' });
 
     // Which project it's for: the space's own (resolved here, never taken on

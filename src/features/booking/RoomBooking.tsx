@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { contactProblem } from '../../lib/contactRules';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import {
@@ -200,6 +201,8 @@ export function RoomBooking({ project, stays, tour = false, preview = false, ini
     e.preventDefault();
     if (!ready || !chosen || preview) return;
     if (!form.name.trim() || !form.phone.trim()) return setError('Add your name and phone, so we can confirm.');
+    const problem = contactProblem(form);
+    if (problem) return setError(problem);
     setSending(true);
     setError('');
     try {

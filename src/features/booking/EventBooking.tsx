@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { contactProblem } from '../../lib/contactRules';
 import {
   API_BASE_URL, getEventCalendar, requestEvent, type EventCalendar, type EventHall, type EventSession, type SiteEvents
 } from '../../lib/api';
@@ -71,6 +72,8 @@ export function EventBooking({ project, events, preview = false, initialHall = '
     e.preventDefault();
     if (!ready || !chosen || !session || preview) return;
     if (!form.name.trim() || !form.phone.trim()) return setError('Add your name and phone, so we can confirm.');
+    const problem = contactProblem(form);
+    if (problem) return setError(problem);
     setSending(true);
     setError('');
     try {

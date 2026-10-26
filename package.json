@@ -30,7 +30,8 @@
     "react-dom": "19.2.7",
     "react-icons": "^5.7.0",
     "three": "^0.164.0",
-    "three-mesh-bvh": "^0.9.15"
+    "three-mesh-bvh": "^0.9.15",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

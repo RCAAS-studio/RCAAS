@@ -282,7 +282,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
               <div className="mt-5 pt-4 border-t border-zinc-200 flex items-center justify-between">
                 <span className="text-xs text-zinc-500">Need immediate booking?</span>
                 <a
-                  href="https://wa.me/9779801234567"
+                  href="https://wa.me/9779846789573"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-semibold text-accent hover:underline"
@@ -927,7 +927,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             </button>
 
             <a
-              href="https://wa.me/9779801234567"
+              href="https://wa.me/9779846789573"
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold rounded-lg border border-zinc-700 transition-colors flex items-center space-x-2 text-sm"

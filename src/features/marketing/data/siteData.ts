@@ -9,18 +9,18 @@ export const SITE_METADATA = {
   secondaryTagline: 'Turn real places into experiences that move people.',
   nameMeaning: 'Reality Capture as a Service',
   location: 'Kathmandu, Nepal',
-  address: 'Thapathali, Kathmandu 44600, Nepal',
-  // G06: phone, WhatsApp, email and address are not confirmed yet. While false, the Contact and
-  // Thank-you pages and the contactPoint schema show [[TBI]] placeholders instead of these values.
-  // Once real details are in, set to true so every page reads the same NAP from here.
-  contactConfirmed: false,
+  address: 'Kageshwori-Manohara, Kathmandu, Nepal',
+  // G06: confirmed by the owner on 2026-10-26 (the phone and WhatsApp are GeoNova Solutions' for now).
+  // Every page reads the same NAP from here; with this false, the Contact and Thank-you pages and the
+  // contactPoint schema show [[TBI]] placeholders instead.
+  contactConfirmed: true,
   officeHours: null as string | null,
   responseTime: null as string | null,
   mapsUrl: null as string | null,
-  phone: '+977 1 4256789',
-  whatsapp: '+977 9801234567',
-  whatsappUrl: 'https://wa.me/9779801234567?text=Hello%20RCAAS%2C%20I%20would%20like%20to%20discuss%20a%203D%20reality%20capture%20project.',
-  email: 'contact@rcaas.tech',
+  phone: '+977 984 678 9573',
+  whatsapp: '+977 984 678 9573',
+  whatsappUrl: 'https://wa.me/9779846789573?text=Hello%20RCAAS%2C%20I%20would%20like%20to%20discuss%20a%203D%20reality%20capture%20project.',
+  email: 'inquiry.rcaas@gmail.com',
   // G09: founding year still to be input.
   foundingYear: null as string | null,
   boilerplate:
@@ -293,7 +293,7 @@ export const PLACEHOLDER_REGISTER: PlaceholderItem[] = [
   { id: 'G03', item: 'Tagline: "Real places. Real stories. Real results."', usedOn: 'Home H1, schema slogan', priority: 'B', status: 'Simulated in Production' },
   { id: 'G04', item: 'Domain: rcaas.tech (production apex)', usedOn: 'Config', priority: 'B', status: 'Simulated in Production' },
   { id: 'G05', item: 'Logo, favicon, brand styling (Loro Labs aesthetic)', usedOn: 'Global', priority: 'B', status: 'Simulated in Production' },
-  { id: 'G06', item: 'Contact NAP, phone, WhatsApp +977 9801234567, address', usedOn: 'Footer, Contact, schema', priority: 'B', status: 'Simulated in Production' },
+  { id: 'G06', item: 'Contact NAP, phone, WhatsApp +977 984 678 9573 (GeoNova\'s for now), address Kageshwori-Manohara', usedOn: 'Footer, Contact, schema', priority: 'B', status: 'Simulated in Production' },
   { id: 'G07', item: 'Social URLs (LinkedIn, YouTube, X)', usedOn: 'Footer, sameAs', priority: 'H', status: 'Simulated in Production' },
   { id: 'G08', item: 'Google Business Profile + local categories', usedOn: 'Local SEO', priority: 'H', status: 'Simulated in Production' },
   { id: 'G09', item: 'Founding year: 2024', usedOn: 'About, schema', priority: 'H', status: 'Simulated in Production' },

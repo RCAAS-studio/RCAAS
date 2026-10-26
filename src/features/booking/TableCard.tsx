@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { contactProblem } from '../../lib/contactRules';
 import {
   getAvailability, getPreviewAvailability, reserveTable, type Availability, type SiteBooking
 } from '../../lib/api';
@@ -73,6 +74,8 @@ export function TableCard({ project, booking, venue, places, onPlace, initialTab
     e.preventDefault();
     if (!avail || !pickedTime || preview) return;
     if (!form.name.trim() || !form.phone.trim()) return setError(t('Add your name and phone, so we can confirm.'));
+    const problem = contactProblem(form);
+    if (problem) return setError(t(problem));
     setSending(true);
     setError('');
     try {

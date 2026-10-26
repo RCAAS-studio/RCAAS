@@ -389,6 +389,10 @@ test('a client\'s staff answer enquiries and bookings and read the report, and r
     table: 't1', date: tomorrow, time: '19:00', party: 2, name: 'Guest', phone: '9800000003', formRenderedAt: Date.now() - 5000
   });
   assert.equal(booked.status, 201);
+  const badPhone = await api('POST', `/api/sites/${pid}/reservations`, {
+    table: 't1', date: tomorrow, time: '20:30', party: 2, name: 'Guest', phone: 'ring the desk', formRenderedAt: Date.now() - 5000
+  });
+  assert.equal(badPhone.status, 400, 'a booking needs a number it can text');
   const asked = await api('POST', '/api/leads', { sceneId: 'himal-hall', name: 'Asker', phone: '9800000004', message: 'Parking?', formRenderedAt: Date.now() - 5000 });
   assert.ok(asked.json.id, 'the enquiry is stored');
 
@@ -600,6 +604,13 @@ test('an enquiry is filed to its project, emailed to its people, and exports to 
   assert.equal((await send({ sceneId: 'hub', sceneName: 'Enquiry Hotel (project page)', propertyId: pid })).status, 200);
   // a made-up project from the page files nowhere
   assert.equal((await send({ sceneId: 'hub', propertyId: 'no-such-project' })).status, 200);
+  // a phone or email nobody could reach is refused, in words the form shows
+  for (const bad of [{ phone: 'call me' }, { phone: '98-abc-1234567' }, { phone: '12' }, { email: 'asha@mail' }]) {
+    const r = await send({ sceneId: 'enquiry-suite', ...bad });
+    assert.equal(r.status, 400, JSON.stringify(bad));
+    assert.match((await r.json()).error, /doesn’t look right/);
+  }
+  assert.equal((await send({ sceneId: 'hub', propertyId: 'no-such-project', phone: '+44 (20) 7946-0958' })).status, 200, 'a foreign number as people write it');
 
   // emails go out after the reply; give them a moment
   for (let i = 0; i < 50 && mailbox.length < 2; i++) await new Promise((r) => setTimeout(r, 50));

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { contactProblem } from '../../lib/contactRules';
 import { joinWaitlist, type WaitFor, type WaitRequest } from '../../lib/api';
 
 /**
@@ -36,6 +37,8 @@ export function WaitlistForm({ project, what, request, preview = false }: {
     e.preventDefault();
     if (preview) return;
     if (!form.name.trim() || !form.phone.trim()) return setError('Add your name and phone, so we can tell you.');
+    const problem = contactProblem(form);
+    if (problem) return setError(problem);
     setSending(true);
     setError('');
     try {

@@ -4,6 +4,7 @@ import App from '../../../features/marketing/App';
 import { pageMeta, isNotFoundPath, blogPageCount } from '../../../features/marketing/meta';
 import { ROUTES } from '../../../features/marketing/types';
 import { VISIBLE_POSTS, postPath } from '../../../features/marketing/content/blog';
+import { OG_IMAGE } from '../../../lib/shareMeta';
 
 /* Every rcaas.tech page: their App routes by the path itself (and moves
  * between its pages with pushState), so one catch-all serves them all. The
@@ -35,8 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: { absolute: title },
     description,
     alternates: { canonical: path },
-    openGraph: { title, description, url: path },
-    twitter: { title, description },
+    openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_US', title, description, url: path, images: [OG_IMAGE] },
+    twitter: { card: 'summary_large_image', title, description, images: [OG_IMAGE.url] },
     ...(robots ? { robots } : {})
   };
 }

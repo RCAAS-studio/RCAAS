@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { EnquiryPanel } from '../enquiry/EnquiryPanel';
 import { submitLead } from '../../lib/api';
+import { reachProblem } from '../../lib/contactRules';
 
 gsap.registerPlugin(useGSAP);
 
@@ -331,12 +332,15 @@ export function SpaceEnquiry({ project, space, title, preview = false }: { proje
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!v.name.trim() || !v.reach.trim()) return setError('Add your name and a phone number or email so we can reach you.');
+    const problem = reachProblem(v.reach);
+    if (problem) return setError(problem);
     setStatus('sending');
     setError('');
-    const email = v.reach.includes('@') ? v.reach.trim() : '';
+    // one box: an email goes as the email, anything else as the phone
+    const reach = v.reach.trim(), isEmail = reach.includes('@');
     try {
       await submitLead({
-        name: v.name, phone: v.reach.trim(), email, requirement: v.requirement,
+        name: v.name, phone: isEmail ? '' : reach, email: isEmail ? reach : '', requirement: v.requirement,
         dates: [v.date, v.guests && `${v.guests} guests`].filter(Boolean).join(' · '),
         sceneId: space, sceneName: title, propertyId: project, website: v.website, formRenderedAt: renderedAt
       });
@@ -351,7 +355,7 @@ export function SpaceEnquiry({ project, space, title, preview = false }: { proje
   return (
     <form className="ws-ask-form" onSubmit={send} noValidate>
       <input aria-label="Name" placeholder="Name" maxLength={100} value={v.name} onChange={set('name')} autoComplete="name" />
-      <input aria-label="Phone or email" placeholder="Phone or email" maxLength={30} value={v.reach} onChange={set('reach')} autoComplete="tel" />
+      <input aria-label="Phone or email" placeholder="Phone or email" maxLength={200} value={v.reach} onChange={set('reach')} autoComplete="tel" />
       <select aria-label="What it’s about" value={v.requirement} onChange={set('requirement')}>
         {REQ.map((r) => <option key={r}>{r}</option>)}
       </select>

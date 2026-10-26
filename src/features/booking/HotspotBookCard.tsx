@@ -5,6 +5,7 @@ import { getHereHall, getHereTables, requestHere, safeUrl, type Availability, ty
 import { bookingHref, nightsBetween, venueDay } from './booking';
 import { countIntent } from '../../lib/stats';
 import { useT } from '../../lib/i18n';
+import { contactProblem } from '../../lib/contactRules';
 import type { Hotspot } from '../../@types/hotspot.types';
 
 const Cal = () => (
@@ -135,6 +136,8 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
       return;
     }
     if (!form.name.trim() || !form.phone.trim()) return setError(t('Add your name and phone, so we can confirm.'));
+    const problem = contactProblem(form);
+    if (problem) return setError(t(problem));
     setSending(true);
     setError('');
     try {

@@ -40,7 +40,7 @@ import {
 import { nightsOf, roomsFree, roomsNeeded, stayCalendar, stayProblem } from '../stays.js';
 import { SESSIONS, SESSION_LABEL, eventCalendar, eventProblem, hallFree, hallHotspotFree } from '../events.js';
 import { WAIT_STATUSES, waitersWithSpace } from '../waitlist.js';
-import { textGuest } from '../notify.js';
+import { textGuest, validPhone, validEmail, PHONE_WRONG } from '../notify.js';
 
 export const reservationsRouter = Router();
 const wrap = (fn) => (req, res, next) => fn(req, res).catch(next);
@@ -209,7 +209,8 @@ function guestFrom(req, res) {
   }
   const guest = { name: text(body.name), phone: text(body.phone), email: text(body.email), notes: text(body.notes), ip };
   if (!guest.name || !guest.phone) { res.status(400).json({ error: 'Add your name and phone, so we can confirm.' }); return null; }
-  if (guest.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(guest.email)) { res.status(400).json({ error: 'That email address doesn’t look right.' }); return null; }
+  if (!validPhone(guest.phone)) { res.status(400).json({ error: PHONE_WRONG }); return null; }
+  if (guest.email && !validEmail(guest.email)) { res.status(400).json({ error: 'That email address doesn’t look right.' }); return null; }
   return { body, guest };
 }
 

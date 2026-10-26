@@ -151,10 +151,9 @@ export default function App() {
       telephone: SITE_METADATA.phone,
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Thapathali',
+        streetAddress: 'Kageshwori-Manohara',
         addressLocality: 'Kathmandu',
         addressRegion: 'Bagmati',
-        postalCode: '44600',
         addressCountry: 'NP',
       },
       areaServed: { '@type': 'Country', name: 'Nepal' },

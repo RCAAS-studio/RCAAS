@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
-import { SITE_URL } from '../lib/shareMeta';
+import { SITE_URL, OG_IMAGE } from '../lib/shareMeta';
 import { BASE_PATH, withBase } from '../lib/basePath';
 
 
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 } },
   description: 'Walkable 3D virtual tours of hotels, restaurants, venues, colleges and heritage sites, captured with LiDAR in Nepal, with enquiry and booking forms inside the tour.',
   applicationName: 'RCAAS.tech',
-  openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_US', images: [{ url: withBase('/og.jpg'), width: 1200, height: 630, alt: 'RCAAS.tech: a stupa drawn as a point cloud' }] },
-  twitter: { card: 'summary_large_image', images: [withBase('/og.jpg')] },
+  openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_US', images: [OG_IMAGE] },
+  twitter: { card: 'summary_large_image', images: [OG_IMAGE.url] },
   icons: { icon: withBase('/favicon.svg') }
 };
 
