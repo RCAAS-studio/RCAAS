@@ -7,7 +7,7 @@ out/
 next-env.d.ts
 
 #documents
-.docs/
+docs/
 
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo

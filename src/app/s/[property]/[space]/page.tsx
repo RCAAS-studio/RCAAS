@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { connection } from 'next/server';
 import { API_BASE_URL, apiUrl, type PublicSite } from '../../../../lib/api';
 import { SpaceView } from '../../../../features/website/SpaceView';
-import { shareMeta } from '../../../../lib/shareMeta';
+import { brandIcons, shareMeta } from '../../../../lib/shareMeta';
 
 /** One space of a project's website (/s/<project>/<space>): its live tour, what it is, and how to book or ask. */
 async function load(id: string): Promise<PublicSite | null> {
@@ -25,7 +25,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const name = s.project.theme.brand || s.project.title;
   return {
     ...shareMeta(`${sp.title} | ${name}`, sp.tagline || `${sp.title} at ${name}, in 3D.`, apiUrl(sp.thumb)),
-    alternates: { canonical: `/s/${encodeURIComponent(property)}/${encodeURIComponent(space)}` }
+    alternates: { canonical: `/s/${encodeURIComponent(property)}/${encodeURIComponent(space)}` },
+    icons: brandIcons(s.project.theme.favicon, API_BASE_URL)
   };
 }
 

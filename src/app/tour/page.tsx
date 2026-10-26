@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { API_BASE_URL, apiUrl, type GalleryItem } from '../../lib/api';
-import { shareMeta } from '../../lib/shareMeta';
+import { brandIcons, shareMeta } from '../../lib/shareMeta';
 import TourClient from './TourClient';
 
 /**
@@ -21,11 +21,14 @@ export async function generateMetadata({ searchParams }: {
       ? await fetch(`${API_BASE_URL}/api/properties/${encodeURIComponent(g.propertyId)}/theme`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null))
       : null;
     const brand: string = t?.theme?.brand || t?.title || '';
-    return shareMeta(
-      brand ? `${g.title} · ${brand}` : g.title,
-      g.tagline || `Walk ${g.title} in 3D and send an enquiry from inside the room.`,
-      apiUrl(g.thumb)
-    );
+    return {
+      ...shareMeta(
+        brand ? `${g.title} · ${brand}` : g.title,
+        g.tagline || `Walk ${g.title} in 3D and send an enquiry from inside the room.`,
+        apiUrl(g.thumb)
+      ),
+      icons: brandIcons(t?.theme?.favicon, API_BASE_URL)
+    };
   } catch {
     return {}; // no API, no preview: the tour itself still loads
   }

@@ -107,6 +107,13 @@ export const uploadProjectLogo = (id: string, file: File) =>
   });
 export const removeProjectLogo = (id: string) =>
   request<Property>(`/api/properties/${encodeURIComponent(id)}/logo`, { method: 'DELETE' });
+/** The browser-tab icon of the project's tours and website (square, e.g. 512×512). */
+export const uploadProjectFavicon = (id: string, file: File) =>
+  request<Property>(`/api/properties/${encodeURIComponent(id)}/favicon`, {
+    method: 'PUT', body: file, headers: { 'Content-Type': 'application/octet-stream' }
+  });
+export const removeProjectFavicon = (id: string) =>
+  request<Property>(`/api/properties/${encodeURIComponent(id)}/favicon`, { method: 'DELETE' });
 
 /** A project's enquiries (server/src/routes/properties.js), for anyone who can see it. */
 export interface Lead {

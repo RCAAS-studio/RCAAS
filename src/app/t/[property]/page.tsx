@@ -7,7 +7,7 @@ import { EnquiryPanel } from '../../../features/enquiry/EnquiryPanel';
 import type { ProjectTheme } from '../../../@types/config.types';
 import { inkOn } from '../../../lib/brandColor';
 import { fontFamily } from '../../../lib/brandFonts';
-import { shareMeta } from '../../../lib/shareMeta';
+import { brandIcons, shareMeta } from '../../../lib/shareMeta';
 import '../../../features/tour/viewer.css';
 import './hub.css';
 
@@ -46,7 +46,8 @@ export async function generateMetadata({ params }: { params: Promise<{ property:
     `Walk ${name} in 3D: ${hub.spaces.map((s) => s.title).join(', ')}. Send an enquiry from inside the room.`,
     apiUrl(hub.spaces.find((s) => s.thumb)?.thumb) ?? (hub.theme.logo ? `${API_BASE_URL}/api/assets/${hub.theme.logo}` : null)
     ),
-    alternates: { canonical: `/t/${encodeURIComponent(property)}` }
+    alternates: { canonical: `/t/${encodeURIComponent(property)}` },
+    icons: brandIcons(hub.theme.favicon, API_BASE_URL)
   };
 }
 

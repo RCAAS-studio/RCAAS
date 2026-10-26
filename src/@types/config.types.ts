@@ -48,7 +48,7 @@ export interface ProjectFeatures { enquiries: boolean; reservations: boolean; we
 export type BrandFont = 'inter' | 'roboto' | 'open-sans' | 'poppins' | 'montserrat' | 'lato' | 'nunito' | 'playfair' | 'merriweather' | 'dm-sans'
   | 'serif' | 'sans' | 'classic';
 /** A project's branding, as stored on it (server/src/store.js setPropertyTheme). */
-export interface ProjectTheme { brand?: string; accent?: string; font?: BrandFont; logo?: string }
+export interface ProjectTheme { brand?: string; accent?: string; font?: BrandFont; logo?: string; favicon?: string }
 /** What a project says about its brand (server/src/store.js setPropertyInfo); its website shows it. */
 export interface ProjectInfo {
   tagline?: string; about?: string; phone?: string; email?: string; address?: string;
