@@ -729,6 +729,47 @@ function LayersRail({ state }: { state: ViewerState }) {
 }
 
 /**
+ * A sideways strip a mouse can move too: the wheel scrolls it sideways and a
+ * drag pulls it (fingers already swipe it; its scrollbar is hidden). True in
+ * the returned ref just after a drag, so letting go isn't taken for a click.
+ */
+function useStripScroll(ref: React.RefObject<HTMLDivElement | null>, on: boolean) {
+  const dragged = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!on || !el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (el.scrollWidth <= el.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // trackpads scroll sideways already
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    let start: { x: number; left: number } | null = null;
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      start = { x: e.clientX, left: el.scrollLeft };
+      dragged.current = false;
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!start) return;
+      if (Math.abs(e.clientX - start.x) > 5) dragged.current = true;
+      if (dragged.current) el.scrollLeft = start.left - (e.clientX - start.x);
+    };
+    const onUp = () => { start = null; setTimeout(() => { dragged.current = false; }, 0); };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+  }, [ref, on]);
+  return dragged;
+}
+
+/**
  * The views tray (the camera tracks) and, under it, the tour bar: ‹ Views, start over | play ›.
  */
 function BottomChrome({ state, showLabels, mode, trayOpen, onToggleTray }: {
@@ -756,6 +797,12 @@ function BottomChrome({ state, showLabels, mode, trayOpen, onToggleTray }: {
     });
   };
   const pause = () => { state.editor.stopSequence(); state.stopFly(); setAuto(false); };
+  const trayRef = useRef<HTMLDivElement | null>(null);
+  const dragged = useStripScroll(trayRef, trayOpen);
+  // the current card comes into view, also when ‹ › or the autoplay move past the edge
+  useEffect(() => {
+    trayRef.current?.querySelector('.vw-card.on')?.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' });
+  }, [idx, trayOpen]);
   // Playing across the short pauses between views too — otherwise the button
   // flips to "Play" in the gap, and pressing it restarts the tour.
   const playing = state.flying || auto;
@@ -776,12 +823,12 @@ function BottomChrome({ state, showLabels, mode, trayOpen, onToggleTray }: {
     <div className="vw-bottom">
       {/* The filmstrip: one photo card per scene, the current one outlined in the accent. */}
       {trayOpen && (
-        <div className="vw-tray" role="list">
+        <div className="vw-tray" role="list" ref={trayRef}>
           {vps.map((vp, i) => (
             <button key={vp.id} role="listitem" className={`vw-card ${i === idx ? 'on' : ''}`}
-              aria-current={i === idx ? 'true' : undefined} onClick={() => go(i)} title={vp.label}>
+              aria-current={i === idx ? 'true' : undefined} onClick={() => { if (!dragged.current) go(i); }} title={vp.label}>
               {vp.thumb
-                ? <img className="vw-card-img" src={apiUrl(vp.thumb)!} alt="" loading="lazy" />
+                ? <img className="vw-card-img" src={apiUrl(vp.thumb)!} alt="" loading="lazy" draggable={false} />
                 : <span className="vw-card-ph" aria-hidden>{Icon.views}</span>}
               {showLabels && <span className="vw-card-nm">{vp.label}</span>}
             </button>

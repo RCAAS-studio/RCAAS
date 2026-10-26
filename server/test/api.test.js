@@ -569,6 +569,10 @@ test('a project carries its own branding: name, accent, font and logo', async ()
   assert.match(logo.json.theme.logo, new RegExp(`^brand_${pid}/logo\\.png\\?v=\\d+$`));
   assert.equal((await fetch(`${BASE}/api/assets/brand_${pid}/logo.png`)).headers.get('content-type'), 'image/png');
   assert.equal((await api('PUT', `/api/properties/${pid}/logo`, new Uint8Array(Buffer.from('<svg/>')), { 'Content-Type': 'application/octet-stream' })).status, 415);
+  // the favicon its tours and website show in the tab, beside the logo
+  const icon = await api('PUT', `/api/properties/${pid}/favicon`, new Uint8Array(png), { 'Content-Type': 'application/octet-stream' });
+  assert.match(icon.json.theme.favicon, new RegExp(`^brand_${pid}/favicon\\.png\\?v=\\d+$`));
+  assert.ok(icon.json.theme.logo, 'the logo stays');
 
   // public, for the tour: just the branding, and the WhatsApp number visitors are shown anyway
   cookie = '';
@@ -580,6 +584,8 @@ test('a project carries its own branding: name, accent, font and logo', async ()
   signIn();
   assert.equal((await api('DELETE', `/api/properties/${pid}/logo`)).json.theme.logo, undefined);
   assert.equal((await fetch(`${BASE}/api/assets/brand_${pid}/logo.png`)).status, 404);
+  assert.equal((await fetch(`${BASE}/api/assets/brand_${pid}/favicon.png`)).status, 200, 'removing the logo keeps the favicon');
+  assert.equal((await api('DELETE', `/api/properties/${pid}/favicon`)).json.theme.favicon, undefined);
 });
 
 test('an enquiry is filed to its project, emailed to its people, and exports to CSV', async () => {
