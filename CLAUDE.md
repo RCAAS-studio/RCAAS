@@ -311,4 +311,5 @@ VR/headset mode, furniture/layout variants, side-by-side compare, CRM sync, live
 - End every task with what was **not** done or verified (e.g. "not tried in a browser").
 - **Headless screenshots with reduced motion stall GSAP:** with nothing animating, headless Chrome stops producing frames (6 in 5 s), so a scroll reveal stops part-way and looks like a bug. Take reveal-dependent shots with motion on.
 - Never commit or push unless asked.
+- **This PC's npm 11.6.2 drops `@emnapi/core` and `@emnapi/runtime` from `package-lock.json`** on any install (sharp's wasm build needs them), and CI's newer npm then fails `npm ci` with "Missing: @emnapi/… from lock file" (2026-10-26). Update npm here (`npm install -g npm@11`), or check before pushing: `npx -y npm@11 ci --dry-run --ignore-scripts`.
 - **`npm audit fix --omit=dev` uninstalls the dev dependencies** (TypeScript, Tailwind's CLI: the build then fails). Use plain `npm audit fix`, or run `npm install` after.
