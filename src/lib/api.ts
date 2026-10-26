@@ -327,7 +327,17 @@ export interface EventRequest {
   name: string; phone: string; email?: string; notes?: string; formRenderedAt: number; website?: string;
 }
 export const requestEvent = (id: string, r: EventRequest) =>
-  request<{ ok: true; id?: string; hallLabel?: string }>(`${sitePath(id)}/events`, { method: 'POST', body: JSON.stringify(r) });
+  request<{ ok: true; id?: string; uploadKey?: string; hallLabel?: string }>(`${sitePath(id)}/events`, { method: 'POST', body: JSON.stringify(r) });
+/** A guest's event plan (PDF or Word, 10 MB) for the hall booking they just made, with its one-time key. */
+export const sendBookingPlan = (id: string, rid: string, key: string, file: File) =>
+  request<{ ok: true }>(`${sitePath(id)}/reservations/${encodeURIComponent(rid)}/attachment?${new URLSearchParams({ key })}`, {
+    method: 'PUT', body: file, headers: { 'Content-Type': 'application/octet-stream', 'x-file-name': file.name.replace(/[^\x20-\x7e]/g, '') }
+  });
+/** The plan files a hall booking takes. */
+export const PLAN_FILES = '.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+/** The nights of a stay a room hotspot is booked: marked by the team, confirmed, or taken in the hotel's own engine. */
+export const getHereRoom = (id: string, space: string, hotspot: string, checkin: string, checkout: string, guests: number) =>
+  request<{ booked: string[]; engine: boolean }>(`${sitePath(id)}/requests/rooms?${new URLSearchParams({ space, hotspot, checkin, checkout, guests: String(guests) })}`);
 
 /** Book now on a room, hall or table hotspot (server: POST /requests). What's booked comes from the published hotspot. */
 export interface HereRequest {
@@ -335,7 +345,7 @@ export interface HereRequest {
   name: string; phone: string; email?: string; notes?: string; formRenderedAt: number; website?: string;
 }
 export const requestHere = (id: string, r: HereRequest) =>
-  request<{ ok: true; id?: string }>(`${sitePath(id)}/requests`, { method: 'POST', body: JSON.stringify(r) });
+  request<{ ok: true; id?: string; uploadKey?: string }>(`${sitePath(id)}/requests`, { method: 'POST', body: JSON.stringify(r) });
 
 export const requestStay = (id: string, r: StayRequest) =>
   request<{ ok: true; id?: string; roomLabel?: string; rooms?: number; nights?: number }>(`${sitePath(id)}/stays`, { method: 'POST', body: JSON.stringify(r) });
@@ -369,9 +379,20 @@ export interface Reservation {
   of?: 'table' | 'room' | 'hall'; notifiedAt?: string;
   /** A table booking at one of the site's other dining places. */
   outlet?: string; outletName?: string;
+  /** The team's "booked" mark (no guest), and a hotspot booking's place. */
+  blocked?: boolean; space?: string; hotspot?: string;
+  /** A hall booking's event plan, sent by the guest (download: bookingPlanUrl). */
+  attachment?: { name: string; type: string; bytes: number };
 }
+/** A published room or hall hotspot the team can mark booked. */
+export interface BookableHotspot { space: string; spaceTitle: string; hotspot: string; label: string; of: 'room' | 'hall' }
 export const getReservations = (id: string) =>
-  request<{ reservations: Reservation[]; booking: SiteBooking | null; stays: SiteStays | null; events?: SiteEvents | null; dining?: DiningPlace[]; today: string }>(`${sitePath(id)}/reservations`);
+  request<{ reservations: Reservation[]; booking: SiteBooking | null; stays: SiteStays | null; events?: SiteEvents | null; dining?: DiningPlace[]; hotspots?: BookableHotspot[]; today: string }>(`${sitePath(id)}/reservations`);
+/** Mark a room or hall booked: a hotspot (space + hotspot), or the website's hall or room type. */
+export type MarkBooked = { space?: string; hotspot?: string; hall?: string; room?: string; date?: string; session?: EventSession; checkin?: string; checkout?: string; note?: string };
+export const markBooked = (id: string, m: MarkBooked) =>
+  request<Reservation>(`${sitePath(id)}/reservations/mark`, { method: 'POST', body: JSON.stringify(m) });
+export const bookingPlanUrl = (id: string, rid: string) => `${API_BASE_URL}${sitePath(id)}/reservations/${encodeURIComponent(rid)}/attachment`;
 export const setReservationStatus = (id: string, rid: string, status: ReservationStatus) =>
   request<Reservation & { waitlistTold?: number }>(`${sitePath(id)}/reservations/${encodeURIComponent(rid)}`, { method: 'PATCH', body: JSON.stringify({ status }) });
 

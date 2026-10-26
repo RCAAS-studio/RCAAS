@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getHereHall, getHereTables, requestHere, safeUrl, type Availability, type EventSession } from '../../lib/api';
+import { getHereHall, getHereRoom, getHereTables, requestHere, safeUrl, sendBookingPlan, PLAN_FILES, type Availability, type EventSession } from '../../lib/api';
 import { bookingHref, nightsBetween, venueDay } from './booking';
 import { countIntent } from '../../lib/stats';
 import { useT } from '../../lib/i18n';
@@ -25,6 +25,8 @@ const SESSIONS: [EventSession, string][] = [['day', 'Daytime'], ['evening', 'Eve
 const OCCASIONS = ['Wedding', 'Reception', 'Birthday', 'Conference', 'Meeting', 'Other'];
 const INTENT = { room: 'room', hall: 'event', table: 'table' } as const;
 const seatsOf = (h: Hotspot) => h.payload?.capacity ?? 0;
+/** "Tue 4 Nov" from 2026-11-04, read at noon UTC so no time zone moves the day. */
+const shortDate = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
 
 /**
  * Book now on a room, hall or table hotspot, over the tour (2026-09-30):
@@ -93,6 +95,21 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
     return () => { live = false; };
   }, [booksHall, project, space, hs.id, ask.date, fresh]);
 
+  // A room: the nights of the stay already booked (marked by the team, confirmed, or taken in the
+  // hotel's own engine) are named, and the request can't be sent; a draft's room has none to say.
+  const [roomBooked, setRoomBooked] = useState<string[]>([]);
+  useEffect(() => {
+    if (kind !== 'room' || !(nightsBetween(ask.date, ask.checkout) >= 1)) { setRoomBooked([]); return; }
+    let live = true;
+    getHereRoom(project, space, hs.id, ask.date, ask.checkout, ask.guests)
+      .then((a) => { if (live) setRoomBooked(a?.booked ?? []); })
+      .catch(() => { if (live) setRoomBooked([]); });
+    return () => { live = false; };
+  }, [kind, project, space, hs.id, ask.date, ask.checkout, ask.guests, fresh]);
+  // A hall: the guest's event plan, sent once the booking is in.
+  const [plan, setPlan] = useState<File | null>(null);
+  const [planFailed, setPlanFailed] = useState(false);
+
   const table = kind === 'table' ? tables.find((x) => x.id === ask.table) ?? hs : hs;
   // The times come from the hours; if they can't load, a time is typed instead (the server still checks it).
   const timed = booksTables && !!avail;
@@ -111,6 +128,7 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
   const nights = nightsBetween(ask.date, ask.checkout);
   const problem = loading ? null
     : kind === 'room' && !(nights >= 1) ? t('Check-out has to be at least a day after check-in.')
+      : kind === 'room' && roomBooked.length ? t('Booked on {dates}. Pick other dates.', { dates: roomBooked.map(shortDate).join(', ') })
       : !(ask.guests >= 1) ? t('How many guests?')
         : kind === 'table' && !time ? (!timed ? t('Pick a time.') : slots.length ? t('This table is taken all that day.') : t('We don’t take bookings that day. Pick another.'))
           : timed && takenAt(table.id, time) ? t('This table is taken at {time}.', { time })
@@ -142,16 +160,18 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
     setSending(true);
     setError('');
     try {
-      await requestHere(project, {
+      const r = await requestHere(project, {
         space, hotspot: table.id, guests: ask.guests, date: kind === 'table' ? day : ask.date,
         ...(kind === 'room' ? { checkout: ask.checkout } : kind === 'hall' ? { session: ask.session, occasion: ask.occasion } : { time }),
         ...form, formRenderedAt: renderedAt
       });
+      // the booking is in either way; a plan that didn't go is said on the done card
+      if (plan && r?.id && r.uploadKey) await sendBookingPlan(project, r.id, r.uploadKey, plan).catch(() => setPlanFailed(true));
       setDone(true);
     } catch (err) {
       setError((err as Error).message);
-      // someone may have just taken it: show the times as they are now
-      if (booksTables) setFresh((n) => n + 1);
+      // someone may have just taken it: show the times (or a room's nights) as they are now
+      if (booksTables || kind === 'room') setFresh((n) => n + 1);
     } finally {
       setSending(false);
     }
@@ -168,6 +188,7 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
             <h2>{t('Request sent')}</h2>
             <p className="vw-sheet-sub">{kind === 'table' ? `${table.label} · ${day} · ${time}` : table.label}</p>
             <p className="vw-sheet-fine">{t('We’ll confirm by phone or email. Nothing is booked until we do.')}</p>
+            {planFailed && <p className="vw-sheet-err">{t('Your plan didn’t send. Email it to us, or bring it when we call.')}</p>}
             <button className="vw-sheet-go vw-sheet-go-quiet" onClick={onClose}>{t('Keep exploring')}</button>
           </div>
         ) : (
@@ -298,6 +319,13 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
                     <span>{t('Email')} <em>{t('optional')}</em></span>
                     <input type="email" value={form.email} maxLength={200} autoComplete="email" onChange={(e) => setForm({ ...form, email: e.target.value })} />
                   </label>
+                  {kind === 'hall' && (
+                    <label className="vw-sheet-input vw-span-2">
+                      <span>{t('Your event plan')} <em>{t('PDF or Word, optional')}</em></span>
+                      <input type="file" accept={PLAN_FILES}
+                        onChange={(e) => { const f = e.target.files?.[0] ?? null; setPlan(f && f.size <= 10 * 1024 * 1024 ? f : null); setError(f && f.size > 10 * 1024 * 1024 ? t('That file is over 10 MB. Email it to us instead.') : ''); }} />
+                    </label>
+                  )}
                 </div>
                 {/* honeypot: hidden from people, filled by bots */}
                 <label className="vw-cta-hp" aria-hidden="true">

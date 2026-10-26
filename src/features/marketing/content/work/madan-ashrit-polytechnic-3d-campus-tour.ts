@@ -4,6 +4,7 @@ import type { CaseStudyContent } from './types';
 // Register W03. Official name and spelling still [[TBC]].
 export const madanAshrit: CaseStudyContent = {
   slug: 'madan-ashrit-polytechnic-3d-campus-tour',
+  status: 'completed',
   name: 'Madan Ashrit Polytechnic Institute',
   titleTag: 'Madan Ashrit Polytechnic 3D Campus Tour | RCAAS',
   metaDescription:

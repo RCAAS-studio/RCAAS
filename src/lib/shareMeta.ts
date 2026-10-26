@@ -17,9 +17,10 @@ export const NOINDEX: Metadata['robots'] = { index: false, follow: false };
 export const OG_IMAGE = { url: '/og.jpg', width: 1200, height: 630, alt: 'RCAAS.tech: a stupa drawn as a point cloud' };
 
 /** A client's own favicon on its tour and website pages (Branding → Favicon,
- *  an asset path); without one, the RCAAS mark from the root layout stays. */
-export const brandIcons = (favicon: string | null | undefined, apiBase: string): Metadata['icons'] =>
-  favicon ? { icon: `${apiBase}/api/assets/${favicon}`, apple: `${apiBase}/api/assets/${favicon}` } : undefined;
+ *  an asset path), to spread into the page's metadata. Without one, nothing:
+ *  even `icons: undefined` would drop the RCAAS mark the root layout gives. */
+export const brandIcons = (favicon: string | null | undefined, apiBase: string): Pick<Metadata, 'icons'> =>
+  favicon ? { icons: { icon: `${apiBase}/api/assets/${favicon}`, apple: `${apiBase}/api/assets/${favicon}` } } : {};
 
 /** Link-preview tags, so a link pasted into WhatsApp or Facebook shows a
  *  title, a line and a picture. `image` must be an absolute URL (api.ts apiUrl

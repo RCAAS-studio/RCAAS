@@ -4,6 +4,7 @@ import type { CaseStudyContent } from './types';
 // Register W04.
 export const basera: CaseStudyContent = {
   slug: 'basera-boutique-hotel-3d-experience',
+  status: 'in-progress',
   name: 'Basera Boutique Hotel',
   titleTag: 'Basera Boutique Hotel Interactive 3D Experience | RCAAS',
   metaDescription:

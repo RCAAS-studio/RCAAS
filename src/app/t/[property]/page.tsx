@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ property:
     apiUrl(hub.spaces.find((s) => s.thumb)?.thumb) ?? (hub.theme.logo ? `${API_BASE_URL}/api/assets/${hub.theme.logo}` : null)
     ),
     alternates: { canonical: `/t/${encodeURIComponent(property)}` },
-    icons: brandIcons(hub.theme.favicon, API_BASE_URL)
+    ...brandIcons(hub.theme.favicon, API_BASE_URL)
   };
 }
 

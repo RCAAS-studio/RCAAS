@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     ...shareMeta(`${sp.title} | ${name}`, sp.tagline || `${sp.title} at ${name}, in 3D.`, apiUrl(sp.thumb)),
     alternates: { canonical: `/s/${encodeURIComponent(property)}/${encodeURIComponent(space)}` },
-    icons: brandIcons(s.project.theme.favicon, API_BASE_URL)
+    ...brandIcons(s.project.theme.favicon, API_BASE_URL)
   };
 }
 

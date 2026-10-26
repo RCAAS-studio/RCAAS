@@ -27,7 +27,7 @@ export async function generateMetadata({ searchParams }: {
         g.tagline || `Walk ${g.title} in 3D and send an enquiry from inside the room.`,
         apiUrl(g.thumb)
       ),
-      icons: brandIcons(t?.theme?.favicon, API_BASE_URL)
+      ...brandIcons(t?.theme?.favicon, API_BASE_URL)
     };
   } catch {
     return {}; // no API, no preview: the tour itself still loads

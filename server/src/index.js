@@ -14,6 +14,7 @@ import { conciergeRouter } from './routes/concierge.js';
 import { studioAiRouter } from './routes/studioAi.js';
 import { sitesRouter, publishDue } from './routes/sites.js';
 import { reservationsRouter } from './routes/reservations.js';
+import { demoEngineRouter } from './routes/demoEngine.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -77,6 +78,8 @@ app.use('/api/team', teamRouter);
 app.use('/api/stats', statsRouter);
 app.use('/api/concierge', conciergeRouter);
 app.use('/api/sites', reservationsRouter);
+// a pretend hotel engine, for showing Book now with an engine's availability on this PC
+if (DEV || process.env.DEMO_ENGINE === '1') app.use('/api/demo-engine', demoEngineRouter);
 app.use('/api/sites', sitesRouter);
 
 // An error we raised on purpose carries a status and says what went wrong;

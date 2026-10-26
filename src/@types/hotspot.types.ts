@@ -33,6 +33,9 @@ export interface HotspotPayload {
   capacity?: number;
   standing?: number;
   bookUrl?: string;
+  /** A room's link to the hotel engine's availability (2026-10-26, server engine.js): the same
+   *  placeholders, answering { booked: [nights] }; the tour strikes those nights out. */
+  availabilityUrl?: string;
 }
 
 export interface Hotspot {

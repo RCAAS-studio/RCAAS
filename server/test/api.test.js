@@ -1551,6 +1551,76 @@ test('Book now on a room, hall or table hotspot works with nothing else set up; 
   assert.equal((await setStatus(table.id, 'requested')).status, 409, 'reopening would double-book the table');
 });
 
+test('the team marks rooms and halls booked, visitors see them taken, a hotel engine can say so too, and a hall booking takes a plan', async () => {
+  signIn();
+  const pid = (await api('POST', '/api/properties', { title: 'Marked Hotel' })).json.id;
+  const hs = (id, type, label, payload = {}) => ({ id, type, label, position: [0, 1, 0], radius: 0.4, payload, occludedBy: 'none' });
+  await api('PUT', '/api/scenes/mh-lobby', sceneDoc('mh-lobby', { propertyId: pid, title: 'Lobby', hotspots: [
+    hs('m-room', 'room', 'Garden Room'),
+    hs('m-hall', 'hall', 'Ballroom'),
+    hs('m-engine', 'room', 'Engine Suite', { availabilityUrl: '/api/demo-engine/availability?checkin={checkin}&checkout={checkout}&room=suite' })
+  ] }));
+  await api('POST', '/api/scenes/mh-lobby/publish');
+  const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+  const inbox = async () => (await api('GET', `/api/sites/${pid}/reservations`)).json;
+  assert.deepEqual((await inbox()).hotspots.map((h) => [h.hotspot, h.of]), [['m-room', 'room'], ['m-hall', 'hall'], ['m-engine', 'room']], 'what can be marked');
+
+  // marked booked for two nights, and the hall for one evening
+  const mark = (b) => api('POST', `/api/sites/${pid}/reservations/mark`, b);
+  const marked = await mark({ space: 'mh-lobby', hotspot: 'm-room', checkin: day(10), checkout: day(12), note: 'Wedding party' });
+  assert.equal(marked.status, 201);
+  assert.deepEqual([marked.json.status, marked.json.blocked, marked.json.phone], ['confirmed', true, '']);
+  assert.equal((await mark({ space: 'mh-lobby', hotspot: 'm-room', checkin: day(11), checkout: day(13) })).status, 409, 'already marked');
+  assert.equal((await mark({ space: 'mh-lobby', hotspot: 'm-hall', date: day(15), session: 'evening' })).status, 201);
+  cookie = '';
+  assert.equal((await mark({ space: 'mh-lobby', hotspot: 'm-hall', date: day(16), session: 'day' })).status, 401, 'only the team marks');
+
+  // a visitor's card: the nights struck out, a request on them refused, the free ones fine
+  const rooms = (h, a, b) => api('GET', `/api/sites/${pid}/requests/rooms?space=mh-lobby&hotspot=${h}&checkin=${a}&checkout=${b}`);
+  assert.deepEqual((await rooms('m-room', day(9), day(13))).json, { booked: [day(10), day(11)], engine: true });
+  const guest = { name: 'Sita', phone: '9800000006', formRenderedAt: Date.now() - 5000, space: 'mh-lobby' };
+  const ask = (b) => api('POST', `/api/sites/${pid}/requests`, { ...guest, ...b });
+  const refused = await ask({ hotspot: 'm-room', date: day(11), checkout: day(14), guests: 2 });
+  assert.equal(refused.status, 409);
+  assert.deepEqual(refused.json.booked, [day(11)]);
+  assert.equal((await ask({ hotspot: 'm-room', date: day(12), checkout: day(14), guests: 2 })).status, 201, 'the day it frees up');
+  assert.deepEqual((await api('GET', `/api/sites/${pid}/requests/halls?space=mh-lobby&hotspot=m-hall&date=${day(15)}`)).json.taken, ['evening', 'full']);
+
+  // the hotel's engine answers for its room (the demo engine here)
+  const viaEngine = (await rooms('m-engine', day(20), day(26))).json;
+  assert.equal(viaEngine.engine, true);
+  assert.ok(viaEngine.booked.length >= 1 && viaEngine.booked.every((n) => n >= day(20) && n < day(26)), 'about every third night');
+  assert.deepEqual((await api('GET', `/api/demo-engine/availability?checkin=${day(20)}&checkout=${day(26)}&room=suite`)).json.booked, viaEngine.booked);
+  assert.equal((await ask({ hotspot: 'm-engine', date: viaEngine.booked[0], checkout: day(27), guests: 1 })).status, 409, 'taken in the engine');
+
+  // a hall booking sends its plan once, with its own key; the team downloads it
+  const hall = await ask({ hotspot: 'm-hall', date: day(18), session: 'day', guests: 120, occasion: 'Conference' });
+  assert.ok(hall.json.uploadKey);
+  const send = (id, key, bytes) => api('PUT', `/api/sites/${pid}/reservations/${id}/attachment?key=${key}`, new Uint8Array(bytes),
+    { 'Content-Type': 'application/octet-stream', 'x-file-name': 'Our plan.pdf' });
+  const pdf = Buffer.from('%PDF-1.4\n% a plan\n');
+  assert.equal((await send(hall.json.id, 'wrong-key-wrong-key-12', pdf)).status, 404, 'not without its key');
+  assert.equal((await send(hall.json.id, hall.json.uploadKey, Buffer.from('MZ not a document'))).status, 415, 'PDF or Word only');
+  const sent = await send(hall.json.id, hall.json.uploadKey, pdf);
+  assert.deepEqual(sent.json.attachment, { name: 'Our plan.pdf', type: 'pdf', bytes: pdf.length });
+  assert.equal((await send(hall.json.id, hall.json.uploadKey, pdf)).status, 404, 'once');
+  assert.equal((await fetch(`${BASE}/api/sites/${pid}/reservations/${hall.json.id}/attachment`)).status, 401, 'never public');
+  signIn();
+  const file = await fetch(`${BASE}/api/sites/${pid}/reservations/${hall.json.id}/attachment`, { headers: { cookie } });
+  assert.equal(file.headers.get('content-type'), 'application/pdf');
+  assert.match(file.headers.get('content-disposition'), /^attachment/);
+  assert.equal(Buffer.from(await file.arrayBuffer()).toString(), pdf.toString());
+  const listed = (await inbox()).reservations.find((r) => r.id === hall.json.id);
+  assert.equal(listed.uploadKey, undefined, 'the key never reaches the inbox');
+
+  // a guest's request confirmed over a marked night is refused; the marks aren't counted as bookings in the report
+  const later = (await inbox()).reservations.find((r) => r.of === 'room' && r.checkin === day(12));
+  assert.equal((await mark({ space: 'mh-lobby', hotspot: 'm-room', checkin: day(12), checkout: day(13) })).status, 201);
+  assert.equal((await api('PATCH', `/api/sites/${pid}/reservations/${later.id}`, { status: 'confirmed' })).status, 409);
+  const f = (await api('GET', `/api/properties/${pid}/report?month=${new Date().toISOString().slice(0, 7)}`)).json.funnel;
+  assert.deepEqual([f.requests.rooms, f.requests.events], [1, 1], 'the guests’ requests that went through, not the three marks');
+});
+
 test('a dining room in 3D: every table is its own hotspot, booked by the sitting, never twice at one time', async () => {
   signIn();
   const pid = (await api('POST', '/api/properties', { title: 'Table Room Hotel' })).json.id;

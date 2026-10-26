@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ property:
     photo ? `${API_BASE_URL}/api/assets/${photo}` : apiUrl(s.tour?.thumb)
     ),
     alternates: { canonical: `/s/${encodeURIComponent(property)}` },
-    icons: brandIcons(s.project.theme.favicon, API_BASE_URL)
+    ...brandIcons(s.project.theme.favicon, API_BASE_URL)
   };
 }
 

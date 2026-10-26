@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { contactProblem } from '../../lib/contactRules';
 import {
-  API_BASE_URL, getEventCalendar, requestEvent, type EventCalendar, type EventHall, type EventSession, type SiteEvents
+  API_BASE_URL, getEventCalendar, requestEvent, sendBookingPlan, PLAN_FILES, type EventCalendar, type EventHall, type EventSession, type SiteEvents
 } from '../../lib/api';
 import './table-booking.css';
 
@@ -46,7 +46,8 @@ export function EventBooking({ project, events, preview = false, initialHall = '
   const [renderedAt] = useState(() => Date.now());
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
-  const [done, setDone] = useState<{ hall: string; date: string; session: string; occasion: string; email: boolean } | null>(null);
+  const [done, setDone] = useState<{ hall: string; date: string; session: string; occasion: string; email: boolean; planSent: boolean } | null>(null);
+  const [plan, setPlan] = useState<File | null>(null);
 
   const load = useCallback(() => {
     if (!preview) getEventCalendar(project).then(setCal).catch(() => setCal(null));
@@ -77,8 +78,11 @@ export function EventBooking({ project, events, preview = false, initialHall = '
     setSending(true);
     setError('');
     try {
-      await requestEvent(project, { hall: chosen.id, date, session, guests: n, occasion, formRenderedAt: renderedAt, ...form });
-      setDone({ hall: chosen.label, date, session: SESSIONS.find(([k]) => k === session)![1], occasion, email: !!form.email.trim() });
+      const r = await requestEvent(project, { hall: chosen.id, date, session, guests: n, occasion, formRenderedAt: renderedAt, ...form });
+      // the booking is in either way; a plan that didn't go is said on the done card
+      const planSent = plan && r?.id && r.uploadKey ? await sendBookingPlan(project, r.id, r.uploadKey, plan).then(() => true, () => false) : true;
+      setDone({ hall: chosen.label, date, session: SESSIONS.find(([k]) => k === session)![1], occasion, email: !!form.email.trim(), planSent });
+      setPlan(null);
       setDate('');
       setSession('');
     } catch (err) {
@@ -98,6 +102,7 @@ export function EventBooking({ project, events, preview = false, initialHall = '
             <h3>Request sent</h3>
             <p>{done.occasion} in {done.hall}, {day(done.date)} ({done.session.toLowerCase()}).</p>
             <p className="tb-dim">We&apos;ll be in touch by phone{done.email ? ' or email' : ''} shortly. Nothing is booked until we confirm.</p>
+            {!done.planSent && <p className="tb-err">Your plan didn&apos;t send. Email it to us, or bring it when we call.</p>}
             <button type="button" className="tb-ghost" onClick={() => setDone(null)}>Plan another event</button>
           </div>
         ) : (
@@ -157,6 +162,8 @@ export function EventBooking({ project, events, preview = false, initialHall = '
               </div>
               <label><span>Email <em>optional, for the confirmation</em></span><input type="email" value={form.email} maxLength={200} autoComplete="email" onChange={(e) => setForm({ ...form, email: e.target.value })} /></label>
               <label><span>Tell us about it <em>optional</em></span><textarea rows={2} value={form.notes} maxLength={500} placeholder="Catering, decoration, a stage, the timings…" onChange={(e) => setForm({ ...form, notes: e.target.value })} /></label>
+              <label><span>Or send your plan <em>PDF or Word, optional</em></span><input type="file" accept={PLAN_FILES}
+                onChange={(e) => { const f = e.target.files?.[0] ?? null; setPlan(f && f.size <= 10 * 1024 * 1024 ? f : null); setError(f && f.size > 10 * 1024 * 1024 ? 'That file is over 10 MB. Email it to us instead.' : ''); }} /></label>
               {/* honeypot: hidden from people, filled by bots */}
               <label className="tb-hp" aria-hidden="true"><span>Leave empty</span><input tabIndex={-1} autoComplete="off" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} /></label>
               <button className="tb-go" type="submit" disabled={sending || preview}>

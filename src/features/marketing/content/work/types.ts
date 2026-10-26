@@ -5,6 +5,8 @@ import type { RoutePath } from '../../types';
 // Text may contain [[TBI: …]] / [[TBC: …]] placeholders.
 export interface CaseStudyContent {
   slug: string;
+  // Shown on the nav's Work menu (2026-10-26, from the old site's list; Chilancho to confirm).
+  status: 'completed' | 'in-progress';
   // Breadcrumb label and short name.
   name: string;
   titleTag: string;

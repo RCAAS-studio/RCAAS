@@ -29,6 +29,9 @@ import { createStaffAccount } from '../usersStore.js';
 import { record, recent } from '../activity.js';
 import { removeSite } from './sites.js';
 import { readReservations, nowIn } from '../reservations.js';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { DATA_DIR } from '../dataDir.js';
 import { sendMail, teamRecipients, venueMail } from '../mailer.js';
 
 export const propertiesRouter = Router();
@@ -109,7 +112,8 @@ propertiesRouter.get('/:id/report', requireEditorSession, wrap(async (req, res) 
   spaces.sort((a, b) => b.visits - a.visits || b.enquiries - a.enquiries);
 
   // Booking requests made this month, and how many of them were confirmed.
-  const made = (await readReservations(p.id)).filter((r) => r.createdAt?.startsWith(month));
+  // guests' bookings only: the team's "booked" marks are no visitor's doing
+  const made = (await readReservations(p.id)).filter((r) => r.createdAt?.startsWith(month) && !r.blocked);
   // (a waitlist entry, kind 'wait', is not a booking request)
   // a Book now request from a hotspot (kind 'request') counts with its kind of booking
   const asked = (of) => (r) => r.kind === 'request' && r.of === of;
@@ -387,6 +391,7 @@ propertiesRouter.delete('/:id', requireEditorSession, wrap(async (req, res) => {
   const gone = await deleteProperty(req.params.id, session.sub ?? null);
   await storage.remove(`brand_${existing.id}`); // its logo
   await removeSite(existing.id); // its website and photos
+  await fs.rm(path.join(DATA_DIR, 'attachments', existing.id), { recursive: true, force: true }); // guests' event plans
   await record(req, existing.id, 'deleted the project', existing.title, gone.released ? `${gone.released} space(s) moved to “Not in a project yet”` : undefined);
   res.json(gone);
 }));

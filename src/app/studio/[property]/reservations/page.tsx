@@ -2,7 +2,8 @@
 
 import { use, useCallback, useEffect, useState } from 'react';
 import {
-  getProperty, getReservations, setReservationStatus, type Reservation, type ReservationStatus, type SiteBooking, type SiteEvents, type SiteStays
+  getProperty, getReservations, setReservationStatus, markBooked, bookingPlanUrl,
+  type BookableHotspot, type EventSession, type Reservation, type ReservationStatus, type SiteBooking, type SiteEvents, type SiteStays
 } from '../../../../lib/api';
 import { useStudioSession } from '../../../../features/auth/useStudioSession';
 import '../../../../features/studio/editor.css';
@@ -33,6 +34,72 @@ const kindOf = (r: Reservation): Kind => (nightly(r) ? 'rooms' : eventish(r) ? '
 const SESSION: Record<string, string> = { day: 'Daytime', evening: 'Evening', full: 'Whole day' };
 
 /**
+ * Mark a room or hall booked on some dates (2026-10-26): visitors then see it
+ * taken in the tour and on the website. Cancel on its row frees it again.
+ */
+function MarkBooked({ id, hotspots, stays, events, today, onMarked }: {
+  id: string; hotspots: BookableHotspot[]; stays: SiteStays | null; events: SiteEvents | null; today: string; onMarked: () => void;
+}) {
+  // every room and hall that can be marked: `h:<space>:<hotspot>`, `hall:<id>`, `room:<id>`
+  const options = [
+    ...hotspots.map((h) => ({ key: `h:${h.space}:${h.hotspot}`, of: h.of, label: `${h.label} (${h.of} in the tour, ${h.spaceTitle})` })),
+    ...(events?.halls ?? []).map((h) => ({ key: `hall:${h.id}`, of: 'hall' as const, label: `${h.label} (hall on the website)` })),
+    ...(stays?.rooms ?? []).map((r) => ({ key: `room:${r.id}`, of: 'room' as const, label: `${r.label} (room type on the website)` }))
+  ];
+  const [key, setKey] = useState('');
+  const [from, setFrom] = useState(today);
+  const [to, setTo] = useState('');
+  const [session, setSession] = useState<EventSession>('full');
+  const [note, setNote] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  if (!options.length) return null;
+  const pick = options.find((o) => o.key === key) ?? options[0];
+  const send = async () => {
+    const [k, a, b] = pick.key.split(':');
+    const where = k === 'h' ? { space: a, hotspot: b } : k === 'hall' ? { hall: a } : { room: a };
+    const when = pick.of === 'room' ? { checkin: from, checkout: to } : { date: from, session };
+    setBusy(true);
+    setMsg('');
+    try {
+      await markBooked(id, { ...where, ...when, note });
+      setMsg(`Marked: visitors now see ${pick.of === 'room' ? 'those nights' : 'that day'} taken.`);
+      setNote('');
+      onMarked();
+    } catch (e) {
+      setMsg((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <section className="se-card">
+      <h2>Mark as booked</h2>
+      <p className="se-hint">Booked by phone, at the desk or in your own engine? Mark it here, and visitors see it taken in the tour and on the website.</p>
+      <label className="se-field"><span>Room or hall</span>
+        <select value={pick.key} onChange={(e) => setKey(e.target.value)}>{options.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}</select>
+      </label>
+      <div className="se-row">
+        <label className="se-field"><span>{pick.of === 'room' ? 'First night' : 'Day'}</span>
+          <input type="date" value={from} min={today} onChange={(e) => setFrom(e.target.value)} /></label>
+        {pick.of === 'room' ? (
+          <label className="se-field"><span>Free again on</span><input type="date" value={to} min={from} onChange={(e) => setTo(e.target.value)} /></label>
+        ) : (
+          <label className="se-field"><span>Part of the day</span>
+            <select value={session} onChange={(e) => setSession(e.target.value as EventSession)}>
+              {Object.entries(SESSION).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+            </select>
+          </label>
+        )}
+      </div>
+      <label className="se-field"><span>Note <em>only you see it</em></span><input value={note} maxLength={120} placeholder="e.g. Sharma wedding, booked by phone" onChange={(e) => setNote(e.target.value)} /></label>
+      <button className="se-main" disabled={busy || !from || (pick.of === 'room' && !(to > from))} onClick={send}>Mark booked</button>
+      {msg && <p className="se-hint" role="status">{msg}</p>}
+    </section>
+  );
+}
+
+/**
  * A place's bookings (/studio/<project>/reservations): tables, picked on
  * its website's floor plan, rooms, listed on the day guests arrive, and
  * events, listed on their day. New
@@ -47,6 +114,7 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
   const [booking, setBooking] = useState<SiteBooking | null>(null);
   const [stays, setStays] = useState<SiteStays | null>(null);
   const [events, setEvents] = useState<SiteEvents | null>(null);
+  const [hotspots, setHotspots] = useState<BookableHotspot[]>([]);
   const [today, setToday] = useState('');
   const [tab, setTab] = useState<Tab>('reply');
   const [kind, setKind] = useState<'all' | Kind>('all');
@@ -61,6 +129,7 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
     setBooking(r.booking);
     setStays(r.stays);
     setEvents(r.events ?? null);
+    setHotspots(r.hotspots ?? []);
     setToday(r.today);
   }).catch((e: Error) => setError(e.message)), [id]);
 
@@ -158,6 +227,7 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
             )}
           </div>
         )}
+        {!booksOff && <MarkBooked id={id} hotspots={hotspots} stays={stays} events={events} today={today} onMarked={load} />}
         <div className="rs-tabs" role="tablist">
           {([['reply', `Needs a reply${waiting.length ? ` (${waiting.length})` : ''}`], ['upcoming', 'Upcoming'], ['past', 'Past'], ['all', 'All'], ['waitlist', `Waitlist${stillWaiting ? ` (${stillWaiting})` : ''}`]] as [Tab, string][]).map(([k, label]) => (
             <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => setTab(k)}>{label}</button>
@@ -218,11 +288,18 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
                   {r.kind === 'request' && (
                     <p className="se-hint">{[`Book now in the tour (${r.spaceTitle})`, r.price, r.deposit && `deposit ${r.deposit}`].filter(Boolean).join(' · ')}</p>
                   )}
-                  <div className="rs-contact">
-                    <a href={`tel:${r.phone}`}>{r.phone}</a>
-                    {r.email && <a href={`mailto:${r.email}`}>{r.email}</a>}
-                  </div>
+                  {r.blocked ? <p className="se-hint">Marked booked by the team: no guest to reach.</p> : (
+                    <div className="rs-contact">
+                      {r.phone && <a href={`tel:${r.phone}`}>{r.phone}</a>}
+                      {r.email && <a href={`mailto:${r.email}`}>{r.email}</a>}
+                    </div>
+                  )}
                   {r.notes && <p className="rs-notes">“{r.notes}”</p>}
+                  {r.attachment && (
+                    <p className="se-hint">
+                      Event plan: <a href={bookingPlanUrl(id, r.id)}>{r.attachment.name}</a> ({Math.max(1, Math.round(r.attachment.bytes / 1024))} KB)
+                    </p>
+                  )}
                   {r.delivery && !r.delivery.sent && <p className="se-hint">Not emailed to you: {r.delivery.reason}</p>}
                 </div>
                 <div className="rs-act">
@@ -233,7 +310,7 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
                       <button disabled={busy === r.id} onClick={() => set(r, 'declined')}>Decline</button>
                     </>
                   )}
-                  {r.status === 'confirmed' && <button disabled={busy === r.id} onClick={() => set(r, 'cancelled')}>Cancel</button>}
+                  {r.status === 'confirmed' && <button disabled={busy === r.id} onClick={() => set(r, 'cancelled')}>{r.blocked ? 'Remove the mark' : 'Cancel'}</button>}
                   {(r.status === 'declined' || r.status === 'cancelled') && upcoming(r) && (
                     <button disabled={busy === r.id} onClick={() => set(r, 'requested')}>Reopen</button>
                   )}

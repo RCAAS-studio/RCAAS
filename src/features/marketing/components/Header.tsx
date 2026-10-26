@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, type Variants } from 'framer-motion';
-import { ArrowRight, ChevronDown, LayoutDashboard, Plus } from 'lucide-react';
+import { ArrowRight, BookOpen, ChevronDown, CircleHelp, Handshake, Info, LayoutDashboard, Mail, Newspaper, Plus, Workflow } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { RoutePath } from '../types';
 import { PILLARS, INDUSTRIES } from '../data/siteData';
+import { CASE_STUDY_CONTENT, caseStudyPath } from '../content/work';
 import { PILLAR_ICONS, industryIcon } from '../data/icons';
 import { IMG } from '../data/images';
 import { useSession } from '../../auth/useSession';
@@ -24,7 +26,7 @@ import { withBase } from '../../../lib/basePath';
  *    down into one card with the pages as numbered chapters.
  * Styles: rcaas.css "Nav" (.snav-*, .mnav-*). */
 
-type DropKey = 'services' | 'industries' | 'about';
+type DropKey = 'services' | 'industries' | 'work' | 'about';
 
 const PILLAR_SUBPAGES: Record<string, { label: string; path: RoutePath }[]> = {
   'immersive-experiences': [{ label: '3D virtual tours', path: '/services/immersive-experiences/3d-virtual-tours/' }],
@@ -34,32 +36,38 @@ const PILLAR_SUBPAGES: Record<string, { label: string; path: RoutePath }[]> = {
   ],
 };
 
-const ABOUT_GROUPS: { heading: string; items: { label: string; line: string; path: RoutePath }[] }[] = [
+const ABOUT_GROUPS: { heading: string; items: { label: string; line: string; path: RoutePath; icon: LucideIcon }[] }[] = [
   {
     heading: 'Company',
     items: [
-      { label: 'About us', line: 'Who we are and why we started', path: '/about/' },
-      { label: 'How we work', line: 'From first call to launch', path: '/how-we-work/' },
-      { label: 'Partner with us', line: 'Work alongside our team', path: '/about/#partner' as RoutePath },
-      { label: 'Contact', line: 'Tell us about your place', path: '/contact/' },
+      { label: 'About us', line: 'Who we are and why we started', path: '/about/', icon: Info },
+      { label: 'How we work', line: 'From first call to launch', path: '/how-we-work/', icon: Workflow },
+      { label: 'Partner with us', line: 'Work alongside our team', path: '/about/#partner' as RoutePath, icon: Handshake },
+      { label: 'Contact', line: 'Tell us about your place', path: '/contact/', icon: Mail },
     ],
   },
   {
     heading: 'Learn',
     items: [
-      { label: 'Learn hub', line: 'Guides to 3D, VR and capture', path: '/learn/' },
-      { label: 'Blog', line: 'Stories from the field', path: '/blog/' },
-      { label: 'FAQ', line: 'Quick answers', path: '/faq/' },
+      { label: 'Learn hub', line: 'Guides to 3D, VR and capture', path: '/learn/', icon: BookOpen },
+      { label: 'Blog', line: 'Stories from the field', path: '/blog/', icon: Newspaper },
+      { label: 'FAQ', line: 'Quick answers', path: '/faq/', icon: CircleHelp },
     ],
   },
 ];
+
+// Our work: each case study with its own photo and where it stands.
+const WORK_STATUS = {
+  completed: { label: 'Completed', cls: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' },
+  'in-progress': { label: 'In progress', cls: 'bg-amber-50 text-amber-700 ring-amber-600/20' },
+} as const;
 
 const ABOUT_SECTIONS = ['/about', '/how-we-work', '/learn', '/blog', '/faq', '/contact'];
 
 const LINKS: { path: RoutePath; label: string; drop?: DropKey; on: (p: string) => boolean }[] = [
   { path: '/services/', label: 'What we create', drop: 'services', on: (p) => p.startsWith('/services') },
   { path: '/industries/', label: 'Industries', drop: 'industries', on: (p) => p.startsWith('/industries') },
-  { path: '/work/', label: 'Our work', on: (p) => p.startsWith('/work') },
+  { path: '/work/', label: 'Our work', drop: 'work', on: (p) => p.startsWith('/work') },
   { path: '/platform/', label: 'Platform', on: (p) => p.startsWith('/platform') },
   { path: '/gallery/', label: 'Live tours', on: (p) => p.startsWith('/gallery') },
   { path: '/about/', label: 'About', drop: 'about', on: (p) => ABOUT_SECTIONS.some((s) => p.startsWith(s)) },
@@ -310,8 +318,16 @@ const rise: Variants = {
 
 const itemCls =
   'group grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3.5 gap-y-1 rounded-2xl px-3.5 pb-4 pt-3.5 text-ink transition-colors duration-300 hover:bg-zinc-100/80 focus-visible:bg-zinc-100/80 focus-visible:outline-none';
-const icCls =
-  'row-span-2 mt-0.5 h-5 w-5 text-zinc-400 transition-[color,transform] duration-500 group-hover:-rotate-6 group-hover:scale-110 group-hover:text-accent';
+// The About page's "We'd like to work with" icons: a pink icon in a bordered
+// tile that fills pink (icon turning white) when the item is hovered.
+const icBox =
+  'row-span-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-line bg-surface transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-focus-visible:border-accent group-focus-visible:bg-accent';
+const icCls = 'h-4.5 w-4.5 text-accent transition-colors duration-300 group-hover:text-white group-focus-visible:text-white';
+const NavIcon: React.FC<{ icon: React.ComponentType<{ className?: string }> }> = ({ icon: Icon }) => (
+  <span className={icBox} aria-hidden="true">
+    <Icon className={icCls} />
+  </span>
+);
 
 const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: () => void; onLeave: () => void }> = ({
   which,
@@ -339,7 +355,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
             return (
               <motion.li key={p.id} variants={rise}>
                 <NavLink to={p.link as RoutePath} go={go} className={itemCls}>
-                  {Icon && <Icon className={icCls} aria-hidden="true" />}
+                  {Icon && <NavIcon icon={Icon} />}
                   <span className="text-sm font-bold tracking-tight font-display">{p.title}</span>
                   <span className="col-start-2 line-clamp-2 text-xs leading-relaxed text-muted">{p.promise}</span>
                 </NavLink>
@@ -386,7 +402,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
             return (
               <motion.li key={ind.id} variants={rise}>
                 <NavLink to={ind.link as RoutePath} go={go} className={itemCls}>
-                  <Icon className={icCls} aria-hidden="true" />
+                  <NavIcon icon={Icon} />
                   <span className="text-[13px] font-bold tracking-tight font-display">{ind.title}</span>
                   <span className="col-start-2 line-clamp-1 text-[11px] text-muted">{ind.goalHeadline}</span>
                 </NavLink>
@@ -407,6 +423,41 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
       </>
     )}
 
+    {which === 'work' && (
+      <>
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {CASE_STUDY_CONTENT.map((w) => {
+            const st = WORK_STATUS[w.status];
+            return (
+              <motion.li key={w.slug} variants={rise}>
+                <NavLink to={caseStudyPath(w)} go={go} className="group block rounded-2xl p-2 transition-colors hover:bg-zinc-100/80 focus-visible:bg-zinc-100/80 focus-visible:outline-none">
+                  <span className="relative block overflow-hidden rounded-xl bg-zinc-950">
+                    <img src={w.image} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider ring-1 ring-inset ${st.cls}`}>
+                      {st.label}
+                    </span>
+                  </span>
+                  <span className="mt-2.5 block px-1 text-[13px] font-bold leading-snug tracking-tight text-ink font-display transition-colors group-hover:text-accent">
+                    {w.name}
+                  </span>
+                  <span className="block px-1 text-[11px] text-muted">{w.industryLabel}</span>
+                </NavLink>
+              </motion.li>
+            );
+          })}
+        </ul>
+        <motion.aside variants={rise} className="grid content-start gap-3.5 pt-3.5">
+          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-400">Places we have captured</p>
+          <p className="text-[13px] leading-relaxed text-muted">
+            Heritage, campuses and hotels, captured with laser and aerial scanning and turned into places people can walk.
+          </p>
+          <NavLink to="/work/" go={go} className="snav-all">
+            All our work <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </NavLink>
+        </motion.aside>
+      </>
+    )}
+
     {which === 'about' && (
       <>
         <div className="grid grid-cols-2 gap-x-8">
@@ -418,11 +469,10 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
               <ul className="grid gap-0.5">
                 {g.items.map((it) => (
                   <motion.li key={it.label} variants={rise}>
-                    <NavLink to={it.path} go={go} className="group block rounded-2xl px-3.5 py-2.5 transition-colors hover:bg-zinc-100/80">
-                      <span className="block text-sm font-bold tracking-tight text-ink font-display transition-colors group-hover:text-accent">
-                        {it.label}
-                      </span>
-                      <span className="block text-xs text-muted">{it.line}</span>
+                    <NavLink to={it.path} go={go} className={itemCls}>
+                      <NavIcon icon={it.icon} />
+                      <span className="text-sm font-bold tracking-tight font-display">{it.label}</span>
+                      <span className="col-start-2 text-xs text-muted">{it.line}</span>
                     </NavLink>
                   </motion.li>
                 ))}
@@ -454,7 +504,7 @@ const CHAPTERS: Chapter[] = [
     sub: PILLARS.flatMap((p) => [{ label: p.title, path: p.link as RoutePath }, ...(PILLAR_SUBPAGES[p.slug] ?? [])]),
   },
   { ...LINKS[1], sub: INDUSTRIES.map((i) => ({ label: i.title, path: i.link as RoutePath })) },
-  LINKS[2],
+  { ...LINKS[2], sub: CASE_STUDY_CONTENT.map((w) => ({ label: `${w.name} · ${WORK_STATUS[w.status].label}`, path: caseStudyPath(w) })) },
   LINKS[3],
   LINKS[4],
   { ...LINKS[5], sub: ABOUT_GROUPS.flatMap((g) => g.items.map(({ label, path }) => ({ label, path }))) },

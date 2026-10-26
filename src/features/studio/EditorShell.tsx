@@ -1400,6 +1400,16 @@ function BookablePicker({ kind, sceneId, payload, onChange, onAddTable }: {
       )}
       <input className="ed2-name" style={{ marginTop: 6 }} value={pl.bookUrl ?? ''} maxLength={300} aria-label="Your own booking page"
         placeholder="Your own booking page (optional): https://…" onChange={(e) => onChange({ bookUrl: e.target.value.trim() || undefined })} />
+      {kind === 'room' && (
+        <>
+          <input className="ed2-name" style={{ marginTop: 6 }} value={pl.availabilityUrl ?? ''} maxLength={300} aria-label="Availability from your booking engine"
+            placeholder="Availability from your booking engine (optional): https://…" onChange={(e) => onChange({ availabilityUrl: e.target.value.trim() || undefined })} />
+          <p className="ed2-muted ed2-fine">
+            Nights you mark booked in Reservations are struck out for visitors. With your engine&apos;s availability link (it can use {'{checkin}'} {'{checkout}'} {'{guests}'}, and
+            answers {'{ "booked": [nights] }'}), the nights taken there are too. To try it: /api/demo-engine/availability?checkin={'{checkin}'}&amp;checkout={'{checkout}'}&amp;room=deluxe
+          </p>
+        </>
+      )}
       {kind === 'table' ? (
         <>
           <p className="ed2-muted ed2-fine">

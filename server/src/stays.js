@@ -32,6 +32,18 @@ function heldByNight(list, roomId) {
   return held;
 }
 
+/** The nights a room hotspot is booked (2026-10-26): requests the team confirmed and its own
+ *  "booked" marks. A guest's request still waiting holds nothing: a room hotspot may stand
+ *  for a room type with several rooms, and the team sorts that out when confirming. */
+export function roomHotspotBooked(list, space, hotspot) {
+  const nights = new Set();
+  for (const r of list) {
+    if (r.kind !== 'request' || r.of !== 'room' || r.space !== space || r.hotspot !== hotspot || r.status !== 'confirmed') continue;
+    for (const n of nightsOf(r.checkin, r.checkout)) nights.add(n);
+  }
+  return nights;
+}
+
 /** Rooms of this type free on every night of the stay (0 when any night is full). */
 export function roomsFree(list, room, checkin, checkout) {
   const held = heldByNight(list, room.id);

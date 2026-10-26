@@ -4,6 +4,7 @@ import type { CaseStudyContent } from './types';
 // Register W02.
 export const nepathya: CaseStudyContent = {
   slug: 'nepathya-school-college-3d-campus-tour',
+  status: 'completed',
   name: 'Nepathya School and College',
   titleTag: 'Nepathya School & College 3D Campus Tour | RCAAS',
   metaDescription:

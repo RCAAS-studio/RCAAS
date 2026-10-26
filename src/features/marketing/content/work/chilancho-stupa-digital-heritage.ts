@@ -4,6 +4,7 @@ import type { CaseStudyContent } from './types';
 // Register W01.
 export const chilanchoStupa: CaseStudyContent = {
   slug: 'chilancho-stupa-digital-heritage',
+  status: 'completed',
   name: 'Chilancho Stupa',
   titleTag: 'Chilancho Stupa 3D Heritage Documentation | RCAAS',
   metaDescription:

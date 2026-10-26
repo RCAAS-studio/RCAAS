@@ -27,8 +27,13 @@
  *
  * Guests hear back by email and, where set up, by SMS or WhatsApp (notify.js).
  */
-import { Router } from 'express';
-import { getProperty, getPublishedScene } from '../store.js';
+import express, { Router } from 'express';
+import { randomBytes, timingSafeEqual } from 'node:crypto';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { getProperty, getPublishedScene, listPublished } from '../store.js';
+import { DATA_DIR, writeFileWhole } from '../dataDir.js';
+import { engineBooked } from '../engine.js';
 import { requireEditorSession } from '../middleware/auth.js';
 import { visibleProject, staffProject } from './properties.js';
 import { readSite, liveBooking, liveStays, publicStays, liveEvents, publicEvents, cleanSite, reviewed } from './sites.js';
@@ -37,7 +42,7 @@ import { record } from '../activity.js';
 import {
   LIVE, STATUSES, atOutlet, availability, bestTable, bookableDates, readReservations, newReservation, nowIn, slotsFor, tableFree, withReservations
 } from '../reservations.js';
-import { nightsOf, roomsFree, roomsNeeded, stayCalendar, stayProblem } from '../stays.js';
+import { nightsOf, roomHotspotBooked, roomsFree, roomsNeeded, stayCalendar, stayProblem } from '../stays.js';
 import { SESSIONS, SESSION_LABEL, eventCalendar, eventProblem, hallFree, hallHotspotFree } from '../events.js';
 import { WAIT_STATUSES, waitersWithSpace } from '../waitlist.js';
 import { textGuest, validPhone, validEmail, PHONE_WRONG } from '../notify.js';
@@ -311,15 +316,16 @@ reservationsRouter.post('/:id/events', wrap(async (req, res) => {
 
   const r = await withReservations(p.id, (list) => {
     if (!hallFree(list, hall.id, ask.date, ask.session)) return null;
-    const made = newReservation({
+    const made = newReservation(withUploadKey({
       kind: 'event', hall: hall.id, hallLabel: hall.label, date: ask.date, time: '', session: ask.session,
       party: ask.guests, occasion: ask.occasion, ...guest
-    });
+    }));
     list.push(made);
     return made;
   });
   if (!r) return res.status(409).json({ error: `${hall.label} is already taken then (${SESSION_LABEL[ask.session].toLowerCase()}, ${shortDay(ask.date)}). Try another day or hall.` });
-  res.status(201).json({ ok: true, id: r.id, hall: hall.id, hallLabel: hall.label, date: r.date, session: r.session, guests: r.party, occasion: r.occasion });
+  // uploadKey: the guest may send their event plan for this booking (PUT …/attachment)
+  res.status(201).json({ ok: true, id: r.id, uploadKey: r.uploadKey, hall: hall.id, hallLabel: hall.label, date: r.date, session: r.session, guests: r.party, occasion: r.occasion });
   tellTheTeam(p, r, `Event request: ${r.occasion}, ${r.party} guests, ${shortDay(r.date)} — ${r.name}`, `New event request for ${venueOf(p)}`,
     [['Name', r.name], ['Phone', r.phone], ['Email', r.email], ['Event', r.occasion], ['Guests', r.party], ['Hall', hall.label],
       ['Day', dayName(r.date)], ['When', SESSION_LABEL[r.session]], ['Notes', r.notes]]);
@@ -370,6 +376,33 @@ reservationsRouter.get('/:id/requests/halls', wrap(async (req, res) => {
   const list = await readReservations(p.id);
   res.json({ date, taken: SESSIONS.filter((s) => !hallHotspotFree(list, space, hotspot, date, s)) });
 }));
+/** A project's published room hotspot, or null. */
+async function roomHotspot(p, space, hotspot) {
+  if (!p || typeof space !== 'string' || !/^[a-z0-9-]+$/i.test(space) || typeof hotspot !== 'string') return null;
+  const snap = await getPublishedScene(space).catch(() => null);
+  return snap && snap.propertyId === p.id ? (snap.hotspots ?? []).find((h) => h.id === hotspot && h.type === 'room') ?? null : null;
+}
+/** The nights of a stay a room hotspot can't be had (sorted): booked here (stays.js roomHotspotBooked),
+ *  or taken in the hotel's own engine when the hotspot names one (engine.js). `engine` false: it couldn't say. */
+async function roomBooked(p, space, hs, stay) {
+  const nights = nightsOf(stay.checkin, stay.checkout);
+  const here = roomHotspotBooked(await readReservations(p.id), space, hs.id);
+  const there = hs.payload?.availabilityUrl ? await engineBooked(hs.payload.availabilityUrl, stay) : [];
+  return { booked: nights.filter((n) => here.has(n) || there?.includes(n)), engine: there !== null };
+}
+
+// Which nights of a stay a room hotspot is booked (nothing personal): the tour's Book now strikes them out.
+reservationsRouter.get('/:id/requests/rooms', wrap(async (req, res) => {
+  const p = await getProperty(req.params.id);
+  const { space, hotspot, checkin, checkout } = req.query;
+  if (!DATE.test(String(checkin ?? '')) || !DATE.test(String(checkout ?? '')) || nightsOf(checkin, checkout).length > 60) {
+    return res.status(400).json({ error: 'Which room, and which nights?' });
+  }
+  const hs = await roomHotspot(p, space, hotspot);
+  if (!hs) return res.status(404).json({ error: 'This room can’t be booked here.' });
+  res.json(await roomBooked(p, space, hs, { checkin, checkout, guests: Number(req.query.guests) || 1 }));
+}));
+
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const HM = /^([01]\d|2[0-3]):[0-5]\d$/;
 const words = (v, n) => (typeof v === 'string' ? v.replace(/[<>]/g, '').trim().slice(0, n) : '');
@@ -403,6 +436,8 @@ reservationsRouter.post('/:id/requests', wrap(async (req, res) => {
     const nights = nightsOf(date, checkout).length;
     if (nights < 1) return res.status(400).json({ error: 'Check-out has to be at least a day after check-in.' });
     if (nights > 60) return res.status(400).json({ error: 'For more than 60 nights, please call us.' });
+    const { booked } = await roomBooked(p, snap.id, hs, { checkin: date, checkout, guests });
+    if (booked.length) return res.status(409).json({ error: `This room is booked on ${booked.map(shortDay).join(', ')}. Pick other dates.`, booked });
     when = { checkin: date, checkout, nights, time: '' };
   } else if (hs.type === 'hall') {
     if (!DATE.test(date) || date <= now.date) return res.status(400).json({ error: 'Pick a day from tomorrow on. For today, please call us.' });
@@ -425,10 +460,11 @@ reservationsRouter.post('/:id/requests', wrap(async (req, res) => {
     // checked in the queue: two guests can't both get the same table at the same time, or the same hall for the same part of a day
     if (hs.type === 'table' && !tableFree(heldTables(list, snap.id), hours, hs.id, date, when.time)) return null;
     if (hs.type === 'hall' && !hallHotspotFree(list, snap.id, hs.id, date, when.session)) return null;
-    const made = newReservation({
+    const fields = {
       kind: 'request', of: hs.type, item: words(hs.label, 80) || hs.type, space: snap.id, spaceTitle: words(snap.title, 80), hotspot: hs.id,
       date, party: guests, price: words(pl.price, 40), deposit: words(pl.deposit, 60), ...when, ...guest
-    });
+    };
+    const made = newReservation(hs.type === 'hall' ? withUploadKey(fields) : fields);
     list.push(made);
     return made;
   });
@@ -437,7 +473,7 @@ reservationsRouter.post('/:id/requests', wrap(async (req, res) => {
       ? 'This hall is already asked for at that time of day. Pick another day, or the other half of the day.'
       : 'Someone has just asked for this table at that time. Pick another time or table.' });
   }
-  res.status(201).json({ ok: true, id: r.id });
+  res.status(201).json({ ok: true, id: r.id, ...(r.uploadKey ? { uploadKey: r.uploadKey } : {}) });
   tellTheTeam(p, r, `Booking request: ${r.item}, ${requestWhen(r)} — ${r.name}`, `New booking request for ${venueOf(p)}, from the 3D tour (${r.spaceTitle})`,
     [['Name', r.name], ['Phone', r.phone], ['Email', r.email], ['Booking', r.item], ['When', requestWhen(r)], ['Guests', r.party],
       ['Event', r.occasion], ['Price', r.price], ['Deposit', r.deposit], ['Notes', r.notes]]);
@@ -483,7 +519,7 @@ reservationsRouter.post('/:id/waitlist', wrap(async (req, res) => {
   res.status(201).json({ ok: true, id: w.id });
 }));
 
-const noIp = ({ ip, ...r }) => r;
+const noIp = ({ ip, uploadKey, uploadUntil, ...r }) => r;
 
 /** What a waiting guest is told when a place may have opened up: by text, and by email if they left one. */
 function tellWaiter(p, w) {
@@ -511,7 +547,137 @@ reservationsRouter.get('/:id/reservations', requireEditorSession, wrap(async (re
   const events = published?.events ?? null;
   const dining = published?.dining ?? [];
   const list = (await readReservations(p.id)).map(noIp).sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-  res.json({ reservations: list, booking, stays, events, dining, today: nowIn(booking?.timezone || stays?.timezone || events?.timezone || 'Asia/Kathmandu').date });
+  res.json({ reservations: list, booking, stays, events, dining, hotspots: await bookableHotspots(p.id), today: nowIn(booking?.timezone || stays?.timezone || events?.timezone || 'Asia/Kathmandu').date });
+}));
+
+/** The project's published room and hall hotspots, for "Mark as booked". */
+async function bookableHotspots(pid) {
+  const out = [];
+  for (const s of (await listPublished()).filter((x) => x.propertyId === pid)) {
+    const snap = await getPublishedScene(s.id).catch(() => null);
+    for (const h of snap?.hotspots ?? []) {
+      if (h.type === 'room' || h.type === 'hall') out.push({ space: s.id, spaceTitle: s.title, hotspot: h.id, label: h.label || h.type, of: h.type });
+    }
+  }
+  return out;
+}
+
+/**
+ * The team marks a room or hall booked on some dates (2026-10-26), so visitors
+ * see it taken: a confirmed booking with nobody's details (`blocked`), held
+ * like any other, which Cancel frees again. A room or hall hotspot in the tour
+ * (`space` + `hotspot`), or the website's hall (`hall`) or room type (`room`).
+ */
+reservationsRouter.post('/:id/reservations/mark', requireEditorSession, wrap(async (req, res) => {
+  const p = await staffProject(req, res);
+  if (!p) return;
+  const b = req.body ?? {};
+  const published = (await readSite(p.id))?.published;
+  const note = words(b.note, 120);
+  const team = { name: 'Booked (marked by the team)', phone: '', email: '', notes: note, blocked: true, status: 'confirmed' };
+  let made;
+  const nightsOk = DATE.test(String(b.checkin ?? '')) && DATE.test(String(b.checkout ?? '')) && nightsOf(b.checkin, b.checkout).length >= 1 && nightsOf(b.checkin, b.checkout).length <= 366;
+  if (b.space && b.hotspot) {
+    const snap = await getPublishedScene(String(b.space)).catch(() => null);
+    const hs = snap && snap.propertyId === p.id ? (snap.hotspots ?? []).find((h) => h.id === b.hotspot && (h.type === 'room' || h.type === 'hall')) : null;
+    if (!hs) return res.status(404).json({ error: 'Pick one of the published rooms or halls.' });
+    const at = { kind: 'request', of: hs.type, item: words(hs.label, 80) || hs.type, space: snap.id, spaceTitle: words(snap.title, 80), hotspot: hs.id, party: 0, time: '' };
+    if (hs.type === 'room') {
+      if (!nightsOk) return res.status(400).json({ error: 'Pick the first night and the day it frees up.' });
+      made = (list) => (nightsOf(b.checkin, b.checkout).some((n) => roomHotspotBooked(list, snap.id, hs.id).has(n)) ? null
+        : { ...at, date: b.checkin, checkin: b.checkin, checkout: b.checkout, nights: nightsOf(b.checkin, b.checkout).length });
+    } else {
+      if (!DATE.test(String(b.date ?? '')) || !SESSIONS.includes(b.session)) return res.status(400).json({ error: 'Pick the day and the part of it.' });
+      made = (list) => (hallHotspotFree(list, snap.id, hs.id, b.date, b.session) ? { ...at, date: b.date, session: b.session, occasion: 'Booked' } : null);
+    }
+  } else if (b.hall) {
+    const hall = published?.events?.halls?.find((h) => h.id === b.hall);
+    if (!hall) return res.status(404).json({ error: 'Pick one of the website’s halls.' });
+    if (!DATE.test(String(b.date ?? '')) || !SESSIONS.includes(b.session)) return res.status(400).json({ error: 'Pick the day and the part of it.' });
+    made = (list) => (hallFree(list, hall.id, b.date, b.session)
+      ? { kind: 'event', hall: hall.id, hallLabel: hall.label, date: b.date, session: b.session, time: '', party: 0, occasion: 'Booked' } : null);
+  } else if (b.room) {
+    const room = published?.stays?.rooms?.find((r) => r.id === b.room);
+    if (!room) return res.status(404).json({ error: 'Pick one of the website’s room types.' });
+    if (!nightsOk) return res.status(400).json({ error: 'Pick the first night and the day it frees up.' });
+    made = (list) => (roomsFree(list, room, b.checkin, b.checkout) >= 1
+      ? { kind: 'stay', room: room.id, roomLabel: room.label, rooms: 1, date: b.checkin, checkin: b.checkin, checkout: b.checkout, nights: nightsOf(b.checkin, b.checkout).length, time: '', party: 0 } : null);
+  } else {
+    return res.status(400).json({ error: 'Pick a room or a hall.' });
+  }
+  const r = await withReservations(p.id, (list) => {
+    const fields = made(list);
+    if (!fields) return null;
+    const x = newReservation({ ...fields, ...team });
+    list.push(x);
+    return x;
+  });
+  if (!r) return res.status(409).json({ error: 'Something is already booked then. Look at the list, or pick other dates.' });
+  await record(req, p.id, `marked ${r.item || r.hallLabel || r.roomLabel} booked`, r.date);
+  res.status(201).json(noIp(r));
+}));
+
+/**
+ * A guest's plan for an event (2026-10-26): a PDF or Word file sent with a hall
+ * booking, so they needn't type it all in the notes. Kept privately, beside the
+ * bookings (never with the public assets), for the team to download. The guest
+ * can send it only for the booking they just made, with the one-time key that
+ * booking answered with, within 30 minutes; one file, 10 MB at most.
+ */
+const ATTACH_MAX = 10 * 1024 * 1024;
+const attachDir = (pid) => path.join(DATA_DIR, 'attachments', pid);
+const DOC_TYPES = { pdf: 'application/pdf', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', doc: 'application/msword' };
+/** What the file is, by its first bytes (not its name): PDF, Word (.docx is a zip) or old Word. */
+function docKind(buf) {
+  if (buf.subarray(0, 5).toString('latin1') === '%PDF-') return 'pdf';
+  if (buf.subarray(0, 4).equals(Buffer.from([0x50, 0x4b, 0x03, 0x04])) && buf.includes('word/')) return 'docx';
+  if (buf.subarray(0, 8).equals(Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]))) return 'doc';
+  return null;
+}
+/** A hall booking's one-time upload key, returned to the guest who made it. */
+const withUploadKey = (fields) => ({ ...fields, uploadKey: randomBytes(18).toString('base64url'), uploadUntil: Date.now() + 30 * 60 * 1000 });
+
+// The guest sends their event plan for the hall booking they just made.
+reservationsRouter.put('/:id/reservations/:rid/attachment', express.raw({ type: () => true, limit: ATTACH_MAX }), wrap(async (req, res) => {
+  if (rateLimited(req.ip || 'unknown')) return res.status(429).json({ error: 'Too many uploads from this connection. Try again shortly.' });
+  const p = await getProperty(req.params.id);
+  const key = String(req.query.key ?? '');
+  const body = req.body;
+  const kind = Buffer.isBuffer(body) && body.length ? docKind(body) : null;
+  if (!kind) return res.status(415).json({ error: 'Send a PDF or a Word file.' });
+  const name = String(req.get('x-file-name') ?? '').replace(/[^\p{L}\p{N} ._()-]/gu, '').trim().slice(0, 100) || `plan.${kind}`;
+  if (!p || !/^[\w-]{1,64}$/.test(req.params.rid)) return res.status(404).json({ error: 'That booking can’t take a file.' });
+  const r = await withReservations(p.id, (list) => {
+    const x = list.find((y) => y.id === req.params.rid);
+    if (!x?.uploadKey || x.uploadKey.length !== key.length || !timingSafeEqual(Buffer.from(x.uploadKey), Buffer.from(key)) || Date.now() > x.uploadUntil) return null;
+    delete x.uploadKey;
+    delete x.uploadUntil;
+    x.attachment = { name, type: kind, bytes: body.length };
+    return { ...x };
+  });
+  if (!r) return res.status(404).json({ error: 'That booking can’t take a file any more. Send it by email instead.' });
+  await fs.mkdir(attachDir(p.id), { recursive: true });
+  await writeFileWhole(path.join(attachDir(p.id), `${r.id}.${kind}`), body);
+  res.json({ ok: true, attachment: r.attachment });
+}), (err, req, res, next) => {
+  if (err.type === 'entity.too.large') return res.status(413).json({ error: 'That file is over 10 MB. Send a smaller one, or email it.' });
+  next(err);
+});
+
+// The team downloads a guest's event plan.
+reservationsRouter.get('/:id/reservations/:rid/attachment', requireEditorSession, wrap(async (req, res) => {
+  const p = await staffProject(req, res);
+  if (!p) return;
+  const r = (await readReservations(p.id)).find((x) => x.id === req.params.rid);
+  if (!r?.attachment || !DOC_TYPES[r.attachment.type]) return res.status(404).json({ error: 'No file with that booking.' });
+  const buf = await fs.readFile(path.join(attachDir(p.id), `${r.id}.${r.attachment.type}`)).catch(() => null);
+  if (!buf) return res.status(404).json({ error: 'No file with that booking.' });
+  res.set({
+    'Content-Type': DOC_TYPES[r.attachment.type],
+    'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(r.attachment.name)}`,
+    'Content-Security-Policy': "sandbox; default-src 'none'",
+    'Cache-Control': 'private, no-store'
+  }).send(buf);
 }));
 
 // Confirm, decline, cancel or reopen a booking, re-checked so it can't double-book; tells the guest.
@@ -523,18 +689,20 @@ reservationsRouter.patch('/:id/reservations/:rid', requireEditorSession, wrap(as
   const published = (await readSite(p.id))?.published;
   // a table booking's own dining place's setup
   const cfgOf = (o) => (o ? published?.dining?.find((d) => d.id === o)?.booking : published?.booking) ?? { stay: 90 };
-  // a hotspot's Book now: its table at that sitting, or its hall for that part of the day (as the requests route
-  // checks them); a room hotspot has no count of rooms to check against
+  // a hotspot's Book now: its table at that sitting, its hall for that part of the day (as the requests route
+  // checks them), or, when confirming, its room on nights not already confirmed or marked booked
   const requestFree = (others, x) => x.of === 'table'
     ? tableFree(heldTables(others, x.space), cleanSite(published, p.id).booking, x.hotspot, x.date, x.time)
-    : x.of === 'hall' ? hallHotspotFree(others, x.space, x.hotspot, x.date, x.session) : true;
+    : x.of === 'hall' ? hallHotspotFree(others, x.space, x.hotspot, x.date, x.session)
+      : status !== 'confirmed' || !nightsOf(x.checkin, x.checkout).some((n) => roomHotspotBooked(others, x.space, x.hotspot).has(n));
   let freed = [];
   const r = await withReservations(p.id, (list) => {
     const x = list.find((y) => y.id === req.params.rid);
     if (!x) return null;
     if ((x.kind === 'wait') !== WAIT_STATUSES.includes(status)) return { wrong: true, kind: x.kind };
     // Taking back a declined or cancelled booking must not double-book its table or room.
-    if (LIVE.includes(status) && !LIVE.includes(x.status)) {
+    // (a room hotspot's request holds its nights only once confirmed, so confirming one is checked too)
+    if ((LIVE.includes(status) && !LIVE.includes(x.status)) || (status === 'confirmed' && x.status !== 'confirmed' && x.kind === 'request' && x.of === 'room')) {
       const others = list.filter((y) => y !== x);
       const room = published?.stays?.rooms?.find((y) => y.id === x.room);
       const free = x.kind === 'request' ? requestFree(others, x)
