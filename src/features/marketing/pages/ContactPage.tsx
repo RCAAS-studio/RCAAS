@@ -399,7 +399,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
               </fieldset>
 
               {/* Honeypot: hidden from people, tempting to bots. */}
-              <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
+              <div className="absolute left-[-9999px] w-px h-px overflow-hidden" aria-hidden="true">
                 <label htmlFor="c-website">Website</label>
                 <input id="c-website" type="text" tabIndex={-1} autoComplete="off" value={form.website} onChange={update('website')} />
               </div>
@@ -476,7 +476,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                       </span>
                       <span className="flex-1 min-w-0">
                         <dt className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">{row.label}</dt>
-                        <dd className="text-sm text-zinc-900 font-medium break-words">{row.value}</dd>
+                        <dd className="text-sm text-zinc-900 font-medium wrap-break-word">{row.value}</dd>
                       </span>
                       {row.href && <ArrowRight className="w-4 h-4 text-zinc-300 transition-all group-hover:text-accent group-hover:translate-x-0.5" aria-hidden="true" />}
                     </>
@@ -507,7 +507,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Map showing the RCAAS Technology office in Kathmandu"
-                  className={`relative block aspect-[16/9] rounded-xl overflow-hidden border border-line bg-surface-sunken ${
+                  className={`relative block aspect-video rounded-xl overflow-hidden border border-line bg-surface-sunken ${
                     SITE_METADATA.mapsUrl ? 'hover:border-zinc-300' : 'pointer-events-none'
                   }`}
                 >
