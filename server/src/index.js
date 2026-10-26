@@ -26,10 +26,11 @@ const PORT = Number(process.env.PORT) || 4000;
 const DEV = process.env.NODE_ENV !== 'production';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 
-// Live on the example secrets, anyone could sign themselves a studio session.
-for (const k of ['SESSION_SECRET', 'EMBED_TOKEN_SECRET', 'EDITOR_PASSWORD']) {
-  if (!DEV && (!process.env[k] || process.env[k].startsWith('change-me'))) {
-    console.error(`[server] ${k} is unset or still the example value; set it in server/.env (openssl rand -hex 32)`);
+// Live on the example secrets, anyone could sign themselves a studio session;
+// on a short one, a single session token lets them guess it offline, then do the same.
+for (const [k, min] of [['SESSION_SECRET', 32], ['EMBED_TOKEN_SECRET', 32], ['EDITOR_PASSWORD', 12]]) {
+  if (!DEV && (!process.env[k] || process.env[k].startsWith('change-me') || process.env[k].length < min)) {
+    console.error(`[server] ${k} is unset, the example value or under ${min} characters; set it in server/.env (openssl rand -hex 32)`);
     process.exit(1);
   }
 }

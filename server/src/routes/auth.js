@@ -15,20 +15,12 @@ import { timingSafeEqual } from 'crypto';
 import { issueSession, clearSession, readSession, staleReason } from '../middleware/auth.js';
 import { createUser, verifyUser, getUserById, getUserByEmail, resetPassword, setPassword, createResetToken } from '../usersStore.js';
 import { sendMail } from '../mailer.js';
+import { rateLimiter } from '../rateLimit.js';
 
 export const authRouter = Router();
 
-// In-memory, per IP — same shape as leads.js; one process today.
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX = Number(process.env.AUTH_RATE_MAX) || 10; // tests raise it; production keeps 10
-const hits = new Map();
-function rateLimited(ip) {
-  const now = Date.now();
-  const list = (hits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
-  list.push(now);
-  hits.set(ip, list);
-  return list.length > RATE_MAX;
-}
+// In-memory, per IP (rateLimit.js); one process today.
+const rateLimited = rateLimiter(Number(process.env.AUTH_RATE_MAX) || 10); // tests raise it; production keeps 10
 const ipOf = (req) => req.ip || req.socket?.remoteAddress || 'unknown';
 const TOO_MANY = { error: 'Too many attempts from this connection. Wait a few minutes and try again.' };
 

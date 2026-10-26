@@ -41,6 +41,7 @@ import { embedKey } from './embed.js';
 import { record } from '../activity.js';
 import { removeReservations } from '../reservations.js';
 import { EVENT_KINDS } from '../events.js';
+import { rateLimiter } from '../rateLimit.js';
 
 export const sitesRouter = Router();
 const wrap = (fn) => (req, res, next) => fn(req, res).catch(next);
@@ -500,14 +501,7 @@ sitesRouter.get('/:id/review', wrap(async (req, res) => {
   });
 }));
 
-const REVIEW_RATE = new Map();
-const reviewLimited = (ip) => {
-  const now = Date.now();
-  const list = (REVIEW_RATE.get(ip) || []).filter((t) => now - t < 10 * 60 * 1000);
-  list.push(now);
-  REVIEW_RATE.set(ip, list);
-  return list.length > (Number(process.env.REVIEW_RATE_MAX) || 60);
-};
+const reviewLimited = rateLimiter(Number(process.env.REVIEW_RATE_MAX) || 60); // per IP, per 10 minutes
 const plain = (v, max) => String(v ?? '').replace(/[<>]/g, '').trim().slice(0, max);
 const frac = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.min(1, Math.max(0, Math.round(n * 10000) / 10000)) : 0.5; };
 

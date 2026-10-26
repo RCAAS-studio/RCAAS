@@ -20,7 +20,8 @@ export const metadata: Metadata = {
   applicationName: 'RCAAS.tech',
   openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_US', images: [OG_IMAGE] },
   twitter: { card: 'summary_large_image', images: [OG_IMAGE.url] },
-  icons: { icon: withBase('/favicon.svg') }
+  // the RCAAS mark on every page; a client's tour and website can carry their own (Branding → Favicon)
+  icons: { icon: withBase('/favicon.png'), apple: withBase('/apple-touch-icon.png') }
 };
 
 export const viewport: Viewport = {

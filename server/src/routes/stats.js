@@ -14,19 +14,11 @@ import { Router } from 'express';
 import express from 'express';
 import { getPublishedScene } from '../store.js';
 import { count, INTENTS, cleanSource } from '../stats.js';
+import { rateLimiter } from '../rateLimit.js';
 
 export const statsRouter = Router();
 
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX = Number(process.env.STATS_RATE_MAX) || 120; // tests raise it
-const hits = new Map();
-function rateLimited(ip) {
-  const now = Date.now();
-  const list = (hits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
-  list.push(now);
-  hits.set(ip, list);
-  return list.length > RATE_MAX;
-}
+const rateLimited = rateLimiter(Number(process.env.STATS_RATE_MAX) || 120); // per IP; tests raise it
 
 // Tour beacon: counts visits, time per space, hotspot opens and booking intents. Totals only; always 204.
 statsRouter.post('/', express.text({ type: () => true, limit: '2kb' }), async (req, res) => {

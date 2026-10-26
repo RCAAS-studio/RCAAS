@@ -14,9 +14,11 @@ export const SITE_METADATA = {
   // Every page reads the same NAP from here; with this false, the Contact and Thank-you pages and the
   // contactPoint schema show [[TBI]] placeholders instead.
   contactConfirmed: true,
-  officeHours: null as string | null,
-  responseTime: null as string | null,
-  mapsUrl: null as string | null,
+  // the old rcaas.tech's published hours (2026-10-26)
+  officeHours: 'Sunday–Friday, 10:00–17:30 NPT' as string | null,
+  // read as "We reply within …"; the owner wants a quick answer, so visitors don't call elsewhere (2026-10-26)
+  responseTime: 'a few working hours' as string | null,
+  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Kageshwori-Manohara%2C%20Kathmandu%2C%20Nepal' as string | null,
   phone: '+977 984 678 9573',
   whatsapp: '+977 984 678 9573',
   whatsappUrl: 'https://wa.me/9779846789573?text=Hello%20RCAAS%2C%20I%20would%20like%20to%20discuss%20a%203D%20reality%20capture%20project.',

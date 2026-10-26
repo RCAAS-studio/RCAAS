@@ -19,6 +19,7 @@ import { Router } from 'express';
 import { getProperty, getPublishedScene, listPublished } from '../store.js';
 import { readSite, liveBooking, liveStays } from './sites.js';
 import { askJson, claudeOn } from '../claude.js';
+import { rateLimiter } from '../rateLimit.js';
 
 export const conciergeRouter = Router();
 const wrap = (fn) => (req, res, next) => fn(req, res).catch(next);
@@ -27,15 +28,7 @@ const on = claudeOn;
 const LANG = { en: 'English', ne: 'Nepali', zh: 'Simplified Chinese' };
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-const RATE_MAX = Number(process.env.CONCIERGE_RATE_MAX) || 20; // per IP, per 10 minutes
-const hits = new Map();
-function rateLimited(ip) {
-  const now = Date.now();
-  const list = (hits.get(ip) || []).filter((t) => now - t < 10 * 60 * 1000);
-  list.push(now);
-  hits.set(ip, list);
-  return list.length > RATE_MAX;
-}
+const rateLimited = rateLimiter(Number(process.env.CONCIERGE_RATE_MAX) || 20); // per IP, per 10 minutes
 
 const line = (label, v) => (v ? `${label}: ${v}` : '');
 const block = (...rows) => rows.flat().filter(Boolean).join('\n');

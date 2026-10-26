@@ -41,6 +41,7 @@ import { nightsOf, roomsFree, roomsNeeded, stayCalendar, stayProblem } from '../
 import { SESSIONS, SESSION_LABEL, eventCalendar, eventProblem, hallFree, hallHotspotFree } from '../events.js';
 import { WAIT_STATUSES, waitersWithSpace } from '../waitlist.js';
 import { textGuest, validPhone, validEmail, PHONE_WRONG } from '../notify.js';
+import { rateLimiter } from '../rateLimit.js';
 
 export const reservationsRouter = Router();
 const wrap = (fn) => (req, res, next) => fn(req, res).catch(next);
@@ -179,16 +180,7 @@ reservationsRouter.get('/:id/events/availability', wrap(async (req, res) => {
   res.json(eventCalendar(await readReservations(b.p.id), b.cfg, nowIn(b.cfg.timezone).date));
 }));
 
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX = Number(process.env.RESERVE_RATE_MAX) || 5; // tests raise it
-const hits = new Map();
-function rateLimited(ip) {
-  const now = Date.now();
-  const list = (hits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
-  list.push(now);
-  hits.set(ip, list);
-  return list.length > RATE_MAX;
-}
+const rateLimited = rateLimiter(Number(process.env.RESERVE_RATE_MAX) || 5); // per IP; tests raise it
 const MIN_FILL_TIME_MS = 1200;
 const LIMITS = { name: 100, phone: 30, email: 200, notes: 500 };
 const text = (v) => String(v ?? '').replace(/[<>]/g, '').trim();

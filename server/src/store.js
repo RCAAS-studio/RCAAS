@@ -511,8 +511,8 @@ export async function setPropertyTheme(id, patch) {
     if (!BRAND_FONTS.includes(patch.font)) throw badRequest(`The font must be one of: ${BRAND_FONTS.join(', ')}.`);
     theme.font = patch.font;
   }
-  if ('logo' in patch) {
-    if (patch.logo) theme.logo = patch.logo; else delete theme.logo;
+  for (const k of ['logo', 'favicon']) {
+    if (k in patch) { if (patch[k]) theme[k] = patch[k]; else delete theme[k]; }
   }
   const next = { ...p, theme };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));

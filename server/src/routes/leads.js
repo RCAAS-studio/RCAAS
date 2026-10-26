@@ -16,24 +16,14 @@ import { getScene, getProperty } from '../store.js';
 import { sendLeadEmail } from '../mailer.js';
 import { cleanSource } from '../stats.js';
 import { validPhone, validEmail, PHONE_WRONG } from '../notify.js';
+import { rateLimiter } from '../rateLimit.js';
 
 export const leadsRouter = Router();
 
 const FIELD_LIMITS = { name: 100, phone: 30, email: 200, requirement: 200, dates: 100, message: 2000, hotspotId: 100, hotspotLabel: 120 };
 const MIN_FILL_TIME_MS = 1200; // a bot fills the form instantly; a person doesn't
 
-// IP -> timestamps of recent submissions. Trimmed lazily on each hit.
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX = Number(process.env.LEADS_RATE_MAX) || 5; // tests raise it
-const hits = new Map();
-
-function rateLimited(ip) {
-  const now = Date.now();
-  const list = (hits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
-  list.push(now);
-  hits.set(ip, list);
-  return list.length > RATE_MAX;
-}
+const rateLimited = rateLimiter(Number(process.env.LEADS_RATE_MAX) || 5); // per IP; tests raise it
 
 /** No HTML in anything we store or ever render back. */
 const clean = (s) => String(s ?? '').replace(/[<>]/g, '').trim();

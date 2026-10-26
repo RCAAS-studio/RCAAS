@@ -13,7 +13,31 @@
  */
 import { createAsset, initAssetFile, uploadAssetChunk, finalizeAsset, finalizeAudio, finalizeVideo360 } from '../../lib/api';
 import type { StagedFile, UploadProgress, UploadResult } from '../../@types/upload.types';
-import type { UpChoice } from './modelConvert';
+import type { ConvertedModel, UpChoice } from './modelConvert';
+
+/** The model converted in a Web Worker (modelConvert.worker.ts), so the tab
+ *  keeps responding through a big FBX; on the main thread, as before, if the
+ *  worker can't start or meets something workers lack. */
+async function convertOffThread(files: StagedFile[], up: UpChoice | undefined, onStage: (s: string) => void): Promise<ConvertedModel> {
+  try {
+    return await new Promise<ConvertedModel>((resolve, reject) => {
+      const worker = new Worker(new URL('./modelConvert.worker.ts', import.meta.url), { type: 'module' });
+      worker.onmessage = ({ data }) => {
+        if (data.stage !== undefined) return onStage(data.stage);
+        worker.terminate();
+        if (data.done) resolve(data.done);
+        else reject(Object.assign(new Error(data.error), { retry: data.retry }));
+      };
+      worker.onerror = (e) => { worker.terminate(); reject(Object.assign(new Error(e.message || 'The model worker stopped.'), { retry: true })); };
+      worker.postMessage({ files, up });
+    });
+  } catch (err) {
+    if (!(err as { retry?: boolean }).retry) throw err;
+    console.warn('[model] converting on the main thread instead:', (err as Error).message);
+    const { convertModel } = await import('./modelConvert');
+    return convertModel(files, { up, onStage });
+  }
+}
 
 const CHUNK_BYTES = 8 * 1024 * 1024; // 8 MB, per §7.1
 /** Same list as modelConvert.ts, kept here so this file doesn't pull in three. */
@@ -158,8 +182,7 @@ export async function uploadVariant(
   // A 3D model (no LCC index, not a zip): convert it here, upload one .glb.
   const isZip = files.length === 1 && files[0].relPath.toLowerCase().endsWith('.zip');
   if (!isZip && !files.some((f) => f.relPath.toLowerCase().endsWith('.lcc2'))) {
-    const { convertModel } = await import('./modelConvert');
-    const c = await convertModel(files, { up, onStage });
+    const c = await convertOffThread(files, up, onStage);
     onStage('');
     const result = await sendFiles([{ relPath: c.file.name, file: c.file }], onProgress);
     return {

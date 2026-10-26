@@ -252,35 +252,38 @@ propertiesRouter.put('/:id/theme', requireEditorSession, wrap(async (req, res) =
   }
 }));
 
-/** The logo: PNG, JPEG or WebP, 2 MB at most, stored as the asset
- *  `brand_<project>`, so it's served like any other asset. A new one
- *  replaces it; `?v=` in the path makes browsers fetch the new one. */
+/** The logo, and the favicon its tour and website show in the browser tab:
+ *  PNG, JPEG or WebP, 2 MB at most, stored in the asset `brand_<project>`,
+ *  so they're served like any other asset. A new one replaces the old;
+ *  `?v=` in the path makes browsers fetch the new one. */
 const LOGO_MAX = 2 * 1024 * 1024;
-// Upload the project's logo (PNG, JPEG or WebP, as the raw body).
-propertiesRouter.put('/:id/logo', requireEditorSession, express.raw({ type: () => true, limit: LOGO_MAX }), wrap(async (req, res) => {
+// Upload the project's logo or favicon (PNG, JPEG or WebP, as the raw body).
+propertiesRouter.put('/:id/:image(logo|favicon)', requireEditorSession, express.raw({ type: () => true, limit: LOGO_MAX }), wrap(async (req, res) => {
   const p = await manageable(req, res);
   if (!p) return;
+  const { image } = req.params;
   const body = req.body;
   const kind = Buffer.isBuffer(body) && body.length ? imageKind(body) : undefined;
-  if (!kind) return res.status(415).json({ error: 'Use a PNG, JPEG or WebP image for the logo.' });
+  if (!kind) return res.status(415).json({ error: `Use a PNG, JPEG or WebP image for the ${image}.` });
   const assetId = `brand_${p.id}`;
-  for (const ext of ['png', 'jpg', 'webp']) await storage.remove(assetId, `logo.${ext}`);
-  await storage.put(assetId, `logo.${kind}`, Readable.from([body]));
-  const next = await setPropertyTheme(p.id, { logo: `${assetId}/logo.${kind}?v=${Date.now()}` });
-  await record(req, p.id, 'uploaded a logo', p.title);
+  for (const ext of ['png', 'jpg', 'webp']) await storage.remove(assetId, `${image}.${ext}`);
+  await storage.put(assetId, `${image}.${kind}`, Readable.from([body]));
+  const next = await setPropertyTheme(p.id, { [image]: `${assetId}/${image}.${kind}?v=${Date.now()}` });
+  await record(req, p.id, `uploaded a ${image}`, p.title);
   res.json(next);
 }), (err, req, res, next) => {
-  if (err.type === 'entity.too.large') return res.status(413).json({ error: 'That logo is over 2 MB. Export it smaller.' });
+  if (err.type === 'entity.too.large') return res.status(413).json({ error: 'That image is over 2 MB. Export it smaller.' });
   next(err);
 });
 
-// Remove the project's logo.
-propertiesRouter.delete('/:id/logo', requireEditorSession, wrap(async (req, res) => {
+// Remove the project's logo or favicon.
+propertiesRouter.delete('/:id/:image(logo|favicon)', requireEditorSession, wrap(async (req, res) => {
   const p = await manageable(req, res);
   if (!p) return;
-  await storage.remove(`brand_${p.id}`);
-  const next = await setPropertyTheme(p.id, { logo: null });
-  await record(req, p.id, 'removed the logo', p.title);
+  const { image } = req.params;
+  for (const ext of ['png', 'jpg', 'webp']) await storage.remove(`brand_${p.id}`, `${image}.${ext}`);
+  const next = await setPropertyTheme(p.id, { [image]: null });
+  await record(req, p.id, `removed the ${image}`, p.title);
   res.json(next);
 }));
 
