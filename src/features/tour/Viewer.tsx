@@ -324,7 +324,7 @@ export function Viewer({ state, isTouch, autoStart = false, tour = false }: View
             <ConciergePanel project={pid} space={state.activeId} venue={ui.brand} onShow={showPlace} onClose={() => setSheet(null)} />
           )}
           {sheet === 'book' && bookingFor(state.activeId)?.enabled && (
-            <BookingCard booking={bookingFor(state.activeId)!} place={state.activeName} onClose={() => setSheet(null)} />
+            <BookingCard booking={bookingFor(state.activeId)!} place={state.activeName} space={state.activeId} onClose={() => setSheet(null)} />
           )}
           {failed && (
             <div className="vw-failed" role="alert">

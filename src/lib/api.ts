@@ -9,6 +9,7 @@ import type { ApiScene, ProjectStatus, Property, SceneDoc } from '../@types/scen
 import type { AudioUploadResult, UploadResult } from '../@types/upload.types';
 import type { BrandFont, ProjectFeatures, ProjectInfo, ProjectTheme } from '../@types/config.types';
 import type { HotspotWords } from '../@types/hotspot.types';
+import type { Intent } from './stats';
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000').replace(/\/$/, '');
 
@@ -131,7 +132,7 @@ export interface ProjectReport {
   spaces: { id: string; title: string; visits: number; seconds: number; enquiries: number }[];
   /** The path to a booking: tour counts (space visits, those that opened a hotspot or a card), then what was saved. */
   funnel: {
-    visits: number; engaged: number; intent: Partial<Record<'enquire' | 'book' | 'table' | 'room' | 'whatsapp' | 'event', number>>; intents: number;
+    visits: number; engaged: number; intent: Partial<Record<Intent, number>>; intents: number; handoffs?: number;
     enquiries: number; requests: { tables: number; rooms: number; events?: number }; confirmed: { tables: number; rooms: number; events?: number };
   };
   /** The most-opened hotspots, with the enquiries sent after looking at each. */

@@ -28,30 +28,34 @@ function Funnel({ report }: { report: ProjectReport }) {
   const split = (t: number, r: number, e = 0) => [t && `${t} table${t === 1 ? '' : 's'}`, r && `${r} room${r === 1 ? '' : 's'}`, e && `${e} event${e === 1 ? '' : 's'}`].filter(Boolean).join(', ');
   const cards = ([['enquire', 'Ask'], ['book', 'Book now'], ['table', 'Reserve a table'], ['room', 'Book a room'], ['event', 'Plan an event'], ['whatsapp', 'WhatsApp']] as const)
     .filter(([k]) => f.intent[k]).map(([k, label]) => `${label} ${f.intent[k]}`).join(' · ');
-  const steps: [string, number, string][] = [
+  const CARDS = 'Opened a booking card, enquiry or WhatsApp';
+  // the fourth: the step its percentage is of
+  const steps: [string, number, string, string?][] = [
     ['Space visits', f.visits, ''],
-    ['Opened a hotspot', f.engaged, ''],
-    ['Opened a booking card, enquiry or WhatsApp', f.intents, cards],
-    ['Sent an enquiry', f.enquiries, ''],
-    ['Asked to book', requests, split(f.requests.tables, f.requests.rooms, f.requests.events)],
-    ['Confirmed', confirmed, split(f.confirmed.tables, f.confirmed.rooms, f.confirmed.events)]
+    ['Opened a hotspot', f.engaged, '', 'Space visits'],
+    [CARDS, f.intents, cards, 'Opened a hotspot'],
+    ['Sent an enquiry', f.enquiries, '', CARDS],
+    // only for a hotel whose Book now goes to its own booking engine
+    ...(f.handoffs ? [['Went on to your own booking page', f.handoffs, 'its analytics see them as utm_source=rcaas', CARDS] as [string, number, string, string]] : []),
+    ['Asked to book', requests, split(f.requests.tables, f.requests.rooms, f.requests.events), CARDS],
+    ['Confirmed', confirmed, split(f.confirmed.tables, f.confirmed.rooms, f.confirmed.events), 'Asked to book']
   ];
   const top = Math.max(1, ...steps.map((s) => s[1]));
   return (
     <section>
       <h2>The path to a booking</h2>
       <ol className="rp-funnel">
-        {steps.map(([label, n, note], i) => (
+        {steps.map(([label, n, note, of]) => (
           <li key={label}>
             <span className="rp-funnel-label">{label}{note && <small>{note}</small>}</span>
             <span className="rp-funnel-bar"><i style={{ width: `${Math.max(n ? 1.5 : 0, (n / top) * 100)}%` }} /></span>
             <b>{n}</b>
-            <span className="rp-funnel-rate">{i === 0 ? '' : pct(n, steps[i === 3 || i === 4 ? 2 : i - 1][1])}</span>
+            <span className="rp-funnel-rate">{of ? pct(n, steps.find((s) => s[0] === of)![1]) : ''}</span>
           </li>
         ))}
       </ol>
       <p className="rp-muted">
-        The first three steps are counted in the tour, once per space visit. Enquiries and bookings are counted from what was sent,
+        The first three steps, and going on to your own booking page, are counted in the tour, once per space visit. Enquiries and bookings are counted from what was sent,
         from the tour and the website. The percentage is how many went on from the step before (enquiries and bookings: from the cards opened).
       </p>
     </section>

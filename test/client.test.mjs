@@ -12,9 +12,12 @@ import { resolveInitialTier } from '../src/features/scene/deviceTier.ts';
 test('booking link carries the visitor\'s dates and guests', () => {
   const t = 'https://basera.com/book?arrive={checkin}&depart={checkout}&adults={guests}&n={nights}';
   const stay = { checkin: '2026-10-01', checkout: '2026-10-04', guests: 2 };
-  assert.equal(bookingHref(t, stay), 'https://basera.com/book?arrive=2026-10-01&depart=2026-10-04&adults=2&n=3');
-  assert.equal(bookingHref(t, null), 'https://basera.com/book?arrive=&depart=&adults=&n=', 'no stay: placeholders emptied, never sent literally');
-  assert.equal(bookingHref('https://basera.com/book', stay), 'https://basera.com/book', 'a plain link is left alone');
+  const tags = 'utm_source=rcaas&utm_medium=virtual_tour';
+  assert.equal(bookingHref(t, stay), `https://basera.com/book?arrive=2026-10-01&depart=2026-10-04&adults=2&n=3&${tags}`);
+  assert.equal(bookingHref(t, null), `https://basera.com/book?arrive=&depart=&adults=&n=&${tags}`, 'no stay: placeholders emptied, never sent literally');
+  assert.equal(bookingHref('https://basera.com/book', stay), `https://basera.com/book?${tags}`, 'a plain link only gains the tags');
+  assert.equal(bookingHref('https://e.com/b?q=a%20b#/rooms', null), `https://e.com/b?q=a%20b&${tags}#/rooms`, 'the hotel’s own encoding and page anchor are kept');
+  assert.equal(bookingHref('https://e.com/b?utm_source=hotel', null), 'https://e.com/b?utm_source=hotel', 'a link that names its source keeps it');
   // a hostile template still has to pass safeUrl before it is rendered
   assert.equal(safeUrl(bookingHref('javascript:alert({guests})', stay)), null);
 });
@@ -273,6 +276,7 @@ test('a point cloud gets a floor to stand on, and walls it can\'t walk through',
 
 test('every tour string has a Nepali and a Chinese translation', async () => {
   const { DICT, translate } = await import('../src/lib/i18n.ts');
+  const { PHONE_WRONG, EMAIL_WRONG } = await import('../src/lib/contactRules.ts');
   const { readFileSync } = await import('node:fs');
   const files = ['tour/Viewer', 'enquiry/EnquiryPanel', 'tour/FloorMap', 'booking/BookingCard', 'scene/TouchControls', 'hotspots/HotspotMarkers', 'booking/TableCard', 'booking/RoomCard', 'tour/ConciergePanel']
     .map((f) => readFileSync(new URL(`../src/features/${f}.tsx`, import.meta.url), 'utf8'));
@@ -281,7 +285,7 @@ test('every tour string has a Nepali and a Chinese translation', async () => {
   for (const k of ['Viewpoints', 'Walk', 'Fly', 'Orbit', 'Glide between the best spots', 'Move freely, as if you’re there',
     'Soar anywhere with W A S D', 'Circle the room at eye level', 'Look around', 'Fly to that view', 'Open what’s there',
     'Walk faster', 'Stop a flythrough', 'Name', 'Phone', 'What are you looking for?', 'Room booking',
-    'Add your name so the team can reach you.', 'Add your phone so the team can reach you.',
+    'Add your name so the team can reach you.', 'Add your phone so the team can reach you.', PHONE_WRONG, EMAIL_WRONG,
     stayProblem({ checkin: '', checkout: '', guests: 1 }), stayProblem({ checkin: '2000-01-01', checkout: '2000-01-02', guests: 1 })]) keys.add(k);
   assert.ok(keys.size > 80, `found ${keys.size} strings`);
   for (const k of keys) {
@@ -291,6 +295,16 @@ test('every tour string has a Nepali and a Chinese translation', async () => {
   assert.equal(translate('zh', 'Go to {place}', { place: 'Lobby' }), '前往Lobby');
   assert.equal(translate('ne', 'Not in the dictionary'), 'Not in the dictionary', 'unknown text stays English');
   assert.equal(translate('en', '{n} nights', { n: 3 }), '3 nights');
+});
+
+test('a phone or email nobody could reach is caught before the form sends it', async () => {
+  const { contactProblem, reachProblem, PHONE_WRONG, EMAIL_WRONG } = await import('../src/lib/contactRules.ts');
+  for (const phone of ['9841000000', '+977 984-678 9573', '+44 (20) 7946-0958', '01-5551234']) assert.equal(contactProblem({ phone }), '', phone);
+  for (const phone of ['call me', '98-abc-1234567', '12', '1234567890123456', '']) assert.equal(contactProblem({ phone }), PHONE_WRONG, phone);
+  assert.equal(contactProblem({ phone: '9841000000', email: ' a.b@c.com.np ' }), '', 'an email, spaces trimmed');
+  assert.equal(contactProblem({ phone: '9841000000', email: '' }), '', 'no email is fine');
+  for (const email of ['asha@mail', 'not an email', 'a@b']) assert.equal(contactProblem({ phone: '9841000000', email }), EMAIL_WRONG, email);
+  assert.deepEqual([reachProblem('x@y.com'), reachProblem('9841000000'), reachProblem('hello')], ['', '', PHONE_WRONG], 'the website’s one box');
 });
 
 test('a night version is reached from its day space, not listed on its own', async () => {

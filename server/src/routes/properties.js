@@ -136,7 +136,9 @@ propertiesRouter.get('/:id/report', requireEditorSession, wrap(async (req, res) 
   const sources = [...sourceNames].map((name) => ({
     name, visits: stats.sources[name] ?? 0, enquiries: leads.filter((l) => (l.source || 'direct') === name).length
   })).sort((a, b) => b.visits - a.visits || b.enquiries - a.enquiries);
-  const intents = Object.values(stats.intent).reduce((a, n) => a + n, 0);
+  // cards opened; going on to the hotel's own booking page is its own step, not another card
+  const { handoff: handoffs = 0, ...cards } = stats.intent;
+  const intents = Object.values(cards).reduce((a, n) => a + n, 0);
   res.json({
     project: { id: p.id, title: p.title, theme: p.theme ?? {} },
     month,
@@ -147,7 +149,7 @@ propertiesRouter.get('/:id/report', requireEditorSession, wrap(async (req, res) 
     fromProjectPage: leads.filter((l) => l.sceneId === 'hub').length,
     spaces,
     funnel: {
-      visits: stats.visits, engaged: stats.engaged, intent: stats.intent, intents,
+      visits: stats.visits, engaged: stats.engaged, intent: stats.intent, intents, handoffs,
       enquiries: leads.length,
       requests: { tables: tables.length, rooms: rooms.length, events: events.length },
       confirmed: { tables: confirmed(tables), rooms: confirmed(rooms), events: confirmed(events) }

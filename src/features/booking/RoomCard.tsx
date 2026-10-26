@@ -86,8 +86,8 @@ export function RoomCard({ project, stays, venue, initialRoom = '', preview = fa
     e.preventDefault();
     if (!chosen || problem || preview) return;
     if (!form.name.trim() || !form.phone.trim()) return setError(t('Add your name and phone, so we can confirm.'));
-    const problem = contactProblem(form);
-    if (problem) return setError(t(problem));
+    const badContact = contactProblem(form);
+    if (badContact) return setError(t(badContact));
     setSending(true);
     setError('');
     try {

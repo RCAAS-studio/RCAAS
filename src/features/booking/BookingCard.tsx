@@ -5,6 +5,7 @@ import { safeUrl } from '../../lib/api';
 import { bookingHref, isoDay, nightsBetween, stayProblem, type Stay } from './booking';
 import type { Booking } from '../../@types/scene.types';
 import { useT } from '../../lib/i18n';
+import { countIntent } from '../../lib/stats';
 
 const Cal = () => (
   <svg viewBox="0 0 24 24" aria-hidden><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
@@ -16,10 +17,11 @@ const People = () => (
 /**
  * The Book now card (§7.6): the room, the dates and party size if the hotel
  * wants them, the price the hotel typed, and one button that continues on the
- * hotel's own booking page with those choices filled in. We never take a
- * booking or a payment here.
+ * hotel's own booking page with those choices filled in (and campaign tags, so
+ * their analytics credit the tour; the report counts the hand-off). We never
+ * take a booking or a payment here.
  */
-export function BookingCard({ booking, place, onClose }: { booking: Booking; place: string; onClose: () => void }) {
+export function BookingCard({ booking, place, space, onClose }: { booking: Booking; place: string; space: string; onClose: () => void }) {
   const t = useT();
   const [stay, setStay] = useState<Stay>(() => ({ checkin: isoDay(1), checkout: isoDay(3), guests: 2 }));
   const set = (patch: Partial<Stay>) => setStay((s) => {
@@ -85,7 +87,7 @@ export function BookingCard({ booking, place, onClose }: { booking: Booking; pla
 
         {problem && <p className="vw-sheet-err">{t(problem)}</p>}
         {href && !problem ? (
-          <a className="vw-sheet-go" href={href} target="_blank" rel="noopener noreferrer">{booking.label.trim() || t('Book now')}</a>
+          <a className="vw-sheet-go" href={href} target="_blank" rel="noopener noreferrer" onClick={() => countIntent(space, 'handoff')}>{booking.label.trim() || t('Book now')}</a>
         ) : (
           <button className="vw-sheet-go" disabled>{booking.label.trim() || t('Book now')}</button>
         )}

@@ -3,7 +3,7 @@ import { submitLead } from '../../../lib/api';
 /** Every form on these pages files an enquiry with the API (POST /api/leads,
  *  server/src/routes/leads.js). It belongs to no project, so it is emailed to
  *  LEADS_TO and listed for admins (GET /api/leads). The API needs a name and a
- *  phone, and drops a filled honeypot (`website`) or a too-fast form silently.
+ *  phone or email that look real (the forms check first: lib/contactRules.ts), and drops a filled honeypot (`website`) or a too-fast form silently.
  *  `details` become the message, one "Label: value" line each. */
 export function sendLead(form: string, renderedAt: number, lead: {
   name: string;

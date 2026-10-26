@@ -76,7 +76,18 @@ export function bookingHref(template: string, stay: Stay | null): string {
   const values: Record<string, string> = stay
     ? { checkin: stay.checkin, checkout: stay.checkout, guests: String(stay.guests), nights: String(nightsBetween(stay.checkin, stay.checkout)) }
     : {};
-  return template.trim().replace(/\{(checkin|checkout|guests|nights)\}/g, (_, k: string) => encodeURIComponent(values[k] ?? ''));
+  return tagged(template.trim().replace(/\{(checkin|checkout|guests|nights)\}/g, (_, k: string) => encodeURIComponent(values[k] ?? '')));
+}
+
+/** Campaign tags on the way out, so the hotel's own analytics (Google Analytics
+ *  reads utm_*) credits the tour with the bookings it brings. Appended as text,
+ *  never re-encoding the hotel's own parameters; a link that already names a
+ *  source keeps it. */
+function tagged(href: string): string {
+  if (!/^https?:\/\//i.test(href) || /[?&]utm_source=/i.test(href)) return href;
+  const [base, hash = ''] = href.split(/(?=#)/);
+  const join = !base.includes('?') ? '?' : /[?&]$/.test(base) ? '' : '&';
+  return `${base}${join}utm_source=rcaas&utm_medium=virtual_tour${hash}`;
 }
 
 /* ------------------------------------------------------------------ */

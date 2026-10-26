@@ -8,6 +8,7 @@ import { Placeholder } from '../components/Placeholder';
 import { linkHandler, pageShellClass } from '../components/GuideParts';
 import { buttonClass } from '../components/ui';
 import { sendLead } from '../lib/leads';
+import { checkContactFields } from '../../../lib/contactRules';
 
 interface ContactPageProps {
   currentPath: RoutePath;
@@ -125,6 +126,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!checkContactFields(e.currentTarget as HTMLFormElement)) return;
     const isSpam = form.website !== '' || Date.now() - startedAt.current < MIN_FILL_MS;
     setStatus('sending');
     try {

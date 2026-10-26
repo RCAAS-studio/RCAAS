@@ -14,7 +14,7 @@
  * utm_source on the link, else the site that linked to it, else "direct"), and
  * how long each hotspot was in the middle of the view ("looked at"), per space. */
 const MAX_SOURCES = 40; // a month keeps at most this many names; the rest count as "other"
-export const INTENTS = ['enquire', 'book', 'table', 'room', 'whatsapp', 'event'];
+export const INTENTS = ['enquire', 'book', 'table', 'room', 'whatsapp', 'event', 'handoff'];
 import { promises as fs } from 'fs';
 import path from 'path';
 import { DATA_DIR, writeFileWhole } from './dataDir.js';

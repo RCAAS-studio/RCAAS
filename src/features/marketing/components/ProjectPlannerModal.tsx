@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SITE_METADATA } from '../data/siteData';
 import { sendLead } from '../lib/leads';
+import { checkContactFields } from '../../../lib/contactRules';
 
 interface ProjectPlannerModalProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
   // Files the request with the API (lib/leads.ts).
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!checkContactFields(e.currentTarget as HTMLFormElement)) return;
     setSending(true);
     setError('');
     try {

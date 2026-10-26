@@ -26,3 +26,19 @@ export const contactProblem = (v: { phone?: string; email?: string }) => phonePr
 
 /** The website's one "phone or email" box: an email if it has an @, else a phone. */
 export const reachProblem = (reach: string) => (reach.includes('@') ? emailProblem(reach) : phoneProblem(reach));
+
+/** For a form the browser checks itself (no noValidate; `required` covers empty
+ *  fields): a wrong phone or email gets the browser's own bubble on that field,
+ *  with these words. False when one is wrong; it clears as they type. */
+export function checkContactFields(form: HTMLFormElement): boolean {
+  for (const input of form.querySelectorAll<HTMLInputElement>('input[type="tel"], input[type="email"]')) {
+    if (!input.value.trim()) continue;
+    const problem = input.type === 'tel' ? phoneProblem(input.value) : emailProblem(input.value);
+    if (!problem) continue;
+    input.setCustomValidity(problem);
+    input.reportValidity();
+    input.addEventListener('input', () => input.setCustomValidity(''), { once: true });
+    return false;
+  }
+  return true;
+}

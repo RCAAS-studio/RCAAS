@@ -665,6 +665,7 @@ test('tour visits and time are counted per space, and the monthly report adds en
     beacon({ space: 'report-lobby', hotspot: 'made-up', first: true }), // not in the space: not counted
     beacon({ space: 'report-lobby', intent: 'enquire' }),
     beacon({ space: 'report-lobby', intent: 'room' }),
+    beacon({ space: 'report-lobby', intent: 'handoff' }), // on to the hotel's own booking page
     beacon({ space: 'report-lobby', intent: 'teleport' })
   ]);
   assert.ok(all.every((r) => r.status === 204));
@@ -682,7 +683,7 @@ test('tour visits and time are counted per space, and the monthly report adds en
   assert.equal(r.spaces.find((s) => s.id === 'report-draft').visits, 0);
   assert.equal(Object.values(r.days).reduce((a, b) => a + b, 0), 2);
   assert.deepEqual(r.funnel, {
-    visits: 2, engaged: 1, intent: { enquire: 1, room: 1 }, intents: 2, enquiries: 1,
+    visits: 2, engaged: 1, intent: { enquire: 1, room: 1, handoff: 1 }, intents: 2, handoffs: 1, enquiries: 1,
     requests: { tables: 0, rooms: 0, events: 0 }, confirmed: { tables: 0, rooms: 0, events: 0 }
   });
   assert.deepEqual(r.hotspots.map((h) => [h.label, h.spaceTitle, h.opens, h.enquiries]), [['Pool view', 'Lobby', 2, 1], ['The bar', 'Lobby', 1, 0]]);

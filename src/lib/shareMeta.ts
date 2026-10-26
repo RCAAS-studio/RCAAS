@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { withBase } from './basePath';
 
 /** The public address of this site, for canonical links, the sitemap and
  *  structured data. Set NEXT_PUBLIC_SITE_URL in production (.env.production);
@@ -13,8 +12,9 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL
 export const NOINDEX: Metadata['robots'] = { index: false, follow: false };
 
 /** The picture every marketing page shares when a link to it is pasted (public/og.jpg, 1200×630).
- *  A page that sets its own `openGraph` must list it again: Next merges metadata one key deep. */
-export const OG_IMAGE = { url: withBase('/og.jpg'), width: 1200, height: 630, alt: 'RCAAS.tech: a stupa drawn as a point cloud' };
+ *  A page that sets its own `openGraph` must list it again: Next merges metadata one key deep.
+ *  No withBase: Next joins it to metadataBase (SITE_URL), which already ends in any sub-path. */
+export const OG_IMAGE = { url: '/og.jpg', width: 1200, height: 630, alt: 'RCAAS.tech: a stupa drawn as a point cloud' };
 
 /** Link-preview tags, so a link pasted into WhatsApp or Facebook shows a
  *  title, a line and a picture. `image` must be an absolute URL (api.ts apiUrl

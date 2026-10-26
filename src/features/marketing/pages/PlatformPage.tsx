@@ -6,6 +6,7 @@ import { SplatEmbed } from '../components/SplatEmbed';
 import { Placeholder } from '../components/Placeholder';
 import { buttonClass, eyebrowClass } from '../components/ui';
 import { sendLead } from '../lib/leads';
+import { checkContactFields } from '../../../lib/contactRules';
 import { FaqList } from '../components/GuideParts';
 
 interface PlatformPageProps {
@@ -151,6 +152,7 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!checkContactFields(e.currentTarget as HTMLFormElement)) return;
     setStatus('submitting');
     try {
       await submitEarlyAccess(form, renderedAt);

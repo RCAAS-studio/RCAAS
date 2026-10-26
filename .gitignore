@@ -38,6 +38,7 @@ server/src/data/users/
 server/src/data/activity/
 server/src/data/stats/
 server/src/data/sites/
+server/src/backups/
 server/src/data/reservations/
 
 # Footage masters (4K, hundreds of MB). The web cuts made from them live in

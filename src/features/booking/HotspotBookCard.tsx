@@ -131,13 +131,14 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
     e.preventDefault();
     if (problem || preview || loading) return;
     if (own) {
-      // their own booking page, with the dates filled in
+      // their own booking page, with the dates filled in (the report counts the hand-off)
+      countIntent(space, 'handoff');
       window.open(bookingHref(own, { checkin: ask.date || venueDay(0), checkout: kind === 'room' ? ask.checkout : ask.date || venueDay(0), guests: ask.guests }), '_blank', 'noopener');
       return;
     }
     if (!form.name.trim() || !form.phone.trim()) return setError(t('Add your name and phone, so we can confirm.'));
-    const problem = contactProblem(form);
-    if (problem) return setError(t(problem));
+    const badContact = contactProblem(form);
+    if (badContact) return setError(t(badContact));
     setSending(true);
     setError('');
     try {

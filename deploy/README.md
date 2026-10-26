@@ -90,4 +90,7 @@ site runs here, switch it to **None** so the two don't compete in search.
 
 - Logs: `pm2 logs`. Status: `pm2 ls`.
 - Roll back: `git checkout <good-sha> && bash deploy/deploy.sh`, then `git checkout main` before the next push deploys.
-- Back up `/srv/rcaas/data` (users, leads, scenes, reservations) daily — e.g. a cron `tar` pushed to the R2 bucket. The scans themselves are already in R2.
+- **Backups:** `server/scripts/backup-data.js` copies `/srv/rcaas/data` (users, leads, scenes, sites, reservations, stats) to `/srv/rcaas/backups/data-<date>.tar.gz`, keeps 14 days, and with `ASSET_DRIVER=s3` also puts each copy in the bucket under `backups.private/` (the scans are already there). They hold accounts and guests' details: keep the bucket private (R2's default; never turn on its public URL). Add it to the deploy user's crontab (`crontab -e`):
+  `15 3 * * *  cd /srv/rcaas/app/server && npm run backup >> /srv/rcaas/backups/backup.log 2>&1`
+  Restore: `pm2 stop all && tar -xzf /srv/rcaas/backups/data-<date>.tar.gz -C /srv/rcaas && pm2 start all`. Try a restore once before launch.
+- **Uptime:** point a free external monitor (UptimeRobot, Better Stack) at `https://<domain>/api/health` every 5 minutes. It answers 200 when the API is up, and 503 when its database is set but down.
