@@ -93,9 +93,6 @@ Passive image galleries don't convert like they used to. This platform is built 
 | 📊 **Analytics** | Monthly visitor reports, exportable floor-plan PDF sheets, and CSV enquiry exports. |
 | ☁️ **Cloud Storage** | Native integration for S3-compatible buckets (Cloudflare R2) to synchronize splat data across machines. |
 
-> [!NOTE]
-> 📚 **Full Feature Book:** Check out the detailed guide in [`docs/RCAAS-Feature-Book.pdf`](docs/RCAAS-Feature-Book.pdf).
-
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:5B21B6,100:22D3EE&height=3" width="100%" alt="divider" />
 
 ## 🏗️ Architecture
@@ -160,7 +157,6 @@ Built around **Three.js** and **React Three Fiber** for hyper-smooth real-time s
 
 ```text
 .
-├── docs/                      # Feature book (PDF)
 ├── public/                    # Static media, sample assets, and site files
 ├── scripts/dev.mjs            # Starts the site and the API together
 ├── server/                    # Express API and file-backed storage layer

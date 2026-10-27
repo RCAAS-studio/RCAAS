@@ -188,8 +188,9 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
   const dayTotal = (d: string) => {
     const live = shown.filter((r) => r.date === d && r.status !== 'declined' && r.status !== 'cancelled');
     const guests = live.filter((r) => kindOf(r) === 'tables').reduce((a, r) => a + r.party, 0);
-    const rooms = live.filter(isStay).reduce((a, r) => a + (r.rooms ?? 1), 0);
-    const evts = live.filter(isEvent).length;
+    // the tour's room and hall hotspots too, guests' and the team's marks alike
+    const rooms = live.filter(nightly).reduce((a, r) => a + (r.rooms ?? 1), 0);
+    const evts = live.filter(eventish).length;
     return [guests && `${guests} ${guests === 1 ? 'guest' : 'guests'} at tables`, rooms && `${rooms} ${rooms === 1 ? 'room' : 'rooms'} for arrivals`,
       evts && `${evts} ${evts === 1 ? 'event' : 'events'}`]
       .filter(Boolean).join(' · ') || 'Nothing booked or waiting';
@@ -275,9 +276,9 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
             ) : (
               <div key={r.id} className={`rs-item is-${r.status}`}>
                 {nightly(r) ? (
-                  <div className="rs-when"><b>{r.nights} {r.nights === 1 ? 'night' : 'nights'}</b><span>{r.party} {r.party === 1 ? 'guest' : 'guests'}</span></div>
+                  <div className="rs-when"><b>{r.nights} {r.nights === 1 ? 'night' : 'nights'}</b><span>{r.blocked ? 'marked' : `${r.party} ${r.party === 1 ? 'guest' : 'guests'}`}</span></div>
                 ) : eventish(r) ? (
-                  <div className="rs-when"><b>{SESSION[r.session ?? ''] ?? r.session}</b><span>{r.party} guests</span></div>
+                  <div className="rs-when"><b>{SESSION[r.session ?? ''] ?? r.session}</b><span>{r.blocked ? 'marked' : `${r.party} guests`}</span></div>
                 ) : (
                   <div className="rs-when"><b>{r.time}</b><span>{r.party} {r.party === 1 ? 'guest' : 'guests'}</span></div>
                 )}
@@ -285,7 +286,7 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
                   <b>{r.name}</b> <span className="rs-table">{r.kind === 'request' ? [r.item, r.occasion].filter(Boolean).join(' · ')
                     : isStay(r) ? roomName(r) : isEvent(r) ? `${r.occasion} · ${hallName(r)}` : tableName(r)}</span>
                   {nightly(r) && <p className="rs-stay">{shortDay(r.checkin ?? r.date)} → {shortDay(r.checkout ?? r.date)}</p>}
-                  {r.kind === 'request' && (
+                  {r.kind === 'request' && !r.blocked && (
                     <p className="se-hint">{[`Book now in the tour (${r.spaceTitle})`, r.price, r.deposit && `deposit ${r.deposit}`].filter(Boolean).join(' · ')}</p>
                   )}
                   {r.blocked ? <p className="se-hint">Marked booked by the team: no guest to reach.</p> : (

@@ -685,7 +685,9 @@ reservationsRouter.patch('/:id/reservations/:rid', requireEditorSession, wrap(as
   const p = await staffProject(req, res);
   if (!p) return;
   const status = req.body?.status;
-  if (![...STATUSES, ...WAIT_STATUSES].includes(status)) return res.status(400).json({ error: `status must be one of ${STATUSES.join(', ')}.` });
+  if (![...STATUSES, ...WAIT_STATUSES].includes(status)) {
+    return res.status(400).json({ error: `status must be one of ${STATUSES.join(', ')} (a booking), or ${WAIT_STATUSES.join(', ')} (a waitlist entry).` });
+  }
   const published = (await readSite(p.id))?.published;
   // a table booking's own dining place's setup
   const cfgOf = (o) => (o ? published?.dining?.find((d) => d.id === o)?.booking : published?.booking) ?? { stay: 90 };
