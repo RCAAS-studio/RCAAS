@@ -24,7 +24,7 @@ updates §4 in the same change. New work lands in "Working", "Needs fixing" or
 
 CI is `.github/workflows/nextjs.yml` (2026-10-18, replaced `ci.yml`): lint, types, tests, the full
 build and a static export on every push and PR; pushes to `main` publish the export to GitHub Pages
-(see "GitHub Pages copy" in §4). **Hosting is postponed (2026-09-29):** everything runs on this PC
+(see "GitHub Pages copy" in §4). Don't swap it for GitHub's sample Next.js workflow: that one skips `prebuild` and keeps the API routes, so the build fails (2026-10-27, on RCAAS-studio). **Hosting is postponed (2026-09-29):** everything runs on this PC
 for now. The VPS deploy job is parked in git (`git show 9a93085:.github/workflows/ci.yml`), and
 `deploy/` is ready for when hosting is picked up again (its README says how to bring the job back).
 
