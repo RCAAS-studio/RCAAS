@@ -2131,3 +2131,26 @@ test('a test email goes where enquiries go, in the venue’s name, and a refusal
   cookie = '';
   assert.equal((await api('POST', `/api/properties/${pid}/lead-emails/test`)).status, 401);
 });
+
+test('the team marks a table booked at a sitting, and visitors see that time taken', async () => {
+  signIn();
+  const pid = (await api('POST', '/api/properties', { title: 'Marked Cafe' })).json.id;
+  await api('PUT', '/api/scenes/mc-room', sceneDoc('mc-room', { propertyId: pid, title: 'Dining room', hotspots: [
+    { id: 't1', type: 'table', label: 'Table 1', position: [0, 1, 0], radius: 0.4, payload: { capacity: 4 }, occludedBy: 'none' }
+  ] }));
+  await api('POST', '/api/scenes/mc-room/publish');
+  const day = new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10);
+  assert.deepEqual((await api('GET', `/api/sites/${pid}/reservations`)).json.hotspots.map((h) => [h.hotspot, h.of]), [['t1', 'table']]);
+  const times = async () => (await api('GET', `/api/sites/${pid}/requests/tables?space=mc-room&date=${day}`)).json.slots;
+  const at = (await times())[0].time;
+  const mark = (b) => api('POST', `/api/sites/${pid}/reservations/mark`, { space: 'mc-room', hotspot: 't1', date: day, ...b });
+  assert.equal((await mark({ time: '03:17' })).status, 400, 'off the hours');
+  const marked = await mark({ time: at });
+  assert.equal(marked.status, 201);
+  assert.deepEqual([marked.json.of, marked.json.time, marked.json.blocked], ['table', at, true]);
+  assert.equal((await mark({ time: at })).status, 409, 'already marked');
+  assert.deepEqual((await times()).find((s) => s.time === at).free, [], 'struck out for visitors');
+  cookie = '';
+  const guest = await api('POST', `/api/sites/${pid}/requests`, { space: 'mc-room', hotspot: 't1', date: day, time: at, guests: 2, name: 'Hari', phone: '9800000007', formRenderedAt: Date.now() - 5000 });
+  assert.equal(guest.status, 409, 'a guest can’t take the marked sitting');
+});

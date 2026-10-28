@@ -385,11 +385,11 @@ export interface Reservation {
   attachment?: { name: string; type: string; bytes: number };
 }
 /** A published room or hall hotspot the team can mark booked. */
-export interface BookableHotspot { space: string; spaceTitle: string; hotspot: string; label: string; of: 'room' | 'hall' }
+export interface BookableHotspot { space: string; spaceTitle: string; hotspot: string; label: string; of: 'room' | 'hall' | 'table' }
 export const getReservations = (id: string) =>
   request<{ reservations: Reservation[]; booking: SiteBooking | null; stays: SiteStays | null; events?: SiteEvents | null; dining?: DiningPlace[]; hotspots?: BookableHotspot[]; today: string }>(`${sitePath(id)}/reservations`);
-/** Mark a room or hall booked: a hotspot (space + hotspot), or the website's hall or room type. */
-export type MarkBooked = { space?: string; hotspot?: string; hall?: string; room?: string; date?: string; session?: EventSession; checkin?: string; checkout?: string; note?: string };
+/** Mark a room, hall or table booked: a hotspot (space + hotspot), or the website's hall or room type. */
+export type MarkBooked = { space?: string; hotspot?: string; hall?: string; room?: string; date?: string; session?: EventSession; checkin?: string; checkout?: string; time?: string; note?: string };
 export const markBooked = (id: string, m: MarkBooked) =>
   request<Reservation>(`${sitePath(id)}/reservations/mark`, { method: 'POST', body: JSON.stringify(m) });
 export const bookingPlanUrl = (id: string, rid: string) => `${API_BASE_URL}${sitePath(id)}/reservations/${encodeURIComponent(rid)}/attachment`;

@@ -2,7 +2,7 @@
 
 import { use, useCallback, useEffect, useState } from 'react';
 import {
-  getProperty, getReservations, setReservationStatus, markBooked, bookingPlanUrl,
+  getProperty, getReservations, setReservationStatus, markBooked, bookingPlanUrl, getHereTables,
   type BookableHotspot, type EventSession, type Reservation, type ReservationStatus, type SiteBooking, type SiteEvents, type SiteStays
 } from '../../../../lib/api';
 import { useStudioSession } from '../../../../features/auth/useStudioSession';
@@ -34,13 +34,13 @@ const kindOf = (r: Reservation): Kind => (nightly(r) ? 'rooms' : eventish(r) ? '
 const SESSION: Record<string, string> = { day: 'Daytime', evening: 'Evening', full: 'Whole day' };
 
 /**
- * Mark a room or hall booked on some dates (2026-10-26): visitors then see it
+ * Mark a room, hall or table booked (2026-10-26; tables 2026-10-27): visitors then see it
  * taken in the tour and on the website. Cancel on its row frees it again.
  */
 function MarkBooked({ id, hotspots, stays, events, today, onMarked }: {
   id: string; hotspots: BookableHotspot[]; stays: SiteStays | null; events: SiteEvents | null; today: string; onMarked: () => void;
 }) {
-  // every room and hall that can be marked: `h:<space>:<hotspot>`, `hall:<id>`, `room:<id>`
+  // every room, hall and table that can be marked: `h:<space>:<hotspot>`, `hall:<id>`, `room:<id>`
   const options = [
     ...hotspots.map((h) => ({ key: `h:${h.space}:${h.hotspot}`, of: h.of, label: `${h.label} (${h.of} in the tour, ${h.spaceTitle})` })),
     ...(events?.halls ?? []).map((h) => ({ key: `hall:${h.id}`, of: 'hall' as const, label: `${h.label} (hall on the website)` })),
@@ -53,17 +53,33 @@ function MarkBooked({ id, hotspots, stays, events, today, onMarked }: {
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
-  if (!options.length) return null;
   const pick = options.find((o) => o.key === key) ?? options[0];
+  // a table: the sittings it is still free at that day, from the tour's own table times
+  const [space, spot] = pick?.of === 'table' ? pick.key.split(':').slice(1) : [];
+  const [times, setTimes] = useState<string[]>([]);
+  const [time, setTime] = useState('');
+  useEffect(() => {
+    if (!space || !spot || !from) return;
+    let live = true;
+    getHereTables(id, space, from).then((a) => {
+      if (!live) return;
+      const t = a?.date === from ? a.slots.filter((s) => s.free.includes(spot)).map((s) => s.time) : [];
+      setTimes(t);
+      setTime((x) => (t.includes(x) ? x : t[0] ?? ''));
+    }).catch(() => { if (live) setTimes([]); });
+    return () => { live = false; };
+  }, [id, space, spot, from]);
+  if (!pick) return null;
   const send = async () => {
     const [k, a, b] = pick.key.split(':');
     const where = k === 'h' ? { space: a, hotspot: b } : k === 'hall' ? { hall: a } : { room: a };
-    const when = pick.of === 'room' ? { checkin: from, checkout: to } : { date: from, session };
+    const when = pick.of === 'room' ? { checkin: from, checkout: to } : pick.of === 'table' ? { date: from, time } : { date: from, session };
     setBusy(true);
     setMsg('');
     try {
       await markBooked(id, { ...where, ...when, note });
-      setMsg(`Marked: visitors now see ${pick.of === 'room' ? 'those nights' : 'that day'} taken.`);
+      setMsg(`Marked: visitors now see ${pick.of === 'room' ? 'those nights' : pick.of === 'table' ? 'that table at that time' : 'that day'} taken.`);
+      if (pick.of === 'table') setTimes((t) => t.filter((x) => x !== time));
       setNote('');
       onMarked();
     } catch (e) {
@@ -76,7 +92,7 @@ function MarkBooked({ id, hotspots, stays, events, today, onMarked }: {
     <section className="se-card">
       <h2>Mark as booked</h2>
       <p className="se-hint">Booked by phone, at the desk or in your own engine? Mark it here, and visitors see it taken in the tour and on the website.</p>
-      <label className="se-field"><span>Room or hall</span>
+      <label className="se-field"><span>Room, hall or table</span>
         <select value={pick.key} onChange={(e) => setKey(e.target.value)}>{options.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}</select>
       </label>
       <div className="se-row">
@@ -84,6 +100,12 @@ function MarkBooked({ id, hotspots, stays, events, today, onMarked }: {
           <input type="date" value={from} min={today} onChange={(e) => setFrom(e.target.value)} /></label>
         {pick.of === 'room' ? (
           <label className="se-field"><span>Free again on</span><input type="date" value={to} min={from} onChange={(e) => setTo(e.target.value)} /></label>
+        ) : pick.of === 'table' ? (
+          <label className="se-field"><span>Time</span>
+            <select value={time} disabled={!times.length} onChange={(e) => setTime(e.target.value)}>
+              {times.length ? times.map((t) => <option key={t} value={t}>{t}</option>) : <option value="">No free times that day</option>}
+            </select>
+          </label>
         ) : (
           <label className="se-field"><span>Part of the day</span>
             <select value={session} onChange={(e) => setSession(e.target.value as EventSession)}>
@@ -93,7 +115,7 @@ function MarkBooked({ id, hotspots, stays, events, today, onMarked }: {
         )}
       </div>
       <label className="se-field"><span>Note <em>only you see it</em></span><input value={note} maxLength={120} placeholder="e.g. Sharma wedding, booked by phone" onChange={(e) => setNote(e.target.value)} /></label>
-      <button className="se-main" disabled={busy || !from || (pick.of === 'room' && !(to > from))} onClick={send}>Mark booked</button>
+      <button className="se-main" disabled={busy || !from || (pick.of === 'room' && !(to > from)) || (pick.of === 'table' && !time)} onClick={send}>Mark booked</button>
       {msg && <p className="se-hint" role="status">{msg}</p>}
     </section>
   );
@@ -280,7 +302,7 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
                 ) : eventish(r) ? (
                   <div className="rs-when"><b>{SESSION[r.session ?? ''] ?? r.session}</b><span>{r.blocked ? 'marked' : `${r.party} guests`}</span></div>
                 ) : (
-                  <div className="rs-when"><b>{r.time}</b><span>{r.party} {r.party === 1 ? 'guest' : 'guests'}</span></div>
+                  <div className="rs-when"><b>{r.time}</b><span>{r.blocked ? 'marked' : `${r.party} ${r.party === 1 ? 'guest' : 'guests'}`}</span></div>
                 )}
                 <div className="rs-who">
                   <b>{r.name}</b> <span className="rs-table">{r.kind === 'request' ? [r.item, r.occasion].filter(Boolean).join(' · ')

@@ -550,22 +550,22 @@ reservationsRouter.get('/:id/reservations', requireEditorSession, wrap(async (re
   res.json({ reservations: list, booking, stays, events, dining, hotspots: await bookableHotspots(p.id), today: nowIn(booking?.timezone || stays?.timezone || events?.timezone || 'Asia/Kathmandu').date });
 }));
 
-/** The project's published room and hall hotspots, for "Mark as booked". */
+/** The project's published room, hall and table hotspots, for "Mark as booked". */
 async function bookableHotspots(pid) {
   const out = [];
   for (const s of (await listPublished()).filter((x) => x.propertyId === pid)) {
     const snap = await getPublishedScene(s.id).catch(() => null);
     for (const h of snap?.hotspots ?? []) {
-      if (h.type === 'room' || h.type === 'hall') out.push({ space: s.id, spaceTitle: s.title, hotspot: h.id, label: h.label || h.type, of: h.type });
+      if (BOOKABLE.includes(h.type)) out.push({ space: s.id, spaceTitle: s.title, hotspot: h.id, label: h.label || h.type, of: h.type });
     }
   }
   return out;
 }
 
 /**
- * The team marks a room or hall booked on some dates (2026-10-26), so visitors
+ * The team marks a room, hall or table booked (2026-10-26; tables 2026-10-27), so visitors
  * see it taken: a confirmed booking with nobody's details (`blocked`), held
- * like any other, which Cancel frees again. A room or hall hotspot in the tour
+ * like any other, which Cancel frees again. A room, hall or table hotspot in the tour
  * (`space` + `hotspot`), or the website's hall (`hall`) or room type (`room`).
  */
 reservationsRouter.post('/:id/reservations/mark', requireEditorSession, wrap(async (req, res) => {
@@ -579,13 +579,20 @@ reservationsRouter.post('/:id/reservations/mark', requireEditorSession, wrap(asy
   const nightsOk = DATE.test(String(b.checkin ?? '')) && DATE.test(String(b.checkout ?? '')) && nightsOf(b.checkin, b.checkout).length >= 1 && nightsOf(b.checkin, b.checkout).length <= 366;
   if (b.space && b.hotspot) {
     const snap = await getPublishedScene(String(b.space)).catch(() => null);
-    const hs = snap && snap.propertyId === p.id ? (snap.hotspots ?? []).find((h) => h.id === b.hotspot && (h.type === 'room' || h.type === 'hall')) : null;
-    if (!hs) return res.status(404).json({ error: 'Pick one of the published rooms or halls.' });
+    const hs = snap && snap.propertyId === p.id ? (snap.hotspots ?? []).find((h) => h.id === b.hotspot && BOOKABLE.includes(h.type)) : null;
+    if (!hs) return res.status(404).json({ error: 'Pick one of the published rooms, halls or tables.' });
     const at = { kind: 'request', of: hs.type, item: words(hs.label, 80) || hs.type, space: snap.id, spaceTitle: words(snap.title, 80), hotspot: hs.id, party: 0, time: '' };
     if (hs.type === 'room') {
       if (!nightsOk) return res.status(400).json({ error: 'Pick the first night and the day it frees up.' });
       made = (list) => (nightsOf(b.checkin, b.checkout).some((n) => roomHotspotBooked(list, snap.id, hs.id).has(n)) ? null
         : { ...at, date: b.checkin, checkin: b.checkin, checkout: b.checkout, nights: nightsOf(b.checkin, b.checkout).length });
+    } else if (hs.type === 'table') {
+      // a sitting on the table-booking hours, checked as a guest's request is
+      const hours = cleanSite(published, p.id).booking;
+      if (!DATE.test(String(b.date ?? '')) || !slotsFor(hours, b.date, nowIn(hours.timezone)).includes(b.time)) {
+        return res.status(400).json({ error: 'Pick the day and one of the times.' });
+      }
+      made = (list) => (tableFree(heldTables(list, snap.id), hours, hs.id, b.date, b.time) ? { ...at, date: b.date, time: b.time } : null);
     } else {
       if (!DATE.test(String(b.date ?? '')) || !SESSIONS.includes(b.session)) return res.status(400).json({ error: 'Pick the day and the part of it.' });
       made = (list) => (hallHotspotFree(list, snap.id, hs.id, b.date, b.session) ? { ...at, date: b.date, session: b.session, occasion: 'Booked' } : null);
@@ -603,7 +610,7 @@ reservationsRouter.post('/:id/reservations/mark', requireEditorSession, wrap(asy
     made = (list) => (roomsFree(list, room, b.checkin, b.checkout) >= 1
       ? { kind: 'stay', room: room.id, roomLabel: room.label, rooms: 1, date: b.checkin, checkin: b.checkin, checkout: b.checkout, nights: nightsOf(b.checkin, b.checkout).length, time: '', party: 0 } : null);
   } else {
-    return res.status(400).json({ error: 'Pick a room or a hall.' });
+    return res.status(400).json({ error: 'Pick a room, hall or table.' });
   }
   const r = await withReservations(p.id, (list) => {
     const fields = made(list);
