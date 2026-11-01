@@ -474,7 +474,8 @@ export default function SiteEditorPage({ params }: { params: Promise<{ property:
             Take room bookings on the website
           </label>
           <RoomsEditor project={id} stays={doc.stays} spaces={published} onError={setError} onChange={(stays) => change({ stays })} />
-          <SitePlan project={id} stays={doc.stays} spaces={spaces} onError={setError} onChange={(stays) => change({ stays })} />
+          <PinPlan project={id} plan={doc.stays.plan} items={doc.stays.rooms} noun="room" spaces={spaces} onError={setError}
+            onPlan={(plan) => change({ stays: { ...doc.stays, plan } })} onItems={(rooms) => change({ stays: { ...doc.stays, rooms } })} />
           <StayRules stays={doc.stays} onChange={(stays) => change({ stays })} />
           <Text label="A note under the booking form" value={doc.stays.note} max={300} placeholder="Breakfast included. Children under 6 stay free."
             onChange={(note) => change({ stays: { ...doc.stays, note } })} />
@@ -489,6 +490,8 @@ export default function SiteEditorPage({ params }: { params: Promise<{ property:
             Take event bookings on the website and in the tour
           </label>
           <HallsEditor project={id} events={doc.events} spaces={published} onError={setError} onChange={(events) => change({ events })} />
+          <PinPlan project={id} plan={doc.events.plan ?? ''} items={doc.events.halls} noun="hall" spaces={spaces} onError={setError}
+            onPlan={(plan) => change({ events: { ...doc.events, plan } })} onItems={(halls) => change({ events: { ...doc.events, halls } })} />
           <Text label="Kinds of event you host, separated by commas" value={doc.events.kinds.join(', ')} max={400}
             placeholder="Wedding, Reception, Birthday, Conference, Meeting, Other"
             onChange={(v) => change({ events: { ...doc.events, kinds: v.split(',').map((k) => k.trim()) } })} />
@@ -875,8 +878,12 @@ function HallsEditor({ project, events, spaces, onChange, onError }: {
 }
 
 /** An optional site plan (a resort layout, or a floor's plan) with the rooms placed on it, to pick them by sight. */
-function SitePlan({ project, stays, spaces, onChange, onError }: {
-  project: string; stays: SiteStays; spaces: SiteSpace[]; onChange: (s: SiteStays) => void; onError: (m: string) => void;
+/** What a plan can carry (2026-11-01, rooms and halls): an id, a label, and where it sits. */
+type Pinned = { id: string; label: string; pin?: boolean; x?: number; y?: number };
+
+function PinPlan<T extends Pinned>({ project, plan, items, noun, spaces, onPlan, onItems, onError }: {
+  project: string; plan: string; items: T[]; noun: string; spaces: SiteSpace[];
+  onPlan: (plan: string) => void; onItems: (items: T[]) => void; onError: (m: string) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [sel, setSel] = useState('');
@@ -886,43 +893,43 @@ function SitePlan({ project, stays, spaces, onChange, onError }: {
     const f = (v: number) => Math.min(1, Math.max(0, Math.round(v * 10000) / 10000));
     return { x: f((e.clientX - r.left) / r.width), y: f((e.clientY - r.top) / r.height) };
   };
-  const edit = (rid: string, patch: Partial<StayRoom>) => onChange({ ...stays, rooms: stays.rooms.map((r) => (r.id === rid ? { ...r, ...patch } : r)) });
-  const current = stays.rooms.find((r) => r.id === sel);
+  const edit = (rid: string, patch: Partial<Pinned>) => onItems(items.map((r) => (r.id === rid ? { ...r, ...patch } : r)));
+  const current = items.find((r) => r.id === sel);
 
-  if (!stays.plan) {
+  if (!plan) {
     return (
       <div className="se-field">
-        <span>A site plan, optional: your resort’s layout or a floor plan, so guests can pick a room on it (PNG, JPEG or WebP)</span>
-        <Photo project={project} value="" label="Upload a site plan…" onChange={(plan) => onChange({ ...stays, plan })} onError={onError} />
-        <PlanPick spaces={spaces} value="" onPick={(plan) => onChange({ ...stays, plan })} />
+        <span>A site plan, optional: your resort’s layout or a floor plan, so guests can pick a {noun} on it (PNG, JPEG or WebP)</span>
+        <Photo project={project} value="" label="Upload a site plan…" onChange={onPlan} onError={onError} />
+        <PlanPick spaces={spaces} value="" onPick={onPlan} />
       </div>
     );
   }
   return (
     <div className="se-field">
-      <span>Pick a room, then click the plan to put it there; drag a marker to move it. {stays.rooms.filter((r) => r.pin).length} of {stays.rooms.length} on the plan.</span>
+      <span>Pick a {noun}, then click the plan to put it there; drag a marker to move it. {items.filter((r) => r.pin).length} of {items.length} on the plan.</span>
       <div className="se-row">
         <label className="se-field">
-          <span>Room to place</span>
+          <span>{noun[0].toUpperCase() + noun.slice(1)} to place</span>
           <select value={sel} onChange={(e) => setSel(e.target.value)}>
-            <option value="">Choose a room…</option>
-            {stays.rooms.map((r) => <option key={r.id} value={r.id}>{r.label || 'Untitled room'}{r.pin ? ' · on the plan' : ''}</option>)}
+            <option value="">Choose a {noun}…</option>
+            {items.map((r) => <option key={r.id} value={r.id}>{r.label || `Untitled ${noun}`}{r.pin ? ' · on the plan' : ''}</option>)}
           </select>
         </label>
       </div>
       <div className="se-plan" ref={box}
         onPointerDown={(e) => {
           if (e.target !== e.currentTarget && !(e.target as HTMLElement).matches('img')) return;
-          if (!current) return onError('Choose the room to place first.');
+          if (!current) return onError(`Choose the ${noun} to place first.`);
           edit(current.id, { pin: true, ...at(e) });
         }}
         onPointerMove={(e) => { if (drag.current) edit(drag.current, at(e)); }}
         onPointerUp={() => { drag.current = null; }}>
         {/* eslint-disable-next-line @next/next/no-img-element -- the uploaded plan */}
-        <img src={asset(stays.plan)} alt="" draggable={false} />
-        {stays.rooms.filter((r) => r.pin).map((r) => (
+        <img src={asset(plan)} alt="" draggable={false} />
+        {items.filter((r) => r.pin).map((r) => (
           <button key={r.id} type="button" className={`se-table se-pin${r.id === sel ? ' is-on' : ''}`}
-            style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%` }} title={r.label}
+            style={{ left: `${(r.x ?? 0.5) * 100}%`, top: `${(r.y ?? 0.5) * 100}%` }} title={r.label}
             onPointerDown={(e) => {
               e.stopPropagation();
               try { e.currentTarget.parentElement?.setPointerCapture(e.pointerId); } catch { /* no pointer to follow: still selects */ }
@@ -935,10 +942,10 @@ function SitePlan({ project, stays, spaces, onChange, onError }: {
       </div>
       <div className="se-row">
         {current?.pin && <button className="se-remove" onClick={() => edit(current.id, { pin: false })}>Take {current.label || 'it'} off the plan</button>}
-        <Photo project={project} value="" label="Replace the site plan…" onChange={(plan) => onChange({ ...stays, plan })} onError={onError} />
-        <button className="se-remove" onClick={() => onChange({ ...stays, plan: '' })}>Remove the site plan</button>
+        <Photo project={project} value="" label="Replace the site plan…" onChange={onPlan} onError={onError} />
+        <button className="se-remove" onClick={() => onPlan('')}>Remove the site plan</button>
       </div>
-      <PlanPick spaces={spaces} value={stays.plan} onPick={(plan) => onChange({ ...stays, plan })} />
+      <PlanPick spaces={spaces} value={plan} onPick={onPlan} />
     </div>
   );
 }

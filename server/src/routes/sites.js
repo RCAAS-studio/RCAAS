@@ -122,7 +122,7 @@ export function cleanSite(d, pid) {
     contact: { title: s(d.contact?.title, 120), body: s(d.contact?.body, 400) },
     booking: cleanBooking(d.booking, { s, img, id, plan }),
     stays: cleanStays(d.stays, { s, img, id, plan }),
-    events: cleanEvents(d.events, { s, img, id })
+    events: cleanEvents(d.events, { s, img, id, plan })
   };
 }
 
@@ -196,19 +196,22 @@ export const liveStays = (site) => {
 
 /** Event bookings (events.js): the venue's halls, the kinds of event it
  *  hosts, how far ahead it books. A hall seats, stands, or both. */
-function cleanEvents(b, { s, img, id }) {
+function cleanEvents(b, { s, img, id, plan }) {
   b = b && typeof b === 'object' ? b : {};
   const int = (v, lo, hi, dflt) => { const n = Math.round(Number(v)); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : dflt; };
+  const frac = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.min(1, Math.max(0, Math.round(n * 10000) / 10000)) : 0.5; };
   const seen = new Set();
   const halls = (Array.isArray(b.halls) ? b.halls : []).slice(0, 20).map((h) => ({
     id: typeof h?.id === 'string' && /^[a-z0-9-]{1,24}$/i.test(h.id) ? h.id : '',
     label: s(h?.label, 60), seated: int(h?.seated, 0, 5000, 0), standing: int(h?.standing, 0, 10000, 0),
     area: s(h?.area, 40), price: s(h?.price, 40), deposit: s(h?.deposit, 60),
-    features: s(h?.features, 200), image: img(h?.image), space: id(h?.space), view: id(h?.view)
+    features: s(h?.features, 200), image: img(h?.image), space: id(h?.space), view: id(h?.view),
+    // on the venue's plan (2026-11-01), as rooms are: `pin` at x, y (fractions of the picture)
+    pin: h?.pin === true, x: frac(h?.x), y: frac(h?.y)
   })).filter((h) => h.id && h.label && !seen.has(h.id) && seen.add(h.id));
   const kinds = [...new Set((Array.isArray(b.kinds) ? b.kinds : []).map((k) => s(k, 40)).filter(Boolean))].slice(0, 12);
   return {
-    on: b.on === true, halls, kinds: kinds.length ? kinds : EVENT_KINDS, days: int(b.days, 7, 730, 365),
+    on: b.on === true, plan: plan(b.plan), halls, kinds: kinds.length ? kinds : EVENT_KINDS, days: int(b.days, 7, 730, 365),
     timezone: typeof b.timezone === 'string' && validTimezone(b.timezone) ? b.timezone : 'Asia/Kathmandu',
     note: s(b.note, 300)
   };

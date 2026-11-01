@@ -6,9 +6,7 @@ export const kabirajRokaya: TeamMember = {
   name: 'Kabiraj Rokaya',
   discipline: 'Leadership',
   role: 'Managing Director',
-  bio: null,
-  bioPending: '2–3 sentences: background, experience, what he leads at RCAAS',
+  bio: 'Kabiraj is the Managing Director of RCAAS.tech.',
   linkedin: 'https://www.linkedin.com/in/kabiraj-rokaya-14310a163',
-  photo: '/images/team/kabiraj-rokaya.svg',
-  photoIsPlaceholder: true,
+  photo: '/images/team/kabiraj-rokaya.jpg',
 };

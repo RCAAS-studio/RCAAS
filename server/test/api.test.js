@@ -2224,6 +2224,10 @@ test('a taken hall has a waitlist, on the website and in the tour, and the waiti
   // the tour's hall hotspot: the same
   const asked = await api('POST', `/api/sites/${pid}/requests`, { ...guest(), space: 'wh-room', hotspot: 'wh-hall', date: day(20), session: 'full', guests: 100, occasion: 'Wedding' });
   assert.equal(asked.status, 201);
+  // the card's calendar: the parts of each day held, a year ahead
+  const cal = (await api('GET', `/api/sites/${pid}/requests/halls/calendar?space=wh-room&hotspot=wh-hall`)).json;
+  assert.deepEqual([cal.first, cal.taken], [day(1), { [day(20)]: ['full'] }]);
+  assert.equal((await api('GET', `/api/sites/${pid}/requests/halls/calendar?space=wh-room`)).status, 400);
   assert.equal((await wait({ space: 'wh-room', hotspot: 'wh-hall', session: 'day' })).status, 201);
   assert.equal((await wait({ space: 'wh-room', hotspot: 'not-a-hall' })).status, 404);
   assert.equal((await wait({ space: 'wh-room', hotspot: 'wh-hall', date: day(0) })).status, 400, 'from tomorrow');

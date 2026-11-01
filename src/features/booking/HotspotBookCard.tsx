@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getHereHall, getHereRoom, getHereTables, requestHere, safeUrl, sendBookingPlan, PLAN_FILES, type Availability, type EventSession } from '../../lib/api';
+import { getHereHall, getHereHallCalendar, getHereRoom, getHereTables, requestHere, safeUrl, sendBookingPlan, PLAN_FILES, type Availability, type EventSession } from '../../lib/api';
 import { bookingHref, nightsBetween, venueDay } from './booking';
 import { countIntent } from '../../lib/stats';
 import { useT } from '../../lib/i18n';
 import { contactProblem } from '../../lib/contactRules';
 import { WaitlistForm } from './WaitlistForm';
+import { HallCalendar } from './HallCalendar';
 import type { Hotspot } from '../../@types/hotspot.types';
 
 const Cal = () => (
@@ -98,6 +99,14 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
       .catch(() => { if (live) setHallTaken([]); });
     return () => { live = false; };
   }, [booksHall, project, space, hs.id, ask.date, fresh]);
+  // the hall's year at a glance, for the calendar (2026-11-01); the plain date field if it can't load
+  const [hallCal, setHallCal] = useState<{ first: string; last: string; taken: Record<string, EventSession[]> } | null>(null);
+  useEffect(() => {
+    if (!booksHall) return;
+    let live = true;
+    getHereHallCalendar(project, space, hs.id).then((c) => { if (live) setHallCal(c); }).catch(() => { if (live) setHallCal(null); });
+    return () => { live = false; };
+  }, [booksHall, project, space, hs.id, fresh]);
 
   // A room: the nights of the stay already booked (marked by the team, confirmed, or taken in the
   // hotel's own engine) are named, and the request can't be sent; a draft's room has none to say.
@@ -221,6 +230,10 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
                   </span>
                 </label>
               )}
+              {booksHall && hallCal ? (
+                <HallCalendar first={hallCal.first} last={hallCal.last} value={ask.date} heldOn={(d) => hallCal.taken[d] ?? []}
+                  onChange={(d) => set({ date: d })} />
+              ) : (
               <label className="vw-sheet-field">
                 <Cal />
                 <span className="vw-sheet-field-txt">
@@ -234,6 +247,7 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
                   )}
                 </span>
               </label>
+              )}
               {kind === 'room' && (
                 <label className="vw-sheet-field">
                   <Cal />

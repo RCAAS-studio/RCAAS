@@ -6,6 +6,7 @@ import {
   API_BASE_URL, getEventCalendar, requestEvent, sendBookingPlan, PLAN_FILES, type EventCalendar, type EventHall, type EventSession, type SiteEvents
 } from '../../lib/api';
 import { WaitlistForm } from './WaitlistForm';
+import { HallCalendar } from './HallCalendar';
 import './table-booking.css';
 
 const asset = (p: string) => `${API_BASE_URL}/api/assets/${p}`;
@@ -56,6 +57,9 @@ export function EventBooking({ project, events, preview = false, initialHall = '
   useEffect(load, [load]);
 
   const chosen = events.halls.find((h) => h.id === hall) ?? null;
+  // the venue's floor plan with its halls on it (2026-11-01), beside the list, as the rooms' site plan is
+  const [side, setSide] = useState<'halls' | 'plan'>('halls');
+  const pinned = events.plan ? events.halls.filter((h) => h.pin) : [];
   const held = (hallId: string) => (date ? cal?.taken[hallId]?.[date] ?? [] : []);
   const free = (hallId: string, s: EventSession) => !held(hallId).some((x) => clash(x, s));
   const most = chosen ? Math.max(chosen.seated, chosen.standing) : 0;
@@ -123,10 +127,18 @@ export function EventBooking({ project, events, preview = false, initialHall = '
             </div>
 
             <Step n={2} done={!!date && !!session} title="Day" />
-            <label className="eb-field">
-              <span className="tb-dim">The day of your event</span>
-              <input type="date" value={date} min={cal?.first} max={cal?.last} onChange={(e) => { setDate(e.target.value); setError(''); }} />
-            </label>
+            {cal ? (
+              <div className="eb-field">
+                <span className="tb-dim">The day of your event</span>
+                <HallCalendar first={cal.first} last={cal.last} value={date} disabled={!!done}
+                  heldOn={(d) => (chosen ? cal.taken[chosen.id]?.[d] ?? [] : [])} onChange={(d) => { setDate(d); setError(''); }} />
+              </div>
+            ) : (
+              <label className="eb-field">
+                <span className="tb-dim">The day of your event</span>
+                <input type="date" value={date} onChange={(e) => { setDate(e.target.value); setError(''); }} />
+              </label>
+            )}
             <div className="eb-sessions" role="group" aria-label="Part of the day">
               {SESSIONS.map(([k, label]) => {
                 const open = !chosen || !date || free(chosen.id, k);
@@ -186,6 +198,39 @@ export function EventBooking({ project, events, preview = false, initialHall = '
       )}
 
       <div className="rb-side">
+        {pinned.length > 0 && (
+          <div className="rb-tabs" role="tablist">
+            <button type="button" role="tab" aria-selected={side === 'halls'} className={side === 'halls' ? 'is-on' : ''} onClick={() => setSide('halls')}>Halls</button>
+            <button type="button" role="tab" aria-selected={side === 'plan'} className={side === 'plan' ? 'is-on' : ''} onClick={() => setSide('plan')}>Floor plan</button>
+          </div>
+        )}
+        {pinned.length > 0 && side === 'plan' ? (
+          <div className="tb-map rb-map">
+            <div className="tb-view">
+              <div className="tb-zoom">
+                {/* eslint-disable-next-line @next/next/no-img-element -- the venue's own plan */}
+                <img src={asset(events.plan!)} alt="Floor plan" />
+                {pinned.map((h) => {
+                  const takenAll = !!date && !SESSIONS.some(([k]) => free(h.id, k));
+                  const st = takenAll ? 'taken' : 'free';
+                  return (
+                    <button key={h.id} type="button" className={`rb-pin is-${st}${hall === h.id ? ' is-on' : ''}`}
+                      style={{ left: `${(h.x ?? 0.5) * 100}%`, top: `${(h.y ?? 0.5) * 100}%` }} disabled={!!done}
+                      aria-pressed={hall === h.id} aria-label={`${h.label}: ${takenAll ? `taken on ${day(date)}` : holds(h)}`}
+                      onClick={() => { setHall(h.id); setError(''); }}>
+                      <i aria-hidden /><span>{h.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <ul className="tb-legend" aria-hidden>
+              <li><i className="is-free" />Free</li>
+              <li><i className="is-on" />Yours</li>
+              <li><i className="is-taken" />Taken that day</li>
+            </ul>
+          </div>
+        ) : (
         <div className="rb-rooms">
           {events.halls.map((h) => {
             const on = hall === h.id;
@@ -215,6 +260,7 @@ export function EventBooking({ project, events, preview = false, initialHall = '
             );
           })}
         </div>
+        )}
       </div>
     </div>
   );

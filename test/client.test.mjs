@@ -482,3 +482,12 @@ test('a hotspot reads in the visitor’s language where the studio translated it
   assert.equal(localized({ ...h, i18n: undefined }, 'zh').label, 'Spa', 'an older hotspot with no translations');
   assert.equal(localized(h, 'zh').payload.caption, undefined, 'never adds a field the hotspot does not have');
 });
+
+test('a hall calendar day: free, half taken by either half, taken by both halves or the whole day', async () => {
+  const { hallDayState } = await import('../src/features/booking/booking.ts');
+  assert.equal(hallDayState([]), 'free');
+  assert.equal(hallDayState(['day']), 'part');
+  assert.equal(hallDayState(['evening']), 'part');
+  assert.equal(hallDayState(['day', 'evening']), 'full');
+  assert.equal(hallDayState(['full']), 'full');
+});

@@ -6,9 +6,7 @@ export const sumanBaral: TeamMember = {
   name: 'Suman Baral',
   discipline: 'Advisory',
   role: 'Chief Adviser',
-  bio: null,
-  bioPending: '2–3 sentences: background, experience, how he advises RCAAS',
+  bio: 'Suman is the Chief Adviser to RCAAS.tech.',
   linkedin: 'https://www.linkedin.com/in/sumanbaral',
-  photo: '/images/team/suman-baral.svg',
-  photoIsPlaceholder: true,
+  photo: '/images/team/suman-baral.jpg',
 };

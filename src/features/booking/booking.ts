@@ -116,3 +116,12 @@ export function bookableTable(places: Place[] | undefined, outlet: string | unde
   const place = places.find((b) => (b.outlet ?? '') === (outlet ?? ''));
   return place?.tables.some((t) => t.id === tableId) ? { outlet: place.outlet ?? '', tableId } : null;
 }
+
+type Session = 'day' | 'evening' | 'full';
+/** What a hall's day holds (2026-11-01, HallCalendar), from the parts of it booked: 'free', 'part'
+ *  (the daytime or the evening) or 'full'. The whole day clashes with either half. */
+export function hallDayState(held: Session[]): 'free' | 'part' | 'full' {
+  const clash = (a: Session, b: Session) => a === 'full' || b === 'full' || a === b;
+  const day = held.some((h) => clash(h, 'day')), evening = held.some((h) => clash(h, 'evening'));
+  return day && evening ? 'full' : day || evening ? 'part' : 'free';
+}

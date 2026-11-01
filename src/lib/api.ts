@@ -291,6 +291,9 @@ export const getHereTables = (id: string, space: string, date?: string) =>
 /** Which parts of a day a hall hotspot is already asked for, so its Book now can strike them out. */
 export const getHereHall = (id: string, space: string, hotspot: string, date: string) =>
   request<{ date: string; taken: EventSession[] }>(`${sitePath(id)}/requests/halls?${new URLSearchParams({ space, hotspot, date })}`);
+/** A hall hotspot's year ahead (2026-11-01): the parts of each day held, for its card's calendar. */
+export const getHereHallCalendar = (id: string, space: string, hotspot: string) =>
+  request<{ first: string; last: string; taken: Record<string, EventSession[]> }>(`${sitePath(id)}/requests/halls/calendar?${new URLSearchParams({ space, hotspot })}`);
 export interface TableRequest {
   table: string; date: string; time: string; party: number; name: string; phone: string; email?: string; notes?: string;
   website?: string; formRenderedAt: number; outlet?: string;
@@ -314,9 +317,11 @@ export interface EventHall {
   id: string; label: string; seated: number; standing: number; area: string; features: string; image: string; space: string; view: string;
   /** In words: "Rs 1,500 per plate", and what holds the date ("Rs 20,000 deposit"). */
   price?: string; deposit?: string;
+  /** On the venue's plan (2026-11-01): `pin` at x, y, fractions of the picture. */
+  pin?: boolean; x?: number; y?: number;
 }
 /** Event booking: the halls, the kinds of event the venue hosts, how far ahead it books. */
-export interface SiteEvents { on: boolean; halls: EventHall[]; kinds: string[]; days: number; timezone: string; note: string }
+export interface SiteEvents { on: boolean; halls: EventHall[]; kinds: string[]; days: number; timezone: string; note: string; /** The venue's plan with its halls on it (2026-11-01), optional. */ plan?: string }
 export type EventSession = 'day' | 'evening' | 'full';
 /** What's taken: hall → date → the sessions held. The first and last day a guest may pick. */
 export interface EventCalendar { today: string; first: string; last: string; taken: Record<string, Record<string, EventSession[]>> }

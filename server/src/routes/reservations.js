@@ -19,6 +19,7 @@
  *   POST  /api/sites/:id/requests                       public: Book now on a room, hall or table hotspot in the tour:
  *                                                        { space, hotspot, guests, date, checkout? | session?, occasion? | time?, name, phone, email?, notes? }
  *   GET   /api/sites/:id/requests/tables?space=&date=   public: when each table hotspot in a space is free that day
+ *   GET   /api/sites/:id/requests/halls/calendar?space=&hotspot=   public: the parts of each day a hall hotspot is held, a year ahead
  *   POST  /api/sites/:id/waitlist                       public: { of: 'table', date, time?, party } or
  *                                                        { of: 'room', checkin, checkout, room?, party } or { of: 'hall', date, session,
  *                                                        hall? | space + hotspot, party }, and name, phone, email?
@@ -41,7 +42,7 @@ import { readSite, liveBooking, liveStays, publicStays, liveEvents, publicEvents
 import { sendMail, teamRecipients, venueMail } from '../mailer.js';
 import { record } from '../activity.js';
 import {
-  LIVE, STATUSES, atOutlet, availability, bestTable, bookableDates, readReservations, newReservation, nowIn, slotsFor, tableFree, withReservations
+  LIVE, STATUSES, addDays, atOutlet, availability, bestTable, bookableDates, readReservations, newReservation, nowIn, slotsFor, tableFree, withReservations
 } from '../reservations.js';
 import { hotspotRooms, nightsOf, roomHotspotBooked, roomsFree, roomsNeeded, stayCalendar, stayProblem } from '../stays.js';
 import { SESSIONS, SESSION_LABEL, eventCalendar, eventProblem, hallFree, hallHotspotFree } from '../events.js';
@@ -377,6 +378,26 @@ reservationsRouter.get('/:id/requests/halls', wrap(async (req, res) => {
   }
   const list = await readReservations(p.id);
   res.json({ date, taken: SESSIONS.filter((s) => !hallHotspotFree(list, space, hotspot, date, s)) });
+}));
+
+// A hall hotspot's next year at a glance (2026-11-01), for its card's calendar: the parts of each day
+// held (as the website's event calendar gives them), nothing personal.
+reservationsRouter.get('/:id/requests/halls/calendar', wrap(async (req, res) => {
+  const p = await getProperty(req.params.id);
+  const { space, hotspot } = req.query;
+  if (!p || typeof space !== 'string' || !/^[a-z0-9-]+$/i.test(space) || typeof hotspot !== 'string') {
+    return res.status(400).json({ error: 'Which hall?' });
+  }
+  const today = nowIn(cleanSite((await readSite(p.id))?.published, p.id).booking.timezone).date;
+  const first = addDays(today, 1), last = addDays(today, 365);
+  const taken = {};
+  for (const r of await readReservations(p.id)) {
+    if (r.kind !== 'request' || r.of !== 'hall' || r.space !== space || r.hotspot !== hotspot || !LIVE.includes(r.status)) continue;
+    if (r.date < first || r.date > last) continue;
+    const day = (taken[r.date] ??= []);
+    if (!day.includes(r.session)) day.push(r.session);
+  }
+  res.json({ first, last, taken });
 }));
 /** A project's published room hotspot, or null. */
 async function roomHotspot(p, space, hotspot) {

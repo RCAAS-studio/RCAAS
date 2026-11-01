@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { SiteFx } from './components/SiteFx';
 import { RoutePath } from './types';
@@ -13,44 +14,55 @@ import { PlaceholderRegisterModal } from './components/PlaceholderRegisterModal'
 import { CaptureLidarCursor } from './components/CaptureLidarCursor';
 
 // Pages
-import { HomePage } from './pages/HomePage';
-import { ServicesPage } from './pages/ServicesPage';
 import { GameWorldsPage, GAME_WORLDS, GAME_WORLDS_FAQS } from './pages/GameWorldsPage';
-import { ImmersiveExperiencesPage } from './pages/ImmersiveExperiencesPage';
-import { VirtualToursPage } from './pages/VirtualToursPage';
-import { VisualStorytellingPage } from './pages/VisualStorytellingPage';
-import { DigitalTwinsPage } from './pages/DigitalTwinsPage';
-import { LaserScanningPage } from './pages/LaserScanningPage';
-import { DroneMappingPage } from './pages/DroneMappingPage';
-import { IndustriesPage } from './pages/IndustriesPage';
-import { WorkPage } from './pages/WorkPage';
-import { PlatformPage } from './pages/PlatformPage';
-import { HowWeWorkPage } from './pages/HowWeWorkPage';
-import { LearnPage } from './pages/LearnPage';
 import { PUBLISHED_GUIDES } from './data/guides';
 import { TEAM_MEMBERS, isMemberPublished, personId } from './content/team';
 import { FAQ_UPDATED, RESOLVED_FAQS } from './content/faq';
 import { COMPARISON_FAQS } from './pages/ComparisonGuidePage';
 import { GAUSSIAN_FAQS } from './pages/GaussianGuidePage';
-import { AboutPage } from './pages/AboutPage';
-import { FaqPage } from './pages/FaqPage';
-import { ContactPage } from './pages/ContactPage';
-import { ThankYouPage } from './pages/ThankYouPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { TermsPage } from './pages/TermsPage';
-import { BlogHubPage } from './pages/BlogHubPage';
-import { BlogPostPage } from './pages/BlogPostPage';
 import { BLOG_LAUNCHED, PUBLISHED_POSTS, postPath } from './content/blog';
 import { findIndustryContent, isResolvedAnswer } from './content/industries';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { GalleryPage } from './pages/GalleryPage';
-import { CookiesPage, SecurityPage } from './pages/PolicyPages';
 import { pageMeta, resolveBlogRoute, isCaseStudy } from './meta';
 import { withBase, withoutBase } from '../../lib/basePath';
+
+// Each page is its own chunk (2026-11-01): a visit downloads the page it opens (rendered on the server as
+// before), and the rest load in the background once the page is idle (PAGE_FILES, App), so moving
+// between pages stays instant. Page files App also reads data from stay plain imports.
+const HomePage = dynamic(() => import('./pages/HomePage').then((m) => m.HomePage));
+const ServicesPage = dynamic(() => import('./pages/ServicesPage').then((m) => m.ServicesPage));
+const ImmersiveExperiencesPage = dynamic(() => import('./pages/ImmersiveExperiencesPage').then((m) => m.ImmersiveExperiencesPage));
+const VirtualToursPage = dynamic(() => import('./pages/VirtualToursPage').then((m) => m.VirtualToursPage));
+const VisualStorytellingPage = dynamic(() => import('./pages/VisualStorytellingPage').then((m) => m.VisualStorytellingPage));
+const DigitalTwinsPage = dynamic(() => import('./pages/DigitalTwinsPage').then((m) => m.DigitalTwinsPage));
+const LaserScanningPage = dynamic(() => import('./pages/LaserScanningPage').then((m) => m.LaserScanningPage));
+const DroneMappingPage = dynamic(() => import('./pages/DroneMappingPage').then((m) => m.DroneMappingPage));
+const IndustriesPage = dynamic(() => import('./pages/IndustriesPage').then((m) => m.IndustriesPage));
+const WorkPage = dynamic(() => import('./pages/WorkPage').then((m) => m.WorkPage));
+const PlatformPage = dynamic(() => import('./pages/PlatformPage').then((m) => m.PlatformPage));
+const HowWeWorkPage = dynamic(() => import('./pages/HowWeWorkPage').then((m) => m.HowWeWorkPage));
+const LearnPage = dynamic(() => import('./pages/LearnPage').then((m) => m.LearnPage));
+const AboutPage = dynamic(() => import('./pages/AboutPage').then((m) => m.AboutPage));
+const FaqPage = dynamic(() => import('./pages/FaqPage').then((m) => m.FaqPage));
+const ContactPage = dynamic(() => import('./pages/ContactPage').then((m) => m.ContactPage));
+const ThankYouPage = dynamic(() => import('./pages/ThankYouPage').then((m) => m.ThankYouPage));
+const PrivacyPage = dynamic(() => import('./pages/PrivacyPage').then((m) => m.PrivacyPage));
+const TermsPage = dynamic(() => import('./pages/TermsPage').then((m) => m.TermsPage));
+const BlogHubPage = dynamic(() => import('./pages/BlogHubPage').then((m) => m.BlogHubPage));
+const BlogPostPage = dynamic(() => import('./pages/BlogPostPage').then((m) => m.BlogPostPage));
+const NotFoundPage = dynamic(() => import('./pages/NotFoundPage').then((m) => m.NotFoundPage));
+const GalleryPage = dynamic(() => import('./pages/GalleryPage').then((m) => m.GalleryPage));
+const CookiesPage = dynamic(() => import('./pages/PolicyPages').then((m) => m.CookiesPage));
+const SecurityPage = dynamic(() => import('./pages/PolicyPages').then((m) => m.SecurityPage));
+const PAGE_FILES = [() => import('./pages/HomePage'), () => import('./pages/ServicesPage'), () => import('./pages/ImmersiveExperiencesPage'), () => import('./pages/VirtualToursPage'), () => import('./pages/VisualStorytellingPage'), () => import('./pages/DigitalTwinsPage'), () => import('./pages/LaserScanningPage'), () => import('./pages/DroneMappingPage'), () => import('./pages/IndustriesPage'), () => import('./pages/WorkPage'), () => import('./pages/PlatformPage'), () => import('./pages/HowWeWorkPage'), () => import('./pages/LearnPage'), () => import('./pages/AboutPage'), () => import('./pages/FaqPage'), () => import('./pages/ContactPage'), () => import('./pages/ThankYouPage'), () => import('./pages/PrivacyPage'), () => import('./pages/TermsPage'), () => import('./pages/BlogHubPage'), () => import('./pages/BlogPostPage'), () => import('./pages/NotFoundPage'), () => import('./pages/GalleryPage'), () => import('./pages/PolicyPages')];
 
 const withSlash = (path: string) => (path.endsWith('/') ? path : `${path}/`) as RoutePath;
 
 export default function App() {
+  // the other pages' chunks, once this page is idle, so moving between pages stays instant (PAGE_FILES)
+  useEffect(() => {
+    const go = () => PAGE_FILES.forEach((load) => { load().catch(() => {}); });
+    if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 4000 }); else setTimeout(go, 2000);
+  }, []);
   // Next renders this on the server too, so the path comes from the router, not window.
   const pathname = usePathname() || '/';
   const [currentPath, setCurrentPath] = useState<RoutePath>(() => withSlash(pathname));
