@@ -426,7 +426,8 @@ reservationsRouter.get('/:id/requests/rooms', wrap(async (req, res) => {
   res.json(await roomBooked(p, space, hs, { checkin, checkout, guests: Number(req.query.guests) || 1 }));
 }));
 
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
+// a real day on the calendar: 2027-02-30 or month 13 has the shape but no day, and would break the day sums
+const DATE = { test: (d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(`${d}T12:00:00Z`)) && new Date(`${d}T12:00:00Z`).toISOString().startsWith(d) };
 // a hall hotspot holds what the studio typed, seated or standing, whichever is more; unset, any number
 const hallTooSmall = (hs, party) => {
   const most = Math.max(Number(hs.payload?.capacity) || 0, Number(hs.payload?.standing) || 0);

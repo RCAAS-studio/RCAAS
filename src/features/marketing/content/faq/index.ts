@@ -87,7 +87,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       {
         question: 'Do people need an app or special software?',
         answer:
-          'No. Our 3D experiences open from a link in any modern browser on a phone, tablet or computer. A VR headset is only needed for the VR version.',
+          'No. Our 3D experiences open from a link in any modern browser on a phone, tablet or computer.',
         onHome: true,
       },
       {
@@ -97,7 +97,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         question: 'Can people experience it in VR or AR?',
-        answer: 'VR: yes, with a headset such as [[TBI: models]]. AR: [[TBC: what you offer, or remove]].',
+        answer: 'Not yet. The tour runs in any web browser, on phones, tablets and computers, with nothing to install. Headset (VR) and AR viewing are not offered yet.',
       },
       {
         question: 'Can the experience go on our own website?',

@@ -375,7 +375,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
               Still have a question?
             </h2>
             <p className="text-sm sm:text-base text-zinc-600 mb-8 leading-relaxed">
-              Ask us. We usually reply within <Placeholder>[[TBI: response time]]</Placeholder>.
+              Ask us. We usually reply within {SITE_METADATA.responseTime ?? <Placeholder>[[TBI: response time]]</Placeholder>}.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button

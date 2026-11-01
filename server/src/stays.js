@@ -70,7 +70,8 @@ export function stayCalendar(list, cfg, today) {
 
 /** Why a stay can't be asked for, in words, or null. Availability is checked separately. */
 export function stayProblem(cfg, room, { checkin, checkout, guests }, today) {
-  const date = /^\d{4}-\d{2}-\d{2}$/;
+  // a real day on the calendar, not just its shape (2027-02-30)
+  const date = { test: (d) => /^\d{4}-\d{2}-\d{2}$/.test(d ?? '') && !Number.isNaN(Date.parse(`${d}T12:00:00Z`)) && new Date(`${d}T12:00:00Z`).toISOString().startsWith(d) };
   if (!date.test(checkin) || !date.test(checkout)) return 'Pick your check-in and check-out dates.';
   if (checkin < today) return 'Check-in can’t be in the past.';
   if (checkin > addDays(today, cfg.days)) return `We take bookings up to ${cfg.days} days ahead. Call us for later dates.`;

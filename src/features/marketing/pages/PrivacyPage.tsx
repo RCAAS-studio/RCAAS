@@ -45,7 +45,7 @@ const LAST_UPDATED: string | null = null;
 const confirmed = SITE_METADATA.contactConfirmed;
 const EMAIL = confirmed ? SITE_METADATA.email : '[[TBI: email]]';
 const PHONE = confirmed ? SITE_METADATA.phone : '[[TBI: phone]]';
-const ADDRESS = '[[TBI: address]]';
+const ADDRESS = confirmed ? SITE_METADATA.address : '[[TBI: address]]';
 
 const SECTIONS: LegalSectionMeta[] = [
   { id: 'who-we-are', title: 'Who we are', icon: Building2 },

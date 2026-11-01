@@ -44,6 +44,8 @@ export function eventCalendar(list, cfg, today) {
 /** Why an event can't be asked for, in words, or null. Whether the hall is free is checked separately. */
 export function eventProblem(cfg, hall, { date, session, guests, occasion }, today) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return 'Pick the day of your event.';
+  // a real day on the calendar, not just its shape (2027-02-30)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date ?? '') || Number.isNaN(Date.parse(`${date}T12:00:00Z`)) || !new Date(`${date}T12:00:00Z`).toISOString().startsWith(date)) return 'Pick a day.';
   if (date <= today) return 'Pick a day from tomorrow on. For today, please call us.';
   if (date > addDays(today, cfg.days)) return `We take event bookings up to ${cfg.days} days ahead. Call us for later dates.`;
   if (!SESSIONS.includes(session)) return 'Daytime, evening or the whole day?';

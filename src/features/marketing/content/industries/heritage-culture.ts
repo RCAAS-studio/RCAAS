@@ -63,7 +63,7 @@ export const heritageCulture: IndustryContent = {
     embedUrl: null,
     pending: '[[TBI: embed URL, full-screen URL, poster, file size]]',
     caption: 'Chilancho Stupa · documented in 3D to preserve its form, proportions and detail.',
-    description: 'An interactive 3D model of Chilancho Stupa in [[TBI: location]], created by RCAAS Technology.',
+    description: 'An interactive 3D model of Chilancho Stupa in Kirtipur, Kathmandu, created by RCAAS Technology.',
     place: { type: 'LandmarksOrHistoricalBuildings', name: 'Chilancho Stupa' },
   },
   record: {

@@ -36,7 +36,7 @@ export { TERMS_DRAFT };
 const LAST_UPDATED: string | null = null;
 
 const EMAIL = SITE_METADATA.contactConfirmed ? SITE_METADATA.email : '[[TBI: email]]';
-const ADDRESS = '[[TBI: address]]';
+const ADDRESS = SITE_METADATA.contactConfirmed ? SITE_METADATA.address : '[[TBI: address]]';
 const DOMAIN = '[[TBI: domain]]';
 
 const SECTIONS: LegalSectionMeta[] = [

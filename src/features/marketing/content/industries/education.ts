@@ -129,10 +129,10 @@ export const education: IndustryContent = {
         question: 'Can we add "Apply now" or course information inside the tour?',
         answer: '[[TBC: "Yes. We can add information points and buttons that link to your courses and admissions page."]]',
       },
-      { question: 'Can the tour include narration in Nepali and English?', answer: '[[TBC: languages offered]]' },
+      { question: 'Can the tour include narration in Nepali and English?', answer: 'Yes. The tour itself runs in English, Nepali and Chinese, and its guided views can carry narration with captions.' },
       {
         question: 'Can we update the tour when we open a new building or lab?',
-        answer: '[[TBC: "Yes. We capture the new space and add it to your existing tour."]]',
+        answer: 'Yes. We capture the new space and add it to your existing tour.',
       },
     ],
   },
