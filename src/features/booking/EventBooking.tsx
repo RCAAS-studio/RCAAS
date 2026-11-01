@@ -68,6 +68,9 @@ export function EventBooking({ project, events, preview = false, initialHall = '
   // a taken part of the day can be waited for (2026-11-01): the one half taken, or the whole day when both are
   const dayTaken = !!chosen && !!date && !free(chosen.id, 'day'), eveningTaken = !!chosen && !!date && !free(chosen.id, 'evening');
   const waitFor: EventSession | null = dayTaken && eveningTaken ? 'full' : dayTaken ? 'day' : eveningTaken ? 'evening' : null;
+  // a part of the day taken on a newly chosen day or hall is let go, so nothing taken stays chosen
+  const sessionTaken = !!session && !!chosen && !free(chosen.id, session);
+  useEffect(() => { if (sessionTaken) setSession(''); }, [sessionTaken]);
 
   const view = (h: EventHall) => {
     if (onView) return onView(h);

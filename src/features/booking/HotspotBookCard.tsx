@@ -95,7 +95,14 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
     if (!booksHall || !ask.date) return;
     let live = true;
     getHereHall(project, space, hs.id, ask.date)
-      .then((a) => { if (live) setHallTaken(a?.taken ?? []); })
+      .then((a) => {
+        if (!live) return;
+        const taken = a?.taken ?? [];
+        setHallTaken(taken);
+        // a part of the day taken on the new day gives way to the first free one, so nothing taken stays chosen
+        const open = SESSIONS.find(([k]) => !taken.includes(k));
+        if (open) setAsk((x) => (taken.includes(x.session) ? { ...x, session: open[0] } : x));
+      })
       .catch(() => { if (live) setHallTaken([]); });
     return () => { live = false; };
   }, [booksHall, project, space, hs.id, ask.date, fresh]);
@@ -290,7 +297,7 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
               )}
               {booksHall && waitFor && (
                 <WaitlistForm key={`${ask.date}-${waitFor}`} project={project} preview={preview}
-                  what={`${hs.label || 'the hall'} on ${ask.date} (${t(SESSIONS.find(([k]) => k === waitFor)![1]).toLowerCase()})`}
+                  what={`${hs.label || 'the hall'} on ${shortDate(ask.date)} (${t(SESSIONS.find(([k]) => k === waitFor)![1]).toLowerCase()})`}
                   request={{ of: 'hall', space, hotspot: hs.id, date: ask.date, session: waitFor, party: Math.max(1, Math.floor(Number(ask.guests)) || 1) }} />
               )}
               <label className="vw-sheet-field">

@@ -427,6 +427,11 @@ reservationsRouter.get('/:id/requests/rooms', wrap(async (req, res) => {
 }));
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
+// a hall hotspot holds what the studio typed, seated or standing, whichever is more; unset, any number
+const hallTooSmall = (hs, party) => {
+  const most = Math.max(Number(hs.payload?.capacity) || 0, Number(hs.payload?.standing) || 0);
+  return most && party > most ? `${words(hs.label, 80) || 'This hall'} holds up to ${most}. For more, please call us.` : '';
+};
 const HM = /^([01]\d|2[0-3]):[0-5]\d$/;
 const words = (v, n) => (typeof v === 'string' ? v.replace(/[<>]/g, '').trim().slice(0, n) : '');
 /** A booking request's when, in words: the nights, the part of the day, or the time. */
@@ -465,7 +470,8 @@ reservationsRouter.post('/:id/requests', wrap(async (req, res) => {
   } else if (hs.type === 'hall') {
     if (!DATE.test(date) || date <= now.date) return res.status(400).json({ error: 'Pick a day from tomorrow on. For today, please call us.' });
     if (!SESSIONS.includes(body.session)) return res.status(400).json({ error: 'Daytime, evening or the whole day?' });
-    when = { session: body.session, occasion: words(body.occasion, 40) || 'Event', time: '' };
+    if (hallTooSmall(hs, guests)) return res.status(400).json({ error: hallTooSmall(hs, guests) });
+    when ={ session: body.session, occasion: words(body.occasion, 40) || 'Event', time: '' };
   } else {
     const time = String(body.time ?? '');
     if (!DATE.test(date) || date < now.date) return res.status(400).json({ error: 'Pick the day.' });
@@ -535,6 +541,7 @@ reservationsRouter.post('/:id/waitlist', wrap(async (req, res) => {
       if (!DATE.test(date) || date <= today) return res.status(400).json({ error: 'Pick a day from tomorrow on. For today, please call us.' });
       if (!SESSIONS.includes(session)) return res.status(400).json({ error: 'Daytime, evening or the whole day?' });
       if (!Number.isInteger(party) || party < 1 || party > 5000) return res.status(400).json({ error: 'How many guests?' });
+      if (hallTooSmall(hs, party)) return res.status(400).json({ error: hallTooSmall(hs, party) });
       entry = { of: 'hall', space: snap.id, hotspot: hs.id, hallLabel: words(hs.label, 80) || 'The hall', date, session, time: '', party };
     } else {
       const b = await eventsOf(req.params.id);
