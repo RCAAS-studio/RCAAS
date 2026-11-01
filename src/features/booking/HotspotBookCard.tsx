@@ -6,6 +6,7 @@ import { bookingHref, nightsBetween, venueDay } from './booking';
 import { countIntent } from '../../lib/stats';
 import { useT } from '../../lib/i18n';
 import { contactProblem } from '../../lib/contactRules';
+import { WaitlistForm } from './WaitlistForm';
 import type { Hotspot } from '../../@types/hotspot.types';
 
 const Cal = () => (
@@ -86,6 +87,9 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
   // A hall: the parts of the chosen day already asked for are struck out (the server refuses them anyway).
   const booksHall = kind === 'hall' && !own;
   const [hallTaken, setHallTaken] = useState<EventSession[]>([]);
+  // a taken part of the day can be waited for (2026-11-01): the one half taken, or the whole day when both are
+  const waitFor: EventSession | null = hallTaken.includes('day') && hallTaken.includes('evening') ? 'full'
+    : hallTaken.includes('day') ? 'day' : hallTaken.includes('evening') ? 'evening' : null;
   useEffect(() => {
     if (!booksHall || !ask.date) return;
     let live = true;
@@ -269,6 +273,11 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
                     </select>
                   </span>
                 </label>
+              )}
+              {booksHall && waitFor && (
+                <WaitlistForm key={`${ask.date}-${waitFor}`} project={project} preview={preview}
+                  what={`${hs.label || 'the hall'} on ${ask.date} (${t(SESSIONS.find(([k]) => k === waitFor)![1]).toLowerCase()})`}
+                  request={{ of: 'hall', space, hotspot: hs.id, date: ask.date, session: waitFor, party: Math.max(1, Math.floor(Number(ask.guests)) || 1) }} />
               )}
               <label className="vw-sheet-field">
                 <People />

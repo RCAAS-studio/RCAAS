@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from 'next';
-import { JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { SITE_URL, OG_IMAGE } from '../lib/shareMeta';
 import { BASE_PATH, withBase } from '../lib/basePath';
 
 
-// The one typeface everywhere (2026-10-05, the owner's choice): JetBrains Mono, as --font-ui.
+// The site's typeface (2026-11-01, the owner's choice): Inter, as --font-inter, for the public
+// pages, sign-in and the studio. The tour keeps JetBrains Mono (--font-ui); client websites their own.
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 const ui = JetBrains_Mono({ subsets: ['latin'], weight: 'variable', variable: '--font-ui', display: 'swap' });
 
 export const metadata: Metadata = {
@@ -32,7 +34,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="light" suppressHydrationWarning className={ui.variable}>
+    <html lang="en" data-theme="light" suppressHydrationWarning className={`${inter.variable} ${ui.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

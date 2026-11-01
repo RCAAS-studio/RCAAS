@@ -43,15 +43,37 @@ const nextConfig: NextConfig = {
   // certificate). The studio and sign-in also never show inside
   // another site's frame (clickjacking); /tour is left framable on purpose,
   // since clients embed it on their own websites.
+  // A Content-Security-Policy on every page (2026-11-01): scripts, styles and fonts from this site only
+  // (inline allowed: Next's own scripts need it without nonces), data from this site and the API,
+  // workers from blob: (the 3D SDK makes its own), WebAssembly (meshopt models), the Google map's frame;
+  // no plugins, no <base> tricks. The studio and sign-in add frame-ancestors 'none' (one header, the last
+  // matching rule wins).
   async headers() {
-    const noFrame = [{ key: 'X-Frame-Options', value: 'DENY' }, { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" }];
+    const api = new URL(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000').origin;
+    const dev = process.env.NODE_ENV !== 'production';
+    const csp = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:${dev ? " 'unsafe-eval'" : ''}`,
+      "style-src 'self' 'unsafe-inline'",
+      `img-src 'self' data: blob: https: ${api}`,
+      "font-src 'self' data:",
+      `connect-src 'self' blob: data: ${api}${dev ? ' ws: wss:' : ''}`,
+      `media-src 'self' blob: data: ${api}`,
+      "worker-src 'self' blob:",
+      "frame-src 'self' https://www.google.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self' mailto:"
+    ].join('; ');
+    const noFrame = [{ key: 'X-Frame-Options', value: 'DENY' }, { key: 'Content-Security-Policy', value: `${csp}; frame-ancestors 'none'` }];
     return [
       {
         source: '/:path*',
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Strict-Transport-Security', value: 'max-age=31536000' }
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+          { key: 'Content-Security-Policy', value: csp }
         ]
       },
       { source: '/studio', headers: noFrame },

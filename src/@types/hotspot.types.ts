@@ -36,6 +36,9 @@ export interface HotspotPayload {
   /** A room's link to the hotel engine's availability (2026-10-26, server engine.js): the same
    *  placeholders, answering { booked: [nights] }; the tour strikes those nights out. */
   availabilityUrl?: string;
+  /** How many rooms a room hotspot stands for (2026-11-01; 1 when unset): a night is taken once that
+   *  many requests, waiting or confirmed, or marks cover it. */
+  rooms?: number;
 }
 
 export interface Hotspot {

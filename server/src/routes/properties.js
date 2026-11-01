@@ -33,6 +33,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { DATA_DIR } from '../dataDir.js';
 import { sendMail, teamRecipients, venueMail } from '../mailer.js';
+import { conversionKey } from './stats.js';
 
 export const propertiesRouter = Router();
 
@@ -151,9 +152,11 @@ propertiesRouter.get('/:id/report', requireEditorSession, wrap(async (req, res) 
     days: stats.days,
     enquiries: leads.length,
     fromProjectPage: leads.filter((l) => l.sceneId === 'hub').length,
+    // the link the hotel's booking engine loads after a booking (routes/stats.js), to paste on its thank-you page
+    conversionLink: `/api/stats/conversion/${p.id}/${conversionKey(p.id)}.gif`,
     spaces,
     funnel: {
-      visits: stats.visits, engaged: stats.engaged, intent: stats.intent, intents, handoffs,
+      visits: stats.visits, engaged: stats.engaged, intent: stats.intent, intents, handoffs, conversions: stats.conversions,
       enquiries: leads.length,
       requests: { tables: tables.length, rooms: rooms.length, events: events.length },
       confirmed: { tables: confirmed(tables), rooms: confirmed(rooms), events: confirmed(events) }

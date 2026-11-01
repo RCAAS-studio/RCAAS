@@ -24,7 +24,7 @@ const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 const monthOf = (d = new Date()) => d.toISOString().slice(0, 7);
 const fileFor = (propertyId, month) => path.join(DIR, propertyId, `${month}.json`);
 
-const empty = () => ({ visits: 0, seconds: 0, days: {}, spaces: {}, engaged: 0, intent: {}, hotspots: {}, sources: {}, looked: {} });
+const empty = () => ({ visits: 0, seconds: 0, days: {}, spaces: {}, engaged: 0, intent: {}, hotspots: {}, sources: {}, looked: {}, conversions: 0, conversionRefs: [] });
 
 // A site that links from several hosts counts as one source (l.facebook.com, m.facebook.com…).
 const KNOWN = [
@@ -91,6 +91,22 @@ export function count(propertyId, sceneId, { visit = false, seconds = 0, hotspot
     }
     await fs.mkdir(path.dirname(fileFor(propertyId, month)), { recursive: true });
     await writeFileWhole(fileFor(propertyId, month), JSON.stringify(s));
+  });
+}
+
+/** A booking made on the hotel's own engine (2026-11-01), told by its thank-you page through the
+ *  project's conversion link (routes/stats.js). `ref`, the engine's booking reference, counts once a
+ *  month, so a reloaded thank-you page isn't a second booking. True when it counted. */
+export function countConversion(propertyId, ref = '') {
+  const month = monthOf();
+  return queued(`${propertyId}/${month}`, async () => {
+    const s = { ...empty(), ...(await read(propertyId, month)) };
+    if (ref && s.conversionRefs.includes(ref)) return false;
+    s.conversions += 1;
+    if (ref) s.conversionRefs = [...s.conversionRefs, ref].slice(-500);
+    await fs.mkdir(path.dirname(fileFor(propertyId, month)), { recursive: true });
+    await writeFileWhole(fileFor(propertyId, month), JSON.stringify(s));
+    return true;
   });
 }
 

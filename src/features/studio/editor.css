@@ -18,9 +18,7 @@
   pointer-events: none; /* panes re-enable it; the 3D stays draggable between */
   font: 400 12px/1.45 var(--sans, 'Segoe UI', system-ui, sans-serif);
   color: var(--ed-text);
-
-  /* JetBrains Mono, the one typeface (--font-ui, app/layout.tsx). */
-  --sans: var(--font-ui), ui-monospace, monospace;
+  /* --sans is Inter, set for every studio page by app/studio/layout.tsx */
 
   /* Black and white, so nothing in the chrome competes with the colours in
    * the scan. Dark is the default; [data-theme="light"] below swaps the same

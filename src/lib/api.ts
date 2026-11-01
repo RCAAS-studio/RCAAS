@@ -136,10 +136,12 @@ export interface ProjectReport {
   project: { id: string; title: string; theme: ProjectTheme };
   month: string; visits: number; seconds: number; days: Record<string, number>;
   enquiries: number; fromProjectPage: number;
+  /** The picture the hotel's booking engine loads on its thank-you page (an API path; add ?ref=). */
+  conversionLink?: string;
   spaces: { id: string; title: string; visits: number; seconds: number; enquiries: number }[];
   /** The path to a booking: tour counts (space visits, those that opened a hotspot or a card), then what was saved. */
   funnel: {
-    visits: number; engaged: number; intent: Partial<Record<Intent, number>>; intents: number; handoffs?: number;
+    visits: number; engaged: number; intent: Partial<Record<Intent, number>>; intents: number; handoffs?: number; conversions?: number;
     enquiries: number; requests: { tables: number; rooms: number; events?: number }; confirmed: { tables: number; rooms: number; events?: number };
   };
   /** The most-opened hotspots, with the enquiries sent after looking at each. */
@@ -350,8 +352,9 @@ export const requestHere = (id: string, r: HereRequest) =>
 export const requestStay = (id: string, r: StayRequest) =>
   request<{ ok: true; id?: string; roomLabel?: string; rooms?: number; nights?: number }>(`${sitePath(id)}/stays`, { method: 'POST', body: JSON.stringify(r) });
 
-/** A full day (tables) or full dates (rooms): the guest waits, and is told if a place is let go. */
-export type WaitFor = ({ of: 'table'; date: string; time?: string; outlet?: string } | { of: 'room'; checkin: string; checkout: string; room?: string }) & { party: number };
+/** A full day (tables), full dates (rooms) or a taken part of a day (halls): the guest waits, and is told if a place is let go. */
+export type WaitFor = ({ of: 'table'; date: string; time?: string; outlet?: string } | { of: 'room'; checkin: string; checkout: string; room?: string }
+  | { of: 'hall'; date: string; session: EventSession; hall?: string; space?: string; hotspot?: string }) & { party: number };
 export type WaitRequest = WaitFor & { name: string; phone: string; email?: string; website?: string; formRenderedAt: number };
 export const joinWaitlist = (id: string, w: WaitRequest) =>
   request<{ ok: true; id?: string }>(`${sitePath(id)}/waitlist`, { method: 'POST', body: JSON.stringify(w) });

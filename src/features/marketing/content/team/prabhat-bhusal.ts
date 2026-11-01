@@ -3,7 +3,7 @@ import type { TeamMember } from './types';
 // From prabhatbhusal.com.np and github.com/prabhatbhusal (2026-10-13); photo is his GitHub avatar.
 export const prabhatBhusal: TeamMember = {
   slug: 'prabhat-bhusal',
-  order: 3,
+  order: 4,
   name: 'Prabhat Bhusal',
   discipline: 'Game development',
   role: 'Level designer & game developer',

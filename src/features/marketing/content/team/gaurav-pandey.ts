@@ -2,7 +2,7 @@ import type { TeamMember } from './types';
 
 export const gauravPandey: TeamMember = {
   slug: 'gaurav-pandey',
-  order: 1,
+  order: 3,
   name: 'Gaurav Pandey',
   discipline: 'Engineering',
   role: null,

@@ -5,6 +5,7 @@ import { contactProblem } from '../../lib/contactRules';
 import {
   API_BASE_URL, getEventCalendar, requestEvent, sendBookingPlan, PLAN_FILES, type EventCalendar, type EventHall, type EventSession, type SiteEvents
 } from '../../lib/api';
+import { WaitlistForm } from './WaitlistForm';
 import './table-booking.css';
 
 const asset = (p: string) => `${API_BASE_URL}/api/assets/${p}`;
@@ -60,6 +61,9 @@ export function EventBooking({ project, events, preview = false, initialHall = '
   const most = chosen ? Math.max(chosen.seated, chosen.standing) : 0;
   const n = Number(guests);
   const ready = !!chosen && !!date && !!session && free(chosen.id, session) && Number.isInteger(n) && n >= 1 && n <= most && !!occasion;
+  // a taken part of the day can be waited for (2026-11-01): the one half taken, or the whole day when both are
+  const dayTaken = !!chosen && !!date && !free(chosen.id, 'day'), eveningTaken = !!chosen && !!date && !free(chosen.id, 'evening');
+  const waitFor: EventSession | null = dayTaken && eveningTaken ? 'full' : dayTaken ? 'day' : eveningTaken ? 'evening' : null;
 
   const view = (h: EventHall) => {
     if (onView) return onView(h);
@@ -132,6 +136,11 @@ export function EventBooking({ project, events, preview = false, initialHall = '
                 );
               })}
             </div>
+            {chosen && waitFor && (
+              <WaitlistForm key={`${chosen.id}-${date}-${waitFor}`} project={project} preview={preview}
+                what={`${chosen.label} on ${day(date)} (${SESSIONS.find(([k]) => k === waitFor)![1].toLowerCase()})`}
+                request={{ of: 'hall', hall: chosen.id, date, session: waitFor, party: Number.isInteger(n) && n >= 1 ? n : 1 }} />
+            )}
 
             <Step n={3} done={Number.isInteger(n) && n >= 1 && !!occasion} title="Guests and event" />
             <div className="tb-row">

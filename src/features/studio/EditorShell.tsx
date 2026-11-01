@@ -1382,6 +1382,10 @@ function BookablePicker({ kind, sceneId, payload, onChange, onAddTable }: {
           <input className="ed2-name" type="number" min={1} aria-label="Standing" placeholder="Standing" value={pl.standing ?? ''}
             onChange={(e) => onChange({ standing: num(e.target.value) })} />
         )}
+        {kind === 'room' && (
+          <input className="ed2-name" type="number" min={1} max={999} aria-label="Rooms of this kind" placeholder="Rooms of this kind (1)" value={pl.rooms ?? ''}
+            onChange={(e) => onChange({ rooms: num(e.target.value) })} />
+        )}
       </div>
       {kind === 'table' && (
         <div className="ed2-seg-mini" role="group" aria-label="Usual table sizes">

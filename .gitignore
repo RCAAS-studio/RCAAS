@@ -9,6 +9,7 @@ next-env.d.ts
 # documents
 docs/
 
+
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
 
@@ -19,6 +20,7 @@ npm-debug.log*
 
 # Env
 .env
+.env-example
 .env.local
 .env*.local
 server/.env

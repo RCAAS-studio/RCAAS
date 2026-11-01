@@ -1,6 +1,6 @@
 /**
- * The waitlist (2026-09-28): guests who found a day's tables, or a stay's
- * rooms, all taken. They're kept with the bookings (reservations.js), marked
+ * The waitlist (2026-09-28; halls 2026-11-01): guests who found a day's tables, a stay's
+ * rooms or a hall's part of the day all taken. They're kept with the bookings (reservations.js), marked
  * kind: 'wait', and never hold a table or a room. When a booking is declined
  * or cancelled, the ones who could now book are told (routes/reservations.js),
  * first come first told; the studio can tell or remove one by hand.
@@ -9,6 +9,7 @@
  */
 import { atOutlet, bestTable, nowIn, slotsFor } from './reservations.js';
 import { roomsFree, roomsNeeded } from './stays.js';
+import { hallFree, hallHotspotFree } from './events.js';
 
 export const WAIT_STATUSES = ['waiting', 'notified', 'removed'];
 
@@ -23,6 +24,8 @@ export function hasSpace(list, w, bookingOf, stays) {
     const here = atOutlet(list, w.outlet);
     return (w.time ? times.filter((t) => t === w.time) : times).some((t) => !!bestTable(here, booking, w.party, w.date, t));
   }
+  // a hall (2026-11-01): the website's, or a hall hotspot in the tour, free for their part of the day
+  if (w.of === 'hall') return w.hotspot ? hallHotspotFree(list, w.space, w.hotspot, w.date, w.session) : hallFree(list, w.hall, w.date, w.session);
   if (!stays) return false;
   const rooms = w.room ? stays.rooms.filter((r) => r.id === w.room) : stays.rooms;
   return rooms.some((r) => roomsNeeded(r, w.party) <= roomsFree(list, r, w.date, w.checkout));

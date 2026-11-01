@@ -10,13 +10,13 @@
 @import "tailwindcss/utilities.css" layer(utilities) source(none);
 @source "./**/*.{ts,tsx}";
 
-/* Fonts are served by next/font (the (site) layout sets --font-comfortaa on
-   .rcaas; the root layout sets --font-ui, JetBrains Mono): inline, so they
+/* One face, Inter (2026-11-01), served by next/font: the root layout sets
+   --font-inter on <html>. Helvetica if it fails. Inline, so they
    resolve on the element rather than on :root. */
 @theme inline {
-  --font-sans: var(--font-comfortaa), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-comfortaa), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-ui), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @theme {
@@ -38,9 +38,9 @@
 
 @layer base {
   .rcaas {
-    --font-sans: var(--font-comfortaa), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-display: var(--font-comfortaa), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-mono: var(--font-ui), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-sans: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-display: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-mono: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     /* High-contrast Loro Labs-inspired clean white foundation */
     --bg-light: #FFFFFF;

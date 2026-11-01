@@ -277,11 +277,11 @@ export default function ReservationsPage({ params }: { params: Promise<{ propert
             {shown.filter((r) => r.date === d).map((r) => r.kind === 'wait' ? (
               <div key={r.id} className={`rs-item is-${r.status}`}>
                 <div className="rs-when">
-                  <b>{r.of === 'room' ? `${r.nights} ${r.nights === 1 ? 'night' : 'nights'}` : r.time || 'Any time'}</b>
+                  <b>{r.of === 'room' ? `${r.nights} ${r.nights === 1 ? 'night' : 'nights'}` : r.of === 'hall' ? SESSION[r.session ?? ''] ?? r.session : r.time || 'Any time'}</b>
                   <span>{r.party} {r.party === 1 ? 'guest' : 'guests'}</span>
                 </div>
                 <div className="rs-who">
-                  <b>{r.name}</b> <span className="rs-table">{r.of === 'room' ? r.roomLabel || 'Any room' : 'A table'}</span>
+                  <b>{r.name}</b> <span className="rs-table">{r.of === 'room' ? r.roomLabel || 'Any room' : r.of === 'hall' ? r.hallLabel || 'A hall' : 'A table'}</span>
                   {r.of === 'room' && <p className="rs-stay">{shortDay(r.date)} → {shortDay(r.checkout ?? r.date)}</p>}
                   <div className="rs-contact">
                     <a href={`tel:${r.phone}`}>{r.phone}</a>

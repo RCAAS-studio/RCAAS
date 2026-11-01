@@ -32,16 +32,19 @@ function heldByNight(list, roomId) {
   return held;
 }
 
-/** The nights a room hotspot is booked (2026-10-26): requests the team confirmed and its own
- *  "booked" marks. A guest's request still waiting holds nothing: a room hotspot may stand
- *  for a room type with several rooms, and the team sorts that out when confirming. */
-export function roomHotspotBooked(list, space, hotspot) {
-  const nights = new Set();
+/** How many rooms a room hotspot stands for (its payload `rooms`, 1 when unset). */
+export const hotspotRooms = (hs) => Math.min(999, Math.max(1, Math.floor(Number(hs?.payload?.rooms)) || 1));
+
+/** The nights a room hotspot is full (2026-10-26; 2026-11-01 counts waiting requests too): once
+ *  `rooms` requests, waiting or confirmed, or the team's "booked" marks cover a night, it's taken,
+ *  as a table's sitting or a hall's part of the day is. Declining or cancelling frees it. */
+export function roomHotspotBooked(list, space, hotspot, rooms = 1) {
+  const count = new Map();
   for (const r of list) {
-    if (r.kind !== 'request' || r.of !== 'room' || r.space !== space || r.hotspot !== hotspot || r.status !== 'confirmed') continue;
-    for (const n of nightsOf(r.checkin, r.checkout)) nights.add(n);
+    if (r.kind !== 'request' || r.of !== 'room' || r.space !== space || r.hotspot !== hotspot || !LIVE.includes(r.status)) continue;
+    for (const n of nightsOf(r.checkin, r.checkout)) count.set(n, (count.get(n) ?? 0) + 1);
   }
-  return nights;
+  return new Set([...count].filter(([, c]) => c >= rooms).map(([n]) => n));
 }
 
 /** Rooms of this type free on every night of the stay (0 when any night is full). */

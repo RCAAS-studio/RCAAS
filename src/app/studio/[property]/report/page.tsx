@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
-import { API_BASE_URL, getProjectReport, type ProjectReport } from '../../../../lib/api';
+import { API_BASE_URL, apiUrl, getProjectReport, type ProjectReport } from '../../../../lib/api';
 import { useStudioSession } from '../../../../features/auth/useStudioSession';
 import './report.css';
 
@@ -37,6 +37,8 @@ function Funnel({ report }: { report: ProjectReport }) {
     ['Sent an enquiry', f.enquiries, '', CARDS],
     // only for a hotel whose Book now goes to its own booking engine
     ...(f.handoffs ? [['Went on to your own booking page', f.handoffs, 'its analytics see them as utm_source=rcaas', CARDS] as [string, number, string, string]] : []),
+    // told by the engine's thank-you page (the link below), 2026-11-01
+    ...(f.conversions ? [['Booked on your own booking page', f.conversions, 'told by its thank-you page', f.handoffs ? 'Went on to your own booking page' : CARDS] as [string, number, string, string]] : []),
     ['Asked to book', requests, split(f.requests.tables, f.requests.rooms, f.requests.events), CARDS],
     ['Confirmed', confirmed, split(f.confirmed.tables, f.confirmed.rooms, f.confirmed.events), 'Asked to book']
   ];
@@ -58,6 +60,13 @@ function Funnel({ report }: { report: ProjectReport }) {
         The first three steps, and going on to your own booking page, are counted in the tour, once per space visit. Enquiries and bookings are counted from what was sent,
         from the tour and the website. The percentage is how many went on from the step before (enquiries and bookings: from the cards opened).
       </p>
+      {report.conversionLink && (
+        <details className="rp-muted rp-noprint">
+          <summary>Count the bookings made on your own booking page</summary>
+          Ask whoever runs your booking engine to put this on its thank-you page, with the booking&apos;s reference in place of {'{booking_ref}'} (each reference counts once):
+          <pre>{`<img src="${apiUrl(report.conversionLink)}?ref={booking_ref}" width="1" height="1" alt="">`}</pre>
+        </details>
+      )}
     </section>
   );
 }

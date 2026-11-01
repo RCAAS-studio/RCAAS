@@ -66,7 +66,7 @@
 @media print {
   @page { margin: 14mm; }
   html:has(.rp), body:has(.rp), .rp { background: #fff; min-height: 0; }
-  .rp-controls { display: none; }
+  .rp-controls, .rp-noprint { display: none; }
   .rp-page { box-shadow: none; padding: 0; margin: 0; max-width: none; }
   .rp-head, .rp-bars i, .rp-funnel-bar, .rp-funnel-bar i { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .rp-table tr { break-inside: avoid; }
@@ -76,3 +76,7 @@
 .rp-plan { display: block; width: 100%; max-height: 150mm; object-fit: contain; margin: 24px 0 8px; }
 .rp-table tfoot th { color: inherit; font-size: 14px; border-bottom: 0; }
 @media print { .rp-plan { break-inside: avoid; } }
+
+/* The booking engine's counting snippet (2026-11-01): on screen only, wrapped to the page. */
+.rp-noprint summary { cursor: pointer; }
+.rp-noprint pre { white-space: pre-wrap; word-break: break-all; font-size: 12px; margin: 8px 0 0; }

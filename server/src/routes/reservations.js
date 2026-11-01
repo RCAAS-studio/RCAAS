@@ -20,7 +20,8 @@
  *                                                        { space, hotspot, guests, date, checkout? | session?, occasion? | time?, name, phone, email?, notes? }
  *   GET   /api/sites/:id/requests/tables?space=&date=   public: when each table hotspot in a space is free that day
  *   POST  /api/sites/:id/waitlist                       public: { of: 'table', date, time?, party } or
- *                                                        { of: 'room', checkin, checkout, room?, party }, and name, phone, email?
+ *                                                        { of: 'room', checkin, checkout, room?, party } or { of: 'hall', date, session,
+ *                                                        hall? | space + hotspot, party }, and name, phone, email?
  *   GET   /api/sites/:id/reservations                   studio, and the client's staff: both kinds, and the waitlist
  *   PATCH /api/sites/:id/reservations/:rid              studio, and the client's staff: { status }
  *                                                        (a waitlist entry's: 'notified' tells them now, 'removed')
@@ -42,7 +43,7 @@ import { record } from '../activity.js';
 import {
   LIVE, STATUSES, atOutlet, availability, bestTable, bookableDates, readReservations, newReservation, nowIn, slotsFor, tableFree, withReservations
 } from '../reservations.js';
-import { nightsOf, roomHotspotBooked, roomsFree, roomsNeeded, stayCalendar, stayProblem } from '../stays.js';
+import { hotspotRooms, nightsOf, roomHotspotBooked, roomsFree, roomsNeeded, stayCalendar, stayProblem } from '../stays.js';
 import { SESSIONS, SESSION_LABEL, eventCalendar, eventProblem, hallFree, hallHotspotFree } from '../events.js';
 import { WAIT_STATUSES, waitersWithSpace } from '../waitlist.js';
 import { textGuest, validPhone, validEmail, PHONE_WRONG } from '../notify.js';
@@ -228,6 +229,7 @@ function tellTheTeam(p, r, subject, heading, rows) {
 const dayName = (date) => new Date(`${date}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
 const shortDay = (date) => new Date(`${date}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
 const siteLink = (pid) => `${(process.env.CLIENT_ORIGIN || 'http://localhost:3000').replace(/\/$/, '')}/s/${pid}`;
+const tourLink = (pid, space) => `${(process.env.CLIENT_ORIGIN || 'http://localhost:3000').replace(/\/$/, '')}/t/${pid}/${space}`;
 const venueOf = (p) => p.theme?.brand || p.title;
 
 // A guest's table booking request from the website.
@@ -386,7 +388,7 @@ async function roomHotspot(p, space, hotspot) {
  *  or taken in the hotel's own engine when the hotspot names one (engine.js). `engine` false: it couldn't say. */
 async function roomBooked(p, space, hs, stay) {
   const nights = nightsOf(stay.checkin, stay.checkout);
-  const here = roomHotspotBooked(await readReservations(p.id), space, hs.id);
+  const here = roomHotspotBooked(await readReservations(p.id), space, hs.id, hotspotRooms(hs));
   const there = hs.payload?.availabilityUrl ? await engineBooked(hs.payload.availabilityUrl, stay) : [];
   return { booked: nights.filter((n) => here.has(n) || there?.includes(n)), engine: there !== null };
 }
@@ -460,6 +462,7 @@ reservationsRouter.post('/:id/requests', wrap(async (req, res) => {
     // checked in the queue: two guests can't both get the same table at the same time, or the same hall for the same part of a day
     if (hs.type === 'table' && !tableFree(heldTables(list, snap.id), hours, hs.id, date, when.time)) return null;
     if (hs.type === 'hall' && !hallHotspotFree(list, snap.id, hs.id, date, when.session)) return null;
+    if (hs.type === 'room' && nightsOf(date, when.checkout).some((n) => roomHotspotBooked(list, snap.id, hs.id, hotspotRooms(hs)).has(n))) return null;
     const fields = {
       kind: 'request', of: hs.type, item: words(hs.label, 80) || hs.type, space: snap.id, spaceTitle: words(snap.title, 80), hotspot: hs.id,
       date, party: guests, price: words(pl.price, 40), deposit: words(pl.deposit, 60), ...when, ...guest
@@ -471,7 +474,8 @@ reservationsRouter.post('/:id/requests', wrap(async (req, res) => {
   if (!r) {
     return res.status(409).json({ error: hs.type === 'hall'
       ? 'This hall is already asked for at that time of day. Pick another day, or the other half of the day.'
-      : 'Someone has just asked for this table at that time. Pick another time or table.' });
+      : hs.type === 'room' ? 'Someone has just asked for this room on those nights. Pick other dates.'
+        : 'Someone has just asked for this table at that time. Pick another time or table.' });
   }
   res.status(201).json({ ok: true, id: r.id, ...(r.uploadKey ? { uploadKey: r.uploadKey } : {}) });
   tellTheTeam(p, r, `Booking request: ${r.item}, ${requestWhen(r)} — ${r.name}`, `New booking request for ${venueOf(p)}, from the 3D tour (${r.spaceTitle})`,
@@ -499,6 +503,27 @@ reservationsRouter.post('/:id/waitlist', wrap(async (req, res) => {
     if (problem) return res.status(400).json({ error: problem });
     entry = { of: 'room', room: room?.id ?? '', roomLabel: room?.label ?? '', date: stay.checkin, checkout: stay.checkout,
       nights: nightsOf(stay.checkin, stay.checkout).length, time: cfg.checkin, party };
+  } else if (body.of === 'hall') {
+    // a hall's part of a day (2026-11-01): a hall hotspot in the tour (space + hotspot), or the website's hall
+    const date = String(body.date ?? ''), session = body.session;
+    if (body.space || body.hotspot) {
+      const snap = p ? await getPublishedScene(String(body.space ?? '')).catch(() => null) : null;
+      const hs = snap && snap.propertyId === p.id ? (snap.hotspots ?? []).find((h) => h.id === body.hotspot && h.type === 'hall') : null;
+      if (!hs) return res.status(404).json({ error: 'Pick one of the halls.' });
+      const today = nowIn(cleanSite(published, p.id).booking.timezone).date;
+      if (!DATE.test(date) || date <= today) return res.status(400).json({ error: 'Pick a day from tomorrow on. For today, please call us.' });
+      if (!SESSIONS.includes(session)) return res.status(400).json({ error: 'Daytime, evening or the whole day?' });
+      if (!Number.isInteger(party) || party < 1 || party > 5000) return res.status(400).json({ error: 'How many guests?' });
+      entry = { of: 'hall', space: snap.id, hotspot: hs.id, hallLabel: words(hs.label, 80) || 'The hall', date, session, time: '', party };
+    } else {
+      const b = await eventsOf(req.params.id);
+      if (!b) return res.status(404).json(NO_EVENTS);
+      const hall = b.cfg.halls.find((h) => h.id === body.hall);
+      if (!hall) return res.status(400).json({ error: 'Pick a hall.' });
+      const problem = eventProblem(b.cfg, hall, { date, session, guests: party, occasion: b.cfg.kinds[0] }, nowIn(b.cfg.timezone).date);
+      if (problem) return res.status(400).json({ error: problem });
+      entry = { of: 'hall', hall: hall.id, hallLabel: hall.label, date, session, time: '', party };
+    }
   } else {
     const outlet = outletOf(body.outlet);
     const cfg = liveBooking(published, outlet);
@@ -526,8 +551,12 @@ function tellWaiter(p, w) {
   const venue = venueOf(p);
   const what = w.of === 'room'
     ? `${w.roomLabel || 'a room'} from ${shortDay(w.date)} to ${shortDay(w.checkout)}`
-    : `a table for ${w.party} on ${shortDay(w.date)}${w.time ? ` at ${w.time}` : ''}`;
-  const text = `${venue}: good news, ${what} may now be free. Book it before someone else does: ${siteLink(p.id)}#${w.of === 'room' ? 'stay' : `reserve${w.outlet ? `-${w.outlet}` : ''}`}`;
+    : w.of === 'hall' ? `${w.hallLabel || 'the hall'} on ${shortDay(w.date)} (${SESSION_LABEL[w.session]?.toLowerCase() ?? ''})`
+      : `a table for ${w.party} on ${shortDay(w.date)}${w.time ? ` at ${w.time}` : ''}`;
+  // a hall hotspot's guest goes back to its space in the tour; everyone else to the website's section
+  const link = w.of === 'hall' && w.hotspot ? tourLink(p.id, w.space)
+    : `${siteLink(p.id)}#${w.of === 'room' ? 'stay' : w.of === 'hall' ? 'events' : `reserve${w.outlet ? `-${w.outlet}` : ''}`}`;
+  const text = `${venue}: good news, ${what} may now be free. Book it before someone else does: ${link}`;
   Promise.all([
     textGuest(w.phone, text),
     w.email ? sendMail({ to: [w.email], subject: `A place may be free at ${venue}`, text: `Hello ${w.name},\n\n${text}\n\n${venue}`, ...venueMail(p) }) : null
@@ -584,7 +613,7 @@ reservationsRouter.post('/:id/reservations/mark', requireEditorSession, wrap(asy
     const at = { kind: 'request', of: hs.type, item: words(hs.label, 80) || hs.type, space: snap.id, spaceTitle: words(snap.title, 80), hotspot: hs.id, party: 0, time: '' };
     if (hs.type === 'room') {
       if (!nightsOk) return res.status(400).json({ error: 'Pick the first night and the day it frees up.' });
-      made = (list) => (nightsOf(b.checkin, b.checkout).some((n) => roomHotspotBooked(list, snap.id, hs.id).has(n)) ? null
+      made = (list) => (nightsOf(b.checkin, b.checkout).some((n) => roomHotspotBooked(list, snap.id, hs.id, hotspotRooms(hs)).has(n)) ? null
         : { ...at, date: b.checkin, checkin: b.checkin, checkout: b.checkout, nights: nightsOf(b.checkin, b.checkout).length });
     } else if (hs.type === 'table') {
       // a sitting on the table-booking hours, checked as a guest's request is
@@ -698,19 +727,23 @@ reservationsRouter.patch('/:id/reservations/:rid', requireEditorSession, wrap(as
   const published = (await readSite(p.id))?.published;
   // a table booking's own dining place's setup
   const cfgOf = (o) => (o ? published?.dining?.find((d) => d.id === o)?.booking : published?.booking) ?? { stay: 90 };
-  // a hotspot's Book now: its table at that sitting, its hall for that part of the day (as the requests route
-  // checks them), or, when confirming, its room on nights not already confirmed or marked booked
+  // a room hotspot's request: how many rooms its published hotspot stands for
+  const pre = (await readReservations(p.id)).find((y) => y.id === req.params.rid);
+  const rooms = pre?.kind === 'request' && pre.of === 'room'
+    ? hotspotRooms((await getPublishedScene(pre.space).catch(() => null))?.hotspots?.find((h) => h.id === pre.hotspot)) : 1;
+  // a hotspot's Book now: its table at that sitting, its hall for that part of the day, its room on nights
+  // with a room left (as the requests route checks them)
   const requestFree = (others, x) => x.of === 'table'
     ? tableFree(heldTables(others, x.space), cleanSite(published, p.id).booking, x.hotspot, x.date, x.time)
     : x.of === 'hall' ? hallHotspotFree(others, x.space, x.hotspot, x.date, x.session)
-      : status !== 'confirmed' || !nightsOf(x.checkin, x.checkout).some((n) => roomHotspotBooked(others, x.space, x.hotspot).has(n));
+      : !nightsOf(x.checkin, x.checkout).some((n) => roomHotspotBooked(others, x.space, x.hotspot, rooms).has(n));
   let freed = [];
   const r = await withReservations(p.id, (list) => {
     const x = list.find((y) => y.id === req.params.rid);
     if (!x) return null;
     if ((x.kind === 'wait') !== WAIT_STATUSES.includes(status)) return { wrong: true, kind: x.kind };
     // Taking back a declined or cancelled booking must not double-book its table or room.
-    // (a room hotspot's request holds its nights only once confirmed, so confirming one is checked too)
+    // (confirming a room hotspot's request is checked too: requests from before 2026-11-01 held nothing while waiting)
     if ((LIVE.includes(status) && !LIVE.includes(x.status)) || (status === 'confirmed' && x.status !== 'confirmed' && x.kind === 'request' && x.of === 'room')) {
       const others = list.filter((y) => y !== x);
       const room = published?.stays?.rooms?.find((y) => y.id === x.room);

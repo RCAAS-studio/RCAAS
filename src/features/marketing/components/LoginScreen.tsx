@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react';
 import { ArrowLeft, Box, PenTool, Send, ShieldCheck } from 'lucide-react';
 import { AuthPanel } from '../../auth/AuthPanel';
-import { comfortaa } from '../font';
 import { IMG } from '../data/images';
 import { withBase } from '../../../lib/basePath';
 
@@ -22,7 +21,7 @@ const Corner: React.FC<{ className: string }> = ({ className }) => (
 );
 
 export const LoginScreen: React.FC = () => (
-  <div className={`rcaas ${comfortaa.variable} min-h-dvh bg-white`}>
+  <div className="rcaas min-h-dvh bg-white">
     <div className="grid min-h-dvh lg:grid-cols-[1.08fr_1fr]">
       {/* The place: a real capture, framed like a viewfinder, with a scan line passing over it. */}
       <aside className="relative m-3 hidden overflow-hidden rounded-2xl bg-zinc-950 lg:flex lg:flex-col lg:justify-between">

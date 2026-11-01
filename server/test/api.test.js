@@ -689,10 +689,19 @@ test('tour visits and time are counted per space, and the monthly report adds en
   assert.equal(r.spaces.find((s) => s.id === 'report-draft').visits, 0);
   assert.equal(Object.values(r.days).reduce((a, b) => a + b, 0), 2);
   assert.deepEqual(r.funnel, {
-    visits: 2, engaged: 1, intent: { enquire: 1, room: 1, handoff: 1 }, intents: 2, handoffs: 1, enquiries: 1,
+    visits: 2, engaged: 1, intent: { enquire: 1, room: 1, handoff: 1 }, intents: 2, handoffs: 1, conversions: 0, enquiries: 1,
     requests: { tables: 0, rooms: 0, events: 0 }, confirmed: { tables: 0, rooms: 0, events: 0 }
   });
   assert.deepEqual(r.hotspots.map((h) => [h.label, h.spaceTitle, h.opens, h.enquiries]), [['Pool view', 'Lobby', 2, 1], ['The bar', 'Lobby', 1, 0]]);
+  // bookings made on the hotel's own engine: its thank-you page loads the report's link, a reference counts once
+  assert.match(r.conversionLink, new RegExp(`^/api/stats/conversion/${pid}/[A-Za-z0-9_-]{24}\\.gif$`));
+  const pixel = (path) => fetch(`${BASE}${path}`);
+  for (const q of ['?ref=BK-1', '?ref=BK-1', '?ref=BK-2', '', '?ref={booking_ref}']) {
+    const hit = await pixel(r.conversionLink + q);
+    assert.equal(hit.headers.get('content-type'), 'image/gif');
+  }
+  await pixel(r.conversionLink.replace(/[A-Za-z0-9_-]{24}\.gif$/, 'x'.repeat(24) + '.gif') + '?ref=BK-3');
+  assert.equal((await api('GET', `/api/properties/${pid}/report`)).json.funnel.conversions, 4, 'BK-1 once, BK-2, and two without a reference; not the wrong key');
   assert.equal((await api('GET', `/api/properties/${pid}/report?month=2026-13`)).status, 400);
   cookie = '';
   assert.equal((await api('GET', `/api/properties/${pid}/report`)).status, 401);
@@ -1613,8 +1622,11 @@ test('the team marks rooms and halls booked, visitors see them taken, a hotel en
   const listed = (await inbox()).reservations.find((r) => r.id === hall.json.id);
   assert.equal(listed.uploadKey, undefined, 'the key never reaches the inbox');
 
-  // a guest's request confirmed over a marked night is refused; the marks aren't counted as bookings in the report
+  // a guest's waiting request holds its nights (2026-11-01): no mark over it until it's declined, and then
+  // the declined request can't be taken back over the mark; the marks aren't counted as bookings in the report
   const later = (await inbox()).reservations.find((r) => r.of === 'room' && r.checkin === day(12));
+  assert.equal((await mark({ space: 'mh-lobby', hotspot: 'm-room', checkin: day(12), checkout: day(13) })).status, 409, 'the guest waiting holds it');
+  assert.equal((await api('PATCH', `/api/sites/${pid}/reservations/${later.id}`, { status: 'declined' })).status, 200);
   assert.equal((await mark({ space: 'mh-lobby', hotspot: 'm-room', checkin: day(12), checkout: day(13) })).status, 201);
   assert.equal((await api('PATCH', `/api/sites/${pid}/reservations/${later.id}`, { status: 'confirmed' })).status, 409);
   const f = (await api('GET', `/api/properties/${pid}/report?month=${new Date().toISOString().slice(0, 7)}`)).json.funnel;
@@ -2153,4 +2165,76 @@ test('the team marks a table booked at a sitting, and visitors see that time tak
   cookie = '';
   const guest = await api('POST', `/api/sites/${pid}/requests`, { space: 'mc-room', hotspot: 't1', date: day, time: at, guests: 2, name: 'Hari', phone: '9800000007', formRenderedAt: Date.now() - 5000 });
   assert.equal(guest.status, 409, 'a guest can’t take the marked sitting');
+});
+
+test('a room hotspot holds its nights for waiting guests, as many at once as it has rooms', async () => {
+  signIn();
+  const pid = (await api('POST', '/api/properties', { title: 'Counted Rooms' })).json.id;
+  const hs = (id, payload) => ({ id, type: 'room', label: id, position: [0, 1, 0], radius: 0.4, payload, occludedBy: 'none' });
+  await api('PUT', '/api/scenes/cr-wing', sceneDoc('cr-wing', { propertyId: pid, title: 'Wing', hotspots: [hs('one', {}), hs('two', { rooms: 2 })] }));
+  await api('POST', '/api/scenes/cr-wing/publish');
+  const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+  cookie = '';
+  let phone = 9800000100;
+  const ask = (hotspot) => api('POST', `/api/sites/${pid}/requests`, { space: 'cr-wing', hotspot, date: day(30), checkout: day(32), guests: 2, name: 'Guest', phone: String(phone++), formRenderedAt: Date.now() - 5000 });
+  const booked = async (h) => (await api('GET', `/api/sites/${pid}/requests/rooms?space=cr-wing&hotspot=${h}&checkin=${day(29)}&checkout=${day(33)}`)).json.booked;
+
+  // one room: the first guest waiting holds it, the second is refused and sees the nights struck out
+  const first = await ask('one');
+  assert.equal(first.status, 201);
+  const second = await ask('one');
+  assert.equal(second.status, 409);
+  assert.deepEqual(second.json.booked, [day(30), day(31)]);
+  assert.deepEqual(await booked('one'), [day(30), day(31)]);
+  // two rooms: two guests, then full
+  assert.equal((await ask('two')).status, 201);
+  assert.deepEqual(await booked('two'), [], 'one room left');
+  assert.equal((await ask('two')).status, 201);
+  assert.equal((await ask('two')).status, 409, 'both rooms asked for');
+  // declining frees the night for the next guest
+  signIn();
+  assert.equal((await api('PATCH', `/api/sites/${pid}/reservations/${first.json.id}`, { status: 'declined' })).status, 200);
+  cookie = '';
+  assert.deepEqual(await booked('one'), []);
+  assert.equal((await ask('one')).status, 201);
+});
+
+test('a taken hall has a waitlist, on the website and in the tour, and the waiting guest is told when it frees', async () => {
+  signIn();
+  const pid = (await api('POST', '/api/properties', { title: 'Waiting Halls' })).json.id;
+  const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+  await api('PUT', `/api/sites/${pid}/draft`, { events: { on: true, timezone: 'UTC', days: 90, kinds: ['Wedding'], halls: [{ id: 'grand', label: 'Grand Hall', seated: 300 }] } });
+  await api('POST', `/api/sites/${pid}/publish`);
+  await api('PUT', '/api/scenes/wh-room', sceneDoc('wh-room', { propertyId: pid, title: 'Ballroom', hotspots: [
+    { id: 'wh-hall', type: 'hall', label: 'Ballroom', position: [0, 1, 0], radius: 0.4, payload: { capacity: 200 }, occludedBy: 'none' }
+  ] }));
+  await api('POST', '/api/scenes/wh-room/publish');
+  cookie = '';
+  let phone = 9800000200;
+  const guest = () => ({ name: 'Guest', phone: String(phone++), formRenderedAt: Date.now() - 5000 });
+  const wait = (b) => api('POST', `/api/sites/${pid}/waitlist`, { of: 'hall', date: day(20), session: 'evening', party: 80, ...guest(), ...b });
+
+  // the website's hall: taken for the evening, a second guest waits
+  const booked = await api('POST', `/api/sites/${pid}/events`, { ...guest(), hall: 'grand', date: day(20), session: 'evening', guests: 120, occasion: 'Wedding' });
+  assert.equal(booked.status, 201);
+  assert.equal((await wait({ hall: 'grand' })).status, 201);
+  assert.equal((await wait({ hall: 'nope' })).status, 400, 'a hall of this website');
+  assert.equal((await wait({ hall: 'grand', session: 'night' })).status, 400);
+  assert.equal((await wait({ hall: 'grand', party: 900 })).status, 400, 'more than the hall takes');
+  // the tour's hall hotspot: the same
+  const asked = await api('POST', `/api/sites/${pid}/requests`, { ...guest(), space: 'wh-room', hotspot: 'wh-hall', date: day(20), session: 'full', guests: 100, occasion: 'Wedding' });
+  assert.equal(asked.status, 201);
+  assert.equal((await wait({ space: 'wh-room', hotspot: 'wh-hall', session: 'day' })).status, 201);
+  assert.equal((await wait({ space: 'wh-room', hotspot: 'not-a-hall' })).status, 404);
+  assert.equal((await wait({ space: 'wh-room', hotspot: 'wh-hall', date: day(0) })).status, 400, 'from tomorrow');
+
+  // declining each booking tells the guest waiting for it, and only them
+  signIn();
+  const inbox = async () => (await api('GET', `/api/sites/${pid}/reservations`)).json.reservations;
+  const waiters = () => inbox().then((l) => l.filter((r) => r.kind === 'wait').map((r) => [r.hall || r.hotspot, r.session, r.status]).sort());
+  assert.deepEqual(await waiters(), [['grand', 'evening', 'waiting'], ['wh-hall', 'day', 'waiting']]);
+  assert.equal((await api('PATCH', `/api/sites/${pid}/reservations/${booked.json.id}`, { status: 'declined' })).json.waitlistTold, 1);
+  assert.deepEqual(await waiters(), [['grand', 'evening', 'notified'], ['wh-hall', 'day', 'waiting']]);
+  assert.equal((await api('PATCH', `/api/sites/${pid}/reservations/${asked.json.id}`, { status: 'cancelled' })).json.waitlistTold, 1);
+  assert.deepEqual(await waiters(), [['grand', 'evening', 'notified'], ['wh-hall', 'day', 'notified']]);
 });

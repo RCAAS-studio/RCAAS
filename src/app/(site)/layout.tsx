@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { comfortaa } from '../../features/marketing/font';
 import { withBase } from '../../lib/basePath';
 import '../../features/marketing/rcaas.out.css';
 
@@ -11,5 +10,5 @@ export const metadata: Metadata = {
 
 /* .rcaas scopes their CSS (rcaas.css), so none of it reaches the studio. */
 export default function RcaasLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`rcaas ${comfortaa.variable}`}>{children}</div>;
+  return <div className="rcaas">{children}</div>;
 }
