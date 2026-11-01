@@ -318,7 +318,7 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ onNavigate }) => (
       <p className={`${legalBodyClass} mb-5`}>
         <WithPlaceholders text={RIGHTS_PROCESS} />
       </p>
-      <div className="flex items-start gap-3 rounded-xl border border-accent/25 bg-accent/[0.04] p-5">
+      <div className="flex items-start gap-3 rounded-xl border border-accent/25 bg-accent/4 p-5">
         <UserX className="w-5 h-5 text-accent shrink-0 mt-0.5" aria-hidden="true" />
         <p className="text-sm text-zinc-700 leading-relaxed">
           <WithPlaceholders

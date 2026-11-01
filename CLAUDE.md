@@ -302,6 +302,7 @@ Terms: **Property/project** = one client. **Space** = one captured room/scene do
      - R2: bucket `rcaas-assets` made and its keys in `server/.env` (2026-11-01; a write, read back and delete worked). `ASSET_DRIVER` stays `local` until the VPS (the owner's call); the owner uploads scans by hand. Their `Basera Boutique Hotel/Mantra/` folder sits outside `assets/`, where the API looks, so it's copied here as asset `ast_72f496b069b4` with a draft space `basera-boutique-hotel-mantra` (no start view yet). Then put Cloudflare's cache in front of `/api/assets/*`.
      - The contact page's response time; a share picture in the new site's look (`public/og.jpg` is the old site's).
 2. ~~Events module~~ and ~~separate dining places~~: built 2026-09-30 (see Working).
+2b. **VR (the owner, 2026-11-01), next to build:** an "Enter VR" button (three.js r164 WebXR, `renderer.xr`) for 360° video and 3D-model spaces first; Gaussian splat (`.lcc2`) spaces only if XGRIDS confirms the LCC SDK can draw for WebXR (its README says nothing; don't guess, rule 7). A headset is needed to use it and to test it (a Meta Quest; headless Chrome can't). The FAQ now says VR isn't offered yet; change it once it works on a headset.
 3. Measure first frame on a low-end Android over 4G (target < 5 s) and fix what the numbers show.
 
 4. **Studio roadmap (review of 2026-10-06; the studio works, it needs focus, not a rebuild):**
@@ -310,7 +311,7 @@ Terms: **Property/project** = one client. **Space** = one captured room/scene do
    - *Bigger, each a decision:* FBX/OBJ conversion in a Web Worker; clearing unreferenced uploads; availability for room hotspots; what happens when two people edit one space at once.
 
 ### Not now (don't start without a decision)
-VR/headset mode, furniture/layout variants, side-by-side compare, CRM sync, live booking-engine availability, self-serve capture from phone video, Supabase Auth/Storage/Edge Functions (they'd tie us to Supabase; we use it as plain Postgres).
+~~VR/headset mode~~ (decided 2026-11-01: build it, see below), furniture/layout variants, side-by-side compare, CRM sync, live booking-engine availability, self-serve capture from phone video, Supabase Auth/Storage/Edge Functions (they'd tie us to Supabase; we use it as plain Postgres).
 
 ## 5. Working efficiently here (for Claude)
 
