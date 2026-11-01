@@ -483,7 +483,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
         <motion.aside variants={rise} className="grid content-start gap-3.5 pt-3.5">
           <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-400">Kathmandu · 27.72° N, 85.32° E</p>
           <p className="text-[13px] leading-relaxed text-muted">
-            Engineers and game developers turning real places into experiences people can walk.
+            Geomatics engineers and game developers turning real places into experiences people can walk.
           </p>
           <NavLink to="/contact/" go={go} className="snav-all">
             Tell us about your place <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />

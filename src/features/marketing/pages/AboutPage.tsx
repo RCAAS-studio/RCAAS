@@ -52,7 +52,7 @@ const AT_A_GLANCE: { label: string; value: React.ReactNode }[] = [
     label: 'Team',
     value: (
       <>
-        Engineers and game developers <Placeholder>[[TBC: plus other disciplines]]</Placeholder>
+        Geomatics engineers and game developers
       </>
     ),
   },
@@ -242,7 +242,7 @@ const TeamCard: React.FC<{ member: TeamMember }> = ({ member }) => {
 
       {/* Bio */}
       <div className="p-4 flex flex-col flex-1">
-        <p className="text-xs sm:text-[13px] text-zinc-600 leading-relaxed">
+        <p className="text-xs sm:text-[13px] text-zinc-600 leading-relaxed whitespace-pre-line">
           {member.bio}
           {member.bio && member.bioPending && ' '}
           {(!member.bio || member.bioPending) && (
@@ -603,21 +603,20 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             <div className="max-w-2xl">
               <SectionHeading eyebrow="Team" title="The people behind RCAAS" className="mb-3" />
               <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
-                Engineers and game developers who share one belief: Nepal's places deserve to be recorded well and seen
+                Geomatics engineers and game developers who share one belief: Nepal's places deserve to be recorded well and seen
                 widely. <Placeholder>[[TBI: combined years of experience, if you want to state it]]</Placeholder>
               </p>
             </div>
             <Users className="hidden md:block w-10 h-10 text-zinc-200 shrink-0" aria-hidden="true" />
           </div>
 
-          {/* Two rows on large screens: three cards, then the rest centred on a six-column grid. */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5 lg:max-w-5xl lg:mx-auto">
+          {/* Two by two (2026-11-01, the owner's choice), one column on phones. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:max-w-3xl lg:mx-auto">
             {TEAM_MEMBERS.map((member, i) => (
               <motion.div
                 key={member.slug}
                 {...fadeUp}
                 transition={{ duration: 0.4, delay: i * 0.06 }}
-                className={`lg:col-span-2 ${i === 3 && TEAM_MEMBERS.length === 5 ? 'lg:col-start-2' : ''}`}
               >
                 <TeamCard member={member} />
               </motion.div>

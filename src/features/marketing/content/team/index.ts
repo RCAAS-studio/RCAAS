@@ -3,11 +3,10 @@ import { gauravPandey } from './gaurav-pandey';
 import { sumanBaral } from './suman-baral';
 import { prabhatBhusal } from './prabhat-bhusal';
 import { kabirajRokaya } from './kabiraj-rokaya';
-import { gameDevelopers } from './game-developers';
 
 export type { TeamMember } from './types';
 
-export const TEAM_MEMBERS: TeamMember[] = [gauravPandey, sumanBaral, prabhatBhusal, kabirajRokaya, gameDevelopers].sort(
+export const TEAM_MEMBERS: TeamMember[] = [gauravPandey, sumanBaral, prabhatBhusal, kabirajRokaya].sort(
   (a, b) => a.order - b.order
 );
 

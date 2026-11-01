@@ -197,7 +197,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
             {/* Trust Line */}
             <div className="mt-7 text-xs text-zinc-500 font-mono flex items-center justify-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent"></span>
-              <span>Engineers and game developers, based in Kathmandu.</span>
+              <span>Geomatics engineers and game developers, based in Kathmandu.</span>
             </div>
 
           </motion.div>
