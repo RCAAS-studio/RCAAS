@@ -178,7 +178,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 </button>
               </li>
               <li>
-                <span className="text-zinc-400" aria-hidden="true">›</span>
+                <span className="text-zinc-500" aria-hidden="true">›</span>
               </li>
               <li>
                 <button
@@ -189,7 +189,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 </button>
               </li>
               <li>
-                <span className="text-zinc-400" aria-hidden="true">›</span>
+                <span className="text-zinc-500" aria-hidden="true">›</span>
               </li>
               <li>
                 <button
@@ -200,7 +200,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 </button>
               </li>
               <li>
-                <span className="text-zinc-400" aria-hidden="true">›</span>
+                <span className="text-zinc-500" aria-hidden="true">›</span>
               </li>
               <li className="text-zinc-900 font-semibold" aria-current="page">
                 3D Laser Scanning
@@ -322,7 +322,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
       {/* STICKY ANCHOR NAVIGATION STRIP */}
       <nav aria-label="Section anchors" className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-zinc-200 py-3 overflow-x-auto shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-2 sm:space-x-3 text-xs font-mono whitespace-nowrap">
-          <span className="text-zinc-400 uppercase text-[10px] tracking-wider mr-2 hidden sm:inline">Jump to:</span>
+          <span className="text-zinc-500 uppercase text-[10px] tracking-wider mr-2 hidden sm:inline">Jump to:</span>
           <a href="#showcase" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#showcase</a>
           <a href="#why-scan" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#why-scan</a>
           <a href="#what-is-slam" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#what-is-slam</a>
@@ -434,7 +434,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 </div>
                 <button
                   onClick={() => setShowcaseView('textured')}
-                  className="mt-2 sm:mt-0 font-mono text-xs text-accent hover:underline cursor-pointer"
+                  className="mt-2 sm:mt-0 font-mono text-xs text-accent-soft hover:underline cursor-pointer"
                 >
                   View 3D Tour Mode →
                 </button>
@@ -589,7 +589,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="font-mono text-xs text-accent font-bold uppercase mb-2">Deliverable 01</div>
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">3D Point Cloud</h3>
+                <h3 className="text-lg font-semibold text-zinc-900 mb-2">3D Point Cloud</h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
                   Full millimeter-accurate point cloud of your building or space, indexed for rapid viewport navigation.
                 </p>
@@ -602,7 +602,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="font-mono text-xs text-accent font-bold uppercase mb-2">Deliverable 02</div>
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">Architectural CAD Drawings</h3>
+                <h3 className="text-lg font-semibold text-zinc-900 mb-2">Architectural CAD Drawings</h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
                   Measured floor plans, reflected ceiling plans, building sections, and exterior facade elevations drafted directly from the scan data.
                 </p>
@@ -615,7 +615,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="font-mono text-xs text-accent font-bold uppercase mb-2">Deliverable 03</div>
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">CAD/BIM Reference Clips</h3>
+                <h3 className="text-lg font-semibold text-zinc-900 mb-2">CAD/BIM Reference Clips</h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
                   Cropped, coordinate-locked slices prepared for direct insertion into Autodesk Revit, AutoCAD, and ArchiCAD modeling templates.
                 </p>
@@ -628,7 +628,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="font-mono text-xs text-accent font-bold uppercase mb-2">Deliverable 04</div>
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">Shareable 3D Web Link</h3>
+                <h3 className="text-lg font-semibold text-zinc-900 mb-2">Shareable 3D Web Link</h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
                   A secure link that opens in any browser on phone, tablet or desktop, allowing clients and contractors to inspect and measure without CAD licenses.
                 </p>
@@ -641,7 +641,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="font-mono text-xs text-accent font-bold uppercase mb-2">Deliverable 05</div>
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">3D Mesh or Scan-to-BIM</h3>
+                <h3 className="text-lg font-semibold text-zinc-900 mb-2">3D Mesh or Scan-to-BIM</h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
                   Optional parametric Revit family model (LOD 200/300) or high-density textured polygon mesh for visualisation and clash detection.
                 </p>
@@ -654,7 +654,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="font-mono text-xs text-accent font-bold uppercase mb-2">Deliverable 06</div>
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">Optional: 3D Virtual Tour</h3>
+                <h3 className="text-lg font-semibold text-zinc-900 mb-2">Optional: 3D Virtual Tour</h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
                   From the exact same reality capture visit, we can produce a photorealistic 3D virtual tour for your marketing and leasing team.
                 </p>
@@ -693,7 +693,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                     {uc.badge}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">
+                <h3 className="text-lg font-semibold text-zinc-900 mb-2">
                   {uc.title}
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -755,14 +755,14 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                   <div className="font-mono text-2xl font-bold text-accent mb-3">
                     {step.step}
                   </div>
-                  <h3 className="text-base font-bold text-zinc-900 mb-2">
+                  <h3 className="text-base font-semibold text-zinc-900 mb-2">
                     {step.title}
                   </h3>
                   <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
                     {step.line}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-zinc-100 text-[10px] font-mono text-zinc-400">
+                <div className="mt-4 pt-3 border-t border-zinc-100 text-[10px] font-mono text-zinc-500">
                   Step {step.step} of 04
                 </div>
               </div>
@@ -845,7 +845,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 <span className="font-mono text-xs uppercase tracking-wider text-zinc-500 font-bold block mb-2">
                   Heritage Documentation · Kirtipur, Nepal
                 </span>
-                <h3 className="text-2xl font-bold text-zinc-900 mb-3">
+                <h3 className="text-2xl font-semibold text-zinc-900 mb-3">
                   Historic Monument Preserved in 3D
                 </h3>
                 <p className="text-sm text-zinc-600 leading-relaxed mb-6">
@@ -939,7 +939,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             </a>
           </div>
 
-          <p className="mt-8 text-xs font-mono text-zinc-500">
+          <p className="mt-8 text-xs font-mono text-zinc-400">
             RCAAS Technology · Kathmandu, Nepal · SLAM LiDAR scanning &amp; as-built documentation
           </p>
         </div>
@@ -956,7 +956,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
               onClick={() => onNavigate('/services/digital-twins/drone-mapping/')}
               className="bg-white border border-zinc-200 rounded-xl p-6 hover:border-zinc-300 transition-all cursor-pointer shadow-xs group"
             >
-              <h4 className="text-base font-bold text-zinc-900 group-hover:text-accent transition-colors mb-2">
+              <h4 className="text-base font-semibold text-zinc-900 group-hover:text-accent transition-colors mb-2">
                 Drone Mapping &amp; Aerial Survey
               </h4>
               <p className="text-xs sm:text-sm text-zinc-600 mb-4">
@@ -971,7 +971,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
               onClick={() => onNavigate('/services/digital-twins/')}
               className="bg-white border border-zinc-200 rounded-xl p-6 hover:border-zinc-300 transition-all cursor-pointer shadow-xs group"
             >
-              <h4 className="text-base font-bold text-zinc-900 group-hover:text-accent transition-colors mb-2">
+              <h4 className="text-base font-semibold text-zinc-900 group-hover:text-accent transition-colors mb-2">
                 As-Built Drawings &amp; BIM
               </h4>
               <p className="text-xs sm:text-sm text-zinc-600 mb-4">
@@ -986,7 +986,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
               onClick={() => onNavigate('/services/immersive-experiences/3d-virtual-tours/')}
               className="bg-white border border-zinc-200 rounded-xl p-6 hover:border-zinc-300 transition-all cursor-pointer shadow-xs group"
             >
-              <h4 className="text-base font-bold text-zinc-900 group-hover:text-accent transition-colors mb-2">
+              <h4 className="text-base font-semibold text-zinc-900 group-hover:text-accent transition-colors mb-2">
                 3D Virtual Tours
               </h4>
               <p className="text-xs sm:text-sm text-zinc-600 mb-4">

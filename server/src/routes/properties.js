@@ -13,7 +13,7 @@
 import { Router } from 'express';
 import {
   listProperties, getProperty, createProperty, renameProperty, deleteProperty, listScenes,
-  addPropertyMember, removePropertyMember, propertyIsVisible, propertyStaffSees, propertyIsManageable, propertyIsClaimable, claimProperty, setPropertyTheme, setPropertyInfo, setLeadEmails, setPropertyFeatures, FEATURES, setPropertyStatus
+  addPropertyMember, removePropertyMember, propertyIsVisible, propertyStaffSees, propertyIsManageable, propertyIsClaimable, claimProperty, setPropertyTheme, setPropertyInfo, setLeadEmails, setPropertyFeatures, FEATURES, setPropertyStatus, setPropertyKind
 } from '../store.js';
 import { listLeads, leadsCsv } from '../leadsStore.js';
 import { monthStats, monthOf } from '../stats.js';
@@ -216,6 +216,16 @@ propertiesRouter.put('/:id/status', requireEditorSession, wrap(async (req, res) 
   res.json(next);
 }));
 
+/** Hotel, restaurant, venue, college, heritage or other (store.js PLACE_KINDS), kept in
+ *  its activity log. Owner only. */
+propertiesRouter.put('/:id/kind', requireEditorSession, wrap(async (req, res) => {
+  const p = await manageable(req, res);
+  if (!p) return;
+  const next = await setPropertyKind(p.id, req.body?.kind);
+  if (next.kind !== p.kind) await record(req, p.id, 'changed the kind of place', p.title, next.kind);
+  res.json(next);
+}));
+
 /** What waits on a project, for its card in the list: booking requests needing
  *  a reply (counted as its home counts them) and enquiries in the last 7 days. */
 const WEEK = 7 * 24 * 3600 * 1000;
@@ -361,7 +371,7 @@ const staffView = (p) => ({ id: p.id, title: p.title, theme: p.theme ?? {}, feat
 // Create a project (team accounts only).
 propertiesRouter.post('/', requireEditorSession, wrap(async (req, res) => {
   if (await refuseStaff(req, res)) return;
-  const p = await createProperty(req.body?.title, req.session.sub ?? null);
+  const p = await createProperty(req.body?.title, req.session.sub ?? null, req.body?.kind);
   await record(req, p.id, 'created the project', p.title);
   res.status(201).json(p);
 }));

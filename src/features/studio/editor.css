@@ -1306,14 +1306,26 @@ a.ed2-switch-item:hover { background: var(--ed-raise); }
 }
 
 /* New project: what kind of place (features/studio/siteTemplates.ts). */
-.np-kinds { display: flex; flex-wrap: wrap; gap: 6px; }
+/* Cards (2026-11-03, PlaceKindPicker.tsx): icon, name, the places it suits; arrow keys move the choice. */
+.np-kinds { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 6px; }
 .np-kind {
-  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--ed-line); background: var(--ed-well);
-  color: var(--ed-text); font: 500 12px var(--sans); cursor: pointer;
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 8px; text-align: left;
+  padding: 9px 10px; border-radius: var(--ed-r-sm); border: 1px solid var(--ed-line); background: var(--ed-well);
+  color: var(--ed-text); font: 500 12px/1.3 var(--sans); cursor: pointer;
 }
-.np-kind:hover { border-color: var(--ed-signal); }
+.np-kind .np-kind-ic { font-size: 18px; color: var(--ed-text-dim); }
+.np-kind b, .np-kind-note b { font-weight: 600; color: inherit; } /* not .np-field b's red (the required star) */
+.np-kind small { grid-column: 1 / -1; color: var(--ed-text-dim); font-size: 11px; line-height: 1.35; }
+.np-kind:hover:not(:disabled) { border-color: var(--ed-signal); }
+.np-kind:focus-visible { outline: 2px solid var(--ed-signal); outline-offset: 2px; }
 .np-kind.is-on { background: var(--ed-signal); border-color: var(--ed-signal); color: var(--ed-signal-ink); }
-.np-field small.np-kind-note { position: static; display: block; margin-top: 6px; text-align: left; white-space: normal; }
+.np-kind.is-on .np-kind-ic, .np-kind.is-on small { color: inherit; opacity: .85; }
+.np-kind:disabled { cursor: default; opacity: .6; }
+.np-kind-note { margin-top: 8px; font: 12px/1.45 var(--sans); color: var(--ed-text); }
+.np-kind-note ul { margin: 4px 0 6px; padding-left: 18px; }
+.np-kind-note li { margin: 2px 0; }
+.np-kind-note small { color: var(--ed-text-dim); }
+.np-kind-note .is-kept { color: var(--ed-text-dim); }
 
 /* Building and floor, side by side. */
 .ed2-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }

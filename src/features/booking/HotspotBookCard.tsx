@@ -1,5 +1,6 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
 import { useEffect, useState } from 'react';
 import { getHereHall, getHereHallCalendar, getHereRoom, getHereTables, requestHere, safeUrl, sendBookingPlan, PLAN_FILES, type Availability, type EventSession } from '../../lib/api';
 import { bookingHref, nightsBetween, venueDay } from './booking';
@@ -52,6 +53,7 @@ export function HotspotBookCard({ project, space, hs, tables = [], preview = fal
   preview?: boolean;
   onClose: () => void;
 }) {
+  useEscape(onClose);
   const t = useT();
   const kind = hs.type as 'room' | 'hall' | 'table';
   const pl = hs.payload ?? {};

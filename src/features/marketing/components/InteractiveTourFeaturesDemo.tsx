@@ -30,7 +30,7 @@ const HOTSPOTS: Hotspot[] = [
     category: 'Booking',
     coords: { x: 68, y: 38 },
     description: 'High-ceiling suite overlooking the internal brick courtyard. Features hand-loomed textiles, king bed, and stone bath.',
-    detailSpecs: ['68 m² total area', 'King bed & private balcony', 'Smart climate control'],
+    detailSpecs: ['68 m² (732 sq ft) total area', 'King bed & private balcony', 'Smart climate control'],
     ctaText: 'Reserve Room from Tour',
     ctaAction: 'booking',
   },
@@ -40,7 +40,7 @@ const HOTSPOTS: Hotspot[] = [
     category: 'Architecture',
     coords: { x: 50, y: 72 },
     description: 'Acoustically quiet central gathering space featuring traditional Dachi Appa brickwork and warm concealed night illumination.',
-    detailSpecs: ['140 m² open courtyard', 'Capacity: 80 seated', '360° natural daylight'],
+    detailSpecs: ['140 m² (1,507 sq ft) open courtyard', 'Capacity: 80 seated', '360° natural daylight'],
     ctaText: 'View Evening Lighting',
     ctaAction: 'lighting',
   },
@@ -80,7 +80,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             <span>Interactive Feature Sandbox</span>
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-ink font-display">
+          <h3 className="text-xl sm:text-2xl font-semibold text-ink font-display">
             Interactive Hotspots, Measure & Dollhouse
           </h3>
           <p className="text-sm text-zinc-600 max-w-2xl mt-1">
@@ -316,7 +316,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
                 className="absolute bottom-4 left-4 right-4 z-40 bg-ink border border-accent text-white text-xs px-3.5 py-2.5 rounded-lg shadow-xl flex items-center justify-between"
               >
                 <span>{bookingToast}</span>
-                <span className="font-mono text-accent text-[10px] uppercase font-bold">Interactive Event</span>
+                <span className="font-mono text-accent-soft text-[10px] uppercase font-bold">Interactive Event</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -340,7 +340,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
               </span>
             </div>
 
-            <h4 className="text-base font-bold text-ink font-display mb-1.5">
+            <h4 className="text-base font-semibold text-ink font-display mb-1.5">
               {selectedHotspot?.title}
             </h4>
             <p className="text-xs text-zinc-600 leading-relaxed mb-4">

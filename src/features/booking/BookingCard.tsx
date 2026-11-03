@@ -1,5 +1,6 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
 import { useState } from 'react';
 import { safeUrl } from '../../lib/api';
 import { bookingHref, isoDay, nightsBetween, stayProblem, type Stay } from './booking';
@@ -22,6 +23,7 @@ const People = () => (
  * take a booking or a payment here.
  */
 export function BookingCard({ booking, place, space, onClose }: { booking: Booking; place: string; space: string; onClose: () => void }) {
+  useEscape(onClose);
   const t = useT();
   const [stay, setStay] = useState<Stay>(() => ({ checkin: isoDay(1), checkout: isoDay(3), guests: 2 }));
   const set = (patch: Partial<Stay>) => setStay((s) => {

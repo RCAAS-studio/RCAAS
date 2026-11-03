@@ -5,7 +5,7 @@
  * the scenes baked into lib/scenes.js if the API is unreachable, because
  * "time to first frame under 5s" (CLAUDE.md) can't wait on a second server.
  */
-import type { ApiScene, ProjectStatus, Property, SceneDoc } from '../@types/scene.types';
+import type { ApiScene, PlaceKind, ProjectStatus, Property, SceneDoc } from '../@types/scene.types';
 import type { AudioUploadResult, UploadResult } from '../@types/upload.types';
 import type { BrandFont, ProjectFeatures, ProjectInfo, ProjectTheme } from '../@types/config.types';
 import type { HotspotWords } from '../@types/hotspot.types';
@@ -66,8 +66,10 @@ export const getProperty = (id: string) =>
     if (/does not exist/i.test(err.message)) return null;
     throw err;
   });
-export const createProperty = (title: string) =>
-  request<Property>('/api/properties', { method: 'POST', body: JSON.stringify({ title }) });
+export const createProperty = (title: string, kind?: PlaceKind) =>
+  request<Property>('/api/properties', { method: 'POST', body: JSON.stringify({ title, kind }) });
+export const setProjectKind = (id: string, kind: PlaceKind) =>
+  request<Property>(`/api/properties/${encodeURIComponent(id)}/kind`, { method: 'PUT', body: JSON.stringify({ kind }) });
 /** Title only; the id (and every URL and space pointing at it) stays. */
 export const renameProperty = (id: string, title: string) =>
   request<Property>(`/api/properties/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ title }) });

@@ -139,11 +139,11 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
       {/* Header explanation */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-zinc-200">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-xs font-mono text-accent font-semibold mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-xs font-mono text-accent-strong font-semibold mb-2">
             <span className="h-2 w-2 rounded-full bg-accent animate-ping" />
             Interactive Output Switcher
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold font-display text-ink">
+          <h3 className="text-xl sm:text-2xl font-semibold font-display text-ink">
             From 1 Single Site Visit &rarr; 4 High-Value Deliverables
           </h3>
           <p className="mt-1.5 text-xs sm:text-sm text-zinc-500 max-w-2xl">
@@ -222,14 +222,14 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-semibold">
+                    <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 font-semibold">
                       {item.category}
                     </span>
                     <span
                       className={`text-[10px] font-mono px-2 py-0.5 rounded font-medium ${
                         isSelected
                           ? 'bg-rose-100 text-accent-strong'
-                          : 'bg-zinc-100 text-zinc-500'
+                          : 'bg-zinc-100 text-zinc-600'
                       }`}
                     >
                       {item.badge}
@@ -237,7 +237,7 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
                   </div>
 
                   <h4
-                    className={`text-base font-bold font-display mt-1 ${
+                    className={`text-base font-semibold font-display mt-1 ${
                       isSelected ? 'text-accent' : 'text-zinc-900'
                     }`}
                   >
@@ -285,7 +285,7 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
                       ease: 'easeInOut',
                     }}
                   >
-                    <div className="absolute top-1 right-3 font-mono text-[9px] text-accent bg-black/80 px-2 py-0.5 rounded">
+                    <div className="absolute top-1 right-3 font-mono text-[9px] text-accent-soft bg-black/80 px-2 py-0.5 rounded">
                       SLAM LASER SWEEP · ±5mm ACCURACY
                     </div>
                   </motion.div>
@@ -410,7 +410,7 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-5 border-b border-zinc-200">
                   {active.specs.map((spec) => (
                     <div key={spec.label}>
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-semibold">
                         {spec.label}
                       </div>
                       <div className="mt-1 text-xs font-semibold text-zinc-900 font-mono">

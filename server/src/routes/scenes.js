@@ -69,6 +69,27 @@ async function missingFiles(doc) {
   }
 }
 
+/** Portals visitors won't see (2026-11-03): the tour hides one whose space is unset, deleted,
+ *  unpublished or in another project, so the studio says which and why. */
+async function deadPortals(doc) {
+  const out = [];
+  for (const h of doc.hotspots ?? []) {
+    if (h.type !== 'portal') continue;
+    const name = `“${h.label || 'A portal'}”`, to = h.payload?.sceneId;
+    if (!to) { out.push(`${name} has no space to go to, so visitors won’t see it. Pick one, or remove it.`); continue; }
+    // Nothing about the target is echoed (its title, or whether it exists in someone else's project):
+    // deleted and another project read the same, and an unfiled space only says it can't be opened.
+    const target = await getScene(to);
+    const mine = !!target && !!doc.propertyId && target.propertyId === doc.propertyId;
+    const live = !!target && (target.propertyId ?? null) === (doc.propertyId ?? null) && !!(await getPublishedScene(to));
+    if (live) continue;
+    out.push(mine
+      ? `${name} leads to a space in this project that isn’t published, so visitors won’t see it until it is.`
+      : `${name} leads to a space visitors can’t open (deleted, not published or not in this project), so they won’t see it. Pick another, or remove it.`);
+  }
+  return out;
+}
+
 // Studio: publish state, what would block or warn, and the ready checklist, without publishing.
 scenesRouter.get('/:id/publish', requireEditorSession, sceneGuard, wrap(async (req, res) => {
   const draft = await getScene(req.params.id);
@@ -80,7 +101,7 @@ scenesRouter.get('/:id/publish', requireEditorSession, sceneGuard, wrap(async (r
     publishedVersion: draft.publishedVersion ?? null,
     publishedAt: draft.publishedAt ?? null,
     ...checks,
-    warnings: [...missing, ...checks.warnings],
+    warnings: [...missing, ...checks.warnings, ...await deadPortals(draft)],
     ready: [
       { key: 'files', label: 'Its scan on this server', done: !!draft.splat?.variants?.high?.assetId && !missing.length },
       ...readiness(draft)
@@ -92,7 +113,8 @@ scenesRouter.get('/:id/publish', requireEditorSession, sceneGuard, wrap(async (r
 scenesRouter.post('/:id/publish', requireEditorSession, sceneGuard, wrap(async (req, res) => {
   const result = await publishScene(req.params.id);
   if (!result) return notFound(res, req.params.id);
-  result.warnings = [...await missingFiles(await getScene(req.params.id)), ...(result.warnings ?? [])];
+  const saved = await getScene(req.params.id);
+  result.warnings = [...await missingFiles(saved), ...(result.warnings ?? []), ...await deadPortals(saved)];
   if (result.published) await recordScene(req, req.params.id, 'published', `version ${result.version}`);
   res.status(result.published ? 200 : 422).json(result);
 }));

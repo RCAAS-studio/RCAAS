@@ -332,11 +332,11 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button type="button" onClick={() => onNavigate('/about/')} className="hover:text-zinc-900 transition-colors">
             About
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             How we work
           </span>
@@ -353,7 +353,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
             >
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
               <span className="font-semibold text-zinc-900">How we work</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-500">·</span>
               <span>Process &amp; standards</span>
             </motion.div>
 
@@ -494,7 +494,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
 
                   <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col">
                     <span className="font-mono text-xs text-accent-strong font-semibold">Step {step.number} of 05</span>
-                    <h3 className="text-2xl font-bold text-zinc-900 font-display mt-1 mb-4">{step.title}</h3>
+                    <h3 className="text-2xl font-semibold text-zinc-900 font-display mt-1 mb-4">{step.title}</h3>
 
                     <h4 className="text-xs font-mono uppercase tracking-wider text-zinc-500 mb-2">What happens</h4>
                     <p className="text-sm text-zinc-600 leading-relaxed mb-6">{step.whatHappens}</p>
@@ -577,7 +577,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                         </span>
                         <div>
                           <p className="text-[11px] font-mono uppercase tracking-wider text-white/80">{discipline.tag}</p>
-                          <h3 className="text-lg font-bold text-white font-display">{discipline.heading}</h3>
+                          <h3 className="text-lg font-semibold text-white font-display">{discipline.heading}</h3>
                         </div>
                       </div>
                     </div>
@@ -651,10 +651,10 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                     <span className="w-10 h-10 rounded-lg border border-line bg-surface flex items-center justify-center mb-4 transition-colors group-hover:bg-accent group-hover:border-accent">
                       <Icon className="w-4.5 h-4.5 text-accent transition-colors group-hover:text-white" aria-hidden="true" />
                     </span>
-                    <h3 className="text-base font-bold text-zinc-900 font-display mb-2">{row.category}</h3>
+                    <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">{row.category}</h3>
                     <p className="text-xs text-zinc-600 leading-relaxed mb-5">{row.whatItDoes}</p>
                     <div className="mt-auto pt-4 border-t border-line">
-                      <p className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 mb-1">Examples</p>
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1">Examples</p>
                       <p className="text-xs font-mono text-zinc-800 leading-relaxed">{row.examples}</p>
                     </div>
                   </SpotlightCard>
@@ -671,7 +671,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                 <span className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center mb-4">
                   <MessageCircleQuestion className="w-4.5 h-4.5 text-white" aria-hidden="true" />
                 </span>
-                <h3 className="text-base font-bold text-zinc-900 font-display mb-2">Not sure what your place needs?</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">Not sure what your place needs?</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">Tell us your goal. We choose tools for the job.</p>
                 <span className="mt-auto pt-4 text-xs font-mono font-semibold text-accent">Plan your experience →</span>
               </button>
@@ -726,7 +726,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
               <ol className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3" aria-label="How we handle accuracy">
                 {ACCURACY_CHECKPOINTS.map((checkpoint, i) => (
                   <li key={checkpoint.label} className="relative rounded-xl border border-line bg-white p-4">
-                    <span className="font-mono text-[11px] text-zinc-400">0{i + 1}</span>
+                    <span className="font-mono text-[11px] text-zinc-500">0{i + 1}</span>
                     <p className="text-base font-bold text-zinc-900 font-display">{checkpoint.label}</p>
                     <p className="text-xs text-zinc-600">{checkpoint.line}</p>
                   </li>
@@ -810,7 +810,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   </div>
                   <article className="p-6 sm:p-8 flex flex-col flex-1">
-                    <h3 className="text-xl font-bold text-zinc-900 font-display mb-3">{explainer.title}</h3>
+                    <h3 className="text-xl font-semibold text-zinc-900 font-display mb-3">{explainer.title}</h3>
                     <p className="text-sm text-zinc-600 leading-relaxed mb-6">{explainer.body}</p>
                     <a
                       href={explainer.linkPath}

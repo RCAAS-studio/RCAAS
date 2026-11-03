@@ -174,7 +174,7 @@ export const ValueChainGraphic: React.FC = () => {
 
                   {/* Title */}
                   <h3
-                    className={`text-sm font-bold font-display transition-colors ${
+                    className={`text-sm font-semibold font-display transition-colors ${
                       isSelected ? 'text-ink' : 'text-zinc-900 group-hover:text-accent'
                     }`}
                   >
@@ -191,7 +191,7 @@ export const ValueChainGraphic: React.FC = () => {
                 <div className="mt-4 pt-3 border-t border-zinc-100">
                   <div
                     className={`font-mono text-[10px] truncate transition-colors ${
-                      isSelected ? 'text-accent-strong font-semibold' : 'text-zinc-400 group-hover:text-zinc-600'
+                      isSelected ? 'text-accent-strong font-semibold' : 'text-zinc-500 group-hover:text-zinc-600'
                     }`}
                   >
                     {step.tools}

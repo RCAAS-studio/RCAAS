@@ -1,5 +1,6 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { filesFromDataTransfer, filesFromFileList, isVideo360File, uploadVariant, uploadVideo360 } from './upload';
 import { saveScene, getScenes, getSession, login } from '../../lib/api';
@@ -98,6 +99,7 @@ interface UploaderProps {
 }
 
 export function Uploader({ propertyId = null, onClose, onCreated }: UploaderProps) {
+  useEscape(onClose);
   const [title, setTitle] = useState('');
   const [slots, setSlots] = useState<Record<VariantTier, SlotState>>({ high: IDLE, medium: IDLE, low: IDLE });
   const [creating, setCreating] = useState(false);

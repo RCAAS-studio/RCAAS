@@ -63,11 +63,11 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button type="button" onClick={() => onNavigate('/work/')} className="hover:text-zinc-900 transition-colors">
             Our Work
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             {study.name}
           </span>
@@ -91,7 +91,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
                 <span className="font-semibold text-zinc-900">Case study</span>
-                <span className="text-zinc-400">·</span>
+                <span className="text-zinc-500">·</span>
                 <span>{study.industryLabel}</span>
               </motion.div>
               <motion.h1
@@ -190,7 +190,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
                       <Icon className="w-4.5 h-4.5 text-accent" aria-hidden="true" />
                     </span>
                     <div className="flex-1 rounded-2xl border border-line bg-surface p-6 sm:p-7">
-                      <span className="font-mono text-[11px] text-zinc-400">{step.label}</span>
+                      <span className="font-mono text-[11px] text-zinc-500">{step.label}</span>
                       <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 font-display mb-3">{step.title}</h2>
                       <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
                         <WithPlaceholders text={study[step.key]} />
@@ -257,7 +257,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
                 </figure>
               ))}
             </div>
-            {study.galleryAlt && <p className="mt-3 text-[11px] font-mono text-zinc-400">Alt pattern: {study.galleryAlt}</p>}
+            {study.galleryAlt && <p className="mt-3 text-[11px] font-mono text-zinc-500">Alt pattern: {study.galleryAlt}</p>}
           </section>
 
           {/* WHAT WE USED */}
@@ -279,7 +279,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
                     )}
                   </span>
                   <span className="flex-1">
-                    <span className="block text-[10px] font-mono uppercase tracking-wider text-zinc-400">{link.kind}</span>
+                    <span className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500">{link.kind}</span>
                     <span className="block text-sm font-semibold text-zinc-900">{link.label}</span>
                   </span>
                   <ArrowRight className="w-4 h-4 text-zinc-300 transition-all group-hover:text-accent group-hover:translate-x-0.5" aria-hidden="true" />

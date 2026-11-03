@@ -5,6 +5,7 @@
  * Shown only for spaces with two or more rooms: a single room doesn't need
  * a map. The dot moves by writing attributes each frame, not React state. */
 
+import { sqft } from '../../lib/area';
 import { useEffect, useRef, useState } from 'react';
 import { goToPlan, loadPlan, mapPose, toPlan, type FloorPlan } from './floorMapData';
 import { useT } from '../../lib/i18n';
@@ -60,7 +61,7 @@ export function FloorMap({ assetId, startOpen }: { assetId: string | undefined; 
           {plan.rooms.map((r, i) => (
             <path key={r.id} d={r.rects.map(rect).join('')} fill={TINTS[i % TINTS.length]}
               className={`vw-map-room${here === r.id ? ' is-here' : ''}`} onClick={() => goToPlan(plan, r.at[0], r.at[1])}>
-              <title>{t('{name}, {area} m². Go there', { name: r.name, area: r.area })}</title>
+              <title>{t('{name}, {area} m² ({sqft} sq ft). Go there', { name: r.name, area: r.area, sqft: sqft(r.area) })}</title>
             </path>
           ))}
           <path d={plan.walls.map((w) => `M${w[0]} ${-w[1]}L${w[2]} ${-w[3]}`).join('')} stroke="#F6F1E7" strokeWidth={0.14} strokeLinecap="square" pointerEvents="none" />

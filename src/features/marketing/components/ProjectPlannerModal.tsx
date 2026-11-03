@@ -3,6 +3,15 @@ import { SITE_METADATA } from '../data/siteData';
 import { sendLead } from '../lib/leads';
 import { checkContactFields } from '../../../lib/contactRules';
 
+// Footprint in both units (1 m² = 10.764 sq ft, rounded to the hundred: the field is approximate).
+// The enquiry carries both, so the team reads whichever the client thinks in.
+const SIZES = [
+  { name: 'Compact', m: '< 1,000 m²', ft: '< 10,800 sq ft' },
+  { name: 'Medium', m: '1,000 – 3,500 m²', ft: '10,800 – 37,700 sq ft' },
+  { name: 'Campus / Large', m: '> 3,500 m²', ft: '> 37,700 sq ft' }
+];
+const sizeLabel = (s: (typeof SIZES)[number]) => `${s.name} (${s.m} · ${s.ft})`;
+
 interface ProjectPlannerModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -15,7 +24,7 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
     '3D Virtual Tour (Web)',
     '4K Cinematic Fly-Through Film',
   ]);
-  const [scaleArea, setScaleArea] = useState('Medium (1,000 – 3,500 m²)');
+  const [scaleArea, setScaleArea] = useState(sizeLabel(SIZES[1]));
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
@@ -135,24 +144,26 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
                     2. Approximate Physical Footprint
                   </label>
                   <div className="grid grid-cols-3 gap-2">
-                    {[
-                      'Compact (< 1,000 m²)',
-                      'Medium (1,000 – 3,500 m²)',
-                      'Campus / Large (> 3,500 m²)',
-                    ].map((scale) => (
-                      <button
-                        key={scale}
-                        type="button"
-                        onClick={() => setScaleArea(scale)}
-                        className={`p-2.5 text-center rounded-md text-xs border transition-all ${
-                          scaleArea === scale
-                            ? 'border-accent bg-rose-50/50 text-accent-strong font-semibold'
-                            : 'border-line bg-surface text-zinc-700 hover:border-zinc-400'
-                        }`}
-                      >
-                        {scale}
-                      </button>
-                    ))}
+                    {SIZES.map((s) => {
+                      const scale = sizeLabel(s);
+                      return (
+                        <button
+                          key={scale}
+                          type="button"
+                          aria-pressed={scaleArea === scale}
+                          onClick={() => setScaleArea(scale)}
+                          className={`p-2.5 text-center rounded-md text-xs border transition-all ${
+                            scaleArea === scale
+                              ? 'border-accent bg-rose-50/50 text-accent-strong font-semibold'
+                              : 'border-line bg-surface text-zinc-700 hover:border-zinc-400'
+                          }`}
+                        >
+                          <span className="block">{s.name}</span>
+                          <span className="block mt-0.5 text-[11px] font-normal tabular-nums">{s.m}</span>
+                          <span className="block text-[11px] font-normal tabular-nums">{s.ft}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -337,7 +348,7 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
               </svg>
             </div>
             
-            <h3 className="mt-4 text-xl font-bold text-ink font-display">
+            <h3 className="mt-4 text-xl font-semibold text-ink font-display">
               Proposal Request Received
             </h3>
             

@@ -103,7 +103,7 @@ export const LoginScreen: React.FC = () => (
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-2 text-[11px] font-mono text-zinc-400 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 sm:flex-row">
           <span>© {new Date().getFullYear()} RCAAS Technology · Kathmandu, Nepal</span>
           <span className="flex gap-4">
             <a href="/privacy" className="hover:text-ink">Privacy</a>

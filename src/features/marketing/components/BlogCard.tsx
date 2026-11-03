@@ -75,7 +75,7 @@ export const BlogCard: React.FC<{ post: BlogPost; onNavigate: (path: RoutePath) 
       <div className={`flex flex-col flex-1 ${featured ? 'p-6 sm:p-9 lg:justify-center' : 'p-5'}`}>
         {featured && <p className="text-[11px] font-mono uppercase tracking-wider text-accent font-semibold mb-2">Latest story</p>}
         <h3
-          className={`font-bold text-zinc-900 font-display leading-snug group-hover:text-accent transition-colors ${
+          className={`font-semibold text-zinc-900 font-display leading-snug group-hover:text-accent transition-colors ${
             featured ? 'text-2xl sm:text-3xl text-balance' : 'text-lg'
           }`}
         >

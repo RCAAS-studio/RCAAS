@@ -589,7 +589,7 @@ export const GaussianGuidePage: React.FC<GaussianGuidePageProps> = ({ onNavigate
                 >
                   3D virtual tours <span aria-hidden="true">→</span>
                 </a>
-                <span className="text-zinc-400" aria-hidden="true">·</span>
+                <span className="text-zinc-500" aria-hidden="true">·</span>
                 <a
                   href="/platform/"
                   onClick={goToLink('/platform/')}
@@ -612,7 +612,7 @@ export const GaussianGuidePage: React.FC<GaussianGuidePageProps> = ({ onNavigate
                       />
                     </div>
                     <div className="p-5">
-                      <h3 className="text-sm font-bold text-zinc-900 font-display mb-1.5">{use.use}</h3>
+                      <h3 className="text-sm font-semibold text-zinc-900 font-display mb-1.5">{use.use}</h3>
                       <p className="text-xs text-zinc-600 leading-relaxed">{use.why}</p>
                     </div>
                   </SpotlightCard>

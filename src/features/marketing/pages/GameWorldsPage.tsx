@@ -82,11 +82,11 @@ export const GameWorldsPage: React.FC<GameWorldsPageProps> = ({ onNavigate }) =>
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button type="button" onClick={() => onNavigate('/services/')} className="hover:text-zinc-900 transition-colors">
             What we create
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             {GAME_WORLDS.title}
           </span>
@@ -175,9 +175,9 @@ export const GameWorldsPage: React.FC<GameWorldsPageProps> = ({ onNavigate }) =>
                       <span className="w-12 h-12 rounded-xl border border-line bg-surface flex items-center justify-center transition-colors group-hover:bg-accent group-hover:border-accent">
                         <Icon className="w-6 h-6 text-accent transition-colors group-hover:text-white" aria-hidden="true" />
                       </span>
-                      <span className="font-mono text-xs text-zinc-400">{offer.number}</span>
+                      <span className="font-mono text-xs text-zinc-500">{offer.number}</span>
                     </div>
-                    <h3 className="text-2xl font-bold text-ink font-display mb-3">{offer.title}</h3>
+                    <h3 className="text-2xl font-semibold text-ink font-display mb-3">{offer.title}</h3>
                     <p className="text-sm sm:text-base text-muted leading-relaxed mb-6">{offer.body}</p>
                     <ul className="mt-auto flex flex-wrap gap-2">
                       {offer.tags.map((tag) => (
@@ -207,8 +207,8 @@ export const GameWorldsPage: React.FC<GameWorldsPageProps> = ({ onNavigate }) =>
                       <Icon className="w-5 h-5 text-accent" aria-hidden="true" />
                     </span>
                     <div>
-                      <span className="font-mono text-[11px] text-zinc-400">0{i + 1}</span>
-                      <h3 className="text-sm font-bold text-ink font-display">{step.title}</h3>
+                      <span className="font-mono text-[11px] text-zinc-500">0{i + 1}</span>
+                      <h3 className="text-sm font-semibold text-ink font-display">{step.title}</h3>
                       <p className="mt-1.5 text-xs text-zinc-600 leading-relaxed">
                         <WithPlaceholders text={step.line} />
                       </p>

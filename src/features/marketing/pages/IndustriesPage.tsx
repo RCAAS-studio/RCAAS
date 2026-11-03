@@ -35,7 +35,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({ currentPath, onN
           >
             Home
           </button>
-          <span className="text-zinc-400">›</span>
+          <span className="text-zinc-500">›</span>
           <button 
             onClick={() => onNavigate('/industries/')} 
             className={`transition-colors ${!currentIndustry ? 'text-zinc-900 font-semibold' : 'hover:text-zinc-900'}`}
@@ -44,7 +44,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({ currentPath, onN
           </button>
           {currentIndustry && (
             <>
-              <span className="text-zinc-400">›</span>
+              <span className="text-zinc-500">›</span>
               <span className="text-accent font-semibold">{currentIndustry.title}</span>
             </>
           )}
@@ -62,7 +62,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({ currentPath, onN
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="max-w-3xl mb-14 sm:mb-16"
             >
-              <span className="text-xs font-mono uppercase tracking-wider text-accent font-semibold block mb-2">
+              <span className="text-xs font-mono uppercase tracking-wider text-accent-strong font-semibold block mb-2">
                 Industries Hub
               </span>
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink font-display">
@@ -94,7 +94,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({ currentPath, onN
                       {/* Card Header: Sector & Who it's for */}
                       <div className="flex items-start justify-between gap-3 text-xs font-mono">
                         <span className="text-ink font-semibold tracking-tight">{ind.title}</span>
-                        <span className="text-zinc-500 text-[10px] bg-zinc-100 border border-zinc-200/60 px-2 py-0.5 rounded shrink-0">
+                        <span className="text-zinc-600 text-[10px] bg-zinc-100 border border-zinc-200/60 px-2 py-0.5 rounded shrink-0">
                           {ind.badge}
                         </span>
                       </div>
@@ -124,7 +124,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({ currentPath, onN
                           Proof: {ind.proof}
                         </span>
                       ) : (
-                        <span className="text-[11px] font-mono text-zinc-400">
+                        <span className="text-[11px] font-mono text-zinc-500">
                           Explore solutions
                         </span>
                       )}
@@ -140,7 +140,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({ currentPath, onN
             {/* 3. CLOSING CTA BAND */}
             <section className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-8 sm:p-12 shadow-xs">
               <div className="max-w-2xl">
-                <span className="text-xs font-mono uppercase tracking-wider text-accent font-semibold block mb-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-accent-strong font-semibold block mb-2">
                   Tailored Recommendation
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-bold text-ink font-display tracking-tight">

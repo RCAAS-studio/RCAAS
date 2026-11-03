@@ -50,7 +50,7 @@ export const BlogHubPage: React.FC<BlogHubPageProps> = ({ page, onNavigate }) =>
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             Blog
           </span>
@@ -75,7 +75,7 @@ export const BlogHubPage: React.FC<BlogHubPageProps> = ({ page, onNavigate }) =>
             <span className="font-semibold text-zinc-900">Blog</span>
             {page > 1 && (
               <>
-                <span className="text-zinc-400">·</span>
+                <span className="text-zinc-500">·</span>
                 <span>
                   Page {page} of {pageCount}
                 </span>
@@ -119,7 +119,7 @@ export const BlogHubPage: React.FC<BlogHubPageProps> = ({ page, onNavigate }) =>
                 }`}
               >
                 {chip.label}
-                <span className={`font-mono text-[11px] ${active ? 'text-white/80' : 'text-zinc-400'}`}>{count}</span>
+                <span className={`font-mono text-[11px] ${active ? 'text-white/80' : 'text-zinc-500'}`}>{count}</span>
               </button>
             );
           })}
@@ -211,7 +211,7 @@ export const BlogHubPage: React.FC<BlogHubPageProps> = ({ page, onNavigate }) =>
                 <Rss className="w-3.5 h-3.5" aria-hidden="true" /> RSS feed
               </a>
             ) : (
-              <span className="mt-6 inline-flex w-fit items-center gap-1.5 text-xs font-mono text-zinc-400">
+              <span className="mt-6 inline-flex w-fit items-center gap-1.5 text-xs font-mono text-zinc-500">
                 <Rss className="w-3.5 h-3.5" aria-hidden="true" /> RSS feed (available when the blog launches)
               </span>
             )}

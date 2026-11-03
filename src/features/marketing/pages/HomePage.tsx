@@ -190,7 +190,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                 className="loro-btn-secondary w-full sm:w-auto px-7 py-3.5 text-sm font-medium"
               >
                 <span>Explore a live tour</span>
-                <span className="text-zinc-400 ml-1.5">&darr;</span>
+                <span className="text-zinc-500 ml-1.5">&darr;</span>
               </button>
             </div>
 
@@ -294,7 +294,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                     <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-zinc-500 font-semibold">
                       {pillar.promise}
                     </span>
-                    <h3 className="mt-3 text-2xl font-bold tracking-tight text-ink font-display transition-colors group-hover:text-accent-strong">
+                    <h3 className="mt-3 text-2xl font-semibold tracking-tight text-ink font-display transition-colors group-hover:text-accent-strong">
                       {pillar.title}
                     </h3>
                     <p className="mt-4 text-sm leading-relaxed text-muted">{pillar.body}</p>
@@ -359,7 +359,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                   )}
 
                   <div className="min-w-0 flex-1 p-4 sm:p-5">
-                    <h3 className="text-lg font-bold tracking-tight text-ink font-display leading-snug transition-colors group-hover:text-accent-strong">
+                    <h3 className="text-lg font-semibold tracking-tight text-ink font-display leading-snug transition-colors group-hover:text-accent-strong">
                       <span className="sr-only">{ind.title}: </span>
                       {ind.goalHeadline}
                     </h3>
@@ -369,7 +369,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                       <span className="min-w-0 truncate text-[11px] text-zinc-500">
                         For <span className="font-medium text-zinc-700">{ind.whoItsFor}</span>
                       </span>
-                      <ChevronRight className="h-4 w-4 shrink-0 text-zinc-400 transition-[color,transform] duration-300 group-hover:translate-x-1 group-hover:text-accent" aria-hidden="true" />
+                      <ChevronRight className="h-4 w-4 shrink-0 text-zinc-500 transition-[color,transform] duration-300 group-hover:translate-x-1 group-hover:text-accent" aria-hidden="true" />
                     </div>
                   </div>
                 </motion.a>
@@ -441,7 +441,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                   <span className="font-mono text-2xl font-bold text-accent">
                     {s.step}
                   </span>
-                  <h3 className="mt-3 text-base font-bold text-ink font-display">
+                  <h3 className="mt-3 text-base font-semibold text-ink font-display">
                     {s.title}
                   </h3>
                   <p className="mt-2 text-xs text-muted leading-relaxed">
@@ -510,7 +510,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                       <span className="absolute -right-1 -bottom-1 h-3 w-3 rounded-full bg-accent ring-2 ring-white" aria-hidden="true" />
                     </span>
                     <div>
-                      <h3 className="text-lg font-bold tracking-tight text-ink font-display leading-snug">{point.title}</h3>
+                      <h3 className="text-lg font-semibold tracking-tight text-ink font-display leading-snug">{point.title}</h3>
                       <p className="mt-2.5 text-sm leading-relaxed text-muted">{point.desc}</p>
                     </div>
                   </motion.div>
@@ -648,7 +648,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
               className="loro-btn-secondary w-full sm:w-auto px-7 py-3.5 text-sm font-medium"
             >
               <span>Chat on WhatsApp</span>
-              <span className="ml-1 text-zinc-400">↗</span>
+              <span className="ml-1 text-zinc-500">↗</span>
             </a>
           </div>
 

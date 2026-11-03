@@ -221,7 +221,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
           >
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button
             type="button"
             onClick={() => onNavigate('/services/')}
@@ -229,7 +229,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
           >
             What we create
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button
             type="button"
             onClick={() => onNavigate('/services/immersive-experiences/')}
@@ -237,7 +237,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
           >
             Immersive Experiences
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             3D Virtual Tours
           </span>
@@ -254,7 +254,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
             >
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
               <span className="font-semibold text-zinc-900">3D Virtual Tours</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-500">·</span>
               <span>Capability</span>
             </motion.div>
 
@@ -365,7 +365,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">What you get</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">Hosted 3D tour & shareable link</h3>
+              <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">Hosted 3D tour & shareable link</h3>
               <p className="text-xs text-zinc-600 leading-relaxed">
                 A dedicated, photorealistic 3D tour hosted on fast edge cloud servers, accessible via a custom link and embeddable on any website.
               </p>
@@ -373,7 +373,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Works on</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">Any modern web browser</h3>
+              <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">Any modern web browser</h3>
               <p className="text-xs text-zinc-600 leading-relaxed">
                 Phones, tablets, laptops, and desktop computers (Safari, Chrome, Firefox, Edge). Nothing to install.
               </p>
@@ -381,7 +381,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Time on site</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">A few hours to one day</h3>
+              <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">A few hours to one day</h3>
               <p className="text-xs text-zinc-600 leading-relaxed">
                 Rapid LiDAR and drone photogrammetry scanning with zero business interruption during your preferred hours.
               </p>
@@ -389,7 +389,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Ready in</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">3 to 7 working days</h3>
+              <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">3 to 7 working days</h3>
               <p className="text-xs text-zinc-600 leading-relaxed">
                 Typical turnaround from on-site scanning to 3D reconstruction, hotspot integration, and live client publishing.
               </p>
@@ -397,7 +397,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Pricing basis</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">Project-based transparent quotes</h3>
+              <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">Project-based transparent quotes</h3>
               <p className="text-xs text-zinc-600 leading-relaxed">
                 Quoted based on total space area, architectural complexity, and whether aerial drone capture is required.
               </p>
@@ -405,7 +405,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Where</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">Across Nepal & abroad</h3>
+              <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">Across Nepal & abroad</h3>
               <p className="text-xs text-zinc-600 leading-relaxed">
                 Active deployments in Kathmandu Valley, Pokhara, Chitwan, Lumbini, and remote cultural heritage sites.
               </p>
@@ -498,7 +498,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
                   <th className="p-4 sm:p-5 font-semibold text-zinc-500 w-1/4">Comparison</th>
                   <th className="p-4 sm:p-5 font-semibold text-zinc-700 w-1/4">Photos & video</th>
                   <th className="p-4 sm:p-5 font-semibold text-zinc-700 w-1/4">360° photo tour</th>
-                  <th className="p-4 sm:p-5 font-bold text-accent bg-accent-tint w-1/4 border-l border-accent-line">
+                  <th className="p-4 sm:p-5 font-bold text-accent-strong bg-accent-tint w-1/4 border-l border-accent-line">
                     3D virtual tour (RCAAS)
                   </th>
                 </tr>
@@ -621,7 +621,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-mono text-accent font-bold px-2 py-0.5 rounded bg-accent-tint border border-accent-line">
+                    <span className="text-xs font-mono text-accent-strong font-bold px-2 py-0.5 rounded bg-accent-tint border border-accent-line">
                       {item.number}
                     </span>
                     <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
@@ -629,7 +629,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-zinc-900 font-display mb-2">{item.title}</h3>
+                  <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">{item.title}</h3>
                   <p className="text-xs text-zinc-600 leading-relaxed mb-6">{item.description}</p>
                 </div>
 
@@ -686,7 +686,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
                   <span>{selectedSectorData.tag}</span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 font-display mb-4 leading-snug">
+                <h3 className="text-xl sm:text-2xl font-semibold text-zinc-900 font-display mb-4 leading-snug">
                   {selectedSectorData.headline}
                 </h3>
 
@@ -760,10 +760,10 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="p-6 rounded-xl border border-line bg-white shadow-xs flex flex-col justify-between">
               <div>
-                <div className="w-9 h-9 rounded-lg bg-accent-tint border border-accent-line flex items-center justify-center text-accent font-bold text-sm mb-4 font-mono">
+                <div className="w-9 h-9 rounded-lg bg-accent-tint border border-accent-line flex items-center justify-center text-accent-strong font-bold text-sm mb-4 font-mono">
                   01
                 </div>
-                <h3 className="text-base font-bold text-zinc-900 font-display mb-2">Preparation & briefing</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">Preparation & briefing</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">
                   We discuss your commercial goals, identify the hero spaces and views to highlight, and schedule the scan during your quietest operational hours.
                 </p>
@@ -776,10 +776,10 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
             <div className="p-6 rounded-xl border border-line bg-white shadow-xs flex flex-col justify-between">
               <div>
-                <div className="w-9 h-9 rounded-lg bg-accent-tint border border-accent-line flex items-center justify-center text-accent font-bold text-sm mb-4 font-mono">
+                <div className="w-9 h-9 rounded-lg bg-accent-tint border border-accent-line flex items-center justify-center text-accent-strong font-bold text-sm mb-4 font-mono">
                   02
                 </div>
-                <h3 className="text-base font-bold text-zinc-900 font-display mb-2">On-site reality capture</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">On-site reality capture</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">
                   Our engineers capture the premises with handheld mobile SLAM LiDAR and drone aerial photography. Takes between 2 hours and 1 day with zero guest disruption.
                 </p>
@@ -792,10 +792,10 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
             <div className="p-6 rounded-xl border border-line bg-white shadow-xs flex flex-col justify-between">
               <div>
-                <div className="w-9 h-9 rounded-lg bg-accent-tint border border-accent-line flex items-center justify-center text-accent font-bold text-sm mb-4 font-mono">
+                <div className="w-9 h-9 rounded-lg bg-accent-tint border border-accent-line flex items-center justify-center text-accent-strong font-bold text-sm mb-4 font-mono">
                   03
                 </div>
-                <h3 className="text-base font-bold text-zinc-900 font-display mb-2">3D reconstruction & enrich</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">3D reconstruction & enrich</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">
                   We reconstruct the continuous space into photorealistic 3D using Gaussian splatting, calibrate lighting, configure interactive hotspots, floor plans and links.
                 </p>
@@ -808,10 +808,10 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
             <div className="p-6 rounded-xl border border-line bg-white shadow-xs flex flex-col justify-between">
               <div>
-                <div className="w-9 h-9 rounded-lg bg-accent-tint border border-accent-line flex items-center justify-center text-accent font-bold text-sm mb-4 font-mono">
+                <div className="w-9 h-9 rounded-lg bg-accent-tint border border-accent-line flex items-center justify-center text-accent-strong font-bold text-sm mb-4 font-mono">
                   04
                 </div>
-                <h3 className="text-base font-bold text-zinc-900 font-display mb-2">Delivery, embed & launch</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">Delivery, embed & launch</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">
                   You receive your final hosted link, responsive iframe snippet, QR code assets, and our technical team assists your web team in going live.
                 </p>
@@ -857,7 +857,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors flex flex-col justify-between">
               <div>
                 <span className="text-xs font-mono text-accent font-semibold uppercase">Media & Reach</span>
-                <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">Visual Storytelling</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">Visual Storytelling</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed mb-6">
                   Turn your 3D capture into cinematic fly-through films, social media reels, and guided narrative walkthroughs with voiceover.
                 </p>
@@ -875,7 +875,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors flex flex-col justify-between">
               <div>
                 <span className="text-xs font-mono text-accent font-semibold uppercase">Presence & Events</span>
-                <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">VR Headset Experiences</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">VR Headset Experiences</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed mb-6">
                   Put visitors inside your space using VR headsets at international trade fairs, education expos, and hotel sales suites.
                 </p>
@@ -893,7 +893,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors flex flex-col justify-between">
               <div>
                 <span className="text-xs font-mono text-accent font-semibold uppercase">Survey & Engineering</span>
-                <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">Digital Twins & Survey</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">Digital Twins & Survey</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed mb-6">
                   Extract measured CAD drawings, BIM models, and point clouds for renovation, architecture, and structural heritage conservation.
                 </p>

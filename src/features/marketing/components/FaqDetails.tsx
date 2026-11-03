@@ -121,7 +121,7 @@ export const FaqDetails: React.FC<{
           <button
             type="button"
             onClick={copyLink}
-            className="mt-4 flex w-fit items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-400 transition-colors hover:text-accent"
+            className="mt-4 flex w-fit items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-500 transition-colors hover:text-accent"
           >
             {copied ? <Check className="h-3.5 w-3.5 text-accent" aria-hidden="true" /> : <Link2 className="h-3.5 w-3.5" aria-hidden="true" />}
             {copied ? 'Link copied' : 'Copy link'}

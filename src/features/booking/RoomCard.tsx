@@ -1,5 +1,6 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
 import { useEffect, useState } from 'react';
 import { contactProblem } from '../../lib/contactRules';
 import {
@@ -36,6 +37,7 @@ export function RoomCard({ project, stays, venue, initialRoom = '', preview = fa
   /** Open every room (RoomBooking) with this one, or none, chosen. */
   onOpenAll: (roomId: string) => void;
 }) {
+  useEscape(onClose);
   const t = useT();
   const [cal, setCal] = useState<StayCalendar | null>(null);
   const [stay, setStay] = useState({ checkin: '', checkout: '', guests: 2 });

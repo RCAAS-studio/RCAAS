@@ -1,5 +1,6 @@
 'use client';
 
+import { ask, askText, toast } from '../../components/ui/Ask';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   createProperty, deleteProperty, claimProperty, getProperties, getScenes, moveSceneToProperty, renameProperty,
@@ -219,9 +220,7 @@ function ProjectCard({ project, current, me, onChanged, pic }: { project: Proper
   // A project from before accounts: its name only, until someone claims it.
   if (project.claimable) {
     const claim = async () => {
-      if (!window.confirm(`Claim "${project.title}"?
-
-It becomes yours: from then on only you, and whoever you share it with, can see it.`)) return;
+      if (!(await ask({ title: `Claim “${project.title}”?`, body: 'It becomes yours: from then on only you, and whoever you share it with, can see it.', action: 'Claim it' }))) return;
       try { await claimProperty(project.id); onChanged(); } catch (e) { setError(e instanceof Error ? e.message : 'Could not claim it. Try again.'); }
     };
     return (
@@ -263,9 +262,10 @@ It becomes yours: from then on only you, and whoever you share it with, can see 
   const remove = async () => {
     setMenu(false);
     const spaces = count === 1 ? 'Its 1 space moves' : `Its ${count} spaces move`;
-    if (!window.confirm(`Delete the project "${project.title}"?\n\n${count ? `${spaces} to "Not in a project yet" and published tours keep working, but ` : ''}its website, photos and logo are deleted. To keep it on record, archive it instead.`)) return;
+    if (!(await ask({ title: `Delete “${project.title}”?`, body: `${count ? `${spaces} to “Not in a project yet” and published tours keep working, but ` : ''}its website, photos and logo are deleted for good. To keep it on record, archive it instead.`, action: `Delete ${project.title}`, danger: true }))) return;
     try {
       await deleteProperty(project.id);
+      toast(`Deleted “${project.title}”.`);
       try { if (localStorage.getItem(LAST_PROJECT_KEY) === project.id) localStorage.removeItem(LAST_PROJECT_KEY); } catch { /* private mode */ }
       onChanged();
     } catch (e) {
@@ -353,7 +353,7 @@ function GroupLoose({ spaces, onDone }: { spaces: ApiScene[]; onDone: () => void
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const group = async () => {
-    const name = window.prompt(`Name the project for these ${spaces.length} spaces:`, 'Demo project');
+    const name = await askText({ title: `Put these ${spaces.length} spaces in a new project`, label: 'Project name', value: 'Demo project', action: 'Make the project' });
     if (!name?.trim()) return;
     setBusy(true);
     setError('');

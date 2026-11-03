@@ -13,6 +13,7 @@ import { ThemeToggle } from '../../../components/ui/ThemeToggle';
 import type { ApiScene, Property } from '../../../@types/scene.types';
 import type { ProjectFeatures } from '../../../@types/config.types';
 import { QrCode } from '../../../features/studio/QrCode';
+import { ChangePlaceKind } from '../../../features/studio/PlaceKindPicker';
 import '../../../features/studio/editor.css';
 import '../../../features/studio/home.css';
 
@@ -258,6 +259,8 @@ export default function ProjectHomePage({ params }: { params: Promise<{ property
                   <span className="ph-links"><button className="pl-btn" onClick={() => setDialog('activity')}>All activity</button></span>
                 </section>
               )}
+
+              <ChangePlaceKind project={p} owner={owner} onChanged={load} />
 
               <section className="ph-block" aria-labelledby="ph-features">
                 <h2 className="ph-h" id="ph-features">What this project uses</h2>

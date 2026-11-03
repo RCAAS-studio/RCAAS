@@ -132,7 +132,7 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
                   <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-500">{study.tag}</span>
                   <span
                     className={`mt-1 block font-display text-xl font-bold tracking-tight transition-colors sm:text-2xl ${
-                      isActive ? 'text-white' : 'text-zinc-400 group-hover/item:text-white'
+                      isActive ? 'text-white' : 'text-zinc-500 group-hover/item:text-white'
                     }`}
                   >
                     {study.title}
@@ -147,7 +147,7 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
                 }`}
               >
                 <div className="overflow-hidden">
-                  <p className="text-sm leading-relaxed text-zinc-400">{study.line}</p>
+                  <p className="text-sm leading-relaxed text-zinc-500">{study.line}</p>
                   <a
                     href={study.path}
                     onClick={linkHandler(onNavigate, study.path)}

@@ -30,7 +30,7 @@ export const LegalSection: React.FC<{ section: LegalSectionMeta; number: number;
           <Icon className="w-4 h-4 text-accent" aria-hidden="true" />
         </span>
         <span className="text-lg sm:text-xl font-bold tracking-tight text-ink font-display">
-          <span className="font-mono text-sm text-zinc-400 mr-2">{number}.</span>
+          <span className="font-mono text-sm text-zinc-500 mr-2">{number}.</span>
           {section.title}
         </span>
       </h2>
@@ -81,7 +81,7 @@ export const LegalLayout: React.FC<{
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             {title}
           </span>
@@ -156,7 +156,7 @@ export const LegalLayout: React.FC<{
                           isActive ? 'bg-accent/[0.06] text-zinc-900 font-semibold' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
                         }`}
                       >
-                        <span className={`font-mono text-[11px] w-5 ${isActive ? 'text-accent' : 'text-zinc-400'}`}>{i + 1}</span>
+                        <span className={`font-mono text-[11px] w-5 ${isActive ? 'text-accent' : 'text-zinc-500'}`}>{i + 1}</span>
                         {section.title}
                       </a>
                     </li>

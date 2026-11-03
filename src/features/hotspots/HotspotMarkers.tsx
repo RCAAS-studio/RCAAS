@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useReducer, useState } from 'react';
 import { projected } from './hotspotProjector';
 import { hotspotsFor, subscribeDoc } from '../scene/sceneDoc';
-import { SCENE_BY_ID } from '../scene/scenes';
+import { SCENE_BY_ID, reachable } from '../scene/scenes';
 import { cardBox, nearestIds, showsCard } from './hotspotLayout';
 import { apiUrl, resolveAsset, safeUrl, type EventHall, type SiteBooking, type StayRoom } from '../../lib/api';
 import { bookableTable } from '../booking/booking';
@@ -81,7 +81,9 @@ export function HotspotMarkers({ sceneId, mode = 'view', selId, onSelect, onOpen
     onOpen?.(id);
   };
 
-  const shown = marks.map((m) => {
+  // Visitors never see a portal to a space that's gone or unpublished: it would do nothing (2026-11-03).
+  const live = mode === 'view' ? marks.filter((m) => { const x = byId.get(m.id); return x?.type !== 'portal' || reachable(x.payload?.sceneId); }) : marks;
+  const shown = live.map((m) => {
     const hs = byId.get(m.id);
     const showCard = showsCard(hs?.payload?.reveal, m.dist, carded.has(m.id)) || hover === m.id || (mode === 'edit' && m.id === selId);
     return { m, hs, box: showCard ? cardBox(m.x, m.y, w, h) : null };

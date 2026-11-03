@@ -95,8 +95,8 @@ const ProgressEvidence: React.FC<{ progress: NonNullable<IndustryContent['progre
               <Icon className="h-4.5 w-4.5" strokeWidth={1.7} aria-hidden="true" />
             </span>
             <div className="md:mt-4">
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">{String(i + 1).padStart(2, '0')}</p>
-              <h3 className="mt-1 font-display text-lg font-bold tracking-tight text-ink">{step.label}</h3>
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">{String(i + 1).padStart(2, '0')}</p>
+              <h3 className="mt-1 font-display text-lg font-semibold tracking-tight text-ink">{step.label}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-muted">
                 <WithPlaceholders text={step.line} />
               </p>
@@ -120,7 +120,7 @@ const ProgressEvidence: React.FC<{ progress: NonNullable<IndustryContent['progre
           <p className={`font-mono text-[11px] font-semibold uppercase tracking-[0.16em] ${i === 0 ? 'text-zinc-500' : 'text-accent-soft'}`}>
             {i === 0 ? 'On paper' : 'In the field'}
           </p>
-          <h3 className={`mt-2 font-display text-xl font-bold tracking-tight ${i === 0 ? 'text-ink' : 'text-white'}`}>{side.title}</h3>
+          <h3 className={`mt-2 font-display text-xl font-semibold tracking-tight ${i === 0 ? 'text-ink' : 'text-white'}`}>{side.title}</h3>
           <ul className="mt-4 space-y-2.5">
             {side.items.map((item) => (
               <li key={item} className={`flex items-start gap-2.5 text-sm leading-relaxed ${i === 0 ? 'text-zinc-700' : 'text-zinc-300'}`}>
@@ -260,7 +260,7 @@ export const IndustryPage: React.FC<IndustryPageProps> = ({ industry, onNavigate
                         <span className="w-11 h-11 rounded-xl border border-line bg-surface flex items-center justify-center transition-colors group-hover:bg-accent group-hover:border-accent">
                           <Icon className="w-5 h-5 text-accent transition-colors group-hover:text-white" aria-hidden="true" />
                         </span>
-                        <span className="font-mono text-xs text-zinc-300">{String(i + 1).padStart(2, '0')}</span>
+                        <span className="font-mono text-xs text-zinc-500">{String(i + 1).padStart(2, '0')}</span>
                       </div>
                       <dt className="text-base font-bold text-zinc-900 font-display mb-1.5">{item.space}</dt>
                       <dd className="text-sm text-zinc-600 leading-relaxed">{item.why}</dd>
@@ -287,11 +287,11 @@ export const IndustryPage: React.FC<IndustryPageProps> = ({ industry, onNavigate
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button type="button" onClick={() => onNavigate('/industries/')} className="hover:text-zinc-900 transition-colors">
             Industries
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             {industry.name}
           </span>
@@ -495,7 +495,7 @@ export const IndustryPage: React.FC<IndustryPageProps> = ({ industry, onNavigate
                       <span className={`w-11 h-11 rounded-xl flex items-center justify-center ${dark ? 'bg-white/10' : 'bg-accent'}`}>
                         <Icon className={`w-5 h-5 ${dark ? 'text-accent-soft' : 'text-white'}`} aria-hidden="true" />
                       </span>
-                      <h3 className={`text-lg sm:text-xl font-bold font-display ${dark ? 'text-white' : 'text-zinc-900'}`}>{column.title}</h3>
+                      <h3 className={`text-lg sm:text-xl font-semibold font-display ${dark ? 'text-white' : 'text-zinc-900'}`}>{column.title}</h3>
                     </div>
                     <ul className="space-y-3">
                       {column.items.map((item) => (
@@ -558,7 +558,7 @@ export const IndustryPage: React.FC<IndustryPageProps> = ({ industry, onNavigate
                       <span className="w-10 h-10 rounded-lg bg-white/95 flex items-center justify-center shadow-xs">
                         <Icon className="w-5 h-5 text-accent" aria-hidden="true" />
                       </span>
-                      <h3 className="text-xl font-bold text-white font-display">{audience.title}</h3>
+                      <h3 className="text-xl font-semibold text-white font-display">{audience.title}</h3>
                     </div>
                   </div>
                   <div className="p-6 sm:p-7 flex flex-col flex-1">
@@ -754,9 +754,9 @@ export const IndustryPage: React.FC<IndustryPageProps> = ({ industry, onNavigate
                       <span className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center transition-colors group-hover:bg-accent">
                         <Icon className="w-4.5 h-4.5 text-accent-soft transition-colors group-hover:text-white" aria-hidden="true" />
                       </span>
-                      <span className="font-mono text-xs text-zinc-500">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="font-mono text-xs text-zinc-400">{String(i + 1).padStart(2, '0')}</span>
                     </div>
-                    <h3 className="text-base font-bold font-display mb-1.5">{model.model}</h3>
+                    <h3 className="text-base font-semibold font-display mb-1.5">{model.model}</h3>
                     <p className="text-sm text-zinc-400 leading-relaxed">{model.description}</p>
                   </motion.li>
                 );

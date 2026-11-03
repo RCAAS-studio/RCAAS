@@ -8,16 +8,19 @@
  */
 import type { SiteDoc } from '../../lib/api';
 import type { ProjectFeatures } from '../../@types/config.types';
+import type { PlaceKind } from '../../@types/scene.types';
+import type { IconName } from '../../components/ui/Icon';
 
-export type PlaceKind = 'hotel' | 'restaurant' | 'venue' | 'college' | 'heritage' | 'other';
+export type { PlaceKind };
 
 /** `features`: what such a place doesn't use, switched off from the start (it can be turned on from its home). */
 type Starter = { site?: Partial<SiteDoc>; features?: Partial<ProjectFeatures> };
 interface Template extends Starter {
   kind: PlaceKind;
   label: string;
-  /** What the starter gives them, in a line. */
-  gives: string;
+  icon: IconName;
+  /** The places it suits, so the right card is easy to spot. */
+  who: string;
   /** A name for the first space, when the export didn't suggest one. */
   firstSpace: string;
 }
@@ -36,7 +39,7 @@ const tables = (first: string, last: string) =>
 export const TEMPLATES: Template[] = [
   {
     kind: 'hotel', label: 'Hotel or resort', firstSpace: 'Lobby',
-    gives: 'Room booking with three room types to fill in, table booking hours for the restaurant, a banquet hall for event bookings, and an enquiry section. The bookings start switched off.',
+    icon: 'hotel', who: 'Hotels, resorts, guest houses, homestays',
     site: {
       menu: { title: 'Dining', note: '', items: [] },
       contact: { title: 'Plan your stay', body: 'Ask about dates, rooms, events or anything else. We reply within a day.' },
@@ -51,7 +54,7 @@ export const TEMPLATES: Template[] = [
   },
   {
     kind: 'restaurant', label: 'Restaurant or café', firstSpace: 'Dining room',
-    gives: 'Table booking hours ready for your floor plan, a menu section, and an enquiry section. Booking starts switched off.',
+    icon: 'restaurant', who: 'Restaurants, cafés, bars, bakeries',
     site: {
       menu: { title: 'Menu', note: '', items: [] },
       contact: { title: 'Visit us', body: 'Ask about a table, a private dinner or an event.' },
@@ -60,7 +63,7 @@ export const TEMPLATES: Template[] = [
   },
   {
     kind: 'venue', label: 'Banquet or event venue', firstSpace: 'Main hall',
-    gives: 'Event booking with a hall to fill in (seated and standing, a photo, its 3D space), switched off until you turn it on, and an enquiry section for events.',
+    icon: 'event', who: 'Banquet halls, party palaces, wedding and conference venues',
     site: {
       contact: { title: 'Plan your event', body: 'Tell us the date, how many guests and the kind of event, and we’ll send options.' },
       events: events('Main Hall', 300, 500)
@@ -68,17 +71,63 @@ export const TEMPLATES: Template[] = [
   },
   {
     kind: 'college', label: 'College or school', firstSpace: 'Main building',
-    gives: 'An enquiry section for admissions and campus visits. Bookings start switched off; turn them on from the project’s home if you need them.',
+    icon: 'school', who: 'Schools, colleges, universities, training institutes',
     features: { reservations: false },
     site: { contact: { title: 'Visit the campus', body: 'Ask about admissions, courses or a campus visit.' } }
   },
   {
     kind: 'heritage', label: 'Heritage or cultural site', firstSpace: 'Courtyard',
-    gives: 'An enquiry section for visits and group bookings. Bookings start switched off; turn them on from the project’s home if you need them.',
+    icon: 'temple', who: 'Temples, monasteries, museums, palaces, durbar squares',
     features: { reservations: false },
     site: { contact: { title: 'Plan a visit', body: 'Ask about opening times, guided visits or group bookings.' } }
   },
-  { kind: 'other', label: 'Something else', firstSpace: 'Reception', gives: 'A blank website to start from.' }
+  { kind: 'other', label: 'Something else', firstSpace: 'Reception', icon: 'place', who: 'Offices, shops, homes for sale, anything else' }
 ];
 
 export const templateFor = (kind: PlaceKind) => TEMPLATES.find((t) => t.kind === kind) ?? TEMPLATES[TEMPLATES.length - 1];
+
+/* --- what a starter sets up, in exact words (the picker, and changing the kind later) --- */
+type Parts = {
+  stays?: { rooms: { label: string }[]; checkin: string; checkout: string };
+  booking?: { first: string; last: string; stay: number; maxParty: number };
+  events?: { halls: { label: string; seated: number; standing: number }[] };
+  menu?: { title: string };
+  contact?: { title: string };
+};
+/** One line per thing the starter sets up, with its real names and numbers. */
+export function starterParts(t: Pick<Template, 'site' | 'features'>): string[] {
+  const s = (t.site ?? {}) as Parts;
+  const out: string[] = [];
+  if (s.stays) out.push(`Room booking: ${s.stays.rooms.map((r) => r.label).join(', ')}, to price and photograph; check-in ${s.stays.checkin}, check-out ${s.stays.checkout}. Off until you switch it on.`);
+  if (s.booking) out.push(`Table booking: ${s.booking.first}–${s.booking.last}, ${s.booking.stay}-minute sittings, up to ${s.booking.maxParty} guests a table. Off until you place your tables and switch it on.`);
+  if (s.menu) out.push(`A “${s.menu.title}” menu section, hidden until you add dishes.`);
+  for (const h of s.events?.halls ?? []) out.push(`Event booking: ${h.label}, ${h.seated} seated or ${h.standing} standing. Off until you switch it on.`);
+  if (s.contact) out.push(`An enquiry section headed “${s.contact.title}”.`);
+  if (t.features?.reservations === false) out.push('Bookings switched off for this project (switch Bookings on from its home if it takes them).');
+  return out;
+}
+
+type Have = { stays?: { rooms?: unknown[] }; booking?: { on?: boolean; tables?: unknown[] }; events?: { halls?: unknown[] }; menu?: { title?: string; items?: unknown[] }; contact?: { title?: string; body?: string } };
+const SECTION: Record<keyof Have, string> = { stays: 'Room booking', booking: 'Table booking', events: 'Event booking', menu: 'The menu', contact: 'The enquiry section' };
+/** Changing an existing project's kind: the new starter's sections its website draft
+ *  hasn't got yet (`patch`, to save over the draft), in words (`adds`), and the ones it
+ *  has, which are left alone (`keeps`). Never touches what the author filled in. */
+export function starterAdds(draft: Partial<SiteDoc>, t: Template) {
+  const have = draft as Have;
+  const empty: Record<keyof Have, boolean> = {
+    stays: !have.stays?.rooms?.length,
+    // every draft has table booking (the server fills in these same hours), so it is never re-added: hours an author changed stay
+    booking: !have.booking,
+    events: !have.events?.halls?.length,
+    menu: !have.menu?.items?.length && !have.menu?.title?.trim(),
+    contact: !have.contact?.title?.trim() && !have.contact?.body?.trim()
+  };
+  const patch: Record<string, unknown> = {};
+  const keeps: string[] = [];
+  for (const [k, v] of Object.entries(t.site ?? {})) {
+    if (!(k in empty)) continue;
+    if (empty[k as keyof Have]) patch[k] = v;
+    else keeps.push(k === 'booking' ? 'Table booking is already set up on the website, so its hours stay as they are.' : `${SECTION[k as keyof Have]} already has your content, so it stays as it is.`);
+  }
+  return { patch: patch as Partial<SiteDoc>, adds: starterParts({ site: patch as Partial<SiteDoc> }), keeps };
+}

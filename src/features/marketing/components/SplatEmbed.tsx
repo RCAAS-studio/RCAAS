@@ -614,7 +614,7 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
               <div className="text-[11px] font-mono text-accent-soft uppercase tracking-wider">
                 {activeSpace.tag} · {activeSpace.location}
               </div>
-              <h3 className="text-xl font-bold text-surface font-display mt-1">
+              <h3 className="text-xl font-semibold text-surface font-display mt-1">
                 {activeSpace.name}
               </h3>
               <p className="mt-1 text-xs text-zinc-300 max-w-lg">
@@ -622,7 +622,7 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
               </p>
             </div>
 
-            <div className="text-right text-xs text-zinc-400 font-mono">
+            <div className="text-right text-xs text-zinc-500 font-mono">
             </div>
           </div>
         </div>

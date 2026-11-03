@@ -40,6 +40,8 @@ export function limitTour(ids: string[], start: string) {
 export const firstScene = () => startScene ?? SCENES[0]?.id ?? '';
 /** True on the public tour — its documents come from the published copy. */
 export const isPublicTour = () => tourIds !== null;
+/** Can a portal take the visitor (or the studio) to this space? Not once it is deleted or unpublished. */
+export const reachable = (id?: string | null) => !!id && visibleScenes().some((s) => s.id === id);
 export const visibleScenes = () =>
   SCENES.filter((s) => (!tourIds || tourIds.has(s.id)) && (!propertyScope || s.propertyId === propertyScope));
 

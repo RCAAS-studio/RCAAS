@@ -73,7 +73,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
           >
             Home
           </button>
-          <span className="text-zinc-400">›</span>
+          <span className="text-zinc-500">›</span>
           <button 
             onClick={() => onNavigate('/work/')} 
             className={`transition-colors ${!currentProject ? 'text-zinc-900 font-semibold' : 'hover:text-zinc-900'}`}
@@ -82,7 +82,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
           </button>
           {currentProject && (
             <>
-              <span className="text-zinc-400">›</span>
+              <span className="text-zinc-500">›</span>
               <span className="text-accent font-semibold">{currentProject.title}</span>
             </>
           )}
@@ -100,7 +100,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="max-w-3xl mb-12 sm:mb-14"
             >
-              <span className="text-xs font-mono uppercase tracking-wider text-accent font-semibold block mb-2">
+              <span className="text-xs font-mono uppercase tracking-wider text-accent-strong font-semibold block mb-2">
                 Portfolio &amp; Showcase
               </span>
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink font-display">
@@ -170,7 +170,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
 
                       {/* Content Overlay */}
                       <div className="absolute bottom-4 left-4 right-4">
-                        <h3 className="text-xl sm:text-2xl font-bold font-display text-white mb-1">
+                        <h3 className="text-xl sm:text-2xl font-semibold font-display text-white mb-1">
                           {project.title}
                         </h3>
                         <p className="text-xs text-zinc-300 line-clamp-1 mb-4 font-sans">
@@ -231,7 +231,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
                       </div>
 
                       {/* Project Title */}
-                      <h3 className="text-xl font-bold text-ink font-display group-hover:text-accent transition-colors">
+                      <h3 className="text-xl font-semibold text-ink font-display group-hover:text-accent transition-colors">
                         {project.title}
                       </h3>
 
@@ -253,7 +253,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
                       <span className="text-accent font-semibold group-hover:underline">
                         Read the story →
                       </span>
-                      <span className="text-zinc-400 group-hover:translate-x-0.5 transition-transform">
+                      <span className="text-zinc-500 group-hover:translate-x-0.5 transition-transform">
                         &rarr;
                       </span>
                     </div>
@@ -285,7 +285,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
             {/* 6. CTA BAND */}
             <section className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-8 sm:p-12 shadow-xs">
               <div className="max-w-2xl">
-                <span className="text-xs font-mono uppercase tracking-wider text-accent font-semibold block mb-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-accent-strong font-semibold block mb-2">
                   Initiate a Capture
                 </span>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-ink font-display tracking-tight">

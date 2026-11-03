@@ -301,7 +301,7 @@ export const ComparisonGuidePage: React.FC<ComparisonGuidePageProps> = ({ onNavi
                           <span className="w-10 h-10 rounded-lg border border-line bg-surface flex items-center justify-center shrink-0 transition-colors group-hover:bg-accent group-hover:border-accent">
                             <Icon className="w-4.5 h-4.5 text-accent transition-colors group-hover:text-white" aria-hidden="true" />
                           </span>
-                          <h3 className="text-lg font-bold text-zinc-900 font-display">{format.name}</h3>
+                          <h3 className="text-lg font-semibold text-zinc-900 font-display">{format.name}</h3>
                         </div>
                         <p className="text-sm text-zinc-600 leading-relaxed">{format.howItWorks}</p>
                         {format.id === 'tour3d' && (
@@ -341,7 +341,7 @@ export const ComparisonGuidePage: React.FC<ComparisonGuidePageProps> = ({ onNavi
                       <span className="w-10 h-10 rounded-lg border border-line bg-surface flex items-center justify-center mb-4 transition-colors group-hover:bg-accent group-hover:border-accent">
                         <Icon className="w-4.5 h-4.5 text-accent transition-colors group-hover:text-white" aria-hidden="true" />
                       </span>
-                      <h3 className="text-lg font-bold text-zinc-900 font-display mb-4">{choice.heading}</h3>
+                      <h3 className="text-lg font-semibold text-zinc-900 font-display mb-4">{choice.heading}</h3>
                       <ul className="space-y-3">
                         {choice.reasons.map((reason) => (
                           <li key={reason} className="flex items-start gap-3 text-sm text-zinc-700 leading-relaxed">
@@ -379,7 +379,7 @@ export const ComparisonGuidePage: React.FC<ComparisonGuidePageProps> = ({ onNavi
                   >
                     3D virtual tours <span aria-hidden="true">→</span>
                   </a>
-                  <span className="text-zinc-400" aria-hidden="true">·</span>
+                  <span className="text-zinc-500" aria-hidden="true">·</span>
                   <a
                     href="/services/visual-storytelling/"
                     onClick={goToLink('/services/visual-storytelling/')}

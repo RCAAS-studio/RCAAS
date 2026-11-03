@@ -223,7 +223,7 @@ const TeamCard: React.FC<{ member: TeamMember }> = ({ member }) => {
 
         {/* Name and role over the photo */}
         <div className="absolute bottom-0 inset-x-0 p-4">
-          <h3 className="text-lg font-bold text-white font-display leading-tight">
+          <h3 className="text-lg font-semibold text-white font-display leading-tight">
             {member.name ?? <Placeholder>[[TBI: Game developer(s)]]</Placeholder>}
           </h3>
           <p className="mt-1 text-xs text-white/80">
@@ -304,7 +304,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             About
           </span>
@@ -516,7 +516,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                       <span className="w-10 h-10 rounded-lg border border-line bg-surface flex items-center justify-center transition-colors group-hover:bg-accent group-hover:border-accent">
                         <Icon className="w-4.5 h-4.5 text-accent transition-colors group-hover:text-white" aria-hidden="true" />
                       </span>
-                      <span className="font-mono text-xs text-zinc-400">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="font-mono text-xs text-zinc-500">{String(i + 1).padStart(2, '0')}</span>
                     </div>
                     <dt className="text-base font-bold text-zinc-900 font-display mb-2">{value.title}</dt>
                     <dd className="text-xs sm:text-sm text-zinc-600 leading-relaxed">{value.line}</dd>

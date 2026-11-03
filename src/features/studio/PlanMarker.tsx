@@ -1,5 +1,6 @@
 'use client';
 
+import { sqft } from '../../lib/area';
 import { useEffect, useRef, useState, type PointerEvent as RPointerEvent } from 'react';
 import './planmarks.css';
 import type { EditorApi } from '../../@types/app.types';
@@ -230,7 +231,7 @@ export function PlanMarker({ editor, mode, onMode, onClose }: {
         const pts = r.corners.map((_, j) => spots[`r${i}.${j}`]).filter((s) => s?.front);
         if (pts.length < 3) return null;
         const c = { x: pts.reduce((s, p) => s + p.x, 0) / pts.length, y: pts.reduce((s, p) => s + p.y, 0) / pts.length, front: true };
-        return tag(c, c, `Room · ${area(r.corners).toFixed(1)} m²`, `rt${i}`);
+        return tag(c, c, `Room · ${area(r.corners).toFixed(1)} m² · ${sqft(area(r.corners))} sq ft`, `rt${i}`);
       })}
       <div className="pm-panel" role="dialog" aria-label={NAME[mode]}>
         <div className="pm-modes" role="group" aria-label="What to mark">

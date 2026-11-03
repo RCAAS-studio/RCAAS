@@ -190,7 +190,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             Contact
           </span>
@@ -206,7 +206,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
           >
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="font-semibold text-zinc-900">Contact</span>
-            <span className="text-zinc-400">·</span>
+            <span className="text-zinc-500">·</span>
             <span>Kathmandu, Nepal</span>
           </motion.div>
 
@@ -558,7 +558,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                   {i + 1}
                 </span>
                 <div className="rounded-xl border border-line bg-surface p-5 flex-1 w-full">
-                  <h3 className="text-sm font-bold text-zinc-900 font-display mb-1">{step.title}</h3>
+                  <h3 className="text-sm font-semibold text-zinc-900 font-display mb-1">{step.title}</h3>
                   <p className="text-sm text-zinc-600 leading-relaxed">{step.line}</p>
                 </div>
               </motion.li>

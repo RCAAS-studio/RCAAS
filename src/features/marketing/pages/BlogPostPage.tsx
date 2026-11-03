@@ -91,7 +91,7 @@ const RelatedGroup: React.FC<{ links?: BlogLink[]; kind: string; icon: LucideIco
             <Icon className="w-4 h-4 text-accent transition-colors group-hover:text-white" aria-hidden="true" />
           </span>
           <span className="flex-1 min-w-0">
-            <span className="block text-[10px] font-mono uppercase tracking-wider text-zinc-400">{kind}</span>
+            <span className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500">{kind}</span>
             <span className="block text-sm font-semibold text-zinc-900 truncate">{link.label}</span>
           </span>
           <ArrowRight className="w-4 h-4 text-zinc-300 transition-all group-hover:text-accent group-hover:translate-x-0.5" aria-hidden="true" />
@@ -135,11 +135,11 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ post, onNavigate }) 
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button type="button" onClick={() => onNavigate('/blog/')} className="hover:text-zinc-900 transition-colors">
             Blog
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold truncate" aria-current="page">
             {post.title}
           </span>

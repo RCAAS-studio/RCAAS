@@ -141,11 +141,11 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button type="button" onClick={() => onNavigate('/about/')} className="hover:text-zinc-900 transition-colors">
             About
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             FAQ
           </span>
@@ -162,7 +162,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
             >
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
               <span className="font-semibold text-zinc-900">{totalQuestions} answers</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-500">·</span>
               <span>{FAQ_GROUPS.length} topics</span>
             </motion.div>
 
@@ -207,7 +207,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
               Search the answers
             </label>
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" aria-hidden="true" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" aria-hidden="true" />
               <input
                 id="faq-search"
                 type="search"
@@ -221,7 +221,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
                   type="button"
                   onClick={() => setQuery('')}
                   aria-label="Clear search"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -267,9 +267,9 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
                       isActive ? 'bg-accent/6 text-zinc-900 font-semibold' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
                     } ${count === 0 ? 'opacity-40' : ''}`}
                   >
-                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-zinc-400'}`} aria-hidden="true" />
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-zinc-500'}`} aria-hidden="true" />
                     <span className="flex-1">{link.title}</span>
-                    {count !== undefined && <span className="font-mono text-[11px] text-zinc-400">{count}</span>}
+                    {count !== undefined && <span className="font-mono text-[11px] text-zinc-500">{count}</span>}
                   </a>
                 );
               })}
@@ -287,7 +287,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
                       <Icon className="w-4.5 h-4.5 text-white" aria-hidden="true" />
                     </span>
                     <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink font-display">{group.title}</h2>
-                    <span className="ml-auto font-mono text-xs text-zinc-400">
+                    <span className="ml-auto font-mono text-xs text-zinc-500">
                       {visibleCounts[group.id]}/{group.items.length}
                     </span>
                   </motion.div>

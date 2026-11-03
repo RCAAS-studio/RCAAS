@@ -341,6 +341,20 @@ export async function setPropertyFeatures(id, patch) {
  *  an archived project's published tours and website stay up. A project from
  *  before has none, so it is in progress; `statusAt` is when it last changed. */
 export const PROJECT_STATUSES = ['in-progress', 'delivered', 'archived'];
+/** What kind of place a project is (2026-11-03), as the studio's starter templates name
+ *  them (src/features/studio/siteTemplates.ts). Only a label: changing it never removes
+ *  anything; the studio adds the new kind's missing website sections itself. Older
+ *  projects have none. */
+export const PLACE_KINDS = ['hotel', 'restaurant', 'venue', 'college', 'heritage', 'other'];
+export async function setPropertyKind(id, kind) {
+  if (!PLACE_KINDS.includes(kind)) throw badRequest('Unknown kind of place.');
+  const p = await getProperty(id);
+  if (!p) return null;
+  const next = { ...p, kind };
+  await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
+  return next;
+}
+
 export async function setPropertyStatus(id, status) {
   if (!PROJECT_STATUSES.includes(status)) throw badRequest('Unknown status.');
   const p = await getProperty(id);
@@ -420,11 +434,11 @@ function cleanTitle(title) {
 /** Throws 400 on a bad title, 409 if a property with the same id exists.
  *  `ownerId` is null for the legacy passwordless session, which has no
  *  account to own it — same as an old project's default, visible to all. */
-export async function createProperty(title, ownerId = null) {
+export async function createProperty(title, ownerId = null, kind = null) {
   const clean = cleanTitle(title);
   const id = propertyIdFor(clean);
   if (!id) throw badRequest('Use at least one letter or number in the name.');
-  const doc = { id, version: 1, title: clean, ownerId, members: [], staff: [], createdAt: new Date().toISOString() };
+  const doc = { id, version: 1, title: clean, ownerId, members: [], staff: [], createdAt: new Date().toISOString(), ...(PLACE_KINDS.includes(kind) ? { kind } : {}) };
   await fs.mkdir(PROPERTIES_DIR, { recursive: true });
   try {
     // 'wx': never overwrite a property that already has this id.

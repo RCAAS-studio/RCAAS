@@ -1,5 +1,6 @@
 'use client';
 
+import { sqft } from '../../../../../lib/area';
 import { use, useEffect, useState } from 'react';
 import { API_BASE_URL, assetUrl, getProperty, getScene } from '../../../../../lib/api';
 import { loadPlan, type FloorPlan } from '../../../../../features/tour/floorMapData';
@@ -85,11 +86,11 @@ export default function PlanSheetPage({ params }: { params: Promise<{ property: 
                   <tr key={r.id}>
                     <td>{r.name}</td>
                     <td>{r.size[0].toFixed(1)} × {r.size[1].toFixed(1)} m</td>
-                    <td>{r.area.toFixed(1)} m²</td>
+                    <td>{r.area.toFixed(1)} m² · {sqft(r.area)} sq ft</td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot><tr><th>Total</th><th /><th>{total.toFixed(1)} m²</th></tr></tfoot>
+              <tfoot><tr><th>Total</th><th /><th>{total.toFixed(1)} m² · {sqft(total)} sq ft</th></tr></tfoot>
             </table>
           </section>
         )}

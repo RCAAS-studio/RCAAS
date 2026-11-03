@@ -69,7 +69,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({ onNavigate }) => {
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }} className="mb-8">
           <UncapturedScan />
-          <p className="mt-2 font-mono text-xs text-zinc-400 tracking-widest">404</p>
+          <p className="mt-2 font-mono text-xs text-zinc-500 tracking-widest">404</p>
         </motion.div>
 
         <motion.h1

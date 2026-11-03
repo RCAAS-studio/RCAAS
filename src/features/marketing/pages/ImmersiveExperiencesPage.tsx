@@ -291,7 +291,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           >
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button
             type="button"
             onClick={() => onNavigate('/services/')}
@@ -299,7 +299,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           >
             What we create
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             Immersive Experiences
           </span>
@@ -315,7 +315,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           >
             <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
             <span className="font-semibold text-zinc-900">Immersive Experiences</span>
-            <span className="text-zinc-400">·</span>
+            <span className="text-zinc-500">·</span>
             <span>Pillar 01</span>
           </motion.div>
 
@@ -361,7 +361,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
               className={buttonClass('secondary', 'md')}
             >
               <span>Explore a live tour</span>
-              <span className="ml-2 font-mono text-zinc-400">↓</span>
+              <span className="ml-2 font-mono text-zinc-500">↓</span>
             </button>
 
             <button
@@ -398,7 +398,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
                 <div className="w-10 h-10 rounded-lg bg-zinc-50 border border-line flex items-center justify-center mb-4">
                   {tile.icon}
                 </div>
-                <h3 className="text-sm font-bold text-ink font-display mb-2 leading-snug">
+                <h3 className="text-sm font-semibold text-ink font-display mb-2 leading-snug">
                   {tile.title}
                 </h3>
                 <p className="text-xs text-zinc-600 leading-relaxed font-sans">
@@ -414,7 +414,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="mb-8 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-100 border border-line text-xs font-mono text-zinc-600 mb-3">
               <span>Section 03</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-600">·</span>
               <span>Interactive Spatial Player</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display mb-3">
@@ -433,10 +433,10 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-zinc-500 font-mono px-2">
             <div>
               <span className="font-semibold text-zinc-900">Basera Boutique Hotel</span>
-              <span className="mx-2 text-zinc-400">·</span>
+              <span className="mx-2 text-zinc-500">·</span>
               <span>Captured to let international guests explore the courtyard, suites and dining before booking.</span>
             </div>
-            <div className="text-zinc-400">
+            <div className="text-zinc-500">
               Interactive 3D Demo · Kathmandu, Nepal
             </div>
           </div>
@@ -447,7 +447,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="mb-10 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-100 border border-line text-xs font-mono text-zinc-600 mb-3">
               <span>Section 04</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-600">·</span>
               <span>Delivery Formats</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display mb-3">
@@ -494,14 +494,14 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
                   <div className="lg:col-span-5 bg-zinc-950 text-white p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
                     <div className="relative z-10">
                       <div className="flex items-center justify-between mb-4">
-                        <span className="text-xs font-mono text-accent font-bold">
+                        <span className="text-xs font-mono text-accent-soft font-bold">
                           FORMAT {cap.number}
                         </span>
                         <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/10 text-white/90 border border-white/10">
                           {cap.badge}
                         </span>
                       </div>
-                      <h3 className="text-2xl font-bold font-display text-white mb-4">
+                      <h3 className="text-2xl font-semibold font-display text-white mb-4">
                         {cap.title}
                       </h3>
                       
@@ -614,7 +614,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
                         </button>
                       )}
 
-                      <span className="text-xs font-mono text-zinc-400">
+                      <span className="text-xs font-mono text-zinc-500">
                         Anchored at #{cap.anchor}
                       </span>
                     </div>
@@ -631,7 +631,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="mb-8 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-100 border border-line text-xs font-mono text-zinc-600 mb-3">
               <span>Section 05</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-600">·</span>
               <span>Tour Features & Capabilities</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display mb-3">
@@ -734,7 +734,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="mb-8 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-100 border border-line text-xs font-mono text-zinc-600 mb-3">
               <span>Section 06</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-600">·</span>
               <span>Technology Comparison</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display mb-3">
@@ -785,7 +785,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="mb-8 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-100 border border-line text-xs font-mono text-zinc-600 mb-3">
               <span>Section 07</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-600">·</span>
               <span>Industry Impact</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display mb-3">
@@ -804,11 +804,11 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
                     <span className="text-xs font-mono font-semibold uppercase text-zinc-500">
                       {ind.tag}
                     </span>
-                    <span className="text-xs font-mono text-accent font-bold">
+                    <span className="text-xs font-mono text-accent-strong font-bold">
                       Sector 0{i + 1}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-ink font-display mb-1.5">
+                  <h3 className="text-xl font-semibold text-ink font-display mb-1.5">
                     {ind.name}
                   </h3>
                   <div className="text-xs font-semibold text-accent mb-3">
@@ -831,7 +831,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
                   <button
                     type="button"
                     onClick={() => onNavigate('/contact/')}
-                    className="text-xs font-mono text-zinc-400 hover:text-zinc-700"
+                    className="text-xs font-mono text-zinc-500 hover:text-zinc-700"
                   >
                     Request Proposal
                   </button>
@@ -846,7 +846,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="mb-10 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-100 border border-line text-xs font-mono text-zinc-600 mb-3">
               <span>Section 08</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-600">·</span>
               <span>Workflow</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display mb-3">
@@ -860,7 +860,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
             <div className="rounded-xl border border-line bg-white p-6 shadow-xs relative">
               <span className="text-2xl font-black font-mono text-zinc-200 block mb-3">01</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mb-2">
+              <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">
                 1. Capture (Single visit)
               </h3>
               <p className="text-xs text-zinc-600 leading-relaxed font-sans">
@@ -870,7 +870,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
 
             <div className="rounded-xl border border-line bg-white p-6 shadow-xs relative">
               <span className="text-2xl font-black font-mono text-zinc-200 block mb-3">02</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mb-2">
+              <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">
                 2. Reconstruct & Optimise
               </h3>
               <p className="text-xs text-zinc-600 leading-relaxed font-sans">
@@ -880,7 +880,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
 
             <div className="rounded-xl border border-line bg-white p-6 shadow-xs relative">
               <span className="text-2xl font-black font-mono text-zinc-200 block mb-3">03</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mb-2">
+              <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">
                 3. Enrich with Hotspots
               </h3>
               <p className="text-xs text-zinc-600 leading-relaxed font-sans">
@@ -890,7 +890,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
 
             <div className="rounded-xl border border-line bg-white p-6 shadow-xs relative">
               <span className="text-2xl font-black font-mono text-zinc-200 block mb-3">04</span>
-              <h3 className="text-base font-bold text-zinc-900 font-display mb-2">
+              <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">
                 4. Launch & Share
               </h3>
               <p className="text-xs text-zinc-600 leading-relaxed font-sans">
@@ -905,7 +905,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
           <div className="mb-8 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-100 border border-line text-xs font-mono text-zinc-600 mb-3">
               <span>Section 09</span>
-              <span className="text-zinc-400">·</span>
+              <span className="text-zinc-600">·</span>
               <span>FAQ</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display mb-3">

@@ -491,3 +491,35 @@ test('a hall calendar day: free, half taken by either half, taken by both halves
   assert.equal(hallDayState(['day', 'evening']), 'full');
   assert.equal(hallDayState(['full']), 'full');
 });
+
+test('a kind of place says exactly what it sets up, and a later change adds only what the draft lacks', async () => {
+  const { starterParts, starterAdds, templateFor, TEMPLATES } = await import('../src/features/studio/siteTemplates.ts');
+  const hotel = templateFor('hotel');
+  const parts = starterParts(hotel);
+  assert.ok(parts.some((p) => p.includes('Standard Room, Deluxe Room, Family Suite') && p.includes('check-in 14:00')), 'names the room types');
+  assert.ok(parts.some((p) => p.includes('09:00–21:30') && p.includes('90-minute')), 'the table hours');
+  assert.ok(parts.some((p) => p.includes('Banquet Hall, 150 seated or 250 standing')), 'the hall');
+  assert.ok(starterParts(templateFor('college')).some((p) => p.includes('Bookings switched off')), 'says bookings start off');
+  assert.deepEqual(starterParts(templateFor('other')), [], 'something else sets up nothing');
+  for (const t of TEMPLATES) assert.ok(t.icon && t.who, `${t.kind} has an icon and the places it suits`);
+
+  // an empty draft (server defaults) takes every section
+  const empty = { stays: { rooms: [] }, booking: { on: false, tables: [] }, events: { halls: [] }, menu: { title: '', items: [] }, contact: { title: '', body: '' } };
+  const all = starterAdds(empty, hotel);
+  assert.deepEqual(Object.keys(all.patch).sort(), ['contact', 'events', 'menu', 'stays']);
+  assert.deepEqual(all.keeps, ['Table booking is already set up on the website, so its hours stay as they are.'], 'never overwrites table hours');
+  // what the author filled in is never replaced
+  const filled = { ...empty, stays: { rooms: [{ id: 'k' }] }, menu: { title: 'Our kitchen', items: [] }, contact: { title: '', body: 'Call us' }, booking: { on: true, tables: [] } };
+  const some = starterAdds(filled, hotel);
+  assert.deepEqual(Object.keys(some.patch), ['events'], 'only the missing hall');
+  assert.equal(some.keeps.length, 4, 'rooms, tables, menu and enquiry kept');
+  assert.ok(some.keeps.every((k) => / stays? as (it is|they are).$/.test(k)));
+  assert.deepEqual(starterAdds(empty, templateFor('other')).patch, {}, 'something else adds nothing');
+});
+
+test('areas convert to square feet, rounded, with thousands separators', async () => {
+  const { sqft } = await import('../src/lib/area.ts');
+  assert.equal(sqft(1000), '10,764');
+  assert.equal(sqft(68), '732');
+  assert.equal(sqft(24.5), '264');
+});

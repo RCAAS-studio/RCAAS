@@ -356,22 +356,22 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
                       />
                     </div>
                     <div className="p-5 flex flex-col flex-1">
-                      <h3 className="text-sm font-bold text-zinc-900 font-display mb-3">{project.project}</h3>
+                      <h3 className="text-sm font-semibold text-zinc-900 font-display mb-3">{project.project}</h3>
                       <dl className="space-y-3 text-xs">
                         <div>
-                          <dt className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Usually includes</dt>
+                          <dt className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">Usually includes</dt>
                           <dd className="mt-1">
                             <Placeholder>{project.includes}</Placeholder>
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Typical cost</dt>
+                          <dt className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">Typical cost</dt>
                           <dd className="mt-1">
                             <Placeholder>[[TBI]]</Placeholder>
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Typical timeline</dt>
+                          <dt className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">Typical timeline</dt>
                           <dd className="mt-1">
                             <Placeholder>[[TBI]]</Placeholder>
                           </dd>
@@ -411,8 +411,8 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
                         <Icon className="w-5 h-5" aria-hidden="true" />
                       </span>
                       <div>
-                        <span className="font-mono text-[11px] text-zinc-400">0{i + 1}</span>
-                        <h3 className="text-sm font-bold text-zinc-900 font-display">{stage.stage}</h3>
+                        <span className="font-mono text-[11px] text-zinc-500">0{i + 1}</span>
+                        <h3 className="text-sm font-semibold text-zinc-900 font-display">{stage.stage}</h3>
                         <p className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-mono text-zinc-800">
                           <CalendarClock className="w-3.5 h-3.5 text-accent shrink-0" aria-hidden="true" />
                           {stage.time ?? <Placeholder>{stage.timeHint ? `[[TBI: ${stage.timeHint}]]` : '[[TBI]]'}</Placeholder>}

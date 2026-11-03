@@ -175,7 +175,7 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
           <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <span className="text-accent font-semibold" aria-current="page">
             Platform
           </span>
@@ -258,7 +258,7 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
           <p className="mt-4 text-xs font-mono text-zinc-500">
             <Placeholder>[[TBI: project]]</Placeholder> · hosted on our platform.
           </p>
-          <p className="mt-2 text-[11px] font-mono text-zinc-400">
+          <p className="mt-2 text-[11px] font-mono text-zinc-500">
             <Placeholder>[[TBI: demo project, embed URL, full-screen URL, poster, file size]]</Placeholder>
           </p>
         </section>
@@ -279,7 +279,7 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
                 className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors"
               >
                 <span className="font-mono text-xs text-accent-strong font-semibold">{step.number}</span>
-                <h3 className="text-base font-bold text-zinc-900 font-display mt-1 mb-2">{step.title}</h3>
+                <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">{step.title}</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">{step.line}</p>
               </li>
             ))}
@@ -349,7 +349,7 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
                 key={audience.who}
                 className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors"
               >
-                <h3 className="text-sm font-bold text-zinc-900 font-display mb-2">{audience.who}</h3>
+                <h3 className="text-sm font-semibold text-zinc-900 font-display mb-2">{audience.who}</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">{audience.how}</p>
               </div>
             ))}

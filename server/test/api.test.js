@@ -2123,6 +2123,37 @@ test('a project keeps a status (in progress, delivered, archived) in its history
   assert.equal((await card()).waiting.enquiries, 1, 'an enquiry this week');
 });
 
+test('a project keeps its kind of place: set when made, changed by its owner, logged', async () => {
+  signIn();
+  const made = await api('POST', '/api/properties', { title: 'Kind Inn', kind: 'hotel' });
+  assert.equal(made.json.kind, 'hotel');
+  assert.equal((await api('POST', '/api/properties', { title: 'Odd Kind', kind: 'castle' })).json.kind, undefined, 'an unknown kind is left out');
+  const pid = made.json.id;
+  assert.equal((await api('PUT', `/api/properties/${pid}/kind`, { kind: 'castle' })).status, 400);
+  assert.equal((await api('PUT', `/api/properties/${pid}/kind`, { kind: 'college' })).json.kind, 'college');
+  assert.equal((await api('GET', '/api/properties')).json.find((p) => p.id === pid).kind, 'college');
+  const log = (await api('GET', `/api/properties/${pid}/activity`)).json;
+  assert.ok(log.some((a) => a.action === 'changed the kind of place' && a.detail === 'college'), 'logged with the new kind');
+  cookie = '';
+  assert.equal((await api('PUT', `/api/properties/${pid}/kind`, { kind: 'hotel' })).status, 401);
+  signIn();
+});
+
+test('the publish panel names portals visitors won’t see: no space, deleted, unpublished', async () => {
+  signIn();
+  const hs = (id, to) => ({ id, type: 'portal', label: id, position: [0, 1, 0], radius: 0.4, payload: to === undefined ? {} : { sceneId: to } });
+  assert.equal((await api('PUT', '/api/scenes/portal-target', sceneDoc('portal-target'))).status, 200);
+  const doc = sceneDoc('portal-home', { hotspots: [hs('Nowhere'), hs('Gone', 'no-such-space'), hs('Draft', 'portal-target')] });
+  assert.equal((await api('PUT', '/api/scenes/portal-home', doc)).status, 200);
+  const w = (await api('GET', '/api/scenes/portal-home/publish')).json.warnings.join(' | ');
+  assert.match(w, /“Nowhere” has no space to go to/);
+  assert.match(w, /“Gone” leads to a space visitors can’t open/);
+  assert.match(w, /“Draft” leads to a space visitors can’t open/, 'unfiled: says nothing about the target');
+  assert.doesNotMatch(w, /portal-target/, 'never echoes the target');
+  assert.equal((await api('POST', '/api/scenes/portal-target/publish')).status, 200);
+  assert.doesNotMatch((await api('GET', '/api/scenes/portal-home/publish')).json.warnings.join(' | '), /Draft/, 'published now: fine');
+});
+
 test('a test email goes where enquiries go, in the venue’s name, and a refusal says how to fix it', async () => {
   signIn();
   const pid = (await api('POST', '/api/properties', { title: 'Mail Lodge' })).json.id;

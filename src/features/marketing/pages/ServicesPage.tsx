@@ -310,7 +310,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
           >
             Home
           </button>
-          <span className="text-zinc-400" aria-hidden="true">›</span>
+          <span className="text-zinc-500" aria-hidden="true">›</span>
           <button
             type="button"
             onClick={() => onNavigate('/services/')}
@@ -322,7 +322,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
           </button>
           {isImmersive && (
             <>
-              <span className="text-zinc-400" aria-hidden="true">›</span>
+              <span className="text-zinc-500" aria-hidden="true">›</span>
               <span className="text-accent font-semibold">
                 {is3DTours ? '3D Virtual Tours' : 'Immersive Experiences'}
               </span>
@@ -330,13 +330,13 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
           )}
           {isStorytelling && (
             <>
-              <span className="text-zinc-400" aria-hidden="true">›</span>
+              <span className="text-zinc-500" aria-hidden="true">›</span>
               <span className="text-accent font-semibold">Visual Storytelling</span>
             </>
           )}
           {isDigitalTwins && (
             <>
-              <span className="text-zinc-400" aria-hidden="true">›</span>
+              <span className="text-zinc-500" aria-hidden="true">›</span>
               <span className="text-accent font-semibold">
                 {isLaserScanning
                   ? '3D Laser Scanning'
@@ -415,7 +415,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
                 The four pillars
               </h2>
             </div>
-            <span className="hidden sm:inline-block text-xs font-mono text-zinc-400">
+            <span className="hidden sm:inline-block text-xs font-mono text-zinc-500">
               01 · 02 · 03 · 04
             </span>
           </div>
@@ -500,7 +500,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
 
                         {/* Includes list with capability links */}
                         <div className="mt-6">
-                          <div className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold mb-3">
+                          <div className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 font-semibold mb-3">
                             Includes:
                           </div>
                           <ul className="space-y-2.5 text-xs">
@@ -586,7 +586,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
 
           {/* Interactive Goal Filter Buttons */}
           <div className="flex flex-wrap items-center gap-2 mb-6">
-            <span className="text-xs font-mono text-zinc-400 mr-2">Filter by sector:</span>
+            <span className="text-xs font-mono text-zinc-500 mr-2">Filter by sector:</span>
             {[
               { id: 'all', label: 'All Goals' },
               { id: 'immersive', label: 'Immersive Experiences' },
@@ -710,7 +710,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-ink font-display">
+                  <h3 className="text-xl font-semibold text-ink font-display">
                     {pkg.name}
                   </h3>
 
@@ -719,7 +719,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
                   </div>
 
                   <div className="mt-5 pt-4 border-t border-zinc-100">
-                    <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-semibold mb-2">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-semibold mb-2">
                       Includes
                     </div>
                     <p className="text-xs text-zinc-600 leading-relaxed">
@@ -864,7 +864,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
               </a>
             </div>
 
-            <div className="mt-6 text-xs text-zinc-400 font-mono">
+            <div className="mt-6 text-xs text-zinc-500 font-mono">
               Direct response within 24 hours · Kathmandu, Nepal
             </div>
           </div>

@@ -57,7 +57,7 @@ const Card: React.FC<{ href: string; pic: string | null | undefined; title: stri
         </span>
       </div>
       <div className="absolute bottom-4 left-4 right-4">
-        <h3 className="text-xl sm:text-2xl font-bold font-display text-white mb-1">{title}</h3>
+        <h3 className="text-xl sm:text-2xl font-semibold font-display text-white mb-1">{title}</h3>
         {line && <p className="text-sm text-zinc-300 line-clamp-2">{line}</p>}
         <p className="mt-2 text-[11px] font-mono text-zinc-400">{meta}</p>
       </div>
@@ -86,7 +86,7 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({ onNavigate }) => {
           <button onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
             Home
           </button>
-          <span className="text-zinc-400">›</span>
+          <span className="text-zinc-500">›</span>
           <span className="text-zinc-900 font-semibold">Live tours</span>
         </nav>
 

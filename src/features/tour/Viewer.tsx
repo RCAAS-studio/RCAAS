@@ -1,5 +1,6 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { tourSpaces, visibleScenes, dayNightPair, sameTimeOfDay, SCENE_BY_ID, isPublicTour, hasPlaces, placesMap } from '../scene/scenes';
 import { useUiConfig, setUiConfig } from '../../lib/uiConfig';
@@ -57,6 +58,7 @@ export function Viewer({ state, isTouch, autoStart = false, tour = false }: View
   // 'event': Plan an event (EventBooking), its hall picked when this space is one.
   // 'here': Book now on a room, hall or table hotspot itself (HotspotBookCard).
   const [sheet, setSheet] = useState<'book' | 'ask' | 'table' | 'plan' | 'room' | 'rooms' | 'event' | 'here' | 'concierge' | null>(null);
+  useEscape(() => setSheet(null), !!sheet);
   const [measuring, setMeasuring] = useState(false);
   const closeMeasure = useCallback(() => setMeasuring(false), []);
   const [hereHs, setHereHs] = useState('');
@@ -896,6 +898,7 @@ function NarrationCaption() {
 }
 
 function SpacesPanel({ state, onClose }: { state: ViewerState; onClose: () => void }) {
+  useEscape(onClose);
   const t = useT();
   return (
     <div className="vw-pop vw-pop-spaces" role="dialog" aria-label={t('Spaces')}>
@@ -920,6 +923,7 @@ function SpacesPanel({ state, onClose }: { state: ViewerState; onClose: () => vo
 }
 
 function HelpPanel({ walking, isTouch, onClose }: { walking: boolean; isTouch: boolean; onClose: () => void }) {
+  useEscape(onClose);
   const t = useT();
   const rows: [string, string][] = isTouch
     ? [['Drag', 'Look around'], ['Tap a card', 'Fly to that view'], ['Tap a ring', 'Open what’s there'], ['Walk', 'Move with the joystick']]

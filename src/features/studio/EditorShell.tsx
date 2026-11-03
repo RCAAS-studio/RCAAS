@@ -1,5 +1,7 @@
 'use client';
 
+import { sqft } from '../../lib/area';
+import { ask } from '../../components/ui/Ask';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -250,8 +252,8 @@ export function EditorShell({ state, property, onPreview }: {
 /** The tour at a phone's size (2026-10-13): this editor page in a 390×844 window,
  *  opened straight into Preview (App reads ?preview=phone), so the phone layout's
  *  media queries apply. It loads the saved draft, so unsaved edits aren't in it. */
-function openPhonePreview(sceneId: string) {
-  if (hasUnsavedChanges(sceneId) && !confirm('The phone preview opens the saved version of this space, so your unsaved changes won’t be in it. Open it anyway?')) return;
+async function openPhonePreview(sceneId: string) {
+  if (hasUnsavedChanges(sceneId) && !(await ask({ title: 'Preview without your unsaved changes?', body: 'The phone preview opens the saved version of this space. Save first to see your latest edits in it.', action: 'Open the preview' }))) return;
   const u = new URL(location.href);
   u.searchParams.set('space', sceneId);
   u.searchParams.set('preview', 'phone');
@@ -459,8 +461,8 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
     const p = doc.spawn?.position;
     if (Array.isArray(p) && p.length === 3) setSessionSpawn(sceneId, p as [number, number, number], doc.spawn.yaw ?? 0);
   };
-  const revert = () => {
-    if (!confirm('Throw away every change since the last publish?')) return;
+  const revert = async () => {
+    if (!(await ask({ title: 'Throw away your changes?', body: 'Every change since the last publish is lost. The live tour stays as it is.', action: 'Throw them away', danger: true }))) return;
     run('revert', async () => {
       await adopt(await revertScene(sceneId));
       return 'Reverted to the published version.';
@@ -469,8 +471,8 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
   const [versions, setVersions] = useState<SceneVersion[] | null>(null);
   const loadVersions = () => getVersions(sceneId).then(setVersions).catch(() => setVersions([]));
   useEffect(() => { loadVersions(); }, [sceneId]); // eslint-disable-line react-hooks/exhaustive-deps
-  const restore = (v: number) => {
-    if (!confirm(`Put version ${v} live again? It is published as a new version; unpublished edits in the studio are replaced.`)) return;
+  const restore = async (v: number) => {
+    if (!(await ask({ title: `Put version ${v} live again?`, body: 'It is published as a new version, and your unpublished edits in the studio are replaced by it.', action: `Publish version ${v}`, danger: true }))) return;
     run(`restore-${v}`, async () => {
       const r = await restoreVersion(sceneId, v, true);
       await adopt(r?.doc);
@@ -621,8 +623,8 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
             <p className="up-slot-hint">Their subdomains count too. Leave it empty to allow any website.</p>
             <button
               className="pub-secondary is-danger" disabled={!embed || !!busy}
-              onClick={() => {
-                if (confirm('Retire every embed code handed out for this space? Pages using an old one stop showing the tour until they paste the new code.')) {
+              onClick={async () => {
+                if (await ask({ title: 'Retire every embed code?', body: 'Pages using an old code for this space stop showing the tour until they paste the new one.', action: 'Retire the old codes', danger: true })) {
                   saveEmbed({ rotate: true }, 'Old embed codes retired. Copy the new code above.');
                 }
               }}
@@ -1579,7 +1581,7 @@ function FloorPlanSection({ sceneId, onPlanTool }: { sceneId: string; onPlanTool
     }
   };
   const removeMine = async () => {
-    if (!window.confirm('Remove your uploaded floor plan? The one drawn from the scan stays.')) return;
+    if (!(await ask({ title: 'Remove your uploaded floor plan?', body: 'The one drawn from the scan stays.', action: 'Remove it', danger: true }))) return;
     setError('');
     try {
       await removeFloorPlan(assetId);
@@ -1666,7 +1668,7 @@ function PlanMarksBlock({ assetId, onPlanTool }: { assetId: string; onPlanTool: 
       </div>
       {marks.rooms.map((r, i) => (
         <div key={`r${i}`} className="ed2-row" style={{ flexWrap: 'nowrap', marginTop: 6 }}>
-          <span style={{ flex: 1 }}>Room {i + 1} · {r.corners.length} corners · {areaOf(r.corners).toFixed(1)} m²</span>
+          <span style={{ flex: 1 }}>Room {i + 1} · {r.corners.length} corners · {areaOf(r.corners).toFixed(1)} m² · {sqft(areaOf(r.corners))} sq ft</span>
           <button aria-label={`Remove traced room ${i + 1}`} onClick={() => setPlanMarks({ ...marks, rooms: marks.rooms.filter((_, j) => j !== i) })}>✕</button>
         </div>
       ))}
@@ -1724,7 +1726,7 @@ function RoomNames({ assetId, bust, onSaved }: { assetId: string; bust: number; 
         <div key={r.id} className="ed2-row" style={{ flexWrap: 'nowrap', marginTop: 6 }}>
           <input className="ed2-name" style={{ flex: 1, minWidth: 0 }} aria-label={`Name of room ${i + 1}`} maxLength={40}
             placeholder={`Room ${i + 1}`} value={names[r.id] ?? ''} onChange={(e) => setNames({ ...names, [r.id]: e.target.value })} />
-          <span className="ed2-muted ed2-fine" style={{ whiteSpace: 'nowrap' }}>{r.area} m²</span>
+          <span className="ed2-muted ed2-fine" style={{ whiteSpace: 'nowrap' }}>{r.area} m² · {sqft(r.area)} sq ft</span>
         </div>
       ))}
       <button className="ed2-export" onClick={save} disabled={saving || !dirty}>{saving ? 'Saving…' : 'Save room names'}</button>

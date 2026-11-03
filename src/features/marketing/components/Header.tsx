@@ -378,7 +378,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
           })}
         </ul>
         <motion.aside variants={rise} className="grid content-start gap-3.5 pt-3.5">
-          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-400">See it working</p>
+          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-500">See it working</p>
           <NavLink to="/gallery/" go={go} className="group relative block overflow-hidden rounded-xl bg-zinc-950">
             <img
               src={IMG['menu/live-tour-card']}
@@ -411,7 +411,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
           })}
         </ul>
         <motion.aside variants={rise} className="grid content-start gap-3.5 pt-3.5">
-          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-400">Who it is for</p>
+          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-500">Who it is for</p>
           <p className="text-[13px] leading-relaxed text-muted">
             Hotels, schools, developers, heritage sites, municipalities and more: one capture, shaped around what each needs
             people to do.
@@ -447,7 +447,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
           })}
         </ul>
         <motion.aside variants={rise} className="grid content-start gap-3.5 pt-3.5">
-          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-400">Places we have captured</p>
+          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-500">Places we have captured</p>
           <p className="text-[13px] leading-relaxed text-muted">
             Heritage, campuses and hotels, captured with laser and aerial scanning and turned into places people can walk.
           </p>
@@ -463,7 +463,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
         <div className="grid grid-cols-2 gap-x-8">
           {ABOUT_GROUPS.map((g) => (
             <div key={g.heading}>
-              <motion.p variants={rise} className="px-3.5 pb-2 text-[11px] font-mono uppercase tracking-widest text-zinc-400">
+              <motion.p variants={rise} className="px-3.5 pb-2 text-[11px] font-mono uppercase tracking-widest text-zinc-500">
                 {g.heading}
               </motion.p>
               <ul className="grid gap-0.5">
@@ -481,7 +481,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
           ))}
         </div>
         <motion.aside variants={rise} className="grid content-start gap-3.5 pt-3.5">
-          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-400">Kathmandu · 27.72° N, 85.32° E</p>
+          <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-500">Kathmandu · 27.72° N, 85.32° E</p>
           <p className="text-[13px] leading-relaxed text-muted">
             Geomatics engineers and game developers turning real places into experiences people can walk.
           </p>
@@ -564,7 +564,7 @@ const MobileMenu: React.FC<{
                       aria-current={here ? 'page' : undefined}
                       className="flex flex-1 items-baseline gap-3.5 pb-3.5 pt-4 text-ink"
                     >
-                      <span className={`-translate-y-[0.45em] font-mono text-[11px] tabular-nums ${here ? 'text-accent' : 'text-zinc-400'}`}>
+                      <span className={`-translate-y-[0.45em] font-mono text-[11px] tabular-nums ${here ? 'text-accent' : 'text-zinc-500'}`}>
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <span className="mnav-t">
@@ -626,7 +626,7 @@ const MobileMenu: React.FC<{
               {signedIn ? 'Open studio' : 'Sign in'}
             </a>
             {signedIn && <p className="text-center text-xs text-muted">Signed in as {signedIn}</p>}
-            <p className="mt-1 text-center font-mono text-[11px] tracking-wider text-zinc-400" aria-hidden="true">
+            <p className="mt-1 text-center font-mono text-[11px] tracking-wider text-zinc-500" aria-hidden="true">
               Kathmandu · 27.72° N, 85.32° E
             </p>
           </motion.div>

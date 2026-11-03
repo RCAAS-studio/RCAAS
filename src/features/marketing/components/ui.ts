@@ -5,7 +5,8 @@ export type ButtonVariant = 'primary' | 'secondary' | 'dark';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const BUTTON_BASE =
-  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none';
+  // the press and lift match the studio, tour and client sites (globals.css "Feel"); none with reduced motion
+  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-[color,background-color,border-color,box-shadow,scale,translate] duration-200 ease-out hover:-translate-y-px active:translate-y-0 active:scale-[0.97] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 disabled:opacity-60 disabled:pointer-events-none';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
   primary: 'bg-accent text-white shadow-sm hover:bg-accent-strong',

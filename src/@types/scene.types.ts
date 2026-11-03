@@ -53,6 +53,8 @@ export interface ApiScene {
  *  Ownership (2026-09-24): `ownerId: null` means every studio account can
  *  see and manage it (every project made before ownership existed). */
 export type ProjectStatus = 'in-progress' | 'delivered' | 'archived';
+/** What kind of place a project is (server store.js PLACE_KINDS; the studio's siteTemplates.ts). */
+export type PlaceKind = 'hotel' | 'restaurant' | 'venue' | 'college' | 'heritage' | 'other';
 
 export interface Property {
   id: string;
@@ -73,6 +75,8 @@ export interface Property {
   features?: import('./config.types').ProjectFeatures;
   /** Where it stands (2026-10-13); older projects are in progress. Set by its owner. */
   status?: ProjectStatus;
+  /** Hotel, restaurant… (2026-11-03); absent on older projects. Set by its owner. */
+  kind?: PlaceKind;
   /** When the status last changed; absent until it first does. */
   statusAt?: string;
   /** Only on GET /api/properties. */

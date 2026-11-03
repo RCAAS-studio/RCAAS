@@ -1,5 +1,7 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
+import { ask, toast } from '../../components/ui/Ask';
 import { useEffect, useState } from 'react';
 import { getSession, getTeam, makeResetLink, removeTeammate, setTeamRole, type SessionUser } from '../../lib/api';
 
@@ -13,6 +15,7 @@ import { getSession, getTeam, makeResetLink, removeTeammate, setTeamRole, type S
  * remove. Removing signs them out everywhere and hands their projects to you.
  */
 export function TeamDialog({ onClose }: { onClose: () => void }) {
+  useEscape(onClose);
   const [me, setMe] = useState<SessionUser | null>(null);
   const [team, setTeamList] = useState<SessionUser[] | null>(null);
   const [error, setError] = useState('');
@@ -39,9 +42,9 @@ export function TeamDialog({ onClose }: { onClose: () => void }) {
     const r = await makeResetLink(u.id);
     if (r) { setLink({ id: u.id, url: `${location.origin}${r.path}`, expires: r.expires }); setCopied(false); }
   });
-  const remove = (u: SessionUser) => {
-    if (!confirm(`Remove ${u.name}? They're signed out everywhere at once, and any project they own becomes yours.`)) return;
-    act(u.id, async () => { await removeTeammate(u.id); if (link?.id === u.id) setLink(null); load(); });
+  const remove = async (u: SessionUser) => {
+    if (!(await ask({ title: `Remove ${u.name} from the team?`, body: 'They’re signed out everywhere at once, and any project they own becomes yours.', action: `Remove ${u.name}`, danger: true }))) return;
+    act(u.id, async () => { await removeTeammate(u.id); if (link?.id === u.id) setLink(null); toast(`Removed ${u.name} from the team.`); load(); });
   };
 
   return (

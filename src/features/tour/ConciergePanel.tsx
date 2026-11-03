@@ -1,5 +1,6 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
 import { useEffect, useRef, useState } from 'react';
 import { askConcierge, type ConciergeShow } from '../../lib/api';
 import { useT } from '../../lib/i18n';
@@ -18,6 +19,7 @@ export function ConciergePanel({ project, space, venue, onShow, onClose }: {
   onShow: (show: ConciergeShow) => void;
   onClose: () => void;
 }) {
+  useEscape(onClose);
   const t = useT();
   const [turns, setTurns] = useState<Turn[]>([]);
   const [question, setQuestion] = useState('');

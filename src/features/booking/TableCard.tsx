@@ -1,5 +1,6 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
 import { useEffect, useState } from 'react';
 import { contactProblem } from '../../lib/contactRules';
 import {
@@ -39,6 +40,7 @@ export function TableCard({ project, booking, venue, places, onPlace, initialTab
   /** Open the floor plan (TableBooking) with this table, or none, chosen. */
   onOpenPlan: (tableId: string) => void;
 }) {
+  useEscape(onClose);
   const t = useT();
   const [avail, setAvail] = useState<Availability | null>(null);
   const [party, setParty] = useState(2);

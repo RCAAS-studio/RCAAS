@@ -25,11 +25,11 @@ export const GuideBreadcrumb: React.FC<{ label: string; onNavigate: (path: Route
     <button type="button" onClick={() => onNavigate('/')} className="hover:text-zinc-900 transition-colors">
       Home
     </button>
-    <span className="text-zinc-400" aria-hidden="true">›</span>
+    <span className="text-zinc-500" aria-hidden="true">›</span>
     <button type="button" onClick={() => onNavigate('/learn/')} className="hover:text-zinc-900 transition-colors">
       Learn
     </button>
-    <span className="text-zinc-400" aria-hidden="true">›</span>
+    <span className="text-zinc-500" aria-hidden="true">›</span>
     <span className="text-accent font-semibold" aria-current="page">
       {label}
     </span>
@@ -46,7 +46,7 @@ export const GuideHeader: React.FC<{ eyebrow: string; title: string; minutes: nu
     >
       <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
       <span className="font-semibold text-zinc-900">Guide</span>
-      <span className="text-zinc-400">·</span>
+      <span className="text-zinc-500">·</span>
       <span>{eyebrow}</span>
     </motion.div>
 
@@ -64,15 +64,15 @@ export const GuideHeader: React.FC<{ eyebrow: string; title: string; minutes: nu
       <span>
         By <Placeholder>[[TBI: author name, role]]</Placeholder>
       </span>
-      <span className="text-zinc-400" aria-hidden="true">·</span>
+      <span className="text-zinc-500" aria-hidden="true">·</span>
       <span>
         Published <Placeholder>[[TBI]]</Placeholder>
       </span>
-      <span className="text-zinc-400" aria-hidden="true">·</span>
+      <span className="text-zinc-500" aria-hidden="true">·</span>
       <span>
         Updated <Placeholder>[[TBI]]</Placeholder>
       </span>
-      <span className="text-zinc-400" aria-hidden="true">·</span>
+      <span className="text-zinc-500" aria-hidden="true">·</span>
       <span>{minutes} min read</span>
     </p>
   </header>
@@ -197,7 +197,7 @@ export const ComparisonTable: React.FC<{
           const Icon = column.icon;
           return (
             <div key={column.id} className="rounded-xl border border-line bg-white overflow-hidden shadow-xs">
-              <h3 className="flex items-center gap-2 px-5 py-3.5 bg-surface border-b border-line text-base font-bold text-zinc-900 font-display">
+              <h3 className="flex items-center gap-2 px-5 py-3.5 bg-surface border-b border-line text-base font-semibold text-zinc-900 font-display">
                 <Icon className="w-4 h-4 text-accent" aria-hidden="true" />
                 {column.name}
               </h3>

@@ -81,3 +81,30 @@ body {
 .nf-btn { padding: 12px 24px; border-radius: 999px; border: 1px solid var(--nf-line); color: inherit; text-decoration: none; font-weight: 600; }
 .nf-btn-main { background: var(--nf-accent); border-color: var(--nf-accent); color: #161616; }
 .nf-btn:hover { filter: brightness(1.1); }
+
+/* ---- Feel (2026-11-03): one way things answer the hand on every surface (studio, tour,
+ * client websites, rcaas.tech). Written with the individual `scale`/`translate` properties,
+ * so a design's own `transform` (a centred dialog, a marker's position) is never replaced.
+ * Nothing moves with reduced motion; the keyboard focus ring stays either way. */
+:root { --ui-ease: cubic-bezier(.2, .8, .2, 1); }
+@media (prefers-reduced-motion: no-preference) {
+  /* a press gives under the finger; hotspot markers press their dot (their position is a transform) */
+  :where(button, [role="button"], [role="radio"], summary, a[class*="btn"], a[class*="rounded-full"]):not(:disabled, [aria-disabled="true"], .hs-ring, .hs-card):active { scale: .96; }
+  :where(.pl-card, .ph-space, .vw-card):active { scale: .985; }
+  .hs-ring:active .hs-ring-dot { scale: .86; }
+  /* studio cards rise toward the pointer */
+  .pl-card, .ph-space, .np-kind { transition: translate .22s var(--ui-ease), scale .12s var(--ui-ease), box-shadow .22s, border-color .12s, background .12s, color .12s; }
+  @media (hover: hover) {
+    :where(.pl-card, .ph-space, .np-kind):hover { translate: 0 -2px; box-shadow: 0 12px 26px -16px rgb(0 0 0 / .55); }
+  }
+  /* panels, dialogs and menus arrive with a short rise and fade */
+  :where([role="dialog"], [role="alertdialog"], [role="menu"]) { animation: ui-rise .22s var(--ui-ease) both; }
+}
+@keyframes ui-rise { from { opacity: 0; translate: 0 8px; } }
+:where(button, a, summary, input, select, textarea, [role="button"], [role="radio"], [role="switch"]):focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  /* the dimmed backdrop under a tour panel fades in with it; the studio's kind picker opens the same way */
+  :where(.vw-sheet-scrim, .vw-reserve-scrim, .np-scrim) { animation: ui-fade .2s ease-out both; }
+  :where(.ph-kind-pick) { animation: ui-rise .22s var(--ui-ease) both; }
+}
+@keyframes ui-fade { from { opacity: 0; } }

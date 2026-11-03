@@ -1,5 +1,6 @@
 'use client';
 
+import { ask, toast } from '../../../../components/ui/Ask';
 import { use, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
@@ -692,8 +693,8 @@ function ReviewPanel({ id, dirty, onSave, onError }: { id: string; dirty: boolea
     try { await shareSiteForReview(id); load(); } catch (e) { onError((e as Error).message); }
   };
   const stop = async () => {
-    if (!window.confirm('Stop the review link? Whoever has it can no longer open the draft. Their comments stay here.')) return;
-    try { await stopSiteReview(id); load(); } catch (e) { onError((e as Error).message); }
+    if (!(await ask({ title: 'Stop the review link?', body: 'Whoever has it can no longer open the draft. Their comments stay here.', action: 'Stop the link', danger: true }))) return;
+    try { await stopSiteReview(id); toast('The review link is stopped.'); load(); } catch (e) { onError((e as Error).message); }
   };
   const resolve = async (cid: string, resolved: boolean) => {
     try { await resolveReviewComment(id, cid, resolved); load(); } catch (e) { onError((e as Error).message); }
@@ -845,7 +846,7 @@ function HallsEditor({ project, events, spaces, onChange, onError }: {
                     <input type="number" min={0} max={10000} value={h.standing} onChange={(e) => edit(h.id, { standing: num(e.target.value, 0, 10000) })} /></label>
                 </div>
                 <div className="se-row">
-                  <Text label="Size" value={h.area} max={40} placeholder="450 m²" onChange={(area) => edit(h.id, { area })} />
+                  <Text label="Size" value={h.area} max={40} placeholder="450 m² (4,844 sq ft)" onChange={(area) => edit(h.id, { area })} />
                   <Text label="Price" value={h.price ?? ''} max={40} placeholder="Rs 1,500 per plate" onChange={(price) => edit(h.id, { price })} />
                   <Text label="Deposit" value={h.deposit ?? ''} max={60} placeholder="Rs 20,000 to hold the date" onChange={(deposit) => edit(h.id, { deposit })} />
                 </div>

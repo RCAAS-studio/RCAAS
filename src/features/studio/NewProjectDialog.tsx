@@ -1,9 +1,11 @@
 'use client';
 
+import { ask } from '../../components/ui/Ask';
 import { useEffect, useRef, useState } from 'react';
 import { filesFromDataTransfer, filesFromFileList, isVideo360File, uploadVariant, uploadVideo360 } from './upload';
 import { createProperty, getScenes, saveScene, saveSiteDraft, setProjectFeatures, setProjectInfo, setProjectTheme, uploadProjectLogo } from '../../lib/api';
-import { TEMPLATES, templateFor, type PlaceKind } from './siteTemplates';
+import { templateFor, type PlaceKind } from './siteTemplates';
+import { PlaceKindPicker, StarterSummary } from './PlaceKindPicker';
 import { BrandInfoFields, infoProblem } from './BrandInfoFields';
 import { inkOn, paletteFromImage } from '../../lib/brandColor';
 import { BRAND_FONTS, fontChoices, fontFamily } from '../../lib/brandFonts';
@@ -89,8 +91,8 @@ export function NewProjectDialog({ onClose }: { onClose: () => void }) {
   const videoRef = useRef<HTMLInputElement>(null);
   const uploading = status === 'uploading';
 
-  const close = () => {
-    if (uploading && !window.confirm('The upload is still running. Close and lose it?')) return;
+  const close = async () => {
+    if (uploading && !(await ask({ title: 'Stop the upload?', body: 'It is still running. Closing now loses it, and you start again next time.', action: 'Close and lose it', cancel: 'Keep uploading', danger: true }))) return;
     onClose();
   };
   useEffect(() => {
@@ -144,10 +146,14 @@ export function NewProjectDialog({ onClose }: { onClose: () => void }) {
     if (problem) { setCreateError(problem); return; }
     setCreating(true);
     setCreateError('');
+    let made = '';
     try {
-      const p = await createProperty(title);
+      const p = await createProperty(title, kind);
       if (!p) throw new Error('The server did not confirm the project. Try again.');
-      // Its brand. The project exists now either way: if this fails, say so and let them open it.
+      made = p.id;
+      // The project exists now. Every later step runs even if one fails (a failed brand
+      // used to skip the starter and the uploaded space), and the message names what didn't save.
+      const missed: string[] = [];
       try {
         const name = brand.trim();
         await setProjectTheme(p.id, { ...(name ? { brand: name } : {}), ...(accentSet ? { accent } : {}), font });
@@ -155,23 +161,29 @@ export function NewProjectDialog({ onClose }: { onClose: () => void }) {
         const filled = Object.fromEntries(Object.entries(info).filter(([, v]) => v?.trim())) as ProjectInfo;
         if (Object.keys(filled).length) await setProjectInfo(p.id, filled);
       } catch (e) {
-        setCreatedId(p.id);
-        setCreating(false);
-        setCreateError(`The project was made, but its brand didn’t save (${e instanceof Error ? e.message : 'unknown error'}). Open it and set it in ⋯ → Branding.`);
-        return;
+        missed.push(`its brand (${e instanceof Error ? e.message : 'unknown error'}; set it in ⋯ → Branding)`);
       }
-      if (starter.site) await saveSiteDraft(p.id, starter.site).catch(() => { /* a blank website: nothing lost */ });
-      if (starter.features) await setProjectFeatures(p.id, starter.features).catch(() => { /* all on: switch off from its home */ });
+      if (starter.site) await saveSiteDraft(p.id, starter.site).catch(() => missed.push(`the ${starter.label.toLowerCase()} website sections (choose the kind again on its home)`));
+      if (starter.features) await setProjectFeatures(p.id, starter.features).catch(() => missed.push('which features it uses (switch them on its home)'));
       if (result) {
-        const name = spaceName.trim() || title.trim();
+        const name = spaceName.trim() || starter.firstSpace;
         const id = freeSceneId(`${p.id}-${slugify(name)}`);
         const high = { assetId: result.assetId, meta: result.meta, bytes: result.bytes };
         await saveScene(id, blankSceneDoc(id, name, { high }, p.id, result.format ?? 'lcc2'));
         hydrateScenes(await getScenes());
       }
+      if (missed.length) {
+        setCreatedId(p.id);
+        setCreating(false);
+        setCreateError(`The project was made, but ${missed.join(' and ')} didn’t save. Open it to finish.`);
+        return;
+      }
       location.assign(result ? `/studio/${p.id}/edit` : `/studio/${p.id}`); // its first space to work on, else its home
     } catch (e) {
-      setCreateError(e instanceof Error ? e.message : 'Could not create the project. Try again.');
+      const why = e instanceof Error ? e.message : 'unknown error';
+      // made but its first space failed: a second Create would only meet "already a project called…"
+      if (made) setCreatedId(made);
+      setCreateError(made ? `The project was made, but its first space didn’t save (${why}). Open it and add the space from its home.` : e instanceof Error ? e.message : 'Could not create the project. Try again.');
       setCreating(false);
     }
   };
@@ -345,13 +357,8 @@ export function NewProjectDialog({ onClose }: { onClose: () => void }) {
             </label>
             <div className="np-field">
               <span>Kind of place</span>
-              <div className="np-kinds" role="radiogroup" aria-label="Kind of place">
-                {TEMPLATES.map((t) => (
-                  <button key={t.kind} type="button" role="radio" aria-checked={kind === t.kind}
-                    className={`np-kind${kind === t.kind ? ' is-on' : ''}`} onClick={() => setKind(t.kind)}>{t.label}</button>
-                ))}
-              </div>
-              <small className="np-kind-note">{starter.gives}</small>
+              <PlaceKindPicker value={kind} onChange={setKind} />
+              <StarterSummary kind={kind} />
             </div>
             <label className="np-field">
               <span>First space</span>

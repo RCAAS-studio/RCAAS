@@ -1,5 +1,6 @@
 'use client';
 
+import { useEscape } from '../../hooks/useEscape';
 import { useState } from 'react';
 import { submitLead, whatsappHref } from '../../lib/api';
 import { useT } from '../../lib/i18n';
@@ -66,6 +67,7 @@ export function EnquiryPanel({ sceneId, sceneName, propertyId, label, hotspot, w
   const [openSelf, setOpenSelf] = useState(false);
   const open = openProp ?? openSelf;
   const setOpen = (o: boolean) => (onOpenChange ? onOpenChange(o) : setOpenSelf(o));
+  useEscape(() => setOpen(false), open);
   const [values, setValues] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState('');

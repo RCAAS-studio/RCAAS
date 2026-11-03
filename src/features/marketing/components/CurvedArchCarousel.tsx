@@ -285,7 +285,7 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
                     {card.location}
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-bold font-display tracking-tight text-white mb-1 drop-shadow-sm">
+                  <h3 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-white mb-1 drop-shadow-sm">
                     {card.title}
                   </h3>
 
@@ -346,7 +346,7 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
             />
           ))}
         </div>
-        <span className="text-[10px] font-mono text-zinc-400 sm:hidden">
+        <span className="text-[10px] font-mono text-zinc-500 sm:hidden">
           Swipe left/right or tap to flip projects
         </span>
       </div>

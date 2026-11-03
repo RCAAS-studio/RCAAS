@@ -415,7 +415,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                 </button>
               </li>
               <li>
-                <span className="text-zinc-400" aria-hidden="true">›</span>
+                <span className="text-zinc-500" aria-hidden="true">›</span>
               </li>
               <li>
                 <button
@@ -426,7 +426,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                 </button>
               </li>
               <li>
-                <span className="text-zinc-400" aria-hidden="true">›</span>
+                <span className="text-zinc-500" aria-hidden="true">›</span>
               </li>
               <li className="text-zinc-900 font-semibold" aria-current="page">
                 Visual Storytelling
@@ -531,7 +531,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                 <div className="w-10 h-10 rounded-lg bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-4 group-hover:bg-red-50/50 transition-colors">
                   {tile.icon}
                 </div>
-                <h3 className="text-base font-bold text-zinc-900 mb-2">
+                <h3 className="text-base font-semibold text-zinc-900 mb-2">
                   {tile.title}
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -546,7 +546,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
       {/* Quick Anchor Navigation Strip */}
       <nav aria-label="Section anchors" className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-zinc-200 py-3 overflow-x-auto shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-2 sm:space-x-3 text-xs font-mono whitespace-nowrap">
-          <span className="text-zinc-400 uppercase text-[10px] tracking-wider mr-2 hidden sm:inline">Jump to:</span>
+          <span className="text-zinc-500 uppercase text-[10px] tracking-wider mr-2 hidden sm:inline">Jump to:</span>
           <a href="#showcase" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#showcase</a>
           <a href="#why-story" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#why-story</a>
           <a href="#guided-tours" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#guided-tours</a>
@@ -717,7 +717,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                     Goal: Guide international guests through courtyards, heritage architecture, and luxury suites with cinematic pacing.
                   </span>
                 </div>
-                <div className="mt-2 md:mt-0 font-mono text-xs text-zinc-500">
+                <div className="mt-2 md:mt-0 font-mono text-xs text-zinc-400">
                   Format: 4K UHD Master (3840×2160) · 60fps · Dual-audio
                 </div>
               </div>
@@ -779,7 +779,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                         0{idx + 1}
                       </span>
                       <div className="flex-1">
-                        <h3 className="text-base font-bold text-zinc-900 mb-1">
+                        <h3 className="text-base font-semibold text-zinc-900 mb-1">
                           {item.question}
                         </h3>
                         <p className="text-sm text-zinc-600 leading-relaxed">
@@ -915,7 +915,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                         </span>
                       </div>
 
-                      <h3 className="text-2xl sm:text-3xl font-bold text-zinc-900 mb-4">
+                      <h3 className="text-2xl sm:text-3xl font-semibold text-zinc-900 mb-4">
                         {cap.title}
                       </h3>
 
@@ -1117,12 +1117,12 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                     <span className="font-mono text-xs font-bold text-accent uppercase tracking-wider">
                       {ind.sector}
                     </span>
-                    <span className="text-xs font-mono text-zinc-400">
+                    <span className="text-xs font-mono text-zinc-500">
                       Story Arc: {ind.storyAngle}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-zinc-900 mb-3">
+                  <h3 className="text-xl font-semibold text-zinc-900 mb-3">
                     {ind.headline}
                   </h3>
 
@@ -1185,14 +1185,14 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                   <div className="font-mono text-2xl font-bold text-accent mb-3">
                     {step.step}
                   </div>
-                  <h3 className="text-base font-bold text-zinc-900 mb-2">
+                  <h3 className="text-base font-semibold text-zinc-900 mb-2">
                     {step.name}
                   </h3>
                   <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
                     {step.description}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-zinc-200 text-[11px] font-mono text-zinc-400">
+                <div className="mt-4 pt-3 border-t border-zinc-200 text-[11px] font-mono text-zinc-500">
                   Step {idx + 1} of 5
                 </div>
               </div>
@@ -1262,7 +1262,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
             </a>
           </div>
 
-          <p className="mt-8 text-xs font-mono text-zinc-500">
+          <p className="mt-8 text-xs font-mono text-zinc-400">
             RCAAS Technology · Kathmandu, Nepal · reality capture & visual storytelling
           </p>
         </div>

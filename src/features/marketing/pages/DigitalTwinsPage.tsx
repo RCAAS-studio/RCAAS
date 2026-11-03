@@ -446,7 +446,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                 </button>
               </li>
               <li>
-                <span className="text-zinc-400" aria-hidden="true">›</span>
+                <span className="text-zinc-500" aria-hidden="true">›</span>
               </li>
               <li>
                 <button
@@ -457,7 +457,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                 </button>
               </li>
               <li>
-                <span className="text-zinc-400" aria-hidden="true">›</span>
+                <span className="text-zinc-500" aria-hidden="true">›</span>
               </li>
               <li className="text-zinc-900 font-semibold" aria-current="page">
                 Digital Twins &amp; Survey
@@ -561,7 +561,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                 <div className="w-10 h-10 rounded-lg bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-4 group-hover:bg-red-50/50 transition-colors">
                   {tile.icon}
                 </div>
-                <h3 className="text-base font-bold text-zinc-900 mb-2">
+                <h3 className="text-base font-semibold text-zinc-900 mb-2">
                   {tile.title}
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -576,7 +576,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
       {/* STICKY ANCHOR NAVIGATION STRIP */}
       <nav aria-label="Section anchors" className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-zinc-200 py-3 overflow-x-auto shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-2 sm:space-x-3 text-xs font-mono whitespace-nowrap">
-          <span className="text-zinc-400 uppercase text-[10px] tracking-wider mr-2 hidden sm:inline">Jump to:</span>
+          <span className="text-zinc-500 uppercase text-[10px] tracking-wider mr-2 hidden sm:inline">Jump to:</span>
           <a href="#showcase" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#showcase</a>
           <a href="#definition" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#definition</a>
           <a href="#capabilities" className="px-3 py-2.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">#capabilities</a>
@@ -715,7 +715,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                 </div>
                 <button
                   onClick={() => setShowcaseView('textured')}
-                  className="mt-2 sm:mt-0 font-mono text-xs text-accent hover:underline"
+                  className="mt-2 sm:mt-0 font-mono text-xs text-accent-soft hover:underline"
                 >
                   Return to 3D View →
                 </button>
@@ -746,7 +746,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               <div className="font-mono text-xs font-bold text-accent mb-2 uppercase tracking-wider">
                 01 · Geometric Fidelity
               </div>
-              <h3 className="text-lg font-bold text-zinc-900 mb-2">
+              <h3 className="text-lg font-semibold text-zinc-900 mb-2">
                 Measurable Millimeter Scale
               </h3>
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -758,7 +758,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               <div className="font-mono text-xs font-bold text-accent mb-2 uppercase tracking-wider">
                 02 · Spatial Georeferencing
               </div>
-              <h3 className="text-lg font-bold text-zinc-900 mb-2">
+              <h3 className="text-lg font-semibold text-zinc-900 mb-2">
                 Real-World Coordinate Datum
               </h3>
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -770,7 +770,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               <div className="font-mono text-xs font-bold text-accent mb-2 uppercase tracking-wider">
                 03 · Multi-Disciplinary Utility
               </div>
-              <h3 className="text-lg font-bold text-zinc-900 mb-2">
+              <h3 className="text-lg font-semibold text-zinc-900 mb-2">
                 CAD, BIM, GIS &amp; Web 3D
               </h3>
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -817,7 +817,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                         </span>
                       </div>
 
-                      <h3 className="text-2xl sm:text-3xl font-bold text-zinc-900 mb-4">
+                      <h3 className="text-2xl sm:text-3xl font-semibold text-zinc-900 mb-4">
                         {cap.title}
                       </h3>
 
@@ -955,10 +955,10 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
           {/* Transparent Quality Check Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs">
-              <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-accent font-mono font-bold text-sm mb-4">
+              <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-accent-strong font-mono font-bold text-sm mb-4">
                 01
               </div>
-              <h3 className="text-base font-bold text-zinc-900 mb-2">
+              <h3 className="text-base font-semibold text-zinc-900 mb-2">
                 Ground Control &amp; Check Points
               </h3>
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -967,10 +967,10 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
             </div>
 
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs">
-              <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-accent font-mono font-bold text-sm mb-4">
+              <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-accent-strong font-mono font-bold text-sm mb-4">
                 02
               </div>
-              <h3 className="text-base font-bold text-zinc-900 mb-2">
+              <h3 className="text-base font-semibold text-zinc-900 mb-2">
                 SLAM Loop Closure Analysis
               </h3>
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -979,10 +979,10 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
             </div>
 
             <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs">
-              <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-accent font-mono font-bold text-sm mb-4">
+              <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-accent-strong font-mono font-bold text-sm mb-4">
                 03
               </div>
-              <h3 className="text-base font-bold text-zinc-900 mb-2">
+              <h3 className="text-base font-semibold text-zinc-900 mb-2">
                 Calibration Verification Reports
               </h3>
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
@@ -1044,7 +1044,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                     <tr key={idx} className="hover:bg-zinc-50/70 transition-colors">
                       <td className="py-4 px-4 sm:px-6 font-bold text-zinc-900">
                         <div>{item.deliverable}</div>
-                        <span className="font-mono text-[10px] text-zinc-400 font-normal uppercase">
+                        <span className="font-mono text-[10px] text-zinc-500 font-normal uppercase">
                           {item.category}
                         </span>
                       </td>
@@ -1091,7 +1091,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                   <div className="font-mono text-2xl font-bold text-accent mb-3">
                     0{step.step}
                   </div>
-                  <h3 className="text-base font-bold text-zinc-900 mb-2">
+                  <h3 className="text-base font-semibold text-zinc-900 mb-2">
                     {step.title}
                   </h3>
                   <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-3">
@@ -1101,7 +1101,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                     {step.detail}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-zinc-100 text-[10px] font-mono text-zinc-400">
+                <div className="mt-4 pt-3 border-t border-zinc-100 text-[10px] font-mono text-zinc-500">
                   Phase {step.step} of 5
                 </div>
               </div>
@@ -1141,7 +1141,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                 className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 sm:p-8 hover:bg-white hover:border-zinc-300 transition-all shadow-xs flex flex-col justify-between"
               >
                 <div>
-                  <h3 className="text-xl font-bold text-zinc-900 mb-2">
+                  <h3 className="text-xl font-semibold text-zinc-900 mb-2">
                     {item.role}
                   </h3>
                   <div className="font-mono text-xs text-accent font-semibold mb-4">
@@ -1233,7 +1233,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                 <span className="font-mono text-xs uppercase tracking-wider text-zinc-500 font-bold block mb-2">
                   Historic Monument · Kirtipur, Nepal
                 </span>
-                <h3 className="text-2xl font-bold text-zinc-900 mb-3">
+                <h3 className="text-2xl font-semibold text-zinc-900 mb-3">
                   Preserving Form, Proportions and Detail
                 </h3>
                 <p className="text-sm text-zinc-600 leading-relaxed mb-6">
@@ -1327,7 +1327,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
             </a>
           </div>
 
-          <p className="mt-8 text-xs font-mono text-zinc-500">
+          <p className="mt-8 text-xs font-mono text-zinc-400">
             RCAAS Technology · Kathmandu, Nepal · SLAM LiDAR, Drone Mapping &amp; Survey
           </p>
         </div>
@@ -1344,7 +1344,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               onClick={() => onNavigate('/services/immersive-experiences/')}
               className="bg-white border border-zinc-200 rounded-xl p-6 hover:border-zinc-300 transition-all cursor-pointer shadow-xs group"
             >
-              <h4 className="text-base font-bold text-zinc-900 group-hover:text-accent transition-colors mb-2">
+              <h4 className="text-base font-semibold text-zinc-900 group-hover:text-accent transition-colors mb-2">
                 Immersive Experiences
               </h4>
               <p className="text-xs sm:text-sm text-zinc-600 mb-4">
@@ -1359,7 +1359,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               onClick={() => onNavigate('/how-we-work/')}
               className="bg-white border border-zinc-200 rounded-xl p-6 hover:border-zinc-300 transition-all cursor-pointer shadow-xs group"
             >
-              <h4 className="text-base font-bold text-zinc-900 group-hover:text-accent transition-colors mb-2">
+              <h4 className="text-base font-semibold text-zinc-900 group-hover:text-accent transition-colors mb-2">
                 How We Work
               </h4>
               <p className="text-xs sm:text-sm text-zinc-600 mb-4">
@@ -1374,7 +1374,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               onClick={() => onNavigate('/industries/heritage-culture/')}
               className="bg-white border border-zinc-200 rounded-xl p-6 hover:border-zinc-300 transition-all cursor-pointer shadow-xs group"
             >
-              <h4 className="text-base font-bold text-zinc-900 group-hover:text-accent transition-colors mb-2">
+              <h4 className="text-base font-semibold text-zinc-900 group-hover:text-accent transition-colors mb-2">
                 Digital Heritage
               </h4>
               <p className="text-xs sm:text-sm text-zinc-600 mb-4">

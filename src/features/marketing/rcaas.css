@@ -372,7 +372,7 @@ html:has(.rcaas) {
 }
 .rcaas .auth-switch button {
   position: relative; z-index: 1; min-height: 2.25rem; border-radius: 0.45rem;
-  font-size: 0.75rem; font-weight: 600; color: #71717a; transition: color 0.2s;
+  font-size: 0.75rem; font-weight: 600; color: #52525b; transition: color 0.2s; /* 7:1 on the grey switch; was 4.4 */
 }
 .rcaas .auth-switch button.on { color: var(--color-ink); }
 .rcaas .auth-switch-pill {
@@ -638,7 +638,7 @@ html:has(.rcaas) {
 .rcaas .faq-q { transition: background-color 0.25s ease; }
 .rcaas .faq-q:hover { background: var(--color-surface); }
 .rcaas .faq-q:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; border-radius: 0.875rem; }
-.rcaas .faq-n { color: #a1a1aa; transition: color 0.3s; }
+.rcaas .faq-n { color: #71717a; transition: color 0.3s; }
 .rcaas details.faq[open] .faq-n { color: var(--color-accent); }
 /* + that turns into × */
 .rcaas .faq-ic {

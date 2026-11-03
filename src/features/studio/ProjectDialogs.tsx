@@ -3,6 +3,7 @@
 /** The dialogs a project opens from its card on the projects list and from
  *  its home page: who it's shared with, its branding, its enquiries and its
  *  activity. Owner-only actions are checked again by the server. */
+import { useEscape } from '../../hooks/useEscape';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   getProperty, addPropertyMember, removePropertyMember, getActivity, getProjectLeads, setProjectLeadEmails, projectLeadsCsvUrl, sendTestEmail,
@@ -19,6 +20,7 @@ import type { BrandFont, ProjectInfo, ProjectTheme } from '../../@types/config.t
  *  level, not per-space). Opened from a card's ⋯ menu; owner/admin only,
  *  enforced again server-side regardless of who can open this dialog. */
 export function ShareDialog({ project, onClose }: { project: Property; onClose: () => void }) {
+  useEscape(onClose);
   const [detail, setDetail] = useState<Property | null>(null);
   const [email, setEmail] = useState('');
   const [as, setAs] = useState<'member' | 'staff'>('member');
@@ -113,6 +115,7 @@ export function ShareDialog({ project, onClose }: { project: Property; onClose: 
 /** The project's name, colour, font and logo on its tours. Saves as you go:
  *  published tours pick it up at once (it isn't part of a publish). */
 export function BrandingDialog({ project, onClose }: { project: Property; onClose: () => void }) {
+  useEscape(onClose);
   const [theme, setTheme] = useState<ProjectTheme>(project.theme ?? {});
   const [brand, setBrand] = useState(project.theme?.brand ?? '');
   const [info, setInfo] = useState<ProjectInfo>(project.info ?? {});
@@ -264,6 +267,7 @@ export function BrandingDialog({ project, onClose }: { project: Property; onClos
 /** A project's enquiries: the list, a CSV for Excel, and (owner/admin) who
  *  new ones are emailed to (server/src/mailer.js). */
 export function EnquiriesDialog({ project, canEdit, onClose }: { project: Property; canEdit: boolean; onClose: () => void }) {
+  useEscape(onClose);
   const [data, setData] = useState<ProjectLeads | null>(null);
   const [emails, setEmails] = useState('');
   const [error, setError] = useState('');
@@ -368,6 +372,7 @@ export function EnquiriesDialog({ project, canEdit, onClose }: { project: Proper
 
 /** Who did what in this project, newest first (server/src/activity.js). */
 export function ActivityDialog({ project, onClose }: { project: Property; onClose: () => void }) {
+  useEscape(onClose);
   const [log, setLog] = useState<ActivityEntry[] | null>(null);
   const [error, setError] = useState('');
   useEffect(() => {

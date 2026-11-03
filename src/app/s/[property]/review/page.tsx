@@ -1,5 +1,6 @@
 'use client';
 
+import { askText } from '../../../../components/ui/Ask';
 import { use, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import {
   approveSiteReview, getSiteReview, postReviewComment, setReviewKey, type PublicSite, type ReviewApproval, type ReviewComment
@@ -108,7 +109,7 @@ function Review({ id, reviewKey, data }: {
   };
 
   const approve = async () => {
-    const who = name.trim() || window.prompt('Your name, to sign it off:')?.trim();
+    const who = name.trim() || (await askText({ title: 'Sign off the website', body: 'Your name goes on the approval, so the team knows who approved it.', label: 'Your name', action: 'Approve it' }))?.trim();
     if (!who) return;
     setBusy(true);
     try {

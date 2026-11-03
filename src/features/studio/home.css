@@ -93,3 +93,11 @@
 @media (prefers-reduced-motion: reduce) {
   .ph-switch, .ph-switch > span { transition: none; }
 }
+
+/* Kind of place (2026-11-03, PlaceKindPicker.tsx ChangePlaceKind). */
+.ph-kind-now { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0 0 8px; }
+.ph-kind-now .ic { font-size: 18px; color: var(--ed-text-dim); }
+.ph-kind-now .pl-sub { flex-basis: 100%; }
+.ph-kind-pick { display: grid; gap: 10px; }
+.ph-kind-pick .np-kind-note p { margin: 4px 0; }
+.ph-kind-err { margin: 0; color: var(--ed-danger); font: 12px/1.45 var(--sans); }
