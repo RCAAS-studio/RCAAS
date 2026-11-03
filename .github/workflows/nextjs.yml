@@ -60,8 +60,6 @@ jobs:
           # Pages serves this repo under /<repo>. With a custom domain, set both to the domain's root.
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
           NEXT_PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
-      # The sample scans (176 MB) are for the tour, which isn't in this copy.
-      - run: rm -rf out/assets/rooms
       - uses: actions/upload-pages-artifact@v5
         with:
           path: out

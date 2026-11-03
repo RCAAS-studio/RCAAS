@@ -54,7 +54,7 @@
       "radius": 0.4,
       "label": "Bar",
       "payload": {
-        "sceneId": "bar-restro"
+        "sceneId": ""
       },
       "occludedBy": "none"
     },

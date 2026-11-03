@@ -1,14 +1,7 @@
 /**
- * Hotel scenes.
- *
- * Two independent Gaussian-splat scans, each in its own folder under
- * `public/assets/rooms/<id>/` and containing a `meta.lcc2`. They do NOT share a
- * coordinate frame — each was scanned separately — so there is no "walk from one
- * into the other". The visitor picks a scene from the top menu and the manager
- * unloads whichever scene was loaded before.
- *
- * To add a scene: drop its folder in `public/assets/rooms/`, add an entry here,
- * and (optionally) author viewpoints for it in `viewpoints.js`.
+ * The spaces the tour and studio can open, filled from the API by
+ * hydrateScenes(). Each one's files are an uploaded asset (assetId); a legacy
+ * "local:<id>" doc still resolves to public/assets/rooms/<id>/.
  */
 import type { ApiScene, Scene, SpawnState } from '../../@types/scene.types';
 import { assetUrl } from '../../lib/api';
@@ -24,34 +17,10 @@ export const ASSET_ROOT = base ? `${base}/assets/rooms` : '/assets/rooms';
  *  path. Override per-scene with `meta:` if an export used a different name. */
 export const META_FILE = 'meta.lcc2';
 
-export const SCENES: Scene[] = [
-  {
-    id: 'bar-restro',
-    name: 'Bar & Restaurant',
-    tagline: 'Ground floor · all-day dining',
-    /** Where a cold visitor spawns before any viewpoint is played. World-space,
-     *  Y-up (the model matrix in useSceneManager fixes LCC Z-up). Tune with the
-     *  in-app recorder: walk somewhere sensible and press P. */
-    spawn: [-3.08, 2.42, -0.92],
-    yaw: 0,
-    outdoor: false,
-    /** World units per metre. This scan is metric; the value is pinned
-     *  explicitly because its meta bbox is inflated by stray splats
-     *  (~58-unit diagonal) and any bbox-based guess would be unreliable. */
-    unitScale: 1
-  },
-  {
-    id: 'veterinary-lab',
-    name: 'Spa & Treatment Room',
-    tagline: 'Wellness floor',
-    spawn: [0, 1.7, 3],
-    yaw: 0,
-    outdoor: false
-    // no unitScale -> auto-measured; set one here if it spawns you in the ceiling
-  }
-];
+// Every space comes from the API (hydrateScenes). The two hand-authored demo
+// scans that lived in public/assets/rooms/ were removed on 2026-11-03.
+export const SCENES: Scene[] = [];
 
-export const DEFAULT_SCENE = SCENES[0].id;
 export const DEFAULT_SPAWN: [number, number, number] = [0, 1.7, 3];
 
 export const SCENE_BY_ID: Record<string, Scene> = Object.fromEntries(SCENES.map((s) => [s.id, s]));
@@ -68,7 +37,7 @@ export function limitTour(ids: string[], start: string) {
   tourIds = new Set(ids);
   startScene = start;
 }
-export const firstScene = () => startScene ?? DEFAULT_SCENE;
+export const firstScene = () => startScene ?? SCENES[0]?.id ?? '';
 /** True on the public tour — its documents come from the published copy. */
 export const isPublicTour = () => tourIds !== null;
 export const visibleScenes = () =>

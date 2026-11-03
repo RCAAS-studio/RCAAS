@@ -12,73 +12,15 @@
  *
  * A 1-waypoint path is fine — it just glides from wherever the camera is to
  * that single pose.
- *
- * !!! The coordinates in VIEWPOINTS below are PLACEHOLDERS from early bring-up,
- * not real positions in the current scans. Re-author them in the scene:
- *   walk/fly to a spot, press  B  to drop a path waypoint (repeat as you move),
- *   press  V  to close the viewpoint (waypoints -> one entry),
- *   press  Shift+V  to copy this session's viewpoints as JSON,
- *   then replace the matching scene's array below.
- * (The editor's Views filmstrip does the same thing with thumbnails.)
  */
 
 import * as THREE from 'three';
 import type { PathWaypoint, Viewpoint } from '../../@types/viewpoint.types';
 import type { Track } from '../../@types/scene.types';
 
-export const VIEWPOINTS: Record<string, Viewpoint[]> = {
-  'bar-restro': [
-    {
-      id: 'bar-entrance',
-      label: 'Walk in',
-      seconds: 5,
-      path: [
-        { pos: [0, 1.7, 6], look: [0, 1.5, 0] },
-        { pos: [0, 1.7, 2.5], look: [-2, 1.4, -2] },
-        { pos: [-1.5, 1.65, 0], look: [-3, 1.3, -3] }
-      ]
-    },
-    {
-      id: 'bar-counter',
-      label: 'The bar',
-      seconds: 4,
-      path: [
-        { pos: [-1.5, 1.65, 0], look: [-4, 1.4, -1] },
-        { pos: [-3.2, 1.6, -1.2], look: [-5, 1.3, -2] }
-      ]
-    },
-    {
-      id: 'bar-window',
-      label: 'Window seats',
-      seconds: 4,
-      path: [
-        { pos: [-1.5, 1.65, 0], look: [2, 1.4, -3] },
-        { pos: [1.5, 1.6, -2], look: [3.5, 1.3, -4] }
-      ]
-    }
-  ],
-
-  'veterinary-lab': [
-    {
-      id: 'spa-overview',
-      label: 'Room overview',
-      seconds: 5,
-      path: [
-        { pos: [0, 1.7, 5], look: [0, 1.4, 0] },
-        { pos: [1.5, 1.7, 1.5], look: [-2, 1.3, -2] }
-      ]
-    },
-    {
-      id: 'spa-table',
-      label: 'Treatment table',
-      seconds: 4,
-      path: [
-        { pos: [1.5, 1.7, 1.5], look: [-1, 1.1, -1] },
-        { pos: [0, 1.6, -0.5], look: [-1.5, 1.0, -2] }
-      ]
-    }
-  ]
-};
+// Hand-written fallbacks for spaces with no saved tracks (the two demo scans
+// that had some were removed on 2026-11-03).
+export const VIEWPOINTS: Record<string, Viewpoint[]> = {};
 
 /* ------------------------------------------------------------------ */
 /* In-app recorder                                                    */
