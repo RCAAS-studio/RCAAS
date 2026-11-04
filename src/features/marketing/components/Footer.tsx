@@ -311,7 +311,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenRegister }) =>
         {/* Lower Legal Bar & Auditor Trigger */}
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-line pt-8 text-xs font-mono text-zinc-500">
           <div>
-            &copy; {new Date().getFullYear()} {SITE_METADATA.legalName.replace(/\.$/, '')}. All rights reserved. Registered in Kathmandu, Nepal.
+            &copy; {new Date().getFullYear()} {SITE_METADATA.displayName}. All rights reserved.
           </div>
           
           <div className="flex flex-wrap items-center justify-center gap-x-4">

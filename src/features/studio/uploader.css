@@ -41,7 +41,7 @@
 }
 .up-x {
   appearance: none; border: 0; cursor: pointer; background: transparent;
-  color: var(--ed-text-dim); font-size: 14px; padding: 6px 8px; border-radius: 6px;
+  color: var(--ed-text-dim); font-size: 15px; padding: 6px 8px; border-radius: 6px;
   transition: background 0.12s, color 0.12s;
 }
 .up-x:hover { color: var(--ed-text); background: var(--ed-raise); }
@@ -51,13 +51,13 @@
 .up-field { display: block; margin-bottom: 18px; }
 .up-field span {
   display: block; margin-bottom: 7px;
-  font: 600 12px var(--sans, sans-serif); letter-spacing: 0.01em;
+  font: 600 12.5px var(--sans, sans-serif); letter-spacing: 0.01em;
   color: var(--ed-text);
 }
 .up-field input {
   width: 100%; padding: 11px 13px; color: var(--ed-text);
   background: var(--ed-well); border: 1px solid var(--ed-line); border-radius: var(--ed-r-sm);
-  font: 500 13px var(--sans, sans-serif);
+  font: 500 13.5px var(--sans, sans-serif);
   transition: border-color 0.12s;
 }
 .up-field input::placeholder { color: var(--ed-text-dim); }
@@ -83,7 +83,7 @@
 .up-signin-row input:focus { outline: none; border-color: var(--ed-signal); }
 .up-signin-row button {
   appearance: none; cursor: pointer; padding: 10px 18px; border-radius: var(--ed-r-sm);
-  font: 600 12px var(--sans, sans-serif); letter-spacing: 0.01em;
+  font: 600 12.5px var(--sans, sans-serif); letter-spacing: 0.01em;
   color: var(--ed-signal-ink); background: var(--ed-signal); border: 1px solid var(--ed-signal);
 }
 /* Not-yet, not broken: drop to an outline rather than dissolving the button. */
@@ -126,7 +126,7 @@ div.up-slot-error { border-color: var(--ed-danger); }
 .up-slot:nth-child(3) { --tile: #3F7A52; }
 .up-slot-idle .up-slot-top::before { filter: saturate(0.55) brightness(0.85); }
 .up-slot-label {
-  font: 600 13px var(--sans, sans-serif); letter-spacing: 0.01em;
+  font: 600 13.5px var(--sans, sans-serif); letter-spacing: 0.01em;
   color: var(--ed-text);
 }
 .up-slot-ok { margin-left: auto; font: 600 10.5px var(--sans, sans-serif); color: var(--ed-signal); }
@@ -144,14 +144,14 @@ div.up-slot-error { border-color: var(--ed-danger); }
 .up-browse:hover { border-color: var(--ed-line-lit); background: #1B232F; }
 .up-browse-zip {
   appearance: none; cursor: pointer; border: 0; background: transparent;
-  padding: 2px; font: 500 11px var(--sans, sans-serif); color: var(--ed-text-dim);
+  padding: 2px; font: 500 11.5px var(--sans, sans-serif); color: var(--ed-text-dim);
   text-decoration: underline;
 }
 .up-browse-zip:hover { color: var(--ed-text); }
 
 .up-relink {
   appearance: none; border: 0; padding: 0; cursor: pointer;
-  color: var(--ed-signal); background: transparent; font: 600 11px var(--sans, sans-serif);
+  color: var(--ed-signal); background: transparent; font: 600 11.5px var(--sans, sans-serif);
   text-decoration: underline;
 }
 
@@ -178,7 +178,7 @@ div.up-slot-error { border-color: var(--ed-danger); }
 
 /* `up-slot-error` is on the slot <div> AND the message <p> — the element
  * selector keeps the text rules off the container. */
-p.up-slot-error { color: var(--ed-danger); font-size: 11px; margin: 0; }
+p.up-slot-error { color: var(--ed-danger); font-size: 11.5px; margin: 0; }
 
 .up-error {
   margin: 16px 0 0; padding: 10px 12px; font-size: 11.5px; border-radius: var(--ed-r-sm);
@@ -188,7 +188,7 @@ p.up-slot-error { color: var(--ed-danger); font-size: 11px; margin: 0; }
 .up-create {
   appearance: none; cursor: pointer; width: 100%; margin-top: 20px;
   padding: 13px; border-radius: var(--ed-r-sm);
-  font: 600 13px var(--sans, sans-serif); letter-spacing: 0.01em;
+  font: 600 13.5px var(--sans, sans-serif); letter-spacing: 0.01em;
   color: var(--ed-signal-ink); background: var(--ed-signal); border: 1px solid var(--ed-signal);
   transition: filter 0.12s, color 0.12s, background 0.12s, border-color 0.12s;
 }
@@ -203,7 +203,7 @@ p.up-slot-error { color: var(--ed-danger); font-size: 11px; margin: 0; }
 .up-axis span { font-size: 11.5px; color: var(--ed-text-dim); }
 .up-axis select {
   background: var(--ed-well); color: var(--ed-text); border: 1px solid var(--ed-line);
-  border-radius: var(--ed-r-sm); padding: 6px 10px; font: inherit; font-size: 12px;
+  border-radius: var(--ed-r-sm); padding: 6px 10px; font: inherit; font-size: 12.5px;
 }
 .up-axis select:focus { outline: none; border-color: var(--ed-signal); }
 /* files a model named that weren't picked: a warning, not an error */

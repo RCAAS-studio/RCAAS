@@ -747,7 +747,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
 
           <div className="rounded-xl bg-zinc-50 border border-zinc-200 p-5 text-xs text-muted flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <p>
-              <strong className="text-zinc-900 font-semibold">Note:</strong> Every project is quoted to its size and goal. Prices shown are starting points.
+              <strong className="text-zinc-900 font-semibold">Note:</strong> Every project is quoted to its size and goal, with the scope agreed before work starts.
             </p>
             <button
               type="button"
@@ -865,7 +865,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
             </div>
 
             <div className="mt-6 text-xs text-zinc-500 font-mono">
-              Direct response within 24 hours · Kathmandu, Nepal
+              We aim to reply within {SITE_METADATA.responseTime ?? 'one working day'} · Kathmandu, Nepal
             </div>
           </div>
         </section>

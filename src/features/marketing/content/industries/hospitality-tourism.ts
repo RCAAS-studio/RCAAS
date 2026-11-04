@@ -41,7 +41,7 @@ export const hospitalityTourism: IndustryContent = {
         icon: Box,
       },
       {
-        what: 'Hotspots and booking buttons [[TBC]]',
+        what: 'Hotspots and booking buttons',
         how: 'Tap a room to see details, then go straight to your booking page or WhatsApp.',
         icon: MousePointerClick,
       },
@@ -114,14 +114,14 @@ export const hospitalityTourism: IndustryContent = {
         question: 'Do we need to close rooms while you capture?',
         answer: 'No. We schedule capture around your occupancy and work room by room. Someone to open doors is all we need.',
       },
-      { question: 'Will guests appear in the tour?', answer: '[[TBI: people and faces policy]]' },
+      { question: 'Will guests appear in the tour?', answer: 'We keep guests out of the capture where we can, and remove or blur anyone identifiable before the tour is published.' },
       {
         question: 'Can guests book from inside the tour?',
-        answer: '[[TBC: "Yes. We can add buttons that link to your booking page, WhatsApp or enquiry form."]]',
+        answer: 'Yes. Hotspots and action buttons can link to your booking page, WhatsApp or enquiry form.',
       },
       {
         question: 'Can we update the tour after a renovation or a new season?',
-        answer: '[[TBC: "Yes. We rescan changed areas and update your tour."]]',
+        answer: 'Yes. Changed areas can be captured again and your tour updated, under a separately agreed scope.',
       },
       {
         question: 'Can you create an experience for a whole destination?',

@@ -42,12 +42,12 @@ export const education: IndustryContent = {
     items: [
       { what: '3D campus tour', how: 'Families walk classrooms, labs, libraries, hostels and grounds from a link.', icon: Box },
       {
-        what: 'Guided tour with highlights [[TBC]]',
+        what: 'Guided tour with highlights',
         how: 'A set path with notes at each stop: the new lab, the library, the sports ground.',
         icon: Route,
       },
       {
-        what: 'Hotspots and "Apply" buttons [[TBC]]',
+        what: 'Hotspots and "Apply" buttons',
         how: 'Tap a lab to see the course, then go straight to admissions.',
         icon: MousePointerClick,
       },
@@ -104,7 +104,7 @@ export const education: IndustryContent = {
         image: IMG['industry-education/nepathya-school-and-college'],
       },
       {
-        name: 'Madan Ashrit Polytechnic Institute [[TBC: official name]]',
+        name: 'Madan Ashrit Memorial Polytechnic Institute',
         tag: 'Education',
         line: 'Workshops and labs prospective students can explore for themselves.',
         pending: '[[TBI: result]]',
@@ -123,16 +123,16 @@ export const education: IndustryContent = {
       },
       {
         question: 'Will students appear in the tour?',
-        answer: '[[TBI: people and faces policy; note that extra care applies to children]]',
+        answer: 'We coordinate with the institution, aim to capture while students are away where practical, and remove or blur any identifiable children before anything is published.',
       },
       {
         question: 'Can we add "Apply now" or course information inside the tour?',
-        answer: '[[TBC: "Yes. We can add information points and buttons that link to your courses and admissions page."]]',
+        answer: 'Yes. Hotspots and action buttons can link to course information or your existing admissions page.',
       },
       { question: 'Can the tour include narration in Nepali and English?', answer: 'Yes. The tour itself runs in English, Nepali and Chinese, and its guided views can carry narration with captions.' },
       {
         question: 'Can we update the tour when we open a new building or lab?',
-        answer: 'Yes. We capture the new space and add it to your existing tour.',
+        answer: 'Yes. The new space can be captured and added to your existing tour where it fits, under a separately agreed scope.',
       },
     ],
   },

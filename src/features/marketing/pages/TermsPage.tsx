@@ -98,7 +98,7 @@ export const TermsPage: React.FC<TermsPageProps> = ({ onNavigate }) => {
       <LegalSection section={SECTIONS[0]} number={1}>
         <p className={legalBodyClass}>
           <WithPlaceholders
-            text={`These terms apply to your use of ${DOMAIN} (the "website"), operated by RCAAS Technology Pvt. Ltd. ("RCAAS", "we", "us"), ${ADDRESS}, Kathmandu, Nepal. By using the website, you agree to these terms. If you don't agree, please don't use the website.`}
+            text={`These terms apply to your use of ${DOMAIN} (the "website"), operated by RCAAS Technology ("RCAAS", "we", "us"; planned legal name RCAAS Technology Pvt. Ltd., registration pending), ${ADDRESS}. By using the website, you agree to these terms. If you don't agree, please don't use the website.`}
           />
         </p>
         <div className="mt-4 flex items-start gap-3 rounded-xl border border-line bg-surface p-4">
@@ -240,7 +240,7 @@ export const TermsPage: React.FC<TermsPageProps> = ({ onNavigate }) => {
       {/* 12 */}
       <LegalSection section={SECTIONS[11]} number={12}>
         <address className="not-italic rounded-xl border border-line bg-surface p-5 text-sm text-zinc-700 leading-relaxed">
-          <WithPlaceholders text={`${EMAIL} · RCAAS Technology Pvt. Ltd., ${ADDRESS}, Kathmandu, Nepal`} />
+          <WithPlaceholders text={`${EMAIL} · RCAAS Technology (registration pending), ${ADDRESS}`} />
         </address>
       </LegalSection>
     </LegalLayout>

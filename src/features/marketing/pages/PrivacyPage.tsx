@@ -81,12 +81,12 @@ const COLLECT: { lead: string; text: string; icon: LucideIcon }[] = [
   },
   {
     lead: 'Information collected automatically:',
-    text: 'basic technical and usage data such as pages visited, device and browser type, approximate location and referring website, collected through [[TBI: analytics tool]]. [[TBC: whether cookies are used, and which]]',
+    text: 'basic technical and usage data such as pages visited, device and browser type, approximate location and referring website, once our planned analytics tool, Google Analytics 4, is set up. We use no analytics cookies today. When we add them, optional analytics cookies will be set only after you agree (Accept, Reject or Preferences), and you can change your choice at any time.',
     icon: BarChart3,
   },
   {
     lead: 'Information in captures:',
-    text: '3D scans, photos, video and aerial images of places may incidentally include people, vehicles and number plates, neighbouring properties or personal items. [[TBI: people and faces policy, e.g. "We aim to capture when spaces are quiet, and we remove or blur identifiable people before publishing."]]',
+    text: '3D scans, photos, video and aerial images of places may incidentally include people, vehicles and number plates, neighbouring properties or personal items. We keep identifiable people out of a capture where we can, and remove or blur them before any public release.',
     icon: ScanLine,
   },
   {
@@ -110,17 +110,17 @@ const USES = [
 const PROVIDERS = [
   { what: 'website hosting', who: '[[TBI]]' },
   { what: 'form handling and email', who: '[[TBI]]' },
-  { what: 'analytics', who: '[[TBI]]' },
+  { what: 'analytics (planned, not yet set up)', who: 'Google Analytics 4 (Google)' },
   { what: '3D platform hosting', who: '[[TBI]]' },
   { what: 'web fonts', who: 'Google Fonts (Google receives your IP address when a page loads)' },
   { what: 'messaging, if you contact us on WhatsApp', who: 'WhatsApp (Meta), under its own terms' },
 ];
 
 const RETENTION = [
-  { what: "enquiries that don't become projects", period: '[[TBI: period]]' },
-  { what: 'client and project records', period: '[[TBI: period, including any period required by tax and accounting law]]' },
+  { what: "enquiries that don't become projects", period: 'only while needed for legitimate business purposes, then securely deleted' },
+  { what: 'client and project records', period: 'as long as applicable laws (including tax and accounting law), contracts and legitimate business needs require, then securely deleted' },
   { what: 'early-access list', period: 'until you unsubscribe or the list closes' },
-  { what: 'analytics data', period: '[[TBI]]' },
+  { what: 'analytics data', period: 'the shortest practical period our Google Analytics 4 set-up supports, confirmed when it is set up' },
 ];
 
 const RIGHTS: { text: string; icon: LucideIcon }[] = [
@@ -155,7 +155,7 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ onNavigate }) => (
     <LegalSection section={SECTIONS[0]} number={1}>
       <p className={legalBodyClass}>
         <WithPlaceholders
-          text={`RCAAS Technology Pvt. Ltd. ("RCAAS", "we", "us") is a company registered with the Office of the Company Registrar, Nepal [[TBI: registration number]], with its office at ${ADDRESS}, Kathmandu. We decide how and why the personal information described here is used, and we are responsible for it. For any privacy question, contact [[TBC: name or role of the person responsible for privacy]] at ${EMAIL}.`}
+          text={`RCAAS Technology ("RCAAS", "we", "us"), whose planned legal name is RCAAS Technology Pvt. Ltd. (company registration pending), has its office at ${ADDRESS}. We decide how and why the personal information described here is used, and we are responsible for it. For any privacy question, contact [[TBC: name or role of the person responsible for privacy]] at ${EMAIL}.`}
         />
       </p>
     </LegalSection>
@@ -267,7 +267,7 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ onNavigate }) => (
         <WithPlaceholders text="Our website is not directed at children, and we don't knowingly collect personal information from children through it. If you think a child has sent us information, contact us and we will delete it." />
       </p>
       <p className={`${legalBodyClass} mt-3`}>
-        <WithPlaceholders text="When we capture schools and other places where children may be present, we ask the institution to inform parents or guardians beforehand, and we work with it to [[TBI: e.g. schedule capture outside school hours and remove or blur any identifiable child before publishing]]." />
+        <WithPlaceholders text="When we capture schools and other places where children may be present, we ask the institution to inform parents or guardians beforehand, and we work with it to scan while students are away where practical, and remove or blur any identifiable child before publication." />
       </p>
     </LegalSection>
 
@@ -342,7 +342,7 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ onNavigate }) => (
     {/* 12 */}
     <LegalSection section={SECTIONS[11]} number={12}>
       <address className="not-italic rounded-xl border border-line bg-surface p-5 text-sm text-zinc-700 leading-relaxed">
-        <WithPlaceholders text={`${EMAIL} · ${PHONE} · RCAAS Technology Pvt. Ltd., ${ADDRESS}, Kathmandu, Nepal`} />
+        <WithPlaceholders text={`${EMAIL} · ${PHONE} · RCAAS Technology (registration pending), ${ADDRESS}`} />
       </address>
       <p className={`${legalBodyClass} mt-3`}>
         <WithPlaceholders text="[[TBC: publish a Nepali version of this policy, and state which version applies if they differ]]" />

@@ -13,7 +13,7 @@ export const photosArentEnough: BlogPost = {
   heroImage: { src: '/images/blog/placeholder-hero.svg', alt: '[[TBI: 3D still of a campus]]' },
   relatedWork: [
     { label: 'Nepathya School and College', path: '/work/nepathya-school-college-3d-campus-tour/' },
-    { label: 'Madan Ashrit Polytechnic Institute', path: '/work/madan-ashrit-polytechnic-3d-campus-tour/' },
+    { label: 'Madan Ashrit Memorial Polytechnic Institute', path: '/work/madan-ashrit-polytechnic-3d-campus-tour/' },
   ],
   relatedIndustries: [{ label: 'Education', path: '/industries/education/' }],
   draft: true,

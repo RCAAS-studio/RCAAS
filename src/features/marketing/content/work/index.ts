@@ -13,5 +13,4 @@ export const findCaseStudy = (slug: string) => CASE_STUDY_CONTENT.find((study) =
 
 export const caseStudyPath = (study: CaseStudyContent) => `/work/${study.slug}/` as RoutePath;
 
-// Launch rule: a case study missing its 3D link, location or date stays draft (noindex, with a notice).
-export const isCaseStudyPublished = (study: CaseStudyContent) => Boolean(study.embedUrl && study.location && study.date);
+export { isCaseStudyPublished } from './published';

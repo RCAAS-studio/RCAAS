@@ -108,8 +108,8 @@ export function pageMeta(currentPath: string) {
     title = 'Our Work: 3D Experiences & Digital Heritage Projects | RCAAS';
     metaDesc = 'Explore 3D experiences RCAAS has built for heritage sites, schools, colleges and hotels in Nepal, and the stories behind each project.';
   } else if (currentPath.startsWith('/platform')) {
-    title = 'Host, Share & Measure Your 3D Experience | RCAAS';
-    metaDesc = 'The RCAAS 3D platform puts your photorealistic space online behind one link. It opens on any phone or computer, with nothing to install. Early access open.';
+    title = 'Host, Share & Embed Your 3D Experience | RCAAS';
+    metaDesc = 'RCAAS Studio puts your photorealistic space online behind one link. It opens on any phone or computer, with nothing to install. Early access open.';
   } else if (currentPath.startsWith('/how-we-work')) {
     title = 'How We Work: From Real Place to Experience | RCAAS';
     metaDesc = 'How RCAAS turns a real place into an accurate 3D experience: our five-step process, our engineering and game-development team, toolkit and quality promise.';

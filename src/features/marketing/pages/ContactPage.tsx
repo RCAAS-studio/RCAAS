@@ -328,11 +328,11 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                       ))}
                     </select>
                   </div>
-                  {/* G18: budget field only if confirmed, with ranges in NPR. */}
+                  {/* G18: the owner confirmed an optional Budget Range select (2026-11-03); its NPR amounts are still to confirm. */}
                   <div>
                     <span className={labelClass}>Budget range</span>
                     <div className="rounded-lg border border-dashed border-amber-300 bg-white px-3 py-2.5">
-                      <Placeholder>[[TBC: include? If yes, ranges in NPR]]</Placeholder>
+                      <Placeholder>[[TBC: budget ranges in NPR]]</Placeholder>
                     </div>
                   </div>
                   <div className="sm:col-span-2">
@@ -462,7 +462,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                   Prefer to talk?
                 </h2>
                 <p className="mt-1 text-sm text-zinc-600">
-                  We reply within {SITE_METADATA.responseTime ?? <Placeholder>[[TBI: response time]]</Placeholder>}.
+                  We aim to reply within {SITE_METADATA.responseTime ?? <Placeholder>[[TBI: response time]]</Placeholder>}.
                 </p>
               </div>
 

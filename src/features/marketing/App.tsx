@@ -153,7 +153,6 @@ export default function App() {
       logo: 'https://rcaas.tech/logo.png',
       image: 'https://rcaas.tech/logo.png',
       name: SITE_METADATA.displayName,
-      legalName: SITE_METADATA.legalName,
       alternateName: ['RCAAS', SITE_METADATA.nameMeaning],
       url: 'https://rcaas.tech/',
       description: SITE_METADATA.boilerplate,
@@ -695,7 +694,7 @@ export default function App() {
             {
               '@type': 'ListItem',
               position: 3,
-              name: 'Madan Ashrit Polytechnic 3D Campus Tour',
+              name: 'Madan Ashrit Memorial Polytechnic 3D Campus Tour',
               url: 'https://rcaas.tech/work/madan-ashrit-polytechnic-3d-campus-tour/',
             },
             {
@@ -731,8 +730,8 @@ export default function App() {
         '@type': 'WebPage',
         '@id': 'https://rcaas.tech/platform/#page',
         url: 'https://rcaas.tech/platform/',
-        name: 'Host, Share & Measure Your 3D Experience | RCAAS',
-        description: 'The RCAAS 3D platform puts your photorealistic space online behind one link. It opens on any phone or computer, with nothing to install. Early access open.',
+        name: 'Host, Share & Embed Your 3D Experience | RCAAS',
+        description: 'RCAAS Studio puts your photorealistic space online behind one link. It opens on any phone or computer, with nothing to install. Early access open.',
         isPartOf: { '@id': 'https://rcaas.tech/#organization' },
       });
 
@@ -745,7 +744,7 @@ export default function App() {
             name: 'Do visitors need an app or special software?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'No. The experience opens in any modern web browser on a phone, tablet or computer. A VR headset is only needed for VR.',
+              text: 'No. The experience opens in any modern web browser on a phone, tablet or computer.',
             },
           },
           {
@@ -753,7 +752,31 @@ export default function App() {
             name: 'Can I manage my own experiences on the platform?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Not yet. Today we publish and manage your experience for you. Subscriptions that let businesses manage their own experiences are coming soon. Join early access to hear first.',
+              text: 'Not yet. Today we publish and manage your experience for you. Subscriptions that let businesses manage their own experiences are coming soon; you can register your interest below.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Can I put the experience on my own website?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes. A tour can be embedded on your website, and its link can be shared in messages, on social media and through a QR code.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'How long is my experience hosted, and what happens if hosting ends?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Each project has its own agreed hosting period. If it ends, the tour stays open for a 14-day grace period; after that, access may be suspended and the project kept for 30 more days so it can be restored. Archiving or deletion after that follows your contract. You receive access to the hosted tour, not the raw capture data or 3D model files.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Can I see how many people explored it?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Not yet. Engagement analytics are not part of the platform today.',
             },
           },
         ],

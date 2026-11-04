@@ -105,14 +105,13 @@ const PROCESS: ProcessStep[] = [
     imageAlt: 'A heritage courtyard during restoration, and the same courtyard being rescanned',
     whatHappens: (
       <>
-        <Placeholder>[[TBC: "We review how people engage with the experience and suggest improvements."]]</Placeholder>{' '}
         When your place changes, after a renovation or a new building, we can capture the changes and update your
         experience.
       </>
     ),
     youReceive: (
       <>
-        <Placeholder>[[TBC: engagement summary]]</Placeholder> and ongoing support.
+        Updates to your experience under an agreed scope, and ongoing support.
       </>
     ),
   },
@@ -130,7 +129,7 @@ const GAME_DEVELOPERS: React.ReactNode[] = [
   'Build interaction, hotspots and guided paths',
   'Optimise experiences to run smoothly on phones, browsers and headsets',
   <>
-    Create VR, AR and interactive experiences <Placeholder>[[TBC: per confirmed scope]]</Placeholder>
+    Create VR and interactive experiences, and AR where a project suits it
   </>,
 ];
 
@@ -160,7 +159,7 @@ interface ToolkitRow {
   examples: React.ReactNode;
 }
 
-// Build note: remove rows or examples not confirmed (Register E02, E04, E05, E07, S05).
+// Rows and examples as the owner confirmed them (planning toolkit table and decisions, 2026-11-03); GNSS equipment still to input.
 const TOOLKIT_ROWS: ToolkitRow[] = [
   {
     category: 'Handheld laser scanning',
@@ -168,7 +167,8 @@ const TOOLKIT_ROWS: ToolkitRow[] = [
     whatItDoes: 'Captures interiors and complex structures quickly and accurately, at walking pace',
     examples: (
       <>
-        XGRIDS Lixel Kitty K1 <Placeholder>[[TBI: key specs]]</Placeholder>
+        XGRIDS Lixel Kitty K1. Manufacturer rating: 200,000 points/s, 40 m working range, ±1.2 cm (the scanner's own
+        specification, not a project accuracy guarantee)
       </>
     ),
   },
@@ -198,13 +198,13 @@ const TOOLKIT_ROWS: ToolkitRow[] = [
     category: 'Real-time and game engines',
     icon: Gamepad2,
     whatItDoes: 'Interactive, gamified and VR experiences',
-    examples: <Placeholder>[[TBC: Unreal Engine, Unity]]</Placeholder>,
+    examples: 'Unreal Engine 5, Unity',
   },
   {
     category: 'Film and content production',
     icon: Clapperboard,
     whatItDoes: 'Fly-throughs, renders and social cuts',
-    examples: <Placeholder>[[TBC: tools]]</Placeholder>,
+    examples: 'Tools chosen for each project',
   },
   {
     category: 'Delivery',
@@ -212,8 +212,8 @@ const TOOLKIT_ROWS: ToolkitRow[] = [
     whatItDoes: 'Where your audience experiences it',
     examples: (
       <>
-        RCAAS 3D platform · VR headsets <Placeholder>[[TBI: models]]</Placeholder> ·{' '}
-        <Placeholder>[[TBC: AR]]</Placeholder>
+        RCAAS Studio · VR tested on Meta Quest 2, Meta Quest 3 and Meta Quest 3S (checked for each experience) · AR
+        assessed per project
       </>
     ),
   },
@@ -256,12 +256,8 @@ const PROMISES: { title: string; icon: LucideIcon; meaning: React.ReactNode }[] 
   {
     title: 'Respect for people',
     icon: Users,
-    meaning: (
-      <Placeholder>
-        [[TBI: people and faces policy, e.g. "We capture when spaces are quiet and remove or blur people before
-        publishing."]]
-      </Placeholder>
-    ),
+    meaning:
+      'We keep identifiable people out of a capture where we can, and remove or blur them before anything is released publicly. At schools we coordinate with the institution, aim to scan while students are away, and blur identifiable children.',
   },
   {
     title: 'Respect for places',
@@ -272,12 +268,8 @@ const PROMISES: { title: string; icon: LucideIcon; meaning: React.ReactNode }[] 
   {
     title: 'Clear ownership',
     icon: KeyRound,
-    meaning: (
-      <Placeholder>
-        [[TBI: ownership terms, e.g. "You own the deliverables you paid for. We ask permission before showing your
-        project in our portfolio."]]
-      </Placeholder>
-    ),
+    meaning:
+      'For virtual tours you receive access to the hosted tour, not raw scans or 3D model files. Survey and heritage deliverables, licensing and data handover are set in your contract, and we ask permission before showing your project publicly.',
   },
 ];
 
@@ -614,8 +606,9 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                 Accuracy without engagement is a file no one opens. Engagement without accuracy is a pretty picture you
                 can't trust. <span className="text-accent">We do both.</span>
               </p>
-              <p className="mt-3">
-                <Placeholder>[[TBC: add other disciplines if relevant, e.g. 3D artists, storytellers, videographers]]</Placeholder>
+              <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
+                Our team brings together engineering, surveying and geomatics, software and web development, game development,
+                3D modelling, storytelling and UI/UX.
               </p>
             </div>
             <a

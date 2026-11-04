@@ -29,6 +29,9 @@ interface Feature {
   line: string;
 }
 
+// The demo the owner confirmed (2026-11-03): Chilancho in its own external XGRIDS viewer, not hosted on RCAAS Studio.
+const CHILANCHO_VIEWER = 'https://lcc-viewer.xgrids.com/pub/dbdxnc-chalincho_hd';
+
 const AVAILABLE_NOW: Feature[] = [
   {
     title: 'Photorealistic 3D in the browser',
@@ -38,15 +41,14 @@ const AVAILABLE_NOW: Feature[] = [
   { title: 'Hosting handled for you', line: 'We host, maintain and manage your experience.' },
 ];
 
-// P02: keep only confirmed features; move each to AVAILABLE_NOW once live.
+// P02: the viewer features the owner confirmed (decisions, 2026-11-03). Platform analytics, a platform VR mode and client
+// self-service accounts aren't implemented, so they aren't listed.
 const BUILT_TO_CONVERT: Feature[] = [
   { title: 'Embed on your website', line: 'Place the experience directly on your home, rooms or admissions page.' },
   { title: 'Your branding', line: 'Your logo and colours on the experience.' },
   { title: 'Hotspots and information points', line: 'Tell the story of each space with text, images, video or audio.' },
   { title: 'Action buttons', line: '"Book now", "Apply", "WhatsApp us" or "Enquire" inside the experience.' },
   { title: 'Guided paths', line: 'Lead visitors through the spaces in the order that matters.' },
-  { title: 'VR mode', line: 'Open the same experience in a VR headset.' },
-  { title: 'Engagement analytics', line: 'See how many people explored, for how long and what they clicked.' },
 ];
 
 const AUDIENCES = [
@@ -73,25 +75,21 @@ interface PlatformFaq {
   answer: React.ReactNode;
 }
 
-// Only the first two answers are resolved; the rest stay as register placeholders.
+// Answers settled by the owner's decisions (2026-11-03); "Will it slow down my website?" stays to confirm.
 const PLATFORM_FAQS: PlatformFaq[] = [
   {
     question: 'Do visitors need an app or special software?',
     answer:
-      'No. The experience opens in any modern web browser on a phone, tablet or computer. A VR headset is only needed for VR.',
+      'No. The experience opens in any modern web browser on a phone, tablet or computer.',
   },
   {
     question: 'Can I manage my own experiences on the platform?',
     answer:
-      'Not yet. Today we publish and manage your experience for you. Subscriptions that let businesses manage their own experiences are coming soon. Join early access to hear first.',
+      'Not yet. Today we publish and manage your experience for you. Subscriptions that let businesses manage their own experiences are coming soon; you can register your interest below.',
   },
   {
     question: 'Can I put the experience on my own website?',
-    answer: (
-      <Placeholder>
-        [[TBC: "Yes. We provide an embed code for your website, and the same link works everywhere else."]]
-      </Placeholder>
-    ),
+    answer: 'Yes. A tour can be embedded on your website, and its link can be shared in messages, on social media and through a QR code.',
   },
   {
     question: 'Will it slow down my website?',
@@ -99,15 +97,12 @@ const PLATFORM_FAQS: PlatformFaq[] = [
   },
   {
     question: 'How long is my experience hosted, and what happens if hosting ends?',
-    answer: <Placeholder>[[TBI: hosting period, renewal and what the client keeps]]</Placeholder>,
+    answer:
+      'Each project has its own agreed hosting period. If it ends, the tour stays open for a 14-day grace period; after that, access may be suspended and the project kept for 30 more days so it can be restored. Archiving or deletion after that follows your contract. You receive access to the hosted tour, not the raw capture data or 3D model files.',
   },
   {
     question: 'Can I see how many people explored it?',
-    answer: (
-      <Placeholder>
-        [[TBC: "Yes. We share engagement figures such as views and time spent." — keep only if analytics are available]]
-      </Placeholder>
-    ),
+    answer: 'Not yet. Engagement analytics are not part of the platform today.',
   },
 ];
 
@@ -190,7 +185,7 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
             className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-line bg-surface text-xs font-mono text-zinc-700 mb-6 shadow-xs"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-            <span>[[TBI: platform name, e.g. "RCAAS 3D Platform"]]</span>
+            <span>RCAAS Studio</span>
           </motion.div>
 
           <motion.h1
@@ -253,13 +248,16 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
             </p>
           </div>
 
-          <SplatEmbed initialDemo="basera" />
+          <SplatEmbed initialDemo="chilancho" />
 
           <p className="mt-4 text-xs font-mono text-zinc-500">
-            <Placeholder>[[TBI: project]]</Placeholder> · hosted on our platform.
+            Chilancho Stupa, Kirtipur ·{' '}
+            <a href={CHILANCHO_VIEWER} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent hover:text-accent-strong">
+              open it in the XGRIDS viewer ↗
+            </a>
           </p>
           <p className="mt-2 text-[11px] font-mono text-zinc-500">
-            <Placeholder>[[TBI: demo project, embed URL, full-screen URL, poster, file size]]</Placeholder>
+            <Placeholder>[[TBI: poster, file size]]</Placeholder>
           </p>
         </section>
 
@@ -320,7 +318,6 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
               <div className="flex flex-wrap items-center gap-2 px-5 py-3.5 border-b border-dashed border-line-hover bg-surface">
                 <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" aria-hidden="true" />
                 <h3 className="text-xs font-mono uppercase tracking-wider text-zinc-900 font-semibold">Built to convert</h3>
-                <Placeholder>[[TBC: keep only confirmed features; move each to "Available now" once live]]</Placeholder>
               </div>
               <dl className="divide-y divide-line">
                 {BUILT_TO_CONVERT.map((feature) => (
@@ -371,9 +368,6 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
               the platform matures, businesses will be able to subscribe and manage their own 3D experiences, adding new
               spaces and updates over time.
             </p>
-            <p className="mt-3">
-              <Placeholder>[[TBC: expected timing, only if you want to state one]]</Placeholder>
-            </p>
           </div>
 
           <div
@@ -383,11 +377,7 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
             <span className={eyebrowClass}>Early access</span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-ink font-display mt-1">Be among the first</h2>
             <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
-              Leave your details and we'll tell you as soon as subscriptions open. Early access members{' '}
-              <Placeholder>
-                [[TBC: benefit, e.g. "get a guided setup" or "get first access to new features" — or remove this sentence]]
-              </Placeholder>
-              .
+              Leave your details and we'll tell you as soon as subscriptions open.
             </p>
 
             {status === 'success' ? (

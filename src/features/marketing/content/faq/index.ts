@@ -19,7 +19,7 @@ export interface FaqGroup {
 }
 
 // Visible "Last updated", and dateModified in the schema. Change it whenever the answers change.
-export const FAQ_UPDATED = '2026-10-08';
+export const FAQ_UPDATED = '2026-11-04';
 
 export const FAQ_GROUPS: FaqGroup[] = [
   {
@@ -29,7 +29,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       {
         question: 'What does RCAAS Technology do?',
         answer:
-          'We turn real places into immersive experiences and stories. Our engineers and game developers capture buildings, campuses, properties and heritage sites with advanced laser and aerial scanning, then create 3D tours, VR, AR, films, measured digital twins and game-ready worlds and assets from them.',
+          'We turn real places into immersive experiences and stories. Our engineers and game developers capture buildings, campuses, properties and heritage sites with advanced laser and aerial scanning, then create 3D tours, VR experiences, films, measured digital twins and game-ready worlds and assets from them, with AR where a project suits it.',
         onHome: true,
       },
       {
@@ -40,7 +40,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       {
         question: 'Where do you work?',
         answer:
-          'We are based in Kathmandu and work across Nepal. [[TBC: "We also take on projects abroad."]] For remote sites, we plan travel, equipment and timing in advance.',
+          'We are based in Kathmandu and work across Nepal. International expansion is planned. For remote sites, we plan travel, equipment and timing in advance.',
       },
       {
         question: 'How do I start?',
@@ -65,19 +65,19 @@ export const FAQ_GROUPS: FaqGroup[] = [
       {
         question: 'How much does a project cost?',
         answer:
-          'It depends on the size of the place, the number of spaces and what you want created. [[TBI: pricing basis and, if published, a starting price]]. We send a clear quotation for every project.',
+          'It depends on the size of the place, the number of spaces and what you want created. Every project is priced individually, and we send a clear quotation with the scope before any work starts.',
       },
       {
         question: 'How long does a project take?',
         answer:
-          'Capture usually takes a few hours to a day on site. [[TBI: typical time from capture to finished experience]]. We confirm the timeline in your proposal.',
+          'Capture usually takes a few hours to a day on site. The full schedule depends on the scope, and we confirm it in your proposal.',
       },
       {
         question: 'Can we start small and add more later?',
         answer:
-          '[[TBC: "Yes. Many clients start with their most important spaces, then add more spaces, films or VR later, often from the same capture."]]',
+          'Yes. A project can begin with your most important spaces, and more spaces can be captured and added later under an agreed scope.',
       },
-      { question: 'Are there ongoing costs?', answer: '[[TBI: hosting fees, renewal and update costs]]' },
+      { question: 'Are there ongoing costs?', answer: 'Hosting is agreed per project, for a term set in your proposal or contract, together with any renewal or update charges.' },
     ],
   },
   {
@@ -93,16 +93,16 @@ export const FAQ_GROUPS: FaqGroup[] = [
       {
         question: 'Will it work on mobile data?',
         answer:
-          'Yes, though a stronger connection gives a smoother first load. A typical experience is about [[TBI: size]] MB. On websites, we set it to load only when the visitor chooses to open it.',
+          'Yes, though a stronger connection gives a smoother first load. A detailed 3D tour downloads more data than an ordinary webpage, so on websites we show a preview first and load the tour only when the visitor chooses to open it.',
       },
       {
         question: 'Can people experience it in VR or AR?',
-        answer: 'Not yet. The tour runs in any web browser, on phones, tablets and computers, with nothing to install. Headset (VR) and AR viewing are not offered yet.',
+        answer: 'The browser tour runs on phones, tablets and computers with nothing to install, but has no VR mode yet. Separately, we have built and tested VR experiences on Meta Quest 2, 3 and 3S; tell us if your project needs one. AR is assessed project by project, where it suits the place.',
       },
       {
         question: 'Can the experience go on our own website?',
         answer:
-          '[[TBC: "Yes. We provide an embed code, and the same link works in messages, social media and QR codes."]]',
+          'Yes. A tour can be embedded on your website, and its link can be shared in messages, on social media and through a QR code.',
       },
     ],
   },
@@ -112,18 +112,20 @@ export const FAQ_GROUPS: FaqGroup[] = [
     items: [
       {
         question: 'Who owns the finished experience and data?',
-        answer: '[[TBI: e.g. "You own the deliverables you paid for."]]',
+        answer:
+          'For our virtual tours, you receive access to the published, hosted tour. The standard service does not hand over raw capture data or processed 3D model files. Ownership of survey and heritage datasets is set out in the agreement for that project.',
       },
       {
         question: 'How long is my experience hosted, and what happens if hosting ends?',
-        answer: '[[TBI: hosting period, renewal, and what you keep]]',
+        answer:
+          'Each project has its own agreed hosting period. If it ends, the tour stays open for a 14-day grace period; after that, access may be suspended and the project kept for 30 more days so it can be restored. Archiving or deletion after that follows your contract.',
       },
       {
         question: 'Will people appear in the experience?',
         answer:
-          '[[TBI: people and faces policy, e.g. "We capture when spaces are quiet and remove or blur people before publishing."]]',
+          'We keep identifiable people out of a capture where we can, and remove or blur anyone who appears before the experience is released publicly.',
       },
-      { question: 'Will you show our project in your portfolio?', answer: '[[TBI: e.g. "Only with your permission."]]' },
+      { question: 'Will you show our project in your portfolio?', answer: 'Only with your permission. We ask before showing your project, its images or its results publicly.' },
       {
         question: 'Does capture damage anything?',
         answer: 'No. Laser scanning, photography and drone capture are contactless. We never touch the structure.',

@@ -523,3 +523,19 @@ test('areas convert to square feet, rounded, with thousands separators', async (
   assert.equal(sqft(68), '732');
   assert.equal(sqft(24.5), '264');
 });
+
+test('a case study goes public only with its 3D link, location and date, and no placeholder showing', async () => {
+  const { isCaseStudyPublished } = await import('../src/features/marketing/content/work/published.ts');
+  const study = {
+    titleTag: 'T', metaDescription: 'D', h1: 'H', heroResult: 'R', embedCaption: 'C', challenge: 'a', story: 'b', built: 'c', received: 'd',
+    snapshot: [{ label: 'Date', value: 'October 2025' }], gallery: [],
+    embedUrl: 'https://example.test/viewer', location: 'Kirtipur', date: '2025-10',
+  };
+  assert.equal(isCaseStudyPublished(study), true);
+  assert.equal(isCaseStudyPublished({ ...study, built: 'We captured it. [[TBI: area covered]]' }), false, 'a chip in the story');
+  assert.equal(isCaseStudyPublished({ ...study, snapshot: [{ label: 'Methods', value: '[[TBC: methods]]' }] }), false, 'a chip in the snapshot');
+  assert.equal(isCaseStudyPublished({ ...study, usedPending: '[[TBC: 3D laser scanning]]' }), false, 'a chip under What we used');
+  assert.equal(isCaseStudyPublished({ ...study, gallery: ['lobby'] }), false, 'a gallery frame still waiting for its photo');
+  assert.equal(isCaseStudyPublished({ ...study, resultsPending: '[[TBI: results]]' }), true, 'review-only notes never show on a published page');
+  for (const key of ['embedUrl', 'location', 'date']) assert.equal(isCaseStudyPublished({ ...study, [key]: null }), false, `no ${key}`);
+});

@@ -85,7 +85,7 @@ const CAPABILITIES: CapabilityItem[] = [
       'Milestone celebrations, anniversaries and architectural awards',
     ],
     madeWith:
-      'Millimeter-accurate 3D reconstruction, virtual camera path physics, professional keyframe cinematography, DaVinci Resolve color grading, and acoustic mixing.',
+      'Measured 3D reconstruction, virtual camera paths, keyframe cinematography, colour grading and sound mixing.',
     image: IMG['visual-storytelling/showcase-2'],
     specDetails: {
       format: 'MP4 / ProRes 422 HQ (4K UHD 60fps)',
@@ -171,7 +171,7 @@ const CAPABILITIES: CapabilityItem[] = [
       'Interactive before/after web sliders ready to embed on project websites',
       'Synchronised split-screen fly-through videos showing exact timeline changes',
       'Georeferenced milestone comparison reports for stakeholders and donors',
-      'Longitudinal 3D archive preserving each phase in millimeter coordinates',
+      'Longitudinal 3D archive preserving each phase in measured 3D',
     ],
     bestFor: [
       'Heritage conservation and temple restoration accountability',
@@ -292,9 +292,9 @@ const INDUSTRIES_STORIES = [
     sector: 'Cultural Heritage & Tourism',
     headline: 'Celebrate culture and preserve living histories',
     summary:
-      'Nepal’s cultural monuments are living spaces with layered oral traditions. We pair millimeter-accurate reality captures with oral history narration, traditional instrument soundscapes, and architectural commentary.',
+      'Nepal’s cultural monuments are living spaces with layered oral traditions. We pair measured reality captures with oral history narration, traditional instrument soundscapes, and architectural commentary.',
     storyAngle: 'Living Monuments & Sacred Craft',
-    deliverables: ['Cultural documentary short film', 'Curated virtual exhibition with scholar commentary', 'Permanent millimeter 3D archival record'],
+    deliverables: ['Cultural documentary short film', 'Curated virtual exhibition with scholar commentary', 'Permanent 3D archival record'],
     metric: 'Engages diaspora youth and international travelers while documenting endangered heritage.',
   },
 ];
@@ -488,11 +488,11 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">On-site filming time:</span>
-                  <span className="font-mono text-xs text-zinc-900">2–6 hrs (No film crew)</span>
+                  <span className="font-mono text-xs text-zinc-900">A few hours to a day (no film crew)</span>
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Turnaround:</span>
-                  <span className="font-mono text-xs text-zinc-900">7 to 14 days</span>
+                  <span className="font-mono text-xs text-zinc-900">Set out in your proposal</span>
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Audio options:</span>
@@ -506,7 +506,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
               <div className="mt-5 pt-4 border-t border-zinc-200 flex items-center justify-between">
                 <span className="text-xs text-zinc-500">Need immediate consultation?</span>
                 <a
-                  href="https://wa.me/9779846789573"
+                  href="https://wa.me/9779810789487"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-semibold text-accent hover:underline"
@@ -1250,7 +1250,7 @@ export const VisualStorytellingPage: React.FC<VisualStorytellingPageProps> = ({ 
             </button>
 
             <a
-              href="https://wa.me/9779846789573"
+              href="https://wa.me/9779810789487"
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold rounded-lg border border-zinc-700 transition-colors flex items-center space-x-2 text-sm"

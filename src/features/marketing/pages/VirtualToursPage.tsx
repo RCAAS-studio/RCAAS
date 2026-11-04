@@ -66,7 +66,7 @@ const DELIVERABLES: DeliverableItem[] = [
     title: 'Interactive measurement tool',
     tag: 'Accurate Scale',
     description:
-      'Millimetre-calibrated measurement utility permitting visitors, event planners, and interior architects to verify clearances, doorway heights, and table setups directly inside the browser.',
+      'A measurement tool that lets visitors, event planners and interior architects check clearances, doorway heights and table set-ups directly in the browser.',
     features: ['True point-to-point laser measurement', 'Metric and imperial unit display', 'Crucial for conference venues & wedding halls'],
   },
   {
@@ -142,7 +142,7 @@ const SECTOR_USE_CASES: SectorUseCase[] = [
     id: 'heritage',
     name: 'Cultural Heritage & Museums',
     tag: 'Preservation & Public Access',
-    headline: 'Document sacred architecture in millimetre detail while welcoming global pilgrims and researchers.',
+    headline: 'Document sacred architecture in close 3D detail while welcoming global pilgrims and researchers.',
     challenge: 'Historic monuments face environmental wear and seismic risks, while international devotees and scholars cannot regularly travel to physical sites.',
     solution: 'High-density 3D digital documentation capturing authentic textures, wood carvings, and inscriptions, enriched with scholarly hotspots and audio chants.',
     outcome: 'Creates a permanent, archival-grade digital twin for restoration architects while allowing the global public to step inside cultural landmarks online.',
@@ -383,15 +383,15 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Time on site</span>
               <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">A few hours to one day</h3>
               <p className="text-xs text-zinc-600 leading-relaxed">
-                Rapid LiDAR and drone photogrammetry scanning with zero business interruption during your preferred hours.
+                Handheld LiDAR scanning, plus drone capture where approvals allow, planned around your preferred hours.
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-line bg-surface hover:border-zinc-300 transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Ready in</span>
-              <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">3 to 7 working days</h3>
+              <h3 className="text-base font-semibold text-zinc-900 font-display mt-1 mb-2">Set out in your proposal</h3>
               <p className="text-xs text-zinc-600 leading-relaxed">
-                Typical turnaround from on-site scanning to 3D reconstruction, hotspot integration, and live client publishing.
+                The schedule from capture to a published tour depends on the scope, and we confirm it before work starts.
               </p>
             </div>
 
@@ -950,7 +950,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
             </div>
 
             <p className="text-xs font-mono text-zinc-500 mt-6">
-              Typical response within 2 hours during Nepal working hours · No obligation consultation
+              We aim to reply within {SITE_METADATA.responseTime ?? 'one working day'} · No obligation consultation
             </p>
           </div>
         </section>

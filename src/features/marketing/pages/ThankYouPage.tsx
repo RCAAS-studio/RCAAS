@@ -48,7 +48,7 @@ export const ThankYouPage: React.FC<ThankYouPageProps> = ({ onNavigate }) => {
           transition={{ duration: 0.5, delay: 0.18 }}
           className="text-base sm:text-lg text-zinc-600 leading-relaxed max-w-2xl mx-auto"
         >
-          We'll reply within {SITE_METADATA.responseTime ?? <Placeholder>[[TBI: response time]]</Placeholder>}. In the
+          We aim to reply within {SITE_METADATA.responseTime ?? <Placeholder>[[TBI: response time]]</Placeholder>}. In the
           meantime, step inside some of our work.
         </motion.p>
 

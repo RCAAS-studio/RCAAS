@@ -207,7 +207,7 @@ const COMPARISON_ROWS = [
     feature: 'Measuring & Interaction',
     photos: 'Cannot measure dimensions',
     panos: 'Limited rough estimates',
-    rcaas: 'Sub-centimetre laser measurement tool built-in',
+    rcaas: 'Measurement tool built in',
   },
 ];
 
@@ -236,7 +236,7 @@ const INDUSTRIES_LIST = [
   {
     name: 'Heritage & Cultural Sites',
     goal: 'Protect, celebrate and share culture.',
-    how: 'Creates millimeter-accurate digital records for conservation while welcoming pilgrims and international diaspora to explore sacred architecture.',
+    how: 'Creates measured digital records for conservation while welcoming pilgrims and international diaspora to explore sacred architecture.',
     link: '/industries/heritage-culture/' as RoutePath,
     tag: 'Heritage',
   },

@@ -12,11 +12,11 @@ interface DroneMappingPageProps {
 
 const KEY_FACTS = [
   { label: 'What you get', value: 'Orthomosaic map, surface and terrain models, 3D site model' },
-  { label: 'Area per day', value: 'Dozens of hectares per day, depending on terrain, altitude and detail' },
-  { label: 'Ready in', value: 'Typically 3 to 7 business days from flight completion' },
-  { label: 'Accuracy', value: 'Sub-centimeter GSD; absolute georeferencing calibrated with survey GCPs' },
-  { label: 'Permissions', value: 'We coordinate flight permits and security clearances with authorities' },
-  { label: 'Pricing', value: 'Quoted per hectare, site perimeter, or specific deliverable scope' },
+  { label: 'Area per day', value: 'Depends on terrain, the detail you need and the weather' },
+  { label: 'Ready in', value: 'Set out in your proposal' },
+  { label: 'Accuracy', value: 'Agreed at the brief, with ground control where accuracy matters' },
+  { label: 'Permissions', value: 'Flights subject to CAAN and site approvals, built into your project plan' },
+  { label: 'Pricing', value: 'Quoted per project, to its scope' },
   { label: 'Where', value: 'Kathmandu Valley and across all 7 provinces in Nepal' },
 ];
 
@@ -119,27 +119,27 @@ const PROCESS_STEPS = [
   {
     step: '01',
     title: 'Brief & Permissions',
-    line: 'We agree the flight boundary, required GSD resolution, and deliverables, and initiate flight permits with regulatory authorities.',
+    line: 'We agree the area, purpose, accuracy and deliverables, and plan the flight approvals needed.',
   },
   {
     step: '02',
     title: 'Flight Planning & Control',
-    line: 'We programme autonomous flight trajectories with optimal forward/side overlap and place survey-grade GNSS ground control points.',
+    line: 'We plan flight paths for full overlap and coverage, and set ground control points where accuracy matters.',
   },
   {
     step: '03',
     title: 'Autonomous Flight Capture',
-    line: 'Our certified remote pilots execute the planned mapping missions using RTK survey drones with mechanical shutter cameras.',
+    line: 'We fly the planned missions, with ground capture where needed for detail or terrain under trees.',
   },
   {
     step: '04',
     title: 'Photogrammetric Processing',
-    line: 'Images are bundle-block adjusted, orthorectified, and checked against independent ground check points to verify absolute scale.',
+    line: 'We build the maps and models, then check them against control for accuracy and gaps.',
   },
   {
     step: '05',
     title: 'Delivery & CAD Integration',
-    line: 'You receive georeferenced GeoTIFFs, DWG contour drawings, 3D meshes, and an interactive web link ready for your GIS or CAD software.',
+    line: 'You receive files for your GIS or design software, plus a shareable 3D view.',
   },
 ];
 
@@ -147,32 +147,32 @@ const FAQS = [
   {
     question: 'Do you need permission to fly in Nepal?',
     answer:
-      'Yes. Commercial drone flights in Nepal require regulatory clearance from civil aviation authorities, the Ministry of Home Affairs, and local administration. RCAAS manages the permit documentation and flight scheduling as part of our turnkey project delivery, ensuring all flights comply with national safety regulations.',
+      'Yes. Drone flights in Nepal need approval: Civil Aviation Authority of Nepal (CAAN) registration and the applicable flight permissions, with other authority or site clearances as required. Approval timing is checked for each mission, and we build it into your project plan.',
   },
   {
     question: 'How large an area can you map in a day?',
     answer:
-      'Depending on terrain topography, altitude, weather, and the required ground resolution (GSD), our survey teams can capture sites ranging from a single 0.5-hectare building compound up to dozens of hectares in a single field day. Multi-day operations cover large infrastructure corridors and municipal townships.',
+      'Terrain, the level of detail you need and the weather all affect how much we cover in a day. We confirm the coverage and schedule for your site in the proposal.',
   },
   {
     question: 'How accurate is drone mapping?',
     answer:
-      'When calibrated with survey-grade GNSS ground control points (GCPs) and RTK positioning, horizontal and vertical accuracy is typically within 2 to 5 centimeters. Ground Sample Distance (GSD) is typically sub-centimeter (1–2 cm per pixel). We discuss your specific engineering tolerance requirements during the scoping phase and provide an RMS calibration report upon delivery.',
+      'It depends on the ground control used, the flight height and the site. We agree the accuracy your project needs during planning and tell you if it is achievable.',
   },
   {
     question: 'Can you fly over temples and heritage sites?',
     answer:
-      'Yes, with appropriate government permissions from the Department of Archaeology and local guthi trusts. We maintain absolute respect for sacred spaces, religious ceremonies, and worshippers. Drone capture is 100% contactless, ensuring zero risk of contact or physical disruption to delicate historic monuments.',
+      'Yes, with the right permissions and with respect for the site and the people who care for it: permission from the relevant heritage or site authority, and any location-specific aviation or security clearance. Capture is contactless.',
   },
   {
     question: 'What if the weather is bad on the flight day?',
     answer:
-      'We track localized weather forecasts closely. High-accuracy photogrammetry requires stable lighting and winds within manufacturer safety envelopes. We never fly in rain, active thunderstorms, or high winds. We include weather buffer contingency days in all project proposals at no extra cost.',
+      'We plan flights around the forecast. Strong wind or rain can delay a flight, so we build flexibility into the schedule.',
   },
   {
     question: 'Can you combine aerial drone mapping with ground survey data?',
     answer:
-      'Yes. Combining aerial drone mapping with handheld SLAM laser scanning is one of our flagship capabilities. Drone passes capture roofs, courtyards, and grounds, while our walking LiDAR scanner captures complex interior floors. Both datasets are co-registered into one unified coordinate system.',
+      'Yes. We often combine drone mapping with handheld laser scanning, so roofs, grounds and interiors join into one complete model.',
   },
 ];
 
@@ -288,20 +288,20 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
             <div className="lg:col-span-4 bg-zinc-50 border border-zinc-200 rounded-xl p-6 relative">
               <div className="font-mono text-xs uppercase tracking-wider text-zinc-600 mb-4 pb-2 border-b border-zinc-200 flex justify-between items-center">
                 <span>Aerial Survey Profile</span>
-                <span className="text-accent font-bold">RTK Drone</span>
+                <span className="text-accent font-bold">Survey Drone</span>
               </div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Camera hardware:</span>
-                  <span className="font-mono text-xs text-zinc-900">4/3 CMOS Mechanical Shutter</span>
+                  <span className="font-mono text-xs text-zinc-900">Mechanical-shutter camera</span>
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Ground sampling:</span>
-                  <span className="font-mono text-xs text-zinc-900">Sub-centimeter GSD</span>
+                  <span className="font-mono text-xs text-zinc-900">Agreed per project</span>
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Primary output:</span>
-                  <span className="font-mono text-xs text-zinc-900">GeoTIFF · DSM/DTM · OBJ</span>
+                  <span className="font-mono text-xs text-zinc-900">GeoTIFF · DSM/DTM</span>
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Coordinate system:</span>
@@ -309,14 +309,14 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Flight approvals:</span>
-                  <span className="font-mono text-xs text-zinc-900">Handled on your behalf</span>
+                  <span className="font-mono text-xs text-zinc-900">Built into your project plan</span>
                 </li>
               </ul>
 
               <div className="mt-5 pt-4 border-t border-zinc-200 flex items-center justify-between">
                 <span className="text-xs text-zinc-500">Need immediate feasibility?</span>
                 <a
-                  href="https://wa.me/9779846789573"
+                  href="https://wa.me/9779810789487"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-semibold text-accent hover:underline"
@@ -456,11 +456,11 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
                   <div className="flex items-center space-x-2 bg-black/70 px-3 py-1.5 rounded border border-zinc-800">
                     <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
                     <span>
-                      {showcaseMode === 'ortho' ? 'TRUE-SCALE ORTHOMOSAIC: 1.2 CM/PX GSD' : 'DIGITAL SURFACE MODEL: 0.5M CONTOURS'}
+                      {showcaseMode === 'ortho' ? 'TRUE-SCALE ORTHOMOSAIC' : 'DIGITAL SURFACE MODEL'}
                     </span>
                   </div>
                   <div className="bg-black/70 px-3 py-1.5 rounded border border-zinc-800 text-zinc-300">
-                    RTK FIXED · 18 SATELLITES
+                    GEOREFERENCED
                   </div>
                 </div>
 
@@ -494,9 +494,9 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
               {/* Technical Caption */}
               <div className="p-6 bg-zinc-900 border-t border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-zinc-300">
                 <div>
-                  <span className="font-bold text-white">Project:</span> Large Site &amp; Heritage Mapping, Nepal ·{' '}
+                  <span className="font-bold text-white">Example:</span> Large site &amp; heritage mapping ·{' '}
                   <span className="text-zinc-400">
-                    Captured with autonomous RTK drone survey flights to provide true-scale base data for master planning and preservation.
+                    Drone survey flights give true-scale base data for master planning and preservation.
                   </span>
                 </div>
                 <button
@@ -563,7 +563,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
               <span className="w-2 h-2 rounded-full bg-amber-500" />
               <span>Honest Engineering Note: Drones &amp; Dense Tree Canopy</span>
             </div>
-            Drones see surfaces. Under dense trees or heavy forest vegetation, the bare ground itself may not be visible to optical sensors. In those scenarios, we combine aerial capture with terrestrial survey or ground laser scanning where the terrain beneath the canopy matters. We will advise you transparently at the project brief stage.
+            Drones see surfaces. Under dense trees or heavy forest vegetation, the bare ground itself may not be visible to optical sensors. In those scenarios, we combine aerial capture with ground survey or handheld laser scanning where the terrain beneath the canopy matters. We will advise you transparently at the project brief stage.
           </div>
         </div>
       </section>
@@ -750,7 +750,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
                 Our aerial toolkit
               </h2>
               <p className="text-base text-zinc-600 leading-relaxed mb-6">
-                We fly survey drones built specifically for mapping, such as the DJI Mavic 3 Enterprise, whose mechanical-shutter camera eliminates motion blur and gives distortion-free images for precise photogrammetry. We integrate RTK positioning and tie data to real-world coordinates with survey-grade GNSS and ground control points (GCPs). When interior floors or close details are needed, we combine flights with handheld SLAM laser scanning.
+                We fly survey drones built for mapping, such as the DJI Mavic 3 Enterprise, whose mechanical-shutter camera gives clean, distortion-free images for accurate results. We tie the data to real-world coordinates with survey-grade GNSS and ground control, and combine it with handheld laser scanning when interiors or close detail are needed.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-xs font-semibold">
                 <button
@@ -771,9 +771,9 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
 
             <div className="lg:col-span-4 bg-white border border-zinc-200 rounded-xl p-5 text-center shadow-xs">
               <div className="text-2xl font-bold font-mono text-accent mb-1">DJI Mavic 3E</div>
-              <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-3">Mechanical Shutter RTK</div>
+              <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-3">Mechanical Shutter</div>
               <p className="text-xs text-zinc-600 leading-relaxed">
-                4/3 CMOS sensor with 0.7-second interval shooting, eliminating rolling shutter distortion at high flight speeds.
+                Its mechanical shutter avoids rolling-shutter distortion, for clean mapping images.
               </p>
             </div>
           </div>
@@ -836,26 +836,26 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
             <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
               <div>
                 <span className="font-mono text-xs uppercase tracking-wider text-zinc-500 font-bold block mb-2">
-                  Aerial &amp; Terrestrial Heritage Record · Kirtipur, Nepal
+                  Heritage Record · Kirtipur, Kathmandu Valley
                 </span>
                 <h3 className="text-2xl font-semibold text-zinc-900 mb-3">
                   Historic Stupa Documented in 3D
                 </h3>
                 <p className="text-sm text-zinc-600 leading-relaxed mb-6">
-                  A historic stupa and its surrounding courtyards documented in complete 3D, from the ground and from the air. High-altitude drone passes captured the pinnacle and roof tiers, while terrestrial scanners mapped the surrounding stone platform.
+                  Chilancho Stupa, a historic Buddhist chaitya complex in Kirtipur, recorded in 3D as an in-house research project and published as a web-based 3D experience.
                 </p>
                 <div className="space-y-2 text-xs font-mono text-zinc-700 mb-6">
                   <div className="flex justify-between border-b border-zinc-100 pb-1">
-                    <span>Aerial GSD:</span>
-                    <span className="font-bold text-zinc-900">0.8 cm / pixel</span>
+                    <span>Date:</span>
+                    <span className="font-bold text-zinc-900">October 2025</span>
                   </div>
                   <div className="flex justify-between border-b border-zinc-100 pb-1">
-                    <span>Flight Safety:</span>
-                    <span className="font-bold text-zinc-900">100% Non-contact capture</span>
+                    <span>Project:</span>
+                    <span className="font-bold text-zinc-900">In-house research</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Deliverables:</span>
-                    <span className="font-bold text-zinc-900">Orthomosaic, 3D Mesh, DSM</span>
+                    <span>Delivered:</span>
+                    <span className="font-bold text-zinc-900">Web-based 3D experience</span>
                   </div>
                 </div>
               </div>
@@ -920,7 +920,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
             </button>
 
             <a
-              href="https://wa.me/9779846789573"
+              href="https://wa.me/9779810789487"
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold rounded-lg border border-zinc-700 transition-colors flex items-center space-x-2 text-sm"
@@ -933,7 +933,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
           </div>
 
           <p className="mt-8 text-xs font-mono text-zinc-400">
-            RCAAS Technology · Kathmandu, Nepal · RTK Drone photogrammetry &amp; orthomosaic mapping
+            RCAAS Technology · Kathmandu, Nepal · Drone photogrammetry &amp; orthomosaic mapping
           </p>
         </div>
       </section>
@@ -953,7 +953,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
                 3D Laser Scanning
               </h4>
               <p className="text-xs sm:text-sm text-zinc-600 mb-4">
-                Add dense millimeter interior point clouds and as-built drawings to your aerial survey.
+                Add dense interior point clouds and as-built drawings to your aerial survey.
               </p>
               <span className="text-xs font-semibold text-accent">
                 Explore laser scanning →

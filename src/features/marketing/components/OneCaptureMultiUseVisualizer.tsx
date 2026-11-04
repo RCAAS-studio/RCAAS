@@ -103,22 +103,22 @@ const DELIVERABLES: DeliverableOutput[] = [
     number: '04',
     name: 'As-Built CAD & BIM Data',
     category: 'Digital Twins & Survey',
-    badge: 'Millimetre SLAM LiDAR',
-    description: 'Clean, measured point clouds and CAD drawings ready for architects, engineers, and conservators. Cuts repeat site visits and guarantees design precision.',
+    badge: 'Handheld SLAM LiDAR',
+    description: 'Clean, measured point clouds and CAD drawings ready for architects, engineers, and conservators. Cuts repeat site visits, with the accuracy agreed for your project.',
     forWhom: 'Architects, MEP engineers, interior fit-out teams, and heritage conservators.',
     deliverables: ['Dense Point Cloud (.LAS/.E57)', '2D CAD Floor Plans (.DWG)', 'Revit/BIM IFC Model'],
     specs: [
-      { label: 'Accuracy', value: '±5mm Terrestrial SLAM' },
+      { label: 'Accuracy', value: 'Agreed per project' },
       { label: 'Density', value: '200,000 pts / second' },
-      { label: 'Datum', value: 'UTM / WGS84 Geodetic RTK' },
+      { label: 'Datum', value: 'Real-world coordinates, per project' },
     ],
     route: '/services/digital-twins/3d-laser-scanning/',
     buttonText: 'Explore Digital Twins & Survey',
     image: IMG['one-capture-multi-use-visualizer/datum'],
     overlayStyle: 'bim',
     hotspots: [
-      { id: 'h1', x: 48, y: 40, title: 'LiDAR Registration Station #04', telemetry: '±4.2mm Terrestrial SLAM' },
-      { id: 'h2', x: 30, y: 68, title: 'Geodetic RTK Ground Control Point', telemetry: 'UTM Zone 45N / WGS84' },
+      { id: 'h1', x: 48, y: 40, title: 'LiDAR Registration Station #04', telemetry: 'Handheld SLAM LiDAR' },
+      { id: 'h2', x: 30, y: 68, title: 'Ground Control Point', telemetry: 'UTM Zone 45N / WGS84' },
     ],
   },
 ];
@@ -286,7 +286,7 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
                     }}
                   >
                     <div className="absolute top-1 right-3 font-mono text-[9px] text-accent-soft bg-black/80 px-2 py-0.5 rounded">
-                      SLAM LASER SWEEP · ±5mm ACCURACY
+                      HANDHELD SLAM LASER SWEEP
                     </div>
                   </motion.div>
                 )}
@@ -396,7 +396,7 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
                       className="absolute inset-0 bg-[linear-gradient(to_right,#06b6d415_1px,transparent_1px),linear-gradient(to_bottom,#06b6d415_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" 
                     />
                     <div className="absolute top-4 left-4 bg-black/80 border border-cyan-400/40 text-cyan-300 font-mono text-[11px] px-3 py-1.5 rounded">
-                      TERRESTRIAL SLAM LIDAR: ±5mm ACCURACY
+                      HANDHELD SLAM LIDAR
                     </div>
                     <div className="absolute bottom-4 right-4 bg-black/80 border border-zinc-700 text-zinc-300 font-mono text-[10px] px-3 py-1.5 rounded">
                       CAD / BIM DWG · IFC READY

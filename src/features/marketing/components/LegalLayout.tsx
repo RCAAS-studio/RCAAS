@@ -103,7 +103,7 @@ export const LegalLayout: React.FC<{
             className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-line bg-surface text-xs font-mono text-zinc-700 mb-6 shadow-xs"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-accent" aria-hidden="true" />
-            <span>{SITE_METADATA.legalName}</span>
+            <span>{SITE_METADATA.displayName}{SITE_METADATA.registrationPending ? ' · registration pending' : ''}</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 16 }}

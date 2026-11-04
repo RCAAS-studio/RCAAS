@@ -38,10 +38,10 @@ export const heritageCulture: IndustryContent = {
         icon: Microscope,
         items: [
           'Measured 3D geometry of the structure, inside and out',
-          'Roofs, courtyards and surroundings captured from the air',
+          'Roofs, courtyards and surroundings captured from the air, where approvals allow',
           'Condition and measurement data to study and compare over time',
           'Drawings and data for restoration planning',
-          'A permanent digital archive [[TBI]]',
+          'A digital archive, kept as agreed in your contract',
         ],
       },
       {
@@ -49,7 +49,7 @@ export const heritageCulture: IndustryContent = {
         icon: Users,
         items: [
           'A photorealistic 3D experience anyone can open from a link',
-          'Guided tours with stories at each stop [[TBC]]',
+          'Guided tours with stories at each stop',
           'VR at museums, exhibitions and visitor centres',
           'Films and content for awareness and fundraising',
           "A way to visit for people who can't travel or climb",
@@ -60,8 +60,9 @@ export const heritageCulture: IndustryContent = {
   liveExample: {
     title: 'Explore Chilancho Stupa',
     demo: 'chilancho',
-    embedUrl: null,
-    pending: '[[TBI: embed URL, full-screen URL, poster, file size]]',
+    // the existing XGRIDS viewer (owner-confirmed demo, 2026-11-03); not hosted on RCAAS Studio
+    embedUrl: 'https://lcc-viewer.xgrids.com/pub/dbdxnc-chalincho_hd',
+    pending: '[[TBI: poster, file size]]',
     caption: 'Chilancho Stupa · documented in 3D to preserve its form, proportions and detail.',
     description: 'An interactive 3D model of Chilancho Stupa in Kirtipur, Kathmandu, created by RCAAS Technology.',
     place: { type: 'LandmarksOrHistoricalBuildings', name: 'Chilancho Stupa' },
@@ -74,7 +75,7 @@ export const heritageCulture: IndustryContent = {
       'Aerial coverage of roofs, courtyards and the surrounding area',
       'A photorealistic 3D model for viewing and sharing',
       'Measurement and condition data for conservation, restoration and study',
-      '[[TBI: archive and handover, e.g. data formats, storage and who holds the master copy]]',
+      'Archive and handover (data formats, storage and who holds the master copy), agreed in each project\'s contract',
     ],
     madeWith:
       'Handheld laser scanning for interiors and fine detail, survey drones for roofs and context, survey-grade GNSS for real-world coordinates, and photorealistic reconstruction (Gaussian splatting) for the visual record.',
@@ -107,7 +108,7 @@ export const heritageCulture: IndustryContent = {
       id: 'respect',
       eyebrow: 'Respect and permission',
       title: 'Working with care on sacred and protected sites',
-      body: 'Heritage sites are places of worship, memory and community. We work only with proper permission, follow the rules of each site, and plan our visits with the people and guthis who care for them. Our capture is contactless: we never touch or disturb the structure. [[TBI: approvals typically needed for heritage sites and drone flights, and how you handle them]]',
+      body: 'Heritage sites are places of worship, memory and community. We work only with proper permission, follow the rules of each site, and plan our visits with the people and guthis who care for them. Our capture is contactless: we never touch or disturb the structure. A capture needs permission from the relevant heritage or site authority; drone flights also need Civil Aviation Authority of Nepal (CAAN) registration and the applicable flight permissions, with any location-specific security clearance. We build the approval time into the project plan.',
       icon: Heart,
       layout: 'card',
     },
@@ -153,11 +154,11 @@ export const heritageCulture: IndustryContent = {
       {
         question: 'How accurate is a heritage record?',
         answer:
-          '[[TBI: accuracy by method]]. We agree the accuracy your conservation or research work needs at the start and tell you if it is achievable.',
+          'It depends on the method, the site and the ground control used. We agree the accuracy your conservation or research work needs at the start and tell you if it is achievable.',
       },
       {
         question: 'Who owns the heritage data?',
-        answer: '[[TBI: ownership and access terms, e.g. client, heritage body, public access]]',
+        answer: 'Ownership, licensing and access terms for heritage data, including any public access, are set out in the agreement for each project.',
       },
       {
         question: 'Can the public see the record?',

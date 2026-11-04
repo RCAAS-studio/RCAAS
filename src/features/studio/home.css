@@ -39,7 +39,7 @@
 .ph-space-txt { display: grid; gap: 6px; padding: 12px 14px 14px; }
 .ph-space-name { color: var(--ed-text); font-weight: 600; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ph-space-name:hover { text-decoration: underline; }
-.ph-ready { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ed-text-dim); cursor: help; }
+.ph-ready { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ed-text-dim); cursor: help; }
 .ph-ticks { display: inline-flex; gap: 3px; }
 .ph-ticks i { width: 14px; height: 4px; border-radius: 2px; background: var(--ed-line-lit); }
 .ph-ticks i.is-on { background: var(--ed-text); }
@@ -61,7 +61,7 @@
 .ph-block { padding: 18px; background: var(--ed-panel); border: 1px solid var(--ed-line); border-radius: 12px; }
 .ph-block > p { margin: 0 0 8px; }
 .ph-figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 14px; margin: 0 0 10px; }
-.ph-figs dt { font-size: 12px; color: var(--ed-text-dim); }
+.ph-figs dt { font-size: 12.5px; color: var(--ed-text-dim); }
 .ph-figs dd { margin: 4px 0 0; font: 600 24px/1 var(--sans); font-variant-numeric: tabular-nums; color: var(--ed-text); }
 
 .ph-log { list-style: none; margin: 0 0 4px; padding: 0; display: grid; gap: 10px; }

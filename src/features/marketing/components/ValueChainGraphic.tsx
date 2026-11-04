@@ -17,10 +17,10 @@ const STEPS: ValueChainStep[] = [
     number: '01',
     phase: 'Capture',
     title: 'Single Site Capture',
-    detail: 'Terrestrial SLAM LiDAR (±5mm) and high-resolution aerial photogrammetry flown once with precision geodetic RTK coordinates.',
-    tools: 'SLAM LiDAR · RTK Drones · 360° HDR',
+    detail: 'Handheld SLAM LiDAR and, where approvals allow, drone mapping, in one well-planned visit that gathers site information for several uses.',
+    tools: 'SLAM LiDAR · Drone mapping · Photography',
     badge: 'Reality Intake',
-    specs: ['Sub-centimetre terrestrial LiDAR', 'Centimetre-grade RTK aerial passes', 'Zero disruption to ongoing operations'],
+    specs: ['Handheld SLAM LiDAR', 'Drone mapping, subject to approvals', 'Planned around your operations'],
     iconSvg: (
       <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <circle cx="12" cy="12" r="3" strokeWidth="2" />
@@ -34,9 +34,9 @@ const STEPS: ValueChainStep[] = [
     phase: 'Create',
     title: 'Digital Reconstruction',
     detail: 'Dense point cloud registration, clean CAD/BIM floor plans, 3D mesh building, and real-time Gaussian radiance fields.',
-    tools: 'Millimetre Registration · Radiance Fields',
+    tools: 'Point Cloud Registration · Gaussian Splatting',
     badge: 'Geometry & Light',
-    specs: ['200,000 pts/sec unified point clouds', 'Cleaned geometry ready for CAD/BIM', '3D Gaussian radiance reconstruction'],
+    specs: ['Registered point clouds', 'Cleaned geometry ready for CAD/BIM', '3D Gaussian radiance reconstruction'],
     iconSvg: (
       <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />

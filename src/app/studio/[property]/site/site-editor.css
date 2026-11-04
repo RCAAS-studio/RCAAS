@@ -1,6 +1,6 @@
 /* The website editor (/studio/<project>/site): the studio's own tokens
  * (editor.css, .ed2), as one scrolling form of cards. */
-.ed2.se { pointer-events: auto; overflow-y: auto; background: var(--ed-bg); font-size: 13px; }
+.ed2.se { pointer-events: auto; overflow-y: auto; background: var(--ed-bg); font-size: 13.5px; }
 
 .se-bar {
   position: sticky; top: 0; z-index: 2;
@@ -102,7 +102,7 @@
 .se-look small { color: var(--ed-text-dim); }
 /* the heading fonts, each named in its own face */
 .se-fonts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-.se-fonts-label { flex-basis: 100%; font-size: 13px; font-weight: 600; }
+.se-fonts-label { flex-basis: 100%; font-size: 13.5px; font-weight: 600; }
 .se-fonts-label small { font-weight: 400; color: var(--ed-text-dim); }
 .se .se-font { padding: 8px 14px; font-size: 17px; }
 .se .se-font.is-on { border-color: var(--ed-signal); box-shadow: 0 0 0 1px var(--ed-signal); }
@@ -119,9 +119,9 @@
 .se .se-table {
   position: absolute; translate: -50% -50%; display: grid; place-items: center; min-width: 34px; height: 34px; padding: 0 6px;
   border-radius: 999px; border: 2px solid #1c1a17; background: rgba(255, 255, 255, 0.92); color: #1c1a17;
-  font: 700 11px/1 var(--sans); cursor: grab; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  font: 650 11.5px/1 var(--sans); cursor: grab; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
-.se .se-table small { font-weight: 500; opacity: 0.6; font-size: 10px; }
+.se .se-table small { font-weight: 500; opacity: 0.6; font-size: 10.5px; }
 .se .se-table.shape-square { border-radius: 6px; }
 .se .se-table.shape-long { min-width: 58px; border-radius: 6px; }
 .se .se-table.is-on { background: #1c1a17; color: #fff; outline: 3px solid rgba(255, 255, 255, 0.9); }
@@ -141,8 +141,8 @@
 .rs-item.is-declined, .rs-item.is-cancelled { opacity: 0.55; }
 .rs-when b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
 .rs-when span, .rs-contact, .rs-table { color: var(--ed-text-dim); }
-.rs-who b { font-size: 14px; }
-.rs-table { margin-left: 6px; padding: 2px 8px; border: 1px solid var(--ed-line); border-radius: 999px; font-size: 12px; }
+.rs-who b { font-size: 15px; }
+.rs-table { margin-left: 6px; padding: 2px 8px; border: 1px solid var(--ed-line); border-radius: 999px; font-size: 12.5px; }
 .rs-contact { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
 .rs-contact a { color: inherit; }
 .rs-notes { margin: 6px 0 0; font-style: italic; }
@@ -151,7 +151,7 @@
 .se .rs-kinds button.is-on { border-color: var(--ed-signal); color: var(--ed-signal); background: transparent; }
 .se .se-pin { border-radius: 999px 999px 999px 3px; }
 .rs-act { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-.rs-status { padding: 3px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--ed-line); }
+.rs-status { padding: 3px 10px; border-radius: 999px; font-size: 12.5px; border: 1px solid var(--ed-line); }
 .rs-status.is-requested { border-color: #d9a441; color: #d9a441; }
 .rs-status.is-confirmed { border-color: #4caf7a; color: #4caf7a; }
 @media (max-width: 640px) {
@@ -171,7 +171,7 @@
 /* Client review: the link, the approval, the comments. */
 .se-review { flex-direction: column; align-items: stretch; }
 .se-review-link { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.se-review-link input { flex: 1 1 320px; min-width: 0; font-size: 12px; }
+.se-review-link input { flex: 1 1 320px; min-width: 0; font-size: 12.5px; }
 .se-review-ok { margin: 0; color: #3fb950; }
 .se-review-list { display: grid; gap: 6px; margin: 0; padding: 0 0 0 20px; }
 .se-review-list label { display: flex; gap: 8px; align-items: flex-start; }

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
+  ArrowUpRight,
   Briefcase,
   CalendarDays,
   Camera,
@@ -75,7 +76,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
 
         {!published && (
           <div role="note" className="mb-8 rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 px-5 py-3.5 text-xs font-mono text-amber-900 leading-relaxed">
-            Draft · hidden from search until this case study has its 3D link, location and date (Register W0{index + 1}).
+            Draft · hidden from search until this case study has its 3D link, location and date, and no placeholder is left (Register W0{index + 1}).
           </div>
         )}
 
@@ -173,7 +174,13 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
                 <span className={eyebrowClass}>Live experience</span>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-ink font-display mt-1">{study.embedCaption}</h2>
               </div>
-              {!study.embedUrl && <Placeholder>[[TBI: URL]]</Placeholder>}
+              {study.embedUrl ? (
+                <a href={study.embedUrl} target="_blank" rel="noopener noreferrer" className={buttonClass('secondary', 'md')}>
+                  Open in the XGRIDS viewer <ArrowUpRight className="ml-2 w-4 h-4" aria-hidden="true" />
+                </a>
+              ) : (
+                <Placeholder>[[TBI: URL]]</Placeholder>
+              )}
             </div>
             <SplatEmbed initialDemo={study.embedDemo} />
           </section>

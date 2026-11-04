@@ -19,7 +19,7 @@ const HOTSPOTS: Hotspot[] = [
     title: 'Traditional Malla-Era Woodwork',
     category: 'Detail',
     coords: { x: 34, y: 44 },
-    description: 'Intricately hand-carved Sal timber colonnades crafted by master Newari artisans, documented down to 2mm sub-millimetre fidelity.',
+    description: 'Intricately hand-carved Sal timber colonnades crafted by master Newari artisans, recorded in close 3D detail.',
     detailSpecs: ['Heritage Sal Wood', '18th-century motif reproduction', 'Restored 2023'],
     ctaText: 'Listen to 45s Audio Guide',
     ctaAction: 'audio',
@@ -164,7 +164,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-mono text-white/70 bg-black/75 px-2 py-1 rounded border border-white/10">
-                LOD: 100% (Sub-centimetre)
+                LOD: Full detail
               </span>
             </div>
           </div>
@@ -247,7 +247,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
                 ))}
               </svg>
               <div className="absolute bottom-4 left-4 bg-black/80 border border-white/10 rounded-lg p-2.5 text-xs text-white">
-                <span className="font-mono text-accent font-bold">● MEASUREMENT TOOL:</span> Click any two surface points in 3D to derive millimeter-accurate distance.
+                <span className="font-mono text-accent font-bold">● MEASUREMENT TOOL:</span> Click any two surface points in 3D to measure the distance between them.
               </div>
             </div>
           )}

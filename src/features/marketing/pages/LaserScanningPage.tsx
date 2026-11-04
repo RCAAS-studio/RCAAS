@@ -13,10 +13,10 @@ interface LaserScanningPageProps {
 const KEY_FACTS = [
   { label: 'What you get', value: 'Measured 3D point cloud, plus drawings and models built from it' },
   { label: 'Time on site', value: 'Minutes per floor; a few hours to a day for most buildings' },
-  { label: 'Ready in', value: 'Typically 3 to 7 business days depending on area and drawing scope' },
-  { label: 'Accuracy', value: 'Millimeter-scale relative measurement accuracy calibrated per site' },
-  { label: 'Works with', value: 'CAD, BIM and GIS software via standard formats (E57, LAS, DWG, DXF)' },
-  { label: 'Pricing', value: 'Quoted per floor area, scope of drawings, or project complexity' },
+  { label: 'Ready in', value: 'Set out in your proposal, depending on area and drawing scope' },
+  { label: 'Accuracy', value: 'Agreed at the brief, for what the data is for' },
+  { label: 'Works with', value: 'CAD, BIM and GIS software, depending on the agreed export formats' },
+  { label: 'Pricing', value: 'Quoted per project, to its scope' },
   { label: 'Where', value: 'Kathmandu Valley and across all provinces in Nepal' },
 ];
 
@@ -34,7 +34,7 @@ const COMPARISON_ROWS = [
   {
     feature: 'Irregular walls & floors',
     tape: 'Easy to miss bowed walls or sagging timbers',
-    slam: 'Recorded as they are in true millimeter coordinates',
+    slam: 'Recorded as they are, in 3D',
   },
   {
     feature: 'Missed dimensions',
@@ -105,7 +105,7 @@ const PROCESS_STEPS = [
   {
     step: '04',
     title: 'Deliver & Share',
-    line: 'You receive point clouds (E57/LAS), CAD drawings (DWG/PDF), and an interactive web 3D view with measurement tools.',
+    line: 'You receive the outputs agreed in your scope, such as point clouds, CAD drawings and a web 3D view.',
   },
 ];
 
@@ -113,12 +113,12 @@ const FAQS = [
   {
     question: 'How long does scanning take?',
     answer:
-      'A single floor usually takes only minutes to walk and capture. Most residential buildings, commercial offices, or heritage courtyards are scanned in a few hours to a day, depending on size and accessibility. We give you a guaranteed on-site window in our proposal.',
+      'A single floor usually takes minutes. Most buildings are scanned in a few hours to a day, depending on size and complexity. We give you the timeline in the proposal.',
   },
   {
     question: 'How accurate is a handheld laser scan?',
     answer:
-      'Handheld SLAM LiDAR achieves millimeter-scale relative measurement accuracy across typical rooms and interior spaces. Where absolute georeferencing is needed, we anchor the scan to survey-grade GNSS control points. We discuss the specific tolerance required by your project during scoping and ensure it is achieved.',
+      'It depends on the site, the conditions and what the data is for. We agree the accuracy your project needs at the brief stage and tell you if it is achievable.',
   },
   {
     question: 'Do we need to empty the building?',
@@ -128,12 +128,12 @@ const FAQS = [
   {
     question: 'Which files will I get?',
     answer:
-      'We deliver industry-standard formats including E57, LAS, and LAZ for 3D point clouds, DWG and DXF for 2D architectural drawings, and vector PDFs. Files open directly in Autodesk AutoCAD, Revit, ArchiCAD, Rhino, CloudCompare, and SketchUp.',
+      'That depends on your signed scope. Common choices are E57 or LAS point clouds, DWG or DXF drawings and PDF; we confirm the formats, and that they open in your software, before we quote.',
   },
   {
     question: 'Can you scan outdoor areas and large sites too?',
     answer:
-      'Yes. We combine handheld SLAM laser scanning with RTK survey drone capture for roofs, spires, compound grounds and surrounding topography, delivering a unified 3D dataset where interiors and exteriors join seamlessly.',
+      'Yes. Where approvals allow, we combine handheld scanning with drone capture for roofs, courtyards and grounds, so you get one complete model.',
   },
   {
     question: 'Can the scan also become a 3D tour?',
@@ -282,7 +282,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
               <div className="mt-5 pt-4 border-t border-zinc-200 flex items-center justify-between">
                 <span className="text-xs text-zinc-500">Need immediate booking?</span>
                 <a
-                  href="https://wa.me/9779846789573"
+                  href="https://wa.me/9779810789487"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-semibold text-accent hover:underline"
@@ -591,7 +591,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 <div className="font-mono text-xs text-accent font-bold uppercase mb-2">Deliverable 01</div>
                 <h3 className="text-lg font-semibold text-zinc-900 mb-2">3D Point Cloud</h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
-                  Full millimeter-accurate point cloud of your building or space, indexed for rapid viewport navigation.
+                  A measured point cloud of your building or space, indexed for rapid viewport navigation.
                 </p>
               </div>
               <div className="font-mono text-xs text-zinc-500 pt-3 border-t border-zinc-100">
@@ -792,7 +792,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 Our scanning toolkit
               </h2>
               <p className="text-base text-zinc-600 leading-relaxed mb-6">
-                We scan with advanced handheld SLAM laser scanners such as the XGRIDS Lixel Kitty K1, process raw trajectories in LCC Studio, and tie scans to real-world coordinates with survey-grade GNSS where needed. For roofs, courtyards and surroundings, we add aerial capture from a survey drone, so the inside and outside join into one record.
+                We scan with advanced handheld SLAM laser scanners such as the XGRIDS Lixel Kitty K1, process raw trajectories in LCC Studio, and tie scans to real-world coordinates with survey-grade GNSS where needed. For roofs, courtyards and surroundings, we add aerial capture from a survey drone where approvals allow, so the inside and outside join into one record.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-xs font-semibold">
                 <button
@@ -843,26 +843,26 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
               <div>
                 <span className="font-mono text-xs uppercase tracking-wider text-zinc-500 font-bold block mb-2">
-                  Heritage Documentation · Kirtipur, Nepal
+                  Heritage Documentation · Kirtipur, Kathmandu Valley
                 </span>
                 <h3 className="text-2xl font-semibold text-zinc-900 mb-3">
                   Historic Monument Preserved in 3D
                 </h3>
                 <p className="text-sm text-zinc-600 leading-relaxed mb-6">
-                  A historic stupa complex documented in complete 3D to preserve its form, proportions and structural detail. Captured using handheld SLAM laser scanning across the platform courtyards with drone photogrammetry capturing the spire.
+                  Chilancho Stupa, a historic Buddhist chaitya complex, recorded in 3D as an in-house research project in October 2025 to preserve its form, proportions and detail, and published as a web-based 3D experience.
                 </p>
                 <div className="space-y-2 text-xs font-mono text-zinc-700 mb-6">
                   <div className="flex justify-between border-b border-zinc-100 pb-1">
-                    <span>LiDAR Data:</span>
-                    <span className="font-bold text-zinc-900">Millimeter point cloud</span>
+                    <span>Date:</span>
+                    <span className="font-bold text-zinc-900">October 2025</span>
                   </div>
                   <div className="flex justify-between border-b border-zinc-100 pb-1">
-                    <span>Use Case:</span>
-                    <span className="font-bold text-zinc-900">Conservation archive &amp; research</span>
+                    <span>Project:</span>
+                    <span className="font-bold text-zinc-900">In-house research</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Deliverables:</span>
-                    <span className="font-bold text-zinc-900">E57, Drawings &amp; Web View</span>
+                    <span>Delivered:</span>
+                    <span className="font-bold text-zinc-900">Web-based 3D experience</span>
                   </div>
                 </div>
               </div>
@@ -875,6 +875,16 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
               </button>
             </div>
           </div>
+
+          {/* Approved client quote (owner-confirmed, 2026-11-03) */}
+          <figure className="mt-12 max-w-4xl">
+            <blockquote className="text-xl sm:text-2xl font-semibold text-zinc-900 font-display leading-snug">
+              “Overall, the handheld SLAM LiDAR survey provided a practical and efficient solution for rapid acquisition. We appreciate your team's effort and professionalism in executing this survey and look forward to continued collaboration for future projects.”
+            </blockquote>
+            <figcaption className="mt-4 text-sm font-mono text-zinc-500">
+              Sabin Phaiju, Technical Project Coordinator, ITECO Nepal · Mugling–Narayanghat road survey, Chitwan, February 2026
+            </figcaption>
+          </figure>
         </div>
       </section>
 
@@ -927,7 +937,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
             </button>
 
             <a
-              href="https://wa.me/9779846789573"
+              href="https://wa.me/9779810789487"
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold rounded-lg border border-zinc-700 transition-colors flex items-center space-x-2 text-sm"
@@ -960,7 +970,7 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 Drone Mapping &amp; Aerial Survey
               </h4>
               <p className="text-xs sm:text-sm text-zinc-600 mb-4">
-                Add roofs, grounds and the whole site from above with sub-centimeter orthomosaics.
+                Add roofs, grounds and the whole site from above, subject to approvals.
               </p>
               <span className="text-xs font-semibold text-accent">
                 Explore drone mapping →

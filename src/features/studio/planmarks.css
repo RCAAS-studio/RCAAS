@@ -21,7 +21,7 @@
 .pm-tag {
   position: fixed; z-index: 41; translate: -50% -140%; pointer-events: none;
   padding: 3px 8px; border-radius: 999px; white-space: nowrap;
-  font: 600 12px/1.2 var(--sans, system-ui), system-ui; font-variant-numeric: tabular-nums;
+  font: 600 12.5px/1.2 var(--sans, system-ui), system-ui; font-variant-numeric: tabular-nums;
   color: #fff; background: rgba(14, 14, 16, 0.86);
 }
 .pm-panel {
@@ -29,14 +29,14 @@
   width: min(440px, calc(100vw - 32px)); padding: 10px 14px; border-radius: 14px;
   color: #f2f2f2; background: rgba(14, 14, 16, 0.88); border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); backdrop-filter: blur(10px);
-  font: 400 13px/1.45 var(--sans, system-ui), system-ui;
+  font: 400 13.5px/1.45 var(--sans, system-ui), system-ui;
 }
 .pm-panel p { margin: 0 0 6px; }
 .pm-help { font-weight: 600; }
-.pm-note { color: rgba(242, 242, 242, 0.65); font-size: 12px; }
+.pm-note { color: rgba(242, 242, 242, 0.65); font-size: 12.5px; }
 .pm-modes { display: flex; gap: 4px; margin-bottom: 8px; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); width: fit-content; }
 .pm-panel button {
-  padding: 6px 12px; border-radius: 999px; cursor: pointer; font: 600 12px var(--sans, system-ui), system-ui;
+  padding: 6px 12px; border-radius: 999px; cursor: pointer; font: 600 12.5px var(--sans, system-ui), system-ui;
   color: #111; background: #fff; border: 0;
 }
 .pm-panel .pm-modes button { color: #f2f2f2; background: none; }

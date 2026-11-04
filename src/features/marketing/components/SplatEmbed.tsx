@@ -64,7 +64,7 @@ const DEMO_SPACES: DemoSpace[] = [
   },
   {
     id: 'madan',
-    name: 'Madan Ashrit Polytechnic',
+    name: 'Madan Ashrit Memorial Polytechnic',
     location: 'Nepal',
     tag: 'Vocational Campus',
     clientGoal: 'Showcase specialized engineering bays, robotic workshops, and vocational facilities.',

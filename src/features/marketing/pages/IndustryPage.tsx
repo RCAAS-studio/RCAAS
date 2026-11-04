@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Check, HelpCircle, ScanLine } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, HelpCircle, ScanLine } from 'lucide-react';
 import { RoutePath } from '../types';
 import { SITE_METADATA } from '../data/siteData';
 import type { IndustryContent, IndustryTrack } from '../content/industries';
@@ -526,7 +526,13 @@ export const IndustryPage: React.FC<IndustryPageProps> = ({ industry, onNavigate
         <section id="live-example" className="mb-20 sm:mb-24 scroll-mt-24">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-3">
             <SectionHeading eyebrow="Live example" title={industry.liveExample.title} className="" />
-            {!industry.liveExample.embedUrl && <Placeholder>{industry.liveExample.pending}</Placeholder>}
+            {industry.liveExample.embedUrl ? (
+              <a href={industry.liveExample.embedUrl} target="_blank" rel="noopener noreferrer" className={buttonClass('secondary', 'md', 'shrink-0')}>
+                Open in the XGRIDS viewer <ArrowUpRight className="ml-2 w-4 h-4" aria-hidden="true" />
+              </a>
+            ) : (
+              <Placeholder>{industry.liveExample.pending}</Placeholder>
+            )}
           </div>
           <SplatEmbed initialDemo={industry.liveExample.demo} />
           <p className="mt-3 text-xs font-mono text-zinc-500">

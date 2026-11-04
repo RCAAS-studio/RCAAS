@@ -45,14 +45,14 @@ interface AboutPageProps {
 }
 
 const AT_A_GLANCE: { label: string; value: React.ReactNode }[] = [
-  { label: 'Legal name', value: SITE_METADATA.legalName },
+  { label: 'Planned legal name', value: `${SITE_METADATA.legalName}${SITE_METADATA.registrationPending ? ' (registration pending)' : ''}` },
   { label: 'Founded', value: SITE_METADATA.foundingYear ?? <Placeholder>[[TBI: year]]</Placeholder> },
   { label: 'Based in', value: 'Kathmandu, Nepal' },
   {
     label: 'Team',
     value: (
       <>
-        Geomatics engineers and game developers
+        Engineering, surveying and geomatics, software and web development, game development, 3D modelling, storytelling and UI/UX
       </>
     ),
   },
@@ -65,11 +65,15 @@ const AT_A_GLANCE: { label: string; value: React.ReactNode }[] = [
     label: 'Where we work',
     value: (
       <>
-        Across Nepal <Placeholder>[[TBC: and abroad]]</Placeholder>
+        Across Nepal; international expansion is planned
       </>
     ),
   },
 ];
+
+// The owner's founding story (confirmed decisions, 2026-11-03).
+const FOUNDING_STORY =
+  'Recreating a real environment in 3D once meant weeks of manual modelling, specialist software and large teams. Today, modern capture and processing workflows can produce a detailed digital representation that people can explore on everyday devices and, where supported, in VR. For surveying, one well-planned visit can gather detailed site information for multiple uses, reducing the need for return trips while still requiring suitable quality checks. The same approach helps buyers explore a home or property remotely. RCAAS Technology was founded to make these emerging reality-capture capabilities practical for the organisations and communities that need them.';
 
 const STORY_CONTEXT =
   'Nepal has an extraordinary built and cultural environment, and much of it is poorly recorded or hard to share. Buildings are renovated without drawings. Monuments weather and change. Many places are hard to visit and harder to show. We exist to close that gap, using the same kind of technology behind leading documentation and immersive projects around the world.';
@@ -115,7 +119,8 @@ const VALUES: { title: string; line: string; icon: LucideIcon }[] = [
   },
 ];
 
-// H05: the whole section is [[TBC]] until approved for publication.
+// H05: the owner keeps "Where we're heading" internal until authorised (decisions, 2026-11-03).
+const SHOW_GOALS = false;
 const GOALS: { when: string; goal: string }[] = [
   {
     when: 'Now',
@@ -341,9 +346,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             >
               {SITE_METADATA.boilerplate}
             </motion.p>
-            <p className="mt-4">
-              <Placeholder>[[TBC: "RCAAS stands for Reality Capture as a Service."]]</Placeholder>
-            </p>
+            <p className="mt-4 text-sm sm:text-base text-zinc-600 leading-relaxed max-w-2xl">RCAAS stands for Reality Capture as a Service.</p>
           </div>
 
           <motion.aside
@@ -395,18 +398,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                 Why we started
               </h2>
 
-              <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50/50 p-4 mb-6">
-                <Placeholder>[[TBI: 3–4 sentences in your own words. Suggested shape:]]</Placeholder>
-                <ol className="mt-3 space-y-1.5 text-xs font-mono text-amber-900 list-decimal pl-5">
-                  <li>
-                    The moment or problem that started RCAAS (e.g. a building renovated without drawings, a heritage site
-                    that changed, a client who couldn't show their space).
-                  </li>
-                  <li>What you realised (accurate capture and great experiences rarely came together).</li>
-                  <li>What you set out to do about it.</li>
-                  <li>Where you are today.</li>
-                </ol>
-              </div>
+              <p className="text-sm sm:text-base text-zinc-700 leading-relaxed mb-4">{FOUNDING_STORY}</p>
 
               <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">{STORY_CONTEXT}</p>
             </div>
@@ -471,12 +463,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
               {
                 label: 'Our vision',
                 icon: Telescope,
-                text: "A world that can step inside Nepal's places, and is moved to visit, invest in and protect them.",
+                text: 'A world where anyone can step inside any place, and is moved to visit, invest in, and protect it.',
               },
               {
                 label: 'Our mission',
                 icon: Target,
-                text: 'To turn real places into accurate, immersive experiences and stories that help organisations reach people and make a lasting impact.',
+                text: 'To turn emerging reality technology into simple, sustainable solutions that help people and organizations make better decisions about the places they build, manage, and preserve.',
               },
             ].map((item, i) => {
               const Icon = item.icon;
@@ -488,7 +480,6 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                         <Icon className="w-5 h-5 text-white" aria-hidden="true" />
                       </span>
                       <h3 className="text-xs font-mono uppercase tracking-wider text-zinc-900 font-semibold">{item.label}</h3>
-                      <Placeholder>[[TBC]]</Placeholder>
                     </div>
                     <p className="text-xl sm:text-2xl font-bold text-zinc-900 font-display leading-snug text-balance">{item.text}</p>
                   </SpotlightCard>
@@ -535,7 +526,8 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </dl>
         </section>
 
-        {/* 7. WHERE WE'RE HEADING (#goals), H05 */}
+        {/* 7. WHERE WE'RE HEADING (#goals), H05: kept internal until the owner authorises it (decisions, 2026-11-03). */}
+        {SHOW_GOALS && (
         <section id="goals" className="mb-20 sm:mb-28 scroll-mt-20">
           <p className="mb-4">
             <Placeholder>
@@ -596,6 +588,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             </ol>
           </div>
         </section>
+        )}
 
         {/* 8. TEAM (#team), T01 */}
         <section id="team" className="mb-20 sm:mb-28 scroll-mt-20">
@@ -632,7 +625,11 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             </span>
             <p className="text-sm text-zinc-700 leading-relaxed">
               <strong className="text-zinc-900">Join us.</strong> We're always glad to hear from engineers, game developers
-              and storytellers who care about places. <Placeholder>[[TBC: email or link, or remove]]</Placeholder>
+              and storytellers who care about places. To work with us in future, write to{' '}
+              <a href={`mailto:${SITE_METADATA.email}`} className="font-semibold text-accent hover:text-accent-strong">
+                {SITE_METADATA.email}
+              </a>
+              .
             </p>
           </motion.div>
         </section>

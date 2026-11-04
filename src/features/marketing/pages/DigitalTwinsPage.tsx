@@ -57,20 +57,20 @@ const CAPABILITIES: CapabilityItem[] = [
     linkHref: '/services/digital-twins/3d-laser-scanning/',
     image: IMG['digital-twins/showcase-1'],
     specDetails: {
-      accuracyProfile: 'Millimeter-scale relative measurement accuracy',
+      accuracyProfile: 'Agreed per project at the brief',
       primaryFormats: 'E57, LAS, LAZ, PTS, RCP',
-      captureMethod: 'Continuous walking SLAM LiDAR with RTK georeferencing',
+      captureMethod: 'Continuous walking handheld SLAM LiDAR',
     },
   },
   {
     id: 'drone-mapping',
     number: '02',
     title: 'Drone Mapping & Aerial Survey',
-    badge: 'RTK Photogrammetry · True-Scale Orthomosaics · Roof & Site Topography',
+    badge: 'Aerial Photogrammetry · Orthomosaics · Roof & Site Topography',
     whatItIs:
       'Planned autonomous survey flights that capture roofs, courtyards, steep terrain, and entire sites from above, processed into distortion-free true-scale maps and dense 3D models.',
     youReceive: [
-      'Sub-centimeter resolution Orthomosaic maps (GeoTIFF) ready for GIS and CAD',
+      'Orthomosaic maps (GeoTIFF) ready for GIS and CAD',
       'Digital Surface Models (DSM) and Digital Terrain Models (DTM)',
       '3D textured polygonal mesh of complex rooftops, facades and compound perimeters',
       'Topographic contour vectors at custom intervals (0.25m, 0.5m, 1m) [[TBC]]',
@@ -83,14 +83,14 @@ const CAPABILITIES: CapabilityItem[] = [
       'Construction progress tracking and volumetric earthwork measurement',
     ],
     madeWith:
-      'Survey drones such as the DJI Mavic 3 Enterprise, equipped with a 4/3 CMOS mechanical shutter camera and RTK precision positioning.',
+      'Survey drones such as the DJI Mavic 3 Enterprise, flown subject to the required approvals.',
     linkText: 'Explore drone mapping',
     linkHref: '/services/digital-twins/drone-mapping/',
     image: IMG['digital-twins/showcase-2'],
     specDetails: {
-      accuracyProfile: 'Sub-centimeter Ground Sample Distance (GSD) calibrated with GCPs',
-      primaryFormats: 'GeoTIFF, LAS, OBJ, DXF contours, PDF',
-      captureMethod: 'Autonomous photogrammetric grid flight with RTK corrections',
+      accuracyProfile: 'Ground resolution and accuracy agreed per project',
+      primaryFormats: 'Agreed in scope, e.g. GeoTIFF, LAS, DXF contours, PDF',
+      captureMethod: 'Planned photogrammetric grid flights, subject to approvals',
     },
   },
   {
@@ -145,12 +145,12 @@ const CAPABILITIES: CapabilityItem[] = [
       'Environmental planning, flood risk modeling, and slope stability analysis',
     ],
     madeWith:
-      'Multi-constellation survey-grade GNSS receivers (RTK/PPK), total stations, and calibrated ground control targets.',
+      'Survey positioning equipment and ground control targets, set out in your project proposal.',
     image: IMG['digital-twins/showcase-4'],
     specDetails: {
-      accuracyProfile: 'Tied to geodetic control networks with millimeter closure',
+      accuracyProfile: 'Tied to survey control; accuracy agreed per project',
       primaryFormats: 'GeoPackage, ESRI Shapefile (.shp), GeoTIFF, CSV, DWG',
-      captureMethod: 'Dual-frequency GNSS RTK and optical traverse tie-ins',
+      captureMethod: 'Survey control set out in your proposal',
     },
   },
   {
@@ -158,12 +158,12 @@ const CAPABILITIES: CapabilityItem[] = [
     anchor: 'heritage-records',
     number: '05',
     title: 'Heritage Records & Digital Archives',
-    badge: 'Non-Invasive · Conservation Archiving · Millimeter Precision',
+    badge: 'Non-Invasive · Conservation Archiving · Measured 3D',
     whatItIs:
-      'A complete, permanent 3D record of a historic monument or sacred site, inside and out: its geometry, timber carvings, structural deformations, and sacred surroundings. Capture is 100% contactless, so nothing is touched or altered.',
+      'A complete, permanent 3D record of a historic monument or sacred site, inside and out: its geometry, timber carvings, structural deformations, and sacred surroundings. Capture is contactless, so nothing is touched or altered.',
     youReceive: [
-      'Millimeter-accurate 3D archival point cloud preserved in open archival formats',
-      'Drone aerial record of multi-tiered pagoda roofs, finials (gajur), and courtyards',
+      '3D archival point cloud, in formats agreed for your archive',
+      'Drone aerial record of multi-tiered pagoda roofs, finials (gajur) and courtyards, where approvals allow',
       'Structural deflection and lean analysis (out-of-plumb walls, timber beam sags)',
       'High-resolution photographic texture maps for condition and material assessment',
       'Long-term archival bundle formatted for institutional preservation [[TBI: archive format]]',
@@ -180,9 +180,9 @@ const CAPABILITIES: CapabilityItem[] = [
     linkHref: '/industries/heritage-culture/',
     image: IMG['digital-twins/showcase-5'],
     specDetails: {
-      accuracyProfile: 'Millimeter spatial resolution preserving subtle masonry detail',
-      primaryFormats: 'E57, LAS, OBJ, GeoTIFF, PDF Reports',
-      captureMethod: 'Non-contact terrestrial SLAM LiDAR + aerial drone photogrammetry',
+      accuracyProfile: 'Detail and accuracy agreed per project',
+      primaryFormats: 'Agreed in scope, e.g. E57, LAS, GeoTIFF, PDF reports',
+      captureMethod: 'Non-contact handheld SLAM LiDAR, plus drone photogrammetry where approved',
     },
   },
 ];
@@ -290,9 +290,9 @@ const PROCESS_STEPS = [
   {
     step: '2',
     title: 'Reality Capture',
-    line: 'We scan on the ground and from the air, tied to survey-grade control where accuracy matters.',
+    line: 'We scan on the ground and, where approvals allow, from the air, tied to survey control where accuracy matters.',
     detail:
-      'Our surveyors deploy handheld SLAM LiDAR through every interior floor and fly RTK photogrammetry over roofs, tied to GNSS ground control markers.',
+      'Our surveyors walk handheld SLAM LiDAR through the interiors and, where approvals allow, fly drone photogrammetry over roofs, tied to ground control where the project needs it.',
   },
   {
     step: '3',
@@ -335,7 +335,7 @@ const WHO_ITS_FOR = [
   {
     role: 'Conservators & Researchers',
     benefit: 'Measured heritage records for structural study and faithful restoration.',
-    detail: 'Preserve millimeter documentation of fragile timber carvings, pagoda roof tiers, and earthquake cracks with 100% contactless technology.',
+    detail: 'Preserve measured documentation of fragile timber carvings, pagoda roof tiers and earthquake cracks, with contactless capture.',
     linkHref: '/industries/heritage-culture/' as RoutePath,
     linkText: 'Digital heritage solutions →',
   },
@@ -366,12 +366,12 @@ const FAQS = [
   {
     question: 'How accurate is your data?',
     answer:
-      'Accuracy depends on the method, the site and the ground control used. For handheld SLAM laser scanning, relative measurement accuracy across typical rooms and building levels is within millimeter tolerances. For drone aerial mapping, ground resolution (GSD) is typically sub-centimeter, with absolute real-world georeferencing anchored by survey-grade GNSS control points. We agree the accuracy your project needs during planning and tell you honestly if it can be achieved. Every project includes verification against independent check points.',
+      'It depends on the method, the site and the ground control used. We agree the accuracy your project needs during planning and tell you if it is achievable.',
   },
   {
     question: 'Can I use the data in CAD, BIM or GIS software?',
     answer:
-      'Yes. We deliver data in open and industry-standard formats including E57 and LAS/LAZ for point clouds, DWG/DXF for vector CAD drawings, GeoTIFF for georeferenced aerial maps and elevation models, and OBJ/FBX for 3D polygon meshes. Files plug directly into AutoCAD, Revit, ArchiCAD, Rhino, Civil 3D, and QGIS.',
+      'Yes. We deliver data in standard formats for design and mapping software. E57, LAS, DXF and GeoTIFF are examples of common exchange formats; the deliverables depend on your confirmed project scope.',
   },
   {
     question: 'Can you produce floor plans and sections?',
@@ -381,12 +381,12 @@ const FAQS = [
   {
     question: 'Is the data tied to real-world coordinates?',
     answer:
-      'Yes, where your project needs it. We use multi-frequency survey-grade GNSS receivers and ground control targets (GCPs) so your 3D dataset aligns precisely with the Nepal National Grid, UTM zones, cadastral boundaries, and GIS databases.',
+      'Yes, where your project needs it. We use survey-grade GNSS and ground control points so your data lines up with your maps and drawings.',
   },
   {
     question: 'Does scanning damage buildings or monuments?',
     answer:
-      'No. Terrestrial laser scanning and drone aerial capture are completely contactless (non-destructive). Our sensors emit eye-safe Class 1 laser pulses or capture passive aerial imagery. Nothing touches the monument, making it safe for delicate timber carvings, ancient terracotta, and fragile structures.',
+      'No. Laser scanning and drone capture are contactless. We never touch the structure.',
   },
   {
     question: 'Can you support academic research or a PhD?',
@@ -515,7 +515,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               <ul className="space-y-3 text-sm">
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Sensor hardware:</span>
-                  <span className="font-mono text-xs text-zinc-900">SLAM LiDAR + RTK Drone</span>
+                  <span className="font-mono text-xs text-zinc-900">Handheld SLAM LiDAR + drone</span>
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Coordinate datums:</span>
@@ -531,7 +531,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                 </li>
                 <li className="flex items-center justify-between text-zinc-700">
                   <span className="font-medium">Contact method:</span>
-                  <span className="font-mono text-xs text-zinc-900">100% Non-invasive</span>
+                  <span className="font-mono text-xs text-zinc-900">Non-invasive</span>
                 </li>
               </ul>
 
@@ -653,7 +653,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               </div>
               <SplatEmbed initialDemo="chilancho" />
               <div className="mt-4 text-xs text-zinc-500 font-mono text-center">
-                Caption: Chilancho Stupa Heritage Complex, Kirtipur · Documented in 3D to establish true proportions, structural alignment and millimeter-scale conservation records.
+                Caption: Chilancho Stupa, Kirtipur · A historic Buddhist chaitya complex, recorded in 3D as in-house research (October 2025).
               </div>
             </div>
           ) : (
@@ -708,9 +708,9 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
               {/* Technical Caption */}
               <div className="p-6 bg-zinc-900 border-t border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-zinc-300">
                 <div>
-                  <span className="font-bold text-white">Dataset:</span> Terrestrial SLAM LiDAR (XGRIDS Lixel Kitty K1) + RTK Aerial Drone Photogrammetry ·{' '}
+                  <span className="font-bold text-white">Dataset:</span> Chilancho Stupa, Kirtipur ·{' '}
                   <span className="text-zinc-400">
-                    Registered to 12 independent survey ground control benchmarks.
+                    In-house research, October 2025.
                   </span>
                 </div>
                 <button
@@ -747,7 +747,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                 01 · Geometric Fidelity
               </div>
               <h3 className="text-lg font-semibold text-zinc-900 mb-2">
-                Measurable Millimeter Scale
+                Measured, Not Modelled
               </h3>
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
                 Not a stylized 3D artist impression. Every point represents a real physical reflection captured by laser and high-resolution optical sensors, revealing bowed beams and non-plumb walls.
@@ -1231,26 +1231,26 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
             <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
               <div>
                 <span className="font-mono text-xs uppercase tracking-wider text-zinc-500 font-bold block mb-2">
-                  Historic Monument · Kirtipur, Nepal
+                  Historic Monument · Kirtipur, Kathmandu Valley
                 </span>
                 <h3 className="text-2xl font-semibold text-zinc-900 mb-3">
                   Preserving Form, Proportions and Detail
                 </h3>
                 <p className="text-sm text-zinc-600 leading-relaxed mb-6">
-                  A medieval Buddhist stupa complex documented in complete 3D. We combined handheld SLAM laser scanning across the platform courtyards with drone photogrammetry capturing the spire, establishing a permanent millimeter-scale record for conservation architects and the local community.
+                  Chilancho Stupa, a historic Buddhist chaitya complex known for its group of stupas and traditional brick-and-stone architecture, recorded in 3D as an in-house research project and published as a web-based 3D experience.
                 </p>
                 <div className="space-y-2 text-xs font-mono text-zinc-700 mb-6">
                   <div className="flex justify-between border-b border-zinc-200 pb-1">
-                    <span>LiDAR Points:</span>
-                    <span className="font-bold text-zinc-900">42,000,000+ points</span>
+                    <span>Date:</span>
+                    <span className="font-bold text-zinc-900">October 2025</span>
                   </div>
                   <div className="flex justify-between border-b border-zinc-200 pb-1">
-                    <span>Primary Outputs:</span>
-                    <span className="font-bold text-zinc-900">E57, CAD Sections, Web 3D</span>
+                    <span>Delivered:</span>
+                    <span className="font-bold text-zinc-900">Web-based 3D experience</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Site Downtime:</span>
-                    <span className="font-bold text-zinc-900">0 minutes (Non-invasive)</span>
+                    <span>Project:</span>
+                    <span className="font-bold text-zinc-900">In-house research</span>
                   </div>
                 </div>
               </div>
@@ -1315,7 +1315,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
             </button>
 
             <a
-              href="https://wa.me/9779846789573"
+              href="https://wa.me/9779810789487"
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold rounded-lg border border-zinc-700 transition-colors flex items-center space-x-2 text-sm"

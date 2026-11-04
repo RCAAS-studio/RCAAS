@@ -176,10 +176,10 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
                     {[
                       { name: '3D Virtual Tour (Web)', detail: 'Zero-app browser walkthrough' },
                       { name: '4K Cinematic Fly-Through Film', detail: 'Drone + virtual camera direction' },
-                      { name: 'SLAM LiDAR Point Cloud (±5mm)', detail: 'As-built engineering CAD/BIM' },
+                      { name: 'SLAM LiDAR Point Cloud', detail: 'As-built engineering CAD/BIM' },
                       { name: 'VR Headset Experience (6DoF)', detail: 'Exhibitions and VR showrooms' },
                       { name: 'Heritage Archival Package', detail: 'Orthophotos, elevations & mesh' },
-                      { name: 'Interactive Hotspots & Booking Sync', detail: 'Direct lead conversions' },
+                      { name: 'Interactive Hotspots & Booking Links', detail: 'Enquiry and booking buttons' },
                     ].map((del) => {
                       const active = deliverables.includes(del.name);
                       return (
@@ -353,7 +353,7 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
             </h3>
             
             <p className="mt-2 text-xs text-zinc-600 max-w-md mx-auto leading-relaxed">
-              Thank you, <strong className="text-zinc-900">{contactName || 'there'}</strong>. Our reality capture team in Kathmandu will review your scope for {spaceType} and reach out within 24 hours.
+              Thank you, <strong className="text-zinc-900">{contactName || 'there'}</strong>. Our reality capture team in Kathmandu will review your scope for {spaceType}. We aim to reply within {SITE_METADATA.responseTime ?? 'one working day'}.
             </p>
 
             <div className="mt-6 flex justify-center gap-3">

@@ -3,16 +3,17 @@ import { Ban, Bug, Cookie, Database, Eraser, Globe, KeyRound, Lock, Mail, Refres
 import { RoutePath } from '../types';
 import { LegalLayout, LegalSection, legalBodyClass } from '../components/LegalLayout';
 import type { LegalSectionMeta } from '../components/LegalLayout';
+import { SITE_METADATA } from '../data/siteData';
 
 /* /cookies/ and /security/: the Cookie and Security policies of the earlier
  * rcaas.tech site (written to match what the studio and API do), in this
- * site's legal layout. Words unchanged from that site. */
+ * site's legal layout. Words unchanged from that site, apart from the contact details (2026-11-04). */
 
 interface PolicyPageProps {
   onNavigate: (path: RoutePath) => void;
 }
 
-const LAST_UPDATED = '4 October 2026';
+const LAST_UPDATED = '4 November 2026';
 
 const Body: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div
@@ -24,8 +25,8 @@ const Body: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const CONTACT = (
   <p>
-    GeoNova Solutions Pvt. Ltd., Kageshwari-Manohara, Kathmandu, Nepal. Email{' '}
-    <a href="mailto:info@geonova.com.np">info@geonova.com.np</a> or call <a href="tel:+9779846789573">+977 984 678 9573</a>.
+    {SITE_METADATA.displayName} (registration pending), {SITE_METADATA.address}. Email{' '}
+    <a href={`mailto:${SITE_METADATA.email}`}>{SITE_METADATA.email}</a> or call <a href="tel:+9779810789487">{SITE_METADATA.phone}</a>.
   </p>
 );
 
@@ -204,7 +205,7 @@ export const SecurityPage: React.FC<PolicyPageProps> = ({ onNavigate }) => (
       <Body>
         <p>
           If you find a weakness in RCAAS.tech, email{' '}
-          <a href="mailto:info@geonova.com.np?subject=Security%20report">info@geonova.com.np</a> with &quot;Security
+          <a href={`mailto:${SITE_METADATA.email}?subject=Security%20report`}>{SITE_METADATA.email}</a> with &quot;Security
           report&quot; in the subject. Tell us what you found and how to see it. We will reply within 5 working days and keep you
           told of the fix.
         </p>
