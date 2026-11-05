@@ -9,6 +9,8 @@ next-env.d.ts
 # documents
 docs/
 
+# zed
+.zed/
 
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
