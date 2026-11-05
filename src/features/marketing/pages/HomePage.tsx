@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { CASE_STUDY_CONTENT } from '../content/work';
-import { Placeholder, WithPlaceholders } from '../components/Placeholder';
+import { WithPlaceholders } from '../components/Placeholder';
 import { HOME_FAQS } from '../content/faq';
 import { SplatEmbed } from '../components/SplatEmbed';
 import { SpotlightCard } from '../components/SpotlightCard';
@@ -70,6 +70,9 @@ const useColumnCount = () => {
   }, []);
   return count;
 };
+
+// The live demo (owner-confirmed, 2026-11-03): Chilancho in its own XGRIDS viewer, never labelled as RCAAS Studio.
+const CHILANCHO_VIEWER = CASE_STUDY_CONTENT.find((study) => study.embedDemo === 'chilancho')?.embedUrl;
 
 // "Why RCAAS" reasons (docs/copy/home.md §7).
 const WHY_POINTS: { title: string; desc: string; icon: LucideIcon }[] = [
@@ -160,9 +163,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
             {/* H1 Tagline */}
             <h1 className="text-4xl font-extrabold tracking-tight text-ink sm:text-6xl lg:text-7xl font-display leading-[1.12] sm:leading-[1.08] text-balance">
               {/* Full sentence for Google, AI assistants, and screen readers */}
-              <span className="sr-only">
-                Turn real places into experiences that move people to act.
-              </span>
+              <span className="sr-only">{SITE_METADATA.tagline}</span>
 
               {/* Animated visual layer with laser-square typewriter effect */}
               <span aria-hidden="true">
@@ -220,20 +221,29 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
               Don't just look at photos. Walk through the place.
             </h2>
             <p className="mt-4 text-base text-muted leading-relaxed">
-              <WithPlaceholders text="This is [[TBI: project name]], captured by our team and published on our 3D platform. Move around it on your phone or laptop. No app, no download." />
+              This is Chilancho Stupa, captured by our team and available through the existing XGRIDS viewer. Move around it on your phone or laptop. No app, no download.
             </p>
           </div>
 
           {/* Interactive SplatEmbed */}
           <SplatEmbed initialDemo="chilancho" />
 
+          {CHILANCHO_VIEWER && (
+            <p className="mt-4 text-xs font-mono text-zinc-500">
+              Chilancho Stupa, Kirtipur ·{' '}
+              <a href={CHILANCHO_VIEWER} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent hover:text-accent-strong">
+                open it in the XGRIDS viewer ↗
+              </a>
+            </p>
+          )}
+
           {/* Static HTML description for crawlers and accessibility */}
           <div className="mt-6 rounded-md border border-line bg-white p-4 text-xs text-zinc-600 font-mono shadow-sm">
             <p>
-              <WithPlaceholders text="An interactive, photorealistic 3D model of [[TBI: place name]] in [[TBI: location]], created by RCAAS Technology. Visitors can move freely through [[TBI: spaces shown, e.g. the lobby, rooms and courtyard]]." />
+              <WithPlaceholders text="An interactive, photorealistic 3D model of Chilancho Stupa in Kirtipur, Kathmandu Valley, Nepal, created by RCAAS Technology. Visitors can move freely through [[TBI: spaces shown, e.g. the lobby, rooms and courtyard]]." />
             </p>
             <p className="mt-2">
-              <WithPlaceholders text={'Built to help [[TBI: client]] [[TBI: goal, e.g. "show guests the hotel before they book"]].'} />
+              Built as in-house research by RCAAS Technology, to document the stupa's form and detail for study and for the public.
             </p>
           </div>
 
@@ -415,7 +425,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
               {
                 step: '02',
                 title: 'Capture',
-                desc: 'Our team scans the place on the ground and from the air, quickly and without touching anything.',
+                desc: 'Our team scans the place on the ground, and from the air where approvals allow, quickly and without touching anything.',
               },
               {
                 step: '03',
@@ -430,7 +440,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
               {
                 step: '05',
                 title: 'Measure',
-                desc: 'We look at how people engage and refine the experience over time. [[TBC: keep only if engagement analytics are available]]',
+                desc: 'When your place changes, we can capture the changes and update your experience under an agreed scope.',
               },
             ].map((s) => (
               <SpotlightCard
@@ -467,8 +477,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenPlanner })
                 Why RCAAS
               </h2>
               <p className="mt-6 max-w-md text-sm sm:text-base text-muted leading-relaxed">
-                {SITE_METADATA.boilerplate}{' '}
-                <Placeholder>[[TBC: add "RCAAS stands for Reality Capture as a Service." here]]</Placeholder>
+                {SITE_METADATA.boilerplate} RCAAS stands for Reality Capture as a Service.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
                 <button

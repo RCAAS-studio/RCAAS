@@ -24,22 +24,22 @@ const DEMO_SPACES: DemoSpace[] = [
     name: 'Chilancho Stupa',
     location: 'Kirtipur, Kathmandu Valley',
     tag: 'Cultural Heritage',
-    clientGoal: 'Preserve sacred medieval Newari architecture and share with global researchers and pilgrims.',
+    clientGoal: 'Documented in 3D to preserve its form and detail for study and for the public.',
     coords: '27°40\'58.4"N 85°16\'41.2"E',
     poster: IMG['splat-embed/chilancho-stupa'],
     waypoints: [
       { name: 'Courtyard Approach', rotY: 0, rotX: 0.25, zoom: 0.9, camY: 0 },
       { name: 'Sacred Chaitya', rotY: 1.2, rotX: 0.35, zoom: 1.3, camY: 20 },
       { name: 'Golden Spire Ascent', rotY: 2.8, rotX: 0.55, zoom: 1.6, camY: -50 },
-      { name: 'Aerial Drone Survey', rotY: 4.5, rotX: 0.85, zoom: 0.7, camY: -90 },
+      { name: 'Aerial View', rotY: 4.5, rotX: 0.85, zoom: 0.7, camY: -90 },
     ],
   },
   {
     id: 'basera',
     name: 'Basera Boutique Hotel',
-    location: 'Kathmandu, Nepal',
+    location: 'Babar Mahal, Kathmandu',
     tag: 'Hospitality',
-    clientGoal: 'Let international travelers explore suites and traditional wood-carved courtyards before booking.',
+    clientGoal: 'A hotel guests can look around before they book.',
     coords: '27°41\'24.8"N 85°19\'12.5"E',
     poster: IMG['splat-embed/basera-boutique-hotel'],
     waypoints: [
@@ -51,10 +51,10 @@ const DEMO_SPACES: DemoSpace[] = [
   {
     id: 'nepathya',
     name: 'Nepathya School & College',
-    location: 'Kathmandu, Nepal',
+    location: 'Tilottama, Rupandehi',
     tag: 'Education',
-    clientGoal: 'Allow prospective students and parents to tour modern classrooms and laboratories from anywhere.',
-    coords: '27°42\'10.1"N 85°20\'33.0"E',
+    clientGoal: 'A campus tour families can take from home.',
+    coords: '',
     poster: IMG['splat-embed/nepathya-school-college'],
     waypoints: [
       { name: 'Academic Quad', rotY: 0, rotX: 0.3, zoom: 0.9, camY: 0 },
@@ -65,13 +65,13 @@ const DEMO_SPACES: DemoSpace[] = [
   {
     id: 'madan',
     name: 'Madan Ashrit Memorial Polytechnic',
-    location: 'Nepal',
+    location: 'Kadaghari, Kathmandu',
     tag: 'Vocational Campus',
-    clientGoal: 'Showcase specialized engineering bays, robotic workshops, and vocational facilities.',
-    coords: '27°38\'44.2"N 85°18\'02.7"E',
+    clientGoal: 'Workshops and labs prospective students can explore for themselves.',
+    coords: '',
     poster: IMG['splat-embed/madan-ashrit-polytechnic'],
     waypoints: [
-      { name: 'Robotics Workshop', rotY: 0.5, rotX: 0.2, zoom: 1.1, camY: 0 },
+      { name: 'Workshops', rotY: 0.5, rotX: 0.2, zoom: 1.1, camY: 0 },
       { name: 'Fabrication Hall', rotY: 2.4, rotX: 0.35, zoom: 1.3, camY: 10 },
       { name: 'Polytechnic Quad', rotY: 4.2, rotX: 0.5, zoom: 0.8, camY: -40 },
     ],
@@ -808,9 +808,11 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
               </div>
             </div>
 
-            <div className="p-3 rounded-md bg-ink/90 border border-zinc-800 font-mono text-[11px] text-right text-zinc-400 pointer-events-auto">
-              <div>{activeSpace.coords}</div>
-            </div>
+            {activeSpace.coords && (
+              <div className="p-3 rounded-md bg-ink/90 border border-zinc-800 font-mono text-[11px] text-right text-zinc-400 pointer-events-auto">
+                <div>{activeSpace.coords}</div>
+              </div>
+            )}
           </div>
         </div>
       )}

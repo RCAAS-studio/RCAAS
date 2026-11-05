@@ -68,7 +68,10 @@ export const isNotFoundPath = (path: string) =>
 
 export function pageMeta(currentPath: string) {
   let title = '3D Tours, VR & Immersive Experiences in Nepal | RCAAS';
-  let metaDesc = SITE_METADATA.boilerplate;
+  // the home description from the planning PDF (§6.1); other pages fall back to the boilerplate
+  let metaDesc = currentPath === '/' || currentPath === ''
+    ? 'RCAAS turns real places into 3D tours, VR, AR and stories that help hotels, schools, developers and heritage sites attract visitors and make lasting impact.'
+    : SITE_METADATA.boilerplate;
 
   if (currentPath.startsWith('/services/immersive-experiences/3d-virtual-tours')) {
     title = '3D Virtual Tours in Nepal: Beyond 360° Photos | RCAAS';
