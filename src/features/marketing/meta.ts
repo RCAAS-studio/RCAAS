@@ -62,8 +62,8 @@ export function pageMeta(currentPath: string) {
     title = GAME_WORLDS.titleTag;
     metaDesc = GAME_WORLDS.metaDescription;
   } else if (currentPath.startsWith('/services/visual-storytelling')) {
-    title = 'Fly-Through Films & Visual Storytelling in Nepal | RCAAS';
-    metaDesc = 'Guided 3D tours, cinematic fly-through films and social content made from real places, shaped around what you want your audience to feel and do.';
+    title = 'Visual Storytelling & Fly-Through Films in Nepal | RCAAS';
+    metaDesc = 'Films, guided 3D experiences and social content shaped around your place and audience. Explore a real Chilancho capture and discuss your project with RCAAS.';
   } else if (currentPath.startsWith('/services/digital-twins/3d-laser-scanning')) {
     title = '3D Laser Scanning in Nepal (SLAM LiDAR) | RCAAS';
     metaDesc = 'Handheld 3D laser scanning in Kathmandu and across Nepal. Accurate point clouds, as-built drawings and 3D models of any building, captured in hours, not days.';

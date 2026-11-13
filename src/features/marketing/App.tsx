@@ -25,6 +25,7 @@ import { BLOG_LAUNCHED, PUBLISHED_POSTS, postPath } from './content/blog';
 import { findIndustryContent, isResolvedAnswer } from './content/industries';
 import { pageMeta, resolveBlogRoute, isCaseStudy } from './meta';
 import { withBase, withoutBase } from '../../lib/basePath';
+import { SITE_URL } from '../../lib/shareMeta';
 
 // Each page is its own chunk (2026-11-01): a visit downloads the page it opens (rendered on the server as
 // before), and the rest load in the background once the page is idle (PAGE_FILES, App), so moving
@@ -264,11 +265,12 @@ export default function App() {
         ],
       });
     } else if (currentPath.startsWith('/services/visual-storytelling')) {
+      const serviceUrl = `${SITE_URL}/services/visual-storytelling/`;
       graphItems.push({
         '@type': 'Service',
-        '@id': 'https://rcaas.tech/services/visual-storytelling/#service',
-        url: 'https://rcaas.tech/services/visual-storytelling/',
-        name: 'Fly-Through Films & Visual Storytelling in Nepal | RCAAS',
+        '@id': `${serviceUrl}#service`,
+        url: serviceUrl,
+        name: 'Visual Storytelling',
         description: 'Guided 3D tours, cinematic fly-through films and social content made from real places, shaped around what you want your audience to feel and do.',
         provider: { '@id': 'https://rcaas.tech/#organization' },
         areaServed: { '@type': 'Country', name: 'Nepal' },
@@ -282,19 +284,19 @@ export default function App() {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://rcaas.tech/',
+            item: `${SITE_URL}/`,
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'What we create',
-            item: 'https://rcaas.tech/services/',
+            item: `${SITE_URL}/services/`,
           },
           {
             '@type': 'ListItem',
             position: 3,
             name: 'Visual Storytelling',
-            item: 'https://rcaas.tech/services/visual-storytelling/',
+            item: serviceUrl,
           },
         ],
       });

@@ -85,7 +85,7 @@
 .rcaas .story-page .story-scope-note { margin-top: 34px; max-width: 900px; font-size: 12px; }
 .rcaas .story-page .story-comparison-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 50px; margin-top: 50px; padding-top: 40px; border-top: 1px solid var(--color-line); }
 .rcaas .story-page .story-comparison-layout > div > p { margin-top: 16px; font-size: 14px; }
-.rcaas .story-page .story-comparison-stage { position: relative; aspect-ratio: 16/9; overflow: hidden; border-radius: 9px; background: #000; }
+.rcaas .story-page .story-comparison-stage { position: relative; aspect-ratio: 16/9; overflow: hidden; border-radius: 9px; background: #000; cursor: ew-resize; touch-action: pan-y; user-select: none; }
 .rcaas .story-page .story-comparison-stage img { display: block; position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 .rcaas .story-page .story-comparison-muted { filter: grayscale(1); }
 .rcaas .story-page .story-comparison-reveal { position: absolute; inset: 0; }
@@ -133,7 +133,7 @@
 .rcaas .story-page .story-conversion h2 + p { max-width: 600px; color: #d4d4d8; margin-top: 22px; }
 .rcaas .story-page .story-enquiry-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 32px; }
 .rcaas .story-page .story-enquiry-controls label { color: #d4d4d8; font-size: 14px; }
-.rcaas .story-page .story-enquiry-controls select { max-width: 100%; min-height: 48px; padding: 10px 35px 10px 15px; border: 1px solid #71717a; border-radius: 6px; background: var(--color-ink); color: #fff; font-size: 14px; }
+.rcaas .story-page .story-enquiry-controls select { min-width: 0; max-width: 100%; min-height: 48px; padding: 10px 35px 10px 15px; border: 1px solid #71717a; border-radius: 6px; background: var(--color-ink); color: #fff; font-size: 14px; }
 .rcaas .story-page .story-related { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-top: 42px; padding-top: 23px; border-top: 1px solid #3f3f46; }
 .rcaas .story-page .story-related a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; color: #d4d4d8; }
 .rcaas .story-page .story-related a:hover { color: #fff; text-decoration: underline; }

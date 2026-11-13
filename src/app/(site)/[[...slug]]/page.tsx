@@ -32,11 +32,12 @@ const withSlash = (path: string) => (path.endsWith('/') ? path : `${path}/`);
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const path = await pathOf(params);
   const { title, description, robots } = pageMeta(withSlash(path));
+  const canonicalPath = process.env.NEXT_OUTPUT_EXPORT ? withSlash(path) : path;
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: path },
-    openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_US', title, description, url: path, images: [OG_IMAGE] },
+    alternates: { canonical: canonicalPath },
+    openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_US', title, description, url: canonicalPath, images: [OG_IMAGE] },
     twitter: { card: 'summary_large_image', title, description, images: [OG_IMAGE.url] },
     ...(robots ? { robots } : {})
   };

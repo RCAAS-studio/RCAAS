@@ -13,7 +13,9 @@ const staticExport = !!process.env.NEXT_OUTPUT_EXPORT;
 
 const nextConfig: NextConfig = {
   basePath,
-  ...(staticExport ? { output: 'export' as const } : {}),
+  // Directory indexes keep the public site's /services/.../ links working
+  // on GitHub Pages, which cannot apply Next's extensionless-route rewrites.
+  ...(staticExport ? { output: 'export' as const, trailingSlash: true } : {}),
   // Direct Next development/staging also needs authenticated same-origin
   // assets. The production reverse proxy normally handles /api first.
   ...(staticExport ? {} : {
@@ -68,7 +70,7 @@ const nextConfig: NextConfig = {
       `connect-src 'self' blob: data: ${api}${dev ? ' ws: wss:' : ''}`,
       `media-src 'self' blob: data: ${api}`,
       "worker-src 'self' blob:",
-      "frame-src 'self' https://www.google.com",
+      "frame-src 'self' https://www.google.com https://lcc-viewer.xgrids.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self' mailto:"

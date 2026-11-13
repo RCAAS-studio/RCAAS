@@ -8,7 +8,7 @@ const POSTER = withBase('/media/hero.jpg');
 const CLIP = withBase('/media/hero.mp4');
 // This existing owner-confirmed experience loads the real capture. SplatEmbed's
 // generated canvas remains untouched and is not presented as project evidence.
-const VIEWER = chilanchoStupa.embedUrl;
+const VIEWER = chilanchoStupa.embedUrl || undefined;
 
 export function StorytellingShowcase() {
   const [mode, setMode] = useState(0);
@@ -40,10 +40,10 @@ export function StorytellingShowcase() {
       <div className="story-media-tabs" role="tablist" aria-label="Experience type">
         {['Capture film', 'Interactive 3D'].map((label, index) => (
           <button type="button" role="tab" id={`experience-tab-${index}`} aria-controls={`experience-panel-${index}`}
-            aria-selected={mode === index} tabIndex={mode === index ? 0 : -1} key={label}
+            aria-selected={mode === index} tabIndex={mode === index ? 0 : -1} key={label} disabled={index === 1 && !VIEWER}
             onClick={() => selectMode(index)}
             onKeyDown={event => {
-              const next = nextStoryTab(event.key, index, 2);
+              const next = nextStoryTab(event.key, index, VIEWER ? 2 : 1);
               if (next === null) return;
               event.preventDefault(); selectMode(next);
               document.getElementById(`experience-tab-${next}`)?.focus();
@@ -59,7 +59,7 @@ export function StorytellingShowcase() {
             <div className="story-player">
               {videoError ? (
                 <div className="story-media-fallback">
-                  <img src={POSTER} alt="The Chilancho Stupa courtyard in the captured model" width="1600" height="900" />
+                  <img src={POSTER} alt="The Chilancho Stupa courtyard in the captured model" width="1600" height="900" data-fx="seen" />
                   <div role="status"><p>The clip could not be played here.</p><a href={CLIP}>Open the video file</a></div>
                 </div>
               ) : (
@@ -85,7 +85,7 @@ export function StorytellingShowcase() {
             <div className="story-player story-viewer-stage">
               {viewer === 'idle' || viewer === 'unsupported' ? (
                 <div className="story-viewer-poster">
-                  <img src={POSTER} alt="Preview of the Chilancho Stupa capture" width="1600" height="900" loading="lazy" />
+                  <img src={POSTER} alt="Preview of the Chilancho Stupa capture" width="1600" height="900" loading="lazy" data-fx="seen" />
                   <div>
                     {viewer === 'unsupported' ? <p role="status">This browser could not start WebGL 2. Watch the capture film or try the viewer on another device.</p> : (
                       <><button type="button" className="story-button story-button-light" onClick={loadViewer}><Play size={18} aria-hidden="true" />Load the 3D experience</button><p>Opens the existing XGRIDS viewer. Loads 3D data after you choose to explore.</p></>

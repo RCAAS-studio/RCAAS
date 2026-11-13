@@ -9,6 +9,8 @@ import { linkHandler, pageShellClass } from '../components/GuideParts';
 import { buttonClass } from '../components/ui';
 import { sendLead } from '../lib/leads';
 import { checkContactFields } from '../../../lib/contactRules';
+import { STORY_FORMATS, storytellingFormat } from '../content/storytelling';
+import { withBase } from '../../../lib/basePath';
 
 interface ContactPageProps {
   currentPath: RoutePath;
@@ -86,6 +88,7 @@ const submitEnquiry = (data: Record<string, string>, renderedAt: number) =>
       'Type of place': data.placeType,
       Location: data.location,
       Size: data.size,
+      'Storytelling format': data.goal === 'Films or storytelling' ? storytellingFormat(data.storyFormat)?.name ?? '' : '',
       Message: data.message,
     },
   });
@@ -101,6 +104,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
     phone: '',
     organisation: '',
     goal: DEFAULT_GOAL,
+    storyFormat: '',
     placeType: '',
     location: '',
     size: '',
@@ -116,8 +120,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
 
   // Preselect the goal from ?type= (on load, and when arriving from another page's CTA).
   useEffect(() => {
-    const type = new URLSearchParams(window.location.search).get('type');
-    setForm((prev) => ({ ...prev, goal: goalFromType(type) }));
+    const params = new URLSearchParams(window.location.search);
+    const goal = goalFromType(params.get('type'));
+    const format = goal === 'Films or storytelling' ? storytellingFormat(params.get('format')) : undefined;
+    setForm((prev) => ({ ...prev, goal, storyFormat: format?.id ?? '' }));
   }, [currentPath]);
 
   const update = (field: keyof typeof form) => (
@@ -256,31 +262,33 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                   {GOALS.map((goal) => {
                     const selected = form.goal === goal.label;
                     return (
-                      <button
+                      <label
                         key={goal.label}
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        onClick={() => setForm((prev) => ({ ...prev, goal: goal.label }))}
-                        className={`text-left rounded-lg border px-3.5 py-2.5 text-sm transition-all ${
+                        className={`text-left rounded-lg border px-3.5 py-2.5 text-sm transition-all cursor-pointer focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent ${
                           selected
                             ? 'border-accent bg-white text-zinc-900 font-semibold shadow-[0_4px_14px_-6px_rgba(225,29,72,0.35)]'
                             : 'border-line bg-white text-zinc-600 hover:border-zinc-300'
                         }`}
                       >
                         <span className="flex items-center gap-2">
-                          <span
-                            className={`w-3.5 h-3.5 rounded-full border-2 shrink-0 ${
-                              selected ? 'border-accent bg-accent shadow-[inset_0_0_0_2px_white]' : 'border-zinc-300'
-                            }`}
-                            aria-hidden="true"
-                          />
+                          <input type="radio" name="goal" value={goal.label} checked={selected}
+                            onChange={() => setForm(prev => ({ ...prev, goal: goal.label }))}
+                            className="w-4 h-4 shrink-0 accent-accent" />
                           {goal.label}
                         </span>
-                      </button>
+                      </label>
                     );
                   })}
                 </div>
+                {form.goal === 'Films or storytelling' && (
+                  <div className="mt-5">
+                    <label htmlFor="c-story-format" className={labelClass}>Storytelling format (optional)</label>
+                    <select id="c-story-format" value={form.storyFormat} onChange={update('storyFormat')} className={inputClass}>
+                      <option value="">Help me choose a format</option>
+                      {STORY_FORMATS.map(format => <option key={format.id} value={format.id}>{format.name}</option>)}
+                    </select>
+                  </div>
+                )}
               </fieldset>
 
               {/* Then the place */}
@@ -328,12 +336,9 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                       ))}
                     </select>
                   </div>
-                  {/* G18: the owner confirmed an optional Budget Range select (2026-11-03); its NPR amounts are still to confirm. */}
                   <div>
                     <span className={labelClass}>Budget range</span>
-                    <div className="rounded-lg border border-dashed border-amber-300 bg-white px-3 py-2.5">
-                      <Placeholder>[[TBC: budget ranges in NPR]]</Placeholder>
-                    </div>
+                    <p className="text-xs text-zinc-600">If you have a budget in mind, include it in your message.</p>
                   </div>
                   <div className="sm:col-span-2">
                     <label htmlFor="c-message" className={labelClass}>
@@ -415,7 +420,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                 />
                 <label htmlFor="c-consent" className="text-xs text-zinc-600 leading-relaxed">
                   I agree to RCAAS Technology contacting me about my enquiry. See our{' '}
-                  <a href="/privacy/" onClick={goToLink('/privacy/')} className="text-accent hover:text-accent-strong underline underline-offset-2">
+                  <a href={withBase('/privacy/')} onClick={goToLink('/privacy/')} className="text-accent hover:text-accent-strong underline underline-offset-2">
                     Privacy Policy
                   </a>
                   . *

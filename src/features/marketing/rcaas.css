@@ -36,6 +36,8 @@
 }
 .rcaas .rc-footer-inner { max-width: 1328px; margin-inline: auto; padding: 72px 40px 0; }
 .rcaas .rc-footer-main { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 2fr); gap: 88px; }
+/* Let the signup field shrink when touch devices use 16px input text. */
+.rcaas .rc-footer-main > * { min-width: 0; }
 .rcaas .rc-footer-brand { max-width: 320px; }
 .rcaas .rc-footer-logo { display: inline-flex; padding-block: 4px; }
 .rcaas .rc-footer-logo img { width: 160px; height: auto; }
