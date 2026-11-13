@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ChevronsLeftRight } from 'lucide-react';
 import { withBase } from '../../../lib/basePath';
 
 /** A presentation concept using one real still, never a fictitious dated pair. */
 export function StoryComparison() {
   const [position, setPosition] = useState(50);
+  const activePointer = useRef<number | null>(null);
   const image = withBase('/media/hero.jpg');
   const moveDivider = (event: React.PointerEvent<HTMLDivElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -13,10 +14,22 @@ export function StoryComparison() {
   return (
     <figure className="story-comparison">
       <div className="story-comparison-stage" aria-hidden="true"
-        onPointerDown={event => { if (event.button !== 0) return; event.currentTarget.setPointerCapture(event.pointerId); moveDivider(event); }}
-        onPointerMove={event => { if (event.currentTarget.hasPointerCapture(event.pointerId)) moveDivider(event); }}
-        onPointerUp={event => { if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); }}
-        onPointerCancel={event => { if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); }}>
+        onPointerDown={event => {
+          if (event.button !== 0) return;
+          activePointer.current = event.pointerId;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          moveDivider(event);
+        }}
+        onPointerMove={event => { if (activePointer.current === event.pointerId && event.buttons) moveDivider(event); }}
+        onPointerUp={event => {
+          if (activePointer.current === event.pointerId) moveDivider(event);
+          activePointer.current = null;
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+        }}
+        onPointerCancel={event => {
+          activePointer.current = null;
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+        }}>
         <img src={image} alt="" width="1600" height="900" loading="lazy" className="story-comparison-muted" data-fx="seen" draggable={false} />
         <div className="story-comparison-reveal" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
           <img src={image} alt="" width="1600" height="900" loading="lazy" data-fx="seen" draggable={false} />
