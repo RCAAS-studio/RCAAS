@@ -64,6 +64,8 @@ test('the frontend sends the loaded revision and does not advance it after a con
   await publishSite('audit-site');
   assert.equal(calls.at(-1).options.headers['X-Expected-Revision'], 'saved');
   await saveScene('brand-new-audit-scene', {}, { createOnly: true });
-  assert.equal(calls.at(-1).options.headers['If-None-Match'], '*');
-  assert.equal(calls.at(-1).options.headers['Content-Type'], 'application/json');
+  // request() normalises header names through Headers (lower case); HTTP names are case-insensitive.
+  const sent = new Headers(calls.at(-1).options.headers);
+  assert.equal(sent.get('If-None-Match'), '*');
+  assert.equal(sent.get('Content-Type'), 'application/json');
 });

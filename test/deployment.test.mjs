@@ -56,7 +56,9 @@ test('backup archives restore all data and separate assets and refuse destructiv
   for (const name of ['data', 'assets']) {
     const target = path.join(restore, name);
     await mkdir(target);
-    const extraction = spawnSync('tar', ['-xzf', `${name}.tar.gz`, '-C', target], { cwd: output, encoding: 'utf8', windowsHide: true });
+    // Relative, forward-slash paths: GNU tar (Git Bash) reads an absolute C: path as a remote host; bsdtar takes either.
+    const archive = path.relative(target, path.join(output, `${name}.tar.gz`)).split(path.sep).join('/');
+    const extraction = spawnSync('tar', ['-xzf', archive], { cwd: target, encoding: 'utf8', windowsHide: true });
     assert.equal(extraction.status, 0, extraction.stderr);
   }
   assert.equal(await readFile(path.join(restore, 'data/users/account.json'), 'utf8'), user);

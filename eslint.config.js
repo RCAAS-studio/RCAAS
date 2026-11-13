@@ -4,7 +4,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
 
 export default defineConfig([
-  globalIgnores(['.next', '.next-*', 'dist', 'src/vendor/sdk/**', 'server/node_modules']),
+  globalIgnores(['.next', '.next-*', 'dist', 'src/vendor/sdk/**', 'server/node_modules', 'qa-bug-hunt/**', 'docs/**']),
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   // Deliberate patterns: drop a field with `{ ip, ...rest }`, and name an argument
   // that must exist but isn't read `_x`.
