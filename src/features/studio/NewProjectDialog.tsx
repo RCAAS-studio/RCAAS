@@ -69,6 +69,7 @@ export function NewProjectDialog({ onClose }: { onClose: () => void }) {
   const [logo, setLogo] = useState<File | null>(null);
   const [logoUrl, setLogoUrl] = useState('');
   const [info, setInfo] = useState<ProjectInfo>({});
+  const [brandInfoOpen, setBrandInfoOpen] = useState(false);
   const [createdId, setCreatedId] = useState('');
   const logoRef = useRef<HTMLInputElement>(null);
   useEffect(() => () => { if (logoUrl) URL.revokeObjectURL(logoUrl); }, [logoUrl]);
@@ -169,7 +170,7 @@ export function NewProjectDialog({ onClose }: { onClose: () => void }) {
         const name = spaceName.trim() || starter.firstSpace;
         const id = freeSceneId(`${p.id}-${slugify(name)}`);
         const high = { assetId: result.assetId, meta: result.meta, bytes: result.bytes };
-        await saveScene(id, blankSceneDoc(id, name, { high }, p.id, result.format ?? 'lcc2'));
+        await saveScene(id, blankSceneDoc(id, name, { high }, p.id, result.format ?? 'lcc2'), { createOnly: true });
         hydrateScenes(await getScenes());
       }
       if (missed.length) {
@@ -408,11 +409,20 @@ export function NewProjectDialog({ onClose }: { onClose: () => void }) {
               </div>
             )}
             {logoNote && <small className="np-note">{logoNote}</small>}
-            <details className="np-more">
-              <summary>Brand information <small>optional</small></summary>
-              <p className="np-note">Shown on the project’s website: how guests reach you, and a word about you.</p>
-              <BrandInfoFields value={info} onChange={setInfo} />
-            </details>
+            <div className="np-more">
+              <button
+                type="button" className="np-more-toggle"
+                aria-expanded={brandInfoOpen} aria-controls="np-brand-info"
+                onClick={() => setBrandInfoOpen((open) => !open)}
+              >
+                <span className="np-more-arrow" aria-hidden="true">▸</span>
+                <span>Brand information <small>optional</small></span>
+              </button>
+              <div id="np-brand-info" hidden={!brandInfoOpen}>
+                <p className="np-note">Shown on the project’s website: how guests reach you, and a word about you.</p>
+                <BrandInfoFields value={info} onChange={setInfo} />
+              </div>
+            </div>
 
             {createError && <p className="np-err">{createError}</p>}
 

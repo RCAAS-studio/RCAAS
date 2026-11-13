@@ -1,0 +1,19 @@
+<service>
+  <id>RcaasProxy</id>
+  <name>RCAAS HTTPS proxy</name>
+  <description>Caddy reverse proxy with automatic HTTPS certificate renewal.</description>
+  <executable>C:\RCAAS\bin\caddy.exe</executable>
+  <startarguments>run --config C:\RCAAS\config\Caddyfile --adapter caddyfile</startarguments>
+  <workingdirectory>C:\RCAAS</workingdirectory>
+  <env name="APPDATA" value="C:\RCAAS\caddy-state" />
+  <env name="LOCALAPPDATA" value="C:\RCAAS\caddy-state" />
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+  <onfailure action="restart" delay="10 sec" />
+  <stopexecutable>C:\RCAAS\bin\caddy.exe</stopexecutable>
+  <stoparguments>stop --address 127.0.0.1:2019</stoparguments>
+  <stoptimeout>30 sec</stoptimeout>
+  <serviceaccount><domain>NT AUTHORITY</domain><user>LocalService</user></serviceaccount>
+  <logpath>C:\RCAAS\logs\proxy</logpath>
+  <log mode="roll-by-size"><sizeThreshold>10240</sizeThreshold><keepFiles>8</keepFiles></log>
+</service>

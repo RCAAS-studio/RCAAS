@@ -5,14 +5,25 @@ import {
   getPublishedScene, revertToPublished, listPublished, setSceneProperty, listVersions, restoreVersion
 } from '../store.js';
 import { requireEditorSession } from '../middleware/auth.js';
-import { sceneGuard, optionalSession, visibleScenes } from '../access.js';
+import { sceneGuard, optionalSession, visibleScenes, mayWorkOnScene } from '../access.js';
+import { withWriteLock } from '../writeQueue.js';
+import { checkDraftRevision, draftRevision, sceneDraft } from '../draftRevision.js';
 import { record, recordScene } from '../activity.js';
 import * as storage from '../storage.js';
 
 export const scenesRouter = Router();
 export const galleryRouter = Router();
 
-const wrap = (fn) => (req, res, next) => fn(req, res).catch(next);
+const wrap = (fn) => (req, res, next) => withWriteLock('documents', async () => {
+  if (req.session && req.params.id && !['GET', 'HEAD'].includes(req.method)) {
+    const into = req.body && 'propertyId' in req.body ? req.body.propertyId : undefined;
+    if (!(await mayWorkOnScene(req.access ?? req.session, req.params.id, into))) return res.status(403).json({ error: 'You do not have access to this space.' });
+    const existing = await getScene(req.params.id);
+    if (existing && req.get('If-None-Match') === '*') return res.status(409).json({ error: 'This space already exists. Choose a different name.' });
+    checkDraftRevision(req.get('X-Expected-Revision'), existing ? sceneDraft(existing) : null);
+  }
+  return fn(req, res);
+}).catch(next);
 const notFound = (res, id) => res.status(404).json({ error: `Scene "${id}" not found.` });
 
 // Public: every published space, for the gallery page.
@@ -189,7 +200,7 @@ scenesRouter.get('/:id', requireEditorSession, sceneGuard, async (req, res, next
   try {
     const scene = await getScene(req.params.id);
     if (!scene) return res.status(404).json({ error: `Scene "${req.params.id}" not found.` });
-    res.json(scene);
+    res.set('X-Draft-Revision', draftRevision(sceneDraft(scene))).json(scene);
   } catch (err) {
     next(err);
   }
@@ -197,16 +208,12 @@ scenesRouter.get('/:id', requireEditorSession, sceneGuard, async (req, res, next
 
 // Editor save. Session-auth only for now — add embed-token write scoping if
 // the editor ever needs to save from an embedded context (it doesn't today).
-scenesRouter.put('/:id', requireEditorSession, sceneGuard, async (req, res, next) => {
-  try {
-    if (!req.body || typeof req.body !== 'object') {
+scenesRouter.put('/:id', requireEditorSession, sceneGuard, wrap(async (req, res) => {
+    if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
       return res.status(400).json({ error: 'Request body must be a scene JSON document.' });
     }
-    const existed = !!(await getScene(req.params.id).catch(() => null));
+    const existed = !!(await getScene(req.params.id));
     const saved = await saveScene(req.params.id, req.body, { creator: req.access?.sub ?? null });
     await record(req, saved.propertyId ?? null, existed ? 'saved changes' : 'added a space', saved.title || saved.id);
-    res.json(saved);
-  } catch (err) {
-    next(err);
-  }
-});
+    res.set('X-Draft-Revision', draftRevision(sceneDraft(await getScene(req.params.id)))).json(saved);
+}));

@@ -9,6 +9,7 @@ import { dropWaypoint, closeViewpoint, exportViewpoints } from './viewpoints';
 import { addHotspot } from './sceneDoc';
 import { findFloorBelow, findStandingSpot, clearOrbitDistance } from './collision';
 import { gizmo } from './transform';
+import { hotspotMove } from '../studio/hotspotMove';
 
 // Angular only — these do NOT scale with the scene, unlike everything in
 // walkerConfig.js (which is in world units and set from the scan's size).
@@ -121,6 +122,7 @@ export function useLccWalker({
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (isTypingTarget(e.target)) return; // typing a name must not walk the camera
+      if (hotspotMove.dragging) return;
       keys.current.add(e.code);
       if (e.code === 'Space') e.preventDefault();
 
@@ -152,6 +154,7 @@ export function useLccWalker({
 
     let dragX = 0, dragY = 0;
     const onMouseMove = (e: MouseEvent) => {
+      if (hotspotMove.dragging) return;
       if (locked.current) {
         look.current.yaw -= e.movementX * LOOK;
         look.current.pitch -= e.movementY * LOOK;
@@ -163,7 +166,7 @@ export function useLccWalker({
         clampPitch();
       }
     };
-    const onWheel = (e: WheelEvent) => { wheel.current += e.deltaY; };
+    const onWheel = (e: WheelEvent) => { if (!hotspotMove.dragging) wheel.current += e.deltaY; };
     // Right-drag looks around in Fly/Orbit; the browser menu would get in the way.
     const onContextMenu = (e: MouseEvent) => {
       if (!pointerLockRef.current) return; // the studio keeps its own behaviour
@@ -202,11 +205,13 @@ export function useLccWalker({
 
     const onTouchStart = (e: TouchEvent) => {
       lastTouchAt = performance.now();
+      if (hotspotMove.dragging) return;
       if (touchLook.current) return;
       const t = e.changedTouches[0];
       touchLook.current = { id: t.identifier, x: t.clientX, y: t.clientY };
     };
     const onTouchMove = (e: TouchEvent) => {
+      if (hotspotMove.dragging) return;
       const tl = touchLook.current;
       if (!tl) return;
       for (const t of Array.from(e.changedTouches)) {
@@ -391,6 +396,17 @@ export function useLccWalker({
 
   useFrame((_, raw) => {
     const dt = Math.min(raw, 0.05);
+    // Freeze camera motion (including gravity/inertia) while an axis owns the pointer.
+    if (hotspotMove.dragging) {
+      keys.current.clear();
+      wheel.current = 0;
+      vel.current.set(0, 0, 0);
+      dragging.current = false;
+      touchLook.current = null;
+      camera.updateMatrixWorld();
+      LCCRender.update();
+      return;
+    }
 
     // Keep the camera clip range in step with the editor sliders / scene scale.
     if (camera.near !== walkerCfg.near || camera.far !== walkerCfg.far) {

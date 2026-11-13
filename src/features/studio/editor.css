@@ -950,6 +950,8 @@
   transition: border-color 0.12s, background 0.12s;
 }
 .pl-card:hover { border-color: var(--ed-line-lit); background: var(--ed-raise); }
+/* Card hover transforms create stacking contexts; lift the open menu's whole card above its neighbours. */
+.pl-card:has(.pl-menu-btn[aria-expanded="true"]) { z-index: 3; }
 .pl-card-tile {
   flex: 0 0 auto; width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center;
   font: 650 18px var(--sans); color: var(--ed-signal-ink); background: var(--ed-signal);
@@ -1266,9 +1268,17 @@ a.ed2-switch-item:hover { background: var(--ed-raise); }
   color: var(--ed-text); background: var(--ed-panel); border: 1px solid var(--ed-line); resize: vertical;
 }
 .np-more { border-top: 1px solid var(--ed-line); padding-top: 10px; }
-.np-more summary { cursor: pointer; font: 650 13.5px var(--sans); }
-.np-more summary small { font-weight: 500; color: var(--ed-text-dim); margin-left: 4px; }
-.np-more[open] summary { margin-bottom: 8px; }
+.np-more-toggle {
+  display: flex; align-items: center; gap: 6px; width: 100%; padding: 4px 0;
+  border: 0; background: transparent; color: inherit; text-align: left;
+  cursor: pointer; font: 650 13.5px var(--sans);
+}
+/* Keep the arrow's hit area steady when the global press effect runs. */
+.np-more-toggle:active { scale: none; }
+.np-more-toggle small { font-weight: 500; color: var(--ed-text-dim); margin-left: 4px; }
+.np-more-toggle[aria-expanded='true'] { margin-bottom: 8px; }
+.np-more-arrow { display: inline-block; flex: none; pointer-events: none; }
+.np-more-toggle[aria-expanded='true'] .np-more-arrow { transform: rotate(90deg); }
 .brand-info { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
 @media (max-width: 860px) { .np-body { grid-template-columns: 1fr; } }
 .pl-card-unclaimed .pl-card-txt { flex: 1; min-width: 0; }

@@ -37,6 +37,8 @@ interface HotspotMarkersProps {
   sceneId: string;
   mode?: 'view' | 'edit';
   selId?: string;
+  moveId?: string;
+  moveDragging?: boolean;
   onSelect?: (id: string) => void;
   onOpen?: (id: string) => void;
 }
@@ -48,7 +50,7 @@ interface HotspotMarkersProps {
  * it only reads the per-frame screen projection (hotspotProjector.ts).
  * Shared by the tour (tap = open) and the studio (tap = select).
  */
-export function HotspotMarkers({ sceneId, mode = 'view', selId, onSelect, onOpen }: HotspotMarkersProps) {
+export function HotspotMarkers({ sceneId, mode = 'view', selId, moveId, moveDragging = false, onSelect, onOpen }: HotspotMarkersProps) {
   const [marks, setMarks] = useState<ProjectedHotspot[]>([]);
   const [hover, setHover] = useState<string | null>(null);
   const [, bump] = useReducer((n) => n + 1, 0);
@@ -83,9 +85,9 @@ export function HotspotMarkers({ sceneId, mode = 'view', selId, onSelect, onOpen
 
   // Visitors never see a portal to a space that's gone or unpublished: it would do nothing (2026-11-03).
   const live = mode === 'view' ? marks.filter((m) => { const x = byId.get(m.id); return x?.type !== 'portal' || reachable(x.payload?.sceneId); }) : marks;
-  const shown = live.map((m) => {
+  const shown = live.filter((m) => mode !== 'edit' || m.id !== moveId).map((m) => {
     const hs = byId.get(m.id);
-    const showCard = showsCard(hs?.payload?.reveal, m.dist, carded.has(m.id)) || hover === m.id || (mode === 'edit' && m.id === selId);
+    const showCard = !(mode === 'edit' && moveId) && (showsCard(hs?.payload?.reveal, m.dist, carded.has(m.id)) || hover === m.id || (mode === 'edit' && m.id === selId));
     return { m, hs, box: showCard ? cardBox(m.x, m.y, w, h) : null };
   });
 
@@ -106,7 +108,7 @@ export function HotspotMarkers({ sceneId, mode = 'view', selId, onSelect, onOpen
           <Fragment key={m.id}>
             <button
               className={`hs-ring ${sel ? 'hs-sel' : ''}`}
-              style={{ transform: `translate(${m.x.toFixed(1)}px, ${m.y.toFixed(1)}px) translate(-50%, -50%)` }}
+              style={{ transform: `translate(${m.x.toFixed(1)}px, ${m.y.toFixed(1)}px) translate(-50%, -50%)`, pointerEvents: moveDragging ? 'none' : undefined }}
               onClick={() => activate(m.id)}
               onMouseEnter={() => setHover(m.id)}
               onMouseLeave={() => setHover((v) => (v === m.id ? null : v))}

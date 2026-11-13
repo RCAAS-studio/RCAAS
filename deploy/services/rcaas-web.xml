@@ -1,0 +1,15 @@
+<service>
+  <id>RcaasWeb</id>
+  <name>RCAAS website</name>
+  <description>Next.js site and studio, bound to loopback behind Caddy.</description>
+  <executable>C:\Program Files\nodejs\node.exe</executable>
+  <arguments>--env-file=C:\RCAAS\config\web.env node_modules\next\dist\bin\next start --hostname 127.0.0.1 --port 3000</arguments>
+  <workingdirectory>C:\RCAAS\current</workingdirectory>
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+  <onfailure action="restart" delay="10 sec" />
+  <stoptimeout>120 sec</stoptimeout>
+  <serviceaccount><domain>NT AUTHORITY</domain><user>LocalService</user></serviceaccount>
+  <logpath>C:\RCAAS\logs\web</logpath>
+  <log mode="roll-by-size"><sizeThreshold>10240</sizeThreshold><keepFiles>8</keepFiles></log>
+</service>

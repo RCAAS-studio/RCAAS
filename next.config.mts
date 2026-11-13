@@ -32,8 +32,8 @@ const nextConfig: NextConfig = {
     unoptimized: staticExport
   },
 
-  // deploy/deploy.sh builds into .next-new while the live site keeps serving
-  // .next, then swaps them, so a deploy never serves a half-written build.
+  // Optional separate local build directory. Production builds each release
+  // in its own checkout before switching the current junction (deploy/README.md).
   distDir: process.env.NEXT_DIST_DIR || '.next',
 
   // Every page: the browser takes declared types as given, sends no full

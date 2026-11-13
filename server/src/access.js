@@ -33,7 +33,8 @@ async function spaceAllows(session, propertyId, ownerId) {
 /** Can this session work on this space? A space that doesn't exist yet is
  *  judged by the project it would be saved into, if any (in none, it's theirs). */
 export async function mayWorkOnScene(session, sceneId, intoPropertyId) {
-  const scene = await getScene(sceneId).catch(() => null);
+  if (!session) return false;
+  const scene = await getScene(sceneId);
   if (scene && !(await spaceAllows(session, scene.propertyId, scene.ownerId ?? null))) return false;
   if (intoPropertyId !== undefined && !(await spaceAllows(session, intoPropertyId, session?.sub))) return false;
   return true;
@@ -44,7 +45,7 @@ export async function mayWorkOnScene(session, sceneId, intoPropertyId) {
  *  index asset -> space when there are hundreds. */
 export async function mayWorkOnAsset(session, assetId) {
   for (const { id } of await listScenes()) {
-    const doc = await getScene(id).catch(() => null);
+    const doc = await getScene(id);
     if (doc && JSON.stringify(doc).includes(assetId) && !(await spaceAllows(session, doc.propertyId, doc.ownerId ?? null))) return false;
   }
   return true;

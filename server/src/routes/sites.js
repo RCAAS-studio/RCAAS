@@ -42,24 +42,41 @@ import { record } from '../activity.js';
 import { removeReservations } from '../reservations.js';
 import { EVENT_KINDS } from '../events.js';
 import { rateLimiter } from '../rateLimit.js';
+import { withWriteLock } from '../writeQueue.js';
+import { checkDraftRevision, draftRevision } from '../draftRevision.js';
 
 export const sitesRouter = Router();
-const wrap = (fn) => (req, res, next) => fn(req, res).catch(next);
+const wrap = (fn) => (req, res, next) => withWriteLock(`site:${req.params.id}`, async () => {
+  if (req.session && req.params.id && req.get('X-Expected-Revision') !== undefined) {
+    checkDraftRevision(req.get('X-Expected-Revision'), cleanSite((await readSite(req.params.id))?.draft, req.params.id));
+  }
+  return fn(req, res);
+}).catch(next);
 
 const SITES_DIR = path.join(DATA_DIR, 'sites');
-const fileOf = (pid) => path.join(SITES_DIR, `${pid}.json`);
+const fileOf = (pid) => {
+  if (typeof pid !== 'string' || !/^[a-z0-9-]+$/.test(pid)) throw Object.assign(new Error('Invalid project id.'), { status: 400 });
+  return path.join(SITES_DIR, `${pid}.json`);
+};
 export async function readSite(pid) {
-  try { return JSON.parse(await fs.readFile(fileOf(pid), 'utf8')); } catch { return null; }
+  try {
+    const data = JSON.parse(await fs.readFile(fileOf(pid), 'utf8'));
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid website file.');
+    return data;
+  } catch (err) {
+    if (err.code === 'ENOENT') return null;
+    throw err;
+  }
 }
 async function write(pid, data) {
   await fs.mkdir(SITES_DIR, { recursive: true });
   await writeFileWhole(fileOf(pid), JSON.stringify(data, null, 2));
 }
-export const removeSite = async (pid) => {
+export const removeSite = async (pid) => withWriteLock(`site:${pid}`, async () => {
   await fs.rm(fileOf(pid), { force: true });
   await removeReservations(pid);
   await storage.remove(`site_${pid}`);
-};
+});
 
 /** A scan's floor plan files (assets.js, floorplan.js), best first: the studio's upload, then the drawn ones. */
 const PLAN_FILES = ['uploaded.png', 'uploaded.jpg', 'uploaded.webp', 'plan.svg', 'plan-print.svg'];
@@ -351,7 +368,8 @@ sitesRouter.get('/:id/draft', requireEditorSession, wrap(async (req, res) => {
     });
   }
   // cleanSite fills in anything added to the site since this draft was saved
-  res.json({ draft: cleanSite(saved?.draft, p.id), publishedAt: saved?.publishedAt ?? null, scheduledAt: saved?.scheduled?.at ?? null, spaces });
+  const draft = cleanSite(saved?.draft, p.id);
+  res.set('X-Draft-Revision', draftRevision(draft)).json({ draft, publishedAt: saved?.publishedAt ?? null, scheduledAt: saved?.scheduled?.at ?? null, spaces });
 }));
 
 // Save the website draft (cleaned and capped by cleanSite).
@@ -362,7 +380,7 @@ sitesRouter.put('/:id/draft', requireEditorSession, wrap(async (req, res) => {
   const draft = cleanSite(req.body, p.id);
   await write(p.id, { ...saved, draft });
   await record(req, p.id, 'saved the website', p.title);
-  res.json({ draft, publishedAt: saved.publishedAt ?? null });
+  res.set('X-Draft-Revision', draftRevision(draft)).json({ draft, publishedAt: saved.publishedAt ?? null });
 }));
 
 // Publish the saved draft as the live website.
@@ -374,7 +392,7 @@ sitesRouter.post('/:id/publish', requireEditorSession, wrap(async (req, res) => 
   const publishedAt = new Date().toISOString();
   await write(p.id, { ...saved, published: saved.draft, publishedAt });
   await record(req, p.id, 'published the website', p.title);
-  res.json({ publishedAt });
+  res.set('X-Draft-Revision', draftRevision(cleanSite(saved.draft, p.id))).json({ publishedAt });
 }));
 
 /**
@@ -418,13 +436,15 @@ export async function publishDue(now = Date.now()) {
   let done = 0;
   for (const f of files.filter((x) => x.endsWith('.json'))) {
     const pid = f.slice(0, -5);
+    await withWriteLock(`site:${pid}`, async () => {
     const saved = await readSite(pid);
-    if (!saved?.scheduled || Date.parse(saved.scheduled.at) > now) continue;
+    if (!saved?.scheduled || Date.parse(saved.scheduled.at) > now) return;
     const { scheduled, ...rest } = saved;
     await write(pid, { ...rest, published: scheduled.site, publishedAt: new Date(now).toISOString() });
     const by = scheduled.by?.id ? { session: { sub: scheduled.by.id, name: scheduled.by.name } } : { session: null };
     await record(by, pid, 'published the website on schedule', (await getProperty(pid))?.title ?? pid, `set for ${scheduled.at}`);
     done += 1;
+    });
   }
   return done;
 }
@@ -438,7 +458,7 @@ const emptyReview = () => ({ key: null, comments: [], approval: null });
 export async function reviewed(pid, key) {
   const saved = await readSite(pid);
   const real = saved?.review?.key;
-  if (!real || typeof key !== 'string' || key.length !== real.length) return null;
+  if (!real || typeof key !== 'string' || Buffer.byteLength(key) !== Buffer.byteLength(real)) return null;
   return timingSafeEqual(Buffer.from(key), Buffer.from(real)) ? saved : null;
 }
 

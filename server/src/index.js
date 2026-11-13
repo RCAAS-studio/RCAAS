@@ -55,7 +55,14 @@ app.use((req, res, next) => {
   res.set({ 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'DENY' });
   next();
 });
-app.use(cors({ origin: (origin, done) => done(null, allowed(origin)), credentials: true }));
+app.use(cors({ origin: (origin, done) => done(null, allowed(origin)), credentials: true, exposedHeaders: ['X-Draft-Revision'] }));
+// CORS alone only prevents reading a response; refuse cross-origin cookie writes too.
+app.use((req, res, next) => {
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method) && req.headers.origin && !allowed(req.headers.origin)) {
+    return res.status(403).json({ error: 'This request origin is not allowed.' });
+  }
+  next();
+});
 app.use(cookieParser());
 app.use(express.json({ limit: '2mb' })); // scene JSON docs are small; thumbs are data URLs, so give this some room
 
@@ -108,7 +115,7 @@ async function sameApiOn(port) {
 }
 
 function listen(port, tries = 0) {
-  const server = app.listen(port, () => {
+  const server = app.listen(port, process.env.HOST || (DEV ? undefined : '127.0.0.1'), () => {
     console.log(`[server] splatspace API listening on http://localhost:${port}`);
     if (port !== PORT) {
       console.warn(`[server] (not ${PORT}: it was taken). Point the site here: NEXT_PUBLIC_API_URL=http://localhost:${port}\n` +
@@ -116,6 +123,7 @@ function listen(port, tries = 0) {
     }
   });
   server.on('error', async (err) => {
+    if (!DEV) { console.error(`[server] ${err.code}: unable to listen on the configured port ${port}`); process.exit(1); }
     if (err.code !== 'EADDRINUSE' || tries >= 10) throw err;
     const stale = DEV && tries === 0 ? await sameApiOn(port) : null;
     if (stale) {

@@ -12,7 +12,7 @@
  */
 import { Router } from 'express';
 import { timingSafeEqual } from 'crypto';
-import { issueSession, clearSession, readSession, staleReason } from '../middleware/auth.js';
+import { issueSession, issueLegacySession, clearSession, readSession, staleReason } from '../middleware/auth.js';
 import { createUser, verifyUser, getUserById, getUserByEmail, resetPassword, setPassword, createResetToken } from '../usersStore.js';
 import { sendMail } from '../mailer.js';
 import { rateLimiter } from '../rateLimit.js';
@@ -76,7 +76,7 @@ authRouter.post('/login', async (req, res, next) => {
         return res.status(500).json({ error: 'EDITOR_PASSWORD is not set on the server.' });
       }
       if (!teamCodeMatches(password)) return res.status(401).json({ error: 'Wrong password.' });
-      issueSession(res);
+      issueLegacySession(res);
       return res.json({ authenticated: true, user: null });
     }
 
@@ -131,6 +131,7 @@ authRouter.post('/password', async (req, res, next) => {
       return res.status(400).json({ error: 'Your current password isn’t right.' });
     }
     const user = await setPassword(me.id, password);
+    if (!user) { clearSession(res); return res.status(401).json({ error: 'Your account no longer exists.' }); }
     issueSession(res, user);
     res.json({ authenticated: true, user });
   } catch (err) {
@@ -170,7 +171,8 @@ authRouter.post('/forgot', async (req, res, next) => {
 });
 
 // Who is signed in, with their current role (read from the account, not the cookie).
-authRouter.get('/session', async (req, res) => {
+authRouter.get('/session', async (req, res, next) => {
+  try {
   let s = readSession(req);
   // removed, or signed in before a password reset: signed out
   if (s && (await staleReason(s))) { clearSession(res); s = null; }
@@ -181,4 +183,5 @@ authRouter.get('/session', async (req, res) => {
     authenticated: !!s,
     user: s?.sub ? { id: s.sub, name: s.name, email: s.email, role } : null
   });
+  } catch (err) { next(err); }
 });

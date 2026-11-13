@@ -29,7 +29,8 @@ export async function getUserByEmail(email) {
 /** Locks every admin row first, so two demotions at once can't both pass
  *  the last-admin check. */
 async function adminsLocked(c) {
-  return (await c.query(`select id from app.users where role = 'admin' for update`)).rows.length;
+  await c.query('select pg_advisory_xact_lock(785355, 2)');
+  return (await c.query(`select id from app.users where role = 'admin' order by id for update`)).rows.length;
 }
 
 export async function setUserRole(id, role) {
@@ -47,18 +48,21 @@ export async function setUserRole(id, role) {
   });
 }
 
-/** Null if the email is taken. The first account ever becomes admin.
- *  ponytail: two first sign-ups at the same instant both become admin;
- *  harmless (an admin can demote one). */
+/** Null if the email is taken. Serialize the initial account check so only
+ * one simultaneous first sign-up receives administrator access. */
 export async function createUser({ name, email, password, role }) {
-  const r = await pool.query(
+  const passwordHash = await hashPassword(password);
+  return tx(async (c) => {
+    await c.query('select pg_advisory_xact_lock(785355, 2)');
+    const r = await c.query(
     `insert into app.users (id, name, email, password_hash, role)
      select $1, $2, $3, $4, case when exists (select 1 from app.users) then $5 else 'admin' end
      on conflict (email) do nothing
      returning ${COLS}`,
-    [randomUUID(), String(name).trim(), normEmail(email), await hashPassword(password), role === 'staff' ? 'staff' : 'editor']
-  );
-  return one(r);
+      [randomUUID(), String(name).trim(), normEmail(email), passwordHash, role === 'staff' ? 'staff' : 'editor']
+    );
+    return one(r);
+  });
 }
 
 export async function createStaffAccount({ name, email }) {

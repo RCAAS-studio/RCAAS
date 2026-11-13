@@ -1,0 +1,2 @@
+# Keep deployment scripts portable across editors and checkouts.
+deploy/** text eol=lf

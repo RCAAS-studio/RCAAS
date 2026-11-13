@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { useSceneManager } from './useSceneManager';
 import { Gizmo, useSceneTransform } from '../studio/Gizmo';
 import { ColliderBoxes } from '../studio/ColliderBoxes';
+import { HotspotGizmo } from '../studio/HotspotGizmo';
 import { transformFor, setTransform, IDENTITY } from './transform';
 import { walkerCfg } from './walkerConfig';
 import { clearOrbitDistance, findFloorBelow, findStandingSpot, scanOf, surfaceDistance } from './collision';
@@ -473,6 +474,7 @@ function Stage({ onState, viewerMode }: StageProps) {
       <HotspotProjector sceneId={mgr.activeId} />
       {!viewerMode && <Gizmo sceneId={mgr.activeId} />}
       {!viewerMode && <ColliderBoxes sceneId={mgr.activeId} renderer={mgr.renderer} />}
+      {!viewerMode && mgr.ready && !mgr.loading && !flying && <HotspotGizmo sceneId={mgr.activeId} />}
     </>
   );
 }

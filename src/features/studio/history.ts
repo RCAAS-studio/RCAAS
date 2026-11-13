@@ -19,6 +19,7 @@ interface Snap { hotspots: Hotspot[]; colliders: Collider[]; tracks: Track[]; tr
 const MAX = 100;
 const past: Record<string, string[]> = {};
 const future: Record<string, string[]> = {};
+const groups = new Set<string>();
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((f) => f());
 export const subscribeHistory = (fn: () => void) => { listeners.add(fn); return () => { listeners.delete(fn); }; };
@@ -30,7 +31,7 @@ const snapOf = (sceneId: string) => JSON.stringify({
 
 /** Note the space as it is now, if it changed. The first note, once its draft is read, is where undo stops. */
 export function record(sceneId: string) {
-  if (!docLoaded(sceneId)) return;
+  if (groups.has(sceneId) || !docLoaded(sceneId)) return;
   const s = snapOf(sceneId);
   const stack = (past[sceneId] ??= []);
   if (stack[stack.length - 1] === s) return;
@@ -38,6 +39,19 @@ export function record(sceneId: string) {
   if (stack.length > MAX) stack.shift();
   future[sceneId] = [];
   emit();
+}
+
+/** Keep a continuous pointer gesture in one undo step, including pauses mid-drag. */
+export function beginHistoryGroup(sceneId: string): () => void {
+  record(sceneId);
+  groups.add(sceneId);
+  let ended = false;
+  return () => {
+    if (ended) return;
+    ended = true;
+    groups.delete(sceneId);
+    record(sceneId);
+  };
 }
 
 function apply(sceneId: string, json: string) {
@@ -54,6 +68,7 @@ export const canUndo = (sceneId: string) => (past[sceneId]?.length ?? 0) > 1;
 export const canRedo = (sceneId: string) => (future[sceneId]?.length ?? 0) > 0;
 
 export function undo(sceneId: string) {
+  if (groups.has(sceneId)) return;
   record(sceneId); // a change still settling counts as a step
   if (!canUndo(sceneId)) return;
   (future[sceneId] ??= []).push(past[sceneId].pop()!);
@@ -62,6 +77,7 @@ export function undo(sceneId: string) {
 }
 
 export function redo(sceneId: string) {
+  if (groups.has(sceneId)) return;
   if (!canRedo(sceneId)) return;
   const s = future[sceneId].pop()!;
   past[sceneId].push(s);

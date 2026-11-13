@@ -32,6 +32,7 @@ import { forgetPlan } from '../tour/floorMapData';
 import type { PublishState, EmbedSettings, SceneVersion } from '../../lib/api';
 import { HotspotMarkers } from '../hotspots/HotspotMarkers';
 import { ShortcutSheet } from './ShortcutSheet';
+import { enableHotspotMove, hotspotMove, selectHotspotMove, subscribeHotspotMove } from './hotspotMove';
 import { QrCode } from './QrCode';
 
 /** Where a link will be shared: each gets its own ?src=, so the monthly report
@@ -66,12 +67,13 @@ export function EditorShell({ state, property, onPreview }: {
   const [sel, setSel] = useState<Selection | null>(null);
   const [pose, setPose] = useState<Pose | null>(null);
   const [uploaderOpen, setUploaderOpen] = useState(false);
-  const [, bump] = useReducer((n) => n + 1, 0);
+  const [editTick, bump] = useReducer((n) => n + 1, 0);
   useUiConfig();
 
   useEffect(() => subscribeViewpoints(bump), []);
   useEffect(() => subscribeDoc(bump), []);
   useEffect(() => subscribeHistory(bump), []);
+  useEffect(() => subscribeHotspotMove(bump), []);
   const activeId = state?.activeId;
   useEffect(() => (activeId ? watchHistory(activeId) : undefined), [activeId]);
   const [copying, setCopying] = useState(false);
@@ -104,15 +106,18 @@ export function EditorShell({ state, property, onPreview }: {
     const inHs = hotspotsFor(state.activeId).some((h) => h.id === sel.id)
       || collidersFor(state.activeId).some((c) => c.id === sel.id);
     if (!inTracks && !inHs) setSel(null);
-  }, [state, sel]);
+  }, [state, sel, editTick]);
 
-  // The view's move arrows follow the selected collision box; the model's
+  // The view's move arrows follow the selected hotspot or collision box; the model's
   // own gizmo steps aside so the two sets of handles never overlap.
   useEffect(() => {
     const id = sel?.type === 'collider' ? sel.id : null;
     selectCollider(id);
-    if (id && gizmo.mode !== 'off') setGizmoMode('off');
-  }, [sel]);
+    const hotspotId = sel?.type === 'hotspot' && !measuring && !planTool ? sel.id : null;
+    if ((id || hotspotId) && gizmo.mode !== 'off') setGizmoMode('off');
+    selectHotspotMove(activeId ?? '', hotspotId);
+    return () => { selectCollider(null); selectHotspotMove('', null); };
+  }, [sel, activeId, measuring, planTool]);
 
   // A box clicked in the 3D view opens it, as picking it from the tree does;
   // a hotspot added with H opens like one added from the tree.
@@ -236,6 +241,8 @@ export function EditorShell({ state, property, onPreview }: {
 
       <HotspotMarkers
         sceneId={state.activeId} mode="edit" selId={selHotspot?.id}
+        moveId={state.ready && !state.loading && !state.flying && hotspotMove.sceneId === state.activeId && hotspotMove.enabled ? hotspotMove.id ?? undefined : undefined}
+        moveDragging={hotspotMove.dragging}
         onSelect={(id) => setSel({ type: 'hotspot', id })}
       />
 
@@ -1179,6 +1186,7 @@ interface HotspotInspectorProps {
 }
 
 function HotspotInspector({ ed, hs, activeId, onDelete, onAddTable }: HotspotInspectorProps) {
+  const [moveStep, setMoveStep] = useState<number>(0.1);
   const p = hs.payload || {};
   const set = (patch: Partial<Hotspot>) => ed.updateHotspot(hs.id, patch);
   const setPayload = (patch: Hotspot['payload']) => set({ payload: { ...p, ...patch } });
@@ -1196,7 +1204,25 @@ function HotspotInspector({ ed, hs, activeId, onDelete, onAddTable }: HotspotIns
       </Section>
 
       <Section title="Placement">
-        <p className="ed2-pose">[{hs.position.map((n) => n.toFixed(2)).join(', ')}]</p>
+        <div className="ed2-row">
+          <button type="button" aria-pressed={hotspotMove.enabled}
+            onClick={() => enableHotspotMove(!hotspotMove.enabled)}>
+            {hotspotMove.enabled ? 'Hide move arrows' : 'Show move arrows'}
+          </button>
+        </div>
+        <p className="ed2-muted ed2-fine">Drag X (red) or Z (blue) to move horizontally, Y (green) for height. Axes stay aligned with the space as you look around. Hold Ctrl to snap to 0.1 m; Esc cancels a drag.</p>
+        <div className="ed2-xform-head">
+          <span>Position</span>
+          <StepSize value={moveStep} options={MOVE_STEPS} unit="m" onChange={setMoveStep} />
+        </div>
+        {(['X', 'Y', 'Z'] as const).map((axis, i) => (
+          <Stepper key={`${hs.id}-${axis}`} axis={axis} value={hs.position[i]} step={moveStep} digits={3} unit="m"
+            onChange={(value) => {
+              const position = [...hs.position] as [number, number, number];
+              position[i] = value;
+              set({ position });
+            }} />
+        ))}
         <div className="ed2-row">
           <button onClick={() => ed.placeHotspotAtCamera(hs.id)} title="Moves it onto what the dot in the middle of the view rests on">Set to current view</button>
           <button onClick={() => ed.lookAtHotspot(hs.id)}>Look at</button>

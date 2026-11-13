@@ -40,6 +40,12 @@ const KEYS: [group: string, rows: [keys: string, what: string][]][] = [
     ['G / R / T', 'Move / turn / scale arrows'],
     ['Esc', 'Put the arrows away'],
   ]],
+  ['Hotspot placement (selected hotspot)', [
+    ['G', 'Show world X / Y / Z move arrows'],
+    ['Drag an arrow', 'Move along that axis'],
+    ['Ctrl + drag', 'Snap to 0.1 m'],
+    ['Esc while dragging', 'Cancel the move'],
+  ]],
   ['Editing', [
     ['Ctrl Z', 'Undo'],
     ['Ctrl Y / Ctrl Shift Z', 'Redo'],

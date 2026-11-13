@@ -16,15 +16,24 @@ function secret() {
   return s;
 }
 
-/** `user` is null for the legacy shared-password sign-in, which has no
- *  account to scope — it keeps the full access it always had, so `role`
- *  here is 'admin'. `role` is a snapshot for the client to read; anything
+/** `role` is a snapshot for the client to read; anything
  *  that gates an admin-only action re-checks the real, current role via
  *  `requireAdmin` below, so a promotion or demotion takes effect at once
  *  instead of waiting out the session's 12h. */
-export function issueSession(res, user = null) {
+export function issueSession(res, user) {
+  if (!user || typeof user.id !== 'string' || !user.id) {
+    throw new Error('Cannot issue an account session without an account.');
+  }
   // iatMs: when, to the millisecond — a password reset voids sessions issued before it
-  const claims = user ? { role: user.role, sub: user.id, name: user.name, email: user.email, iatMs: Date.now() } : { role: 'admin' };
+  signSession(res, { role: user.role, sub: user.id, name: user.name, email: user.email, iatMs: Date.now() });
+}
+
+/** Only the explicit shared-password login can create an unscoped session. */
+export function issueLegacySession(res) {
+  signSession(res, { role: 'admin' });
+}
+
+function signSession(res, claims) {
   const token = jwt.sign(claims, secret(), { expiresIn: SESSION_TTL });
   res.cookie(SESSION_COOKIE, token, {
     httpOnly: true,
@@ -42,7 +51,7 @@ export function readSession(req) {
   const token = req.cookies?.[SESSION_COOKIE];
   if (!token) return null;
   try {
-    return jwt.verify(token, secret());
+    return jwt.verify(token, secret(), { algorithms: ['HS256'] });
   } catch {
     return null;
   }
@@ -75,6 +84,7 @@ export function requireEditorSession(req, res, next) {
  *  in role never waits out an old cookie. The legacy passwordless session
  *  (no `sub`) has always had full access and stays admin. */
 export async function requireAdmin(req, res, next) {
+  try {
   const session = readSession(req);
   if (!session) return res.status(401).json({ error: 'Sign in to the editor first.' });
   const why = await staleReason(session);
@@ -86,4 +96,5 @@ export async function requireAdmin(req, res, next) {
   }
   req.session = session;
   next();
+  } catch (err) { next(err); }
 }

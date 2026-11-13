@@ -23,7 +23,14 @@ export const LIVE = ['requested', 'confirmed']; // statuses that hold a table
 export const STATUSES = ['requested', 'confirmed', 'declined', 'cancelled'];
 
 export async function listReservations(pid) {
-  try { return JSON.parse(await fs.readFile(fileOf(pid), 'utf8')); } catch { return []; }
+  try {
+    const list = JSON.parse(await fs.readFile(fileOf(pid), 'utf8'));
+    if (!Array.isArray(list)) throw new Error('Invalid reservations file: expected an array.');
+    return list;
+  } catch (err) {
+    if (err.code === 'ENOENT') return [];
+    throw err;
+  }
 }
 
 const queues = new Map();

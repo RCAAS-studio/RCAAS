@@ -26,6 +26,7 @@ import { recordAsset } from '../activity.js';
 import * as storage from '../storage.js';
 import { buildFloorPlan, renameRooms, saveMarks } from '../floorplan.js';
 import { DATA_DIR } from '../dataDir.js';
+import { withWriteLock } from '../writeQueue.js';
 
 export const assetsRouter = Router();
 
@@ -38,7 +39,37 @@ assetsRouter.param('assetId', (req, res, next, id) => {
 });
 
 const STAGING_DIR = path.join(DATA_DIR, 'uploads-staging');
+// Keep authorization separate from uploaded files: a ZIP cannot replace it.
+const OWNERS_DIR = path.join(DATA_DIR, 'upload-owners');
 const CHUNK_MAX = '16mb'; // client sends 8 MB chunks (§7.1); headroom for slop
+
+const ownerFile = (assetId) => path.join(OWNERS_DIR, `${assetId}.json`);
+const withUpload = (fn) => (req, res, next) => withWriteLock(`upload:${req.params.assetId}`, async () => {
+  if (await refuseStaff(req, res)) return;
+  let owner;
+  try {
+    owner = JSON.parse(await fs.readFile(ownerFile(req.params.assetId), 'utf8'));
+    const staging = await fs.stat(path.join(STAGING_DIR, req.params.assetId));
+    if (!staging.isDirectory()) throw new Error('Invalid upload staging directory.');
+  } catch (err) {
+    if (err.code === 'ENOENT') return res.status(404).json({ error: 'This upload is no longer available. Start the upload again.' });
+    throw err;
+  }
+  if (!owner || !Object.hasOwn(owner, 'ownerId') || owner.ownerId !== (req.session.sub ?? null)) {
+    return res.status(403).json({ error: 'Only the account that started this upload can change it.' });
+  }
+  try {
+    return await fn(req, res, next);
+  } finally {
+    // Finalization (including a rejected upload) removes staging. Retire its
+    // ownership record as well, so completed IDs cannot be staged again.
+    try { await fs.stat(path.join(STAGING_DIR, req.params.assetId)); }
+    catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+      await fs.rm(ownerFile(req.params.assetId), { force: true });
+    }
+  }
+}).catch(next);
 
 function newAssetId() {
   return `ast_${randomUUID().replace(/-/g, '').slice(0, 12)}`;
@@ -48,7 +79,7 @@ function newAssetId() {
 function safeRelPath(relPath) {
   if (typeof relPath !== 'string' || !relPath) return null;
   const normalized = relPath.replace(/\\/g, '/');
-  if (normalized.startsWith('/') || normalized.split('/').includes('..')) return null;
+  if (normalized.startsWith('/') || normalized.split('/').includes('..') || /[:\0]/.test(normalized)) return null;
   return normalized;
 }
 
@@ -76,6 +107,8 @@ assetsRouter.post('/', requireEditorSession, async (req, res, next) => {
     if (await refuseStaff(req, res)) return;
     const assetId = newAssetId();
     await fs.mkdir(path.join(STAGING_DIR, assetId), { recursive: true });
+    await fs.mkdir(OWNERS_DIR, { recursive: true });
+    await fs.writeFile(ownerFile(assetId), JSON.stringify({ ownerId: req.session.sub ?? null }), { flag: 'wx' });
     res.json({ assetId });
   } catch (err) {
     next(err);
@@ -87,7 +120,7 @@ assetsRouter.post('/', requireEditorSession, async (req, res, next) => {
 /* -------------------------------------------------------------------- */
 
 // One file of an upload, at its path inside the asset (chunked and resumable).
-assetsRouter.post('/:assetId/files', requireEditorSession, async (req, res, next) => {
+assetsRouter.post('/:assetId/files', requireEditorSession, withUpload(async (req, res, next) => {
   try {
     const relPath = safeRelPath(req.body?.relPath);
     if (!relPath) return res.status(400).json({ error: 'relPath is required and must be a relative path.' });
@@ -96,7 +129,7 @@ assetsRouter.post('/:assetId/files', requireEditorSession, async (req, res, next
   } catch (err) {
     next(err);
   }
-});
+}));
 
 /* -------------------------------------------------------------------- */
 /* Chunk — raw bytes, appended at a caller-declared offset                */
@@ -106,7 +139,7 @@ assetsRouter.put(
   '/:assetId/files/chunk',
   requireEditorSession,
   express.raw({ type: () => true, limit: CHUNK_MAX }),
-  async (req, res, next) => {
+  withUpload(async (req, res, next) => {
     try {
       const relPath = safeRelPath(req.query.relPath);
       const offset = Number(req.query.offset);
@@ -140,7 +173,7 @@ assetsRouter.put(
     } catch (err) {
       next(err);
     }
-  }
+  })
 );
 
 /* -------------------------------------------------------------------- */
@@ -359,7 +392,7 @@ async function finalizeGlb(assetId, relPath, res) {
 
 
 // Finish an upload: check every file arrived, then move it into storage (?kind= for audio and models).
-assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, async (req, res, next) => {
+assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, withUpload(async (req, res, next) => {
   const { assetId } = req.params;
   try {
     if (req.query.kind === 'audio') return await finalizeAudio(assetId, res);
@@ -472,7 +505,7 @@ assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, async 
   } catch (err) {
     next(err);
   }
-});
+}));
 
 /* -------------------------------------------------------------------- */
 /* Read — public, range-capable (the SDK streams tiles with 206s)        */

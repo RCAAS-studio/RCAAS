@@ -1,3 +1,4 @@
+import { serialized } from './writeQueue.js';
 /**
  * Studio accounts. One JSON file per user under data/users/, named by a hash
  * of the lowercased email — so an email never becomes a path, and lookup is
@@ -82,7 +83,7 @@ export async function getUserByEmail(email) {
 
 /** Promote or demote an account. Refuses to leave the team with zero admins
  *  — the one guard rail against locking everyone out. */
-export async function setUserRole(id, role) {
+export const setUserRole = serialized('users', async (id, role) => {
   if (role !== 'admin' && role !== 'editor') throw new Error('role must be "admin" or "editor"');
   const all = await readAllUsers();
   const record = all.find((u) => u.id === id);
@@ -95,13 +96,13 @@ export async function setUserRole(id, role) {
   record.role = role;
   await writeFileWhole(fileFor(record.email), JSON.stringify(record, null, 2));
   return publicUser(record);
-}
+});
 
 /** Returns the public user, or null if that email is already registered.
  *  The first account ever created becomes admin (there is no admin yet to
  *  invite anyone); every account after that starts as an editor and an
  *  admin promotes them from the team list. */
-export async function createUser({ name, email, password, role }) {
+export const createUser = serialized('users', async ({ name, email, password, role }) => {
   await fs.mkdir(USERS_DIR, { recursive: true });
   const isFirstAccount = (await readAllUsers()).length === 0;
   const record = {
@@ -120,7 +121,7 @@ export async function createUser({ name, email, password, role }) {
     throw err;
   }
   return publicUser(record);
-}
+});
 
 /* ------------------------------------------------------------------ */
 /* Reset links and removal (2026-09-25). No email service yet, so an    */
@@ -150,7 +151,7 @@ export async function passwordChangedAt(id) {
   return u ? u.passwordChangedAt ?? null : undefined; // undefined: no such account
 }
 
-export async function createResetToken(id) {
+export const createResetToken = serialized('users', async (id) => {
   const all = await readAllUsers();
   const record = all.find((u) => u.id === id);
   if (!record) return null;
@@ -158,10 +159,10 @@ export async function createResetToken(id) {
   record.reset = { hash: sha(token), expires: Date.now() + RESET_TTL };
   await writeFileWhole(fileFor(record.email), JSON.stringify(record, null, 2));
   return { token, expires: new Date(record.reset.expires).toISOString(), user: publicUser(record) };
-}
+});
 
 /** Sets the new password if the token is live; null otherwise. */
-export async function resetPassword(token, password) {
+export const resetPassword = serialized('users', async (token, password) => {
   const hash = sha(token);
   const record = (await readAllUsers()).find((u) => u.reset && u.reset.hash === hash);
   if (!record || record.reset.expires < Date.now()) return null;
@@ -170,11 +171,11 @@ export async function resetPassword(token, password) {
   delete record.reset;
   await writeFileWhole(fileFor(record.email), JSON.stringify(record, null, 2));
   return publicUser(record);
-}
+});
 
 /** A signed-in person's own new password (the route checks the old one).
  *  Voids older sessions and any reset link still waiting. */
-export async function setPassword(id, password) {
+export const setPassword = serialized('users', async (id, password) => {
   const record = (await readAllUsers()).find((u) => u.id === id);
   if (!record) return null;
   record.passwordHash = await hashPassword(password);
@@ -182,10 +183,10 @@ export async function setPassword(id, password) {
   delete record.reset;
   await writeFileWhole(fileFor(record.email), JSON.stringify(record, null, 2));
   return publicUser(record);
-}
+});
 
 /** Refuses to remove the last admin. */
-export async function deleteUser(id) {
+export const deleteUser = serialized('users', async (id) => {
   const all = await readAllUsers();
   const record = all.find((u) => u.id === id);
   if (!record) return null;
@@ -194,7 +195,7 @@ export async function deleteUser(id) {
   }
   await fs.rm(fileFor(record.email), { force: true });
   return publicUser(record);
-}
+});
 
 /** Returns the public user when the credentials are right, else null. */
 export async function verifyUser(email, password) {

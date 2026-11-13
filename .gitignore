@@ -25,7 +25,10 @@ npm-debug.log*
 .env-example
 .env.local
 .env*.local
+.env.*
+!.env.example
 server/.env
+deploy/*.env
 
 # Editor / OS
 .vscode/

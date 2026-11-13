@@ -10,7 +10,8 @@ import type { BlogPost } from './content/blog';
 import { findCaseStudy, isCaseStudyPublished } from './content/work';
 import type { CaseStudyContent } from './content/work';
 import { findIndustryContent } from './content/industries';
-import type { RoutePath } from './types';
+import { ROUTES, type RoutePath } from './types';
+import { knownMarketingPath } from './routeMatch';
 
 export const blogPageCount = () => Math.max(1, Math.ceil(VISIBLE_POSTS.length / BLOG_PAGE_SIZE));
 
@@ -40,31 +41,12 @@ export const resolveCaseStudy = (path: string): CaseStudyContent | 'missing' | n
 export const isCaseStudy = (route: CaseStudyContent | 'missing' | null): route is CaseStudyContent =>
   route !== null && route !== 'missing';
 
-// Top-level sections the router renders; any other path (except '/') is a 404.
-export const ROUTE_PREFIXES = [
-  '/services',
-  '/industries',
-  '/work',
-  '/platform',
-  '/how-we-work',
-  '/learn',
-  '/about',
-  '/faq',
-  '/contact',
-  '/thank-you',
-  '/blog',
-  '/privacy',
-  '/terms',
-  // from the earlier rcaas.tech site: the live tours (GalleryPage) and two policies (PolicyPages)
-  '/gallery',
-  '/cookies',
-  '/security',
-];
-
-export const isNotFoundPath = (path: string) =>
-  (path !== '/' && path !== '' && !ROUTE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))) ||
-  resolveBlogRoute(path)?.kind === 'missing' ||
-  resolveCaseStudy(path) === 'missing';
+// Match actual pages; a known section does not make arbitrary descendants valid.
+export const isNotFoundPath = (path: string) => {
+  const clean = path.split(/[?#]/)[0] || '/';
+  const blog = resolveBlogRoute(clean);
+  return !knownMarketingPath(clean, ROUTES, !!blog && blog.kind !== 'missing');
+};
 
 export function pageMeta(currentPath: string) {
   let title = '3D Tours, VR & Immersive Experiences in Nepal | RCAAS';

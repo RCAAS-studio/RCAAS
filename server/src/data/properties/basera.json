@@ -1,0 +1,22 @@
+{
+  "ownerId": "f2d67606-2967-472e-a04b-00a40cfa7db4",
+  "members": [],
+  "staff": [],
+  "status": "in-progress",
+  "id": "basera",
+  "version": 1,
+  "title": "Basera",
+  "createdAt": "2026-11-05T10:50:35.381Z",
+  "kind": "hotel",
+  "features": {
+    "enquiries": true,
+    "reservations": true,
+    "website": true,
+    "report": true,
+    "activity": true
+  },
+  "theme": {
+    "brand": "Basera Boutique Hotel",
+    "font": "inter"
+  }
+}

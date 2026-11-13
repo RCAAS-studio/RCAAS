@@ -27,28 +27,48 @@ async function send(path: string, options: RequestInit): Promise<Response> {
   }
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T | null> {
+// Each browser tab keeps the revision of the draft it loaded. A rejected save
+// must not advance it: the editor still contains the user's unsaved changes.
+const draftRevisions = new Map<string, string>();
+const sceneKey = (id: string) => `/api/scenes/${encodeURIComponent(id)}`;
+const revisionHeaders = (key: string): Record<string, string> => {
+  const revision = draftRevisions.get(key);
+  return revision ? { 'X-Expected-Revision': revision } : {};
+};
+const rememberRevision = (key: string | undefined, res: Response) => {
+  const revision = res.headers.get('X-Draft-Revision');
+  if (key && revision) draftRevisions.set(key, revision);
+};
+
+async function request<T>(path: string, options: RequestInit = {}, draftKey?: string): Promise<T | null> {
+  const headers = Object.fromEntries(new Headers(options.headers).entries());
   const res = await send(path, {
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
-    ...options
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(draftKey && options.method && options.method !== 'GET' ? revisionHeaders(draftKey) : {}),
+      ...headers
+    }
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new Error(body.error || `${res.status} ${res.statusText}`);
   }
-  return res.status === 204 ? null : res.json();
+  const body = res.status === 204 ? null : await res.json();
+  rememberRevision(draftKey, res);
+  return body;
 }
 
 /** [{ id, title, tagline, spawn, outdoor, unitScale, neighbours }] */
 export const getScenes = () => request<ApiScene[]>('/api/scenes');
 
 /** Full scene document for one scene id, in the CLAUDE.md schema shape. */
-export const getScene = (id: string) => request<SceneDoc>(`/api/scenes/${id}`);
+export const getScene = (id: string) => request<SceneDoc>(sceneKey(id), {}, sceneKey(id));
 
 /** Editor-only — requires a signed-in session (see login()). */
-export const saveScene = (id: string, doc: SceneDoc) =>
-  request(`/api/scenes/${id}`, { method: 'PUT', body: JSON.stringify(doc) });
+export const saveScene = (id: string, doc: SceneDoc, { createOnly = false }: { createOnly?: boolean } = {}) =>
+  request(sceneKey(id), { method: 'PUT', body: JSON.stringify(doc), ...(createOnly ? { headers: { 'If-None-Match': '*' } } : {}) }, sceneKey(id));
 
 /** Claude in the studio (server routes/studioAi.js): hotspot words in Nepali and Chinese. */
 export const translateHotspots = (sceneId: string, items: { id: string; label: string; text?: string; caption?: string }[]) =>
@@ -239,17 +259,17 @@ export interface PublicSite {
   publishedAt: string;
 }
 const sitePath = (id: string) => `/api/sites/${encodeURIComponent(id)}`;
-export const getSiteDraft = (id: string) => request<SiteDraft>(`${sitePath(id)}/draft`);
+export const getSiteDraft = (id: string) => request<SiteDraft>(`${sitePath(id)}/draft`, {}, sitePath(id));
 /** The whole draft from the editor, or part of one (a starter template); the server fills in the rest. */
 export const saveSiteDraft = (id: string, draft: Partial<SiteDoc>) =>
-  request<{ draft: SiteDoc; publishedAt: string | null }>(`${sitePath(id)}/draft`, { method: 'PUT', body: JSON.stringify(draft) });
-export const publishSite = (id: string) => request<{ publishedAt: string }>(`${sitePath(id)}/publish`, { method: 'POST' });
+  request<{ draft: SiteDoc; publishedAt: string | null }>(`${sitePath(id)}/draft`, { method: 'PUT', body: JSON.stringify(draft) }, sitePath(id));
+export const publishSite = (id: string) => request<{ publishedAt: string }>(`${sitePath(id)}/publish`, { method: 'POST' }, sitePath(id));
 /* Client review (server/src/routes/sites.js): a private link to the draft; comments pinned on it; an approval. */
 /** A comment pinned on the draft: in the page's section `sec` (its heading `where`), at x across the page and y down the section. */
 export interface ReviewComment { id: string; name: string; text: string; where: string; sec: number; x: number; y: number; at: string; resolved: boolean }
 export interface ReviewApproval { name: string; at: string; draft: string }
 export interface ReviewFeedback { key: string | null; comments: ReviewComment[]; approval: ReviewApproval | null; approvedThisDraft: boolean }
-export const shareSiteForReview = (id: string) => request<{ key: string }>(`${sitePath(id)}/review`, { method: 'POST' });
+export const shareSiteForReview = (id: string) => request<{ key: string }>(`${sitePath(id)}/review`, { method: 'POST' }, sitePath(id));
 export const stopSiteReview = (id: string) => request<{ key: null }>(`${sitePath(id)}/review`, { method: 'DELETE' });
 export const getReviewFeedback = (id: string) => request<ReviewFeedback>(`${sitePath(id)}/review/feedback`);
 export const resolveReviewComment = (id: string, cid: string, resolved: boolean) =>
@@ -263,7 +283,7 @@ export const approveSiteReview = (id: string, key: string, name: string) =>
 
 /** Put the saved draft, as it is now, live at `at` (an ISO time); or cancel that. */
 export const scheduleSite = (id: string, at: string) =>
-  request<{ scheduledAt: string }>(`${sitePath(id)}/schedule`, { method: 'POST', body: JSON.stringify({ at }) });
+  request<{ scheduledAt: string }>(`${sitePath(id)}/schedule`, { method: 'POST', body: JSON.stringify({ at }) }, sitePath(id));
 export const cancelSiteSchedule = (id: string) => request<{ scheduledAt: null }>(`${sitePath(id)}/schedule`, { method: 'DELETE' });
 export const uploadSiteImage = (id: string, file: File) =>
   request<{ path: string }>(`${sitePath(id)}/images`, { method: 'POST', body: file, headers: { 'Content-Type': 'application/octet-stream' } });
@@ -484,19 +504,21 @@ export const getPublishState = (id: string) => request<PublishState>(`/api/scene
 
 /** Resolves with the blockers instead of throwing when publish is refused. */
 export async function publishSceneNow(id: string): Promise<PublishResult> {
-  const res = await send(`/api/scenes/${id}/publish`, { method: 'POST', credentials: 'include' });
+  const key = sceneKey(id);
+  const res = await send(`${key}/publish`, { method: 'POST', credentials: 'include', headers: revisionHeaders(key) });
   const body = await res.json().catch(() => ({}));
-  if (res.ok || res.status === 422) return body as PublishResult;
+  if (res.ok) { rememberRevision(key, res); return body as PublishResult; }
+  if (res.status === 422) return body as PublishResult;
   throw new Error(body.error || `${res.status} ${res.statusText}`);
 }
 export const unpublishScene = (id: string) => request(`/api/scenes/${id}/unpublish`, { method: 'POST' });
-export const revertScene = (id: string) => request<SceneDoc>(`/api/scenes/${id}/revert`, { method: 'POST' });
+export const revertScene = (id: string) => request<SceneDoc>(`${sceneKey(id)}/revert`, { method: 'POST' }, sceneKey(id));
 /** Every published version of a space, newest first. */
 export interface SceneVersion { version: number; publishedAt: string | null; title: string }
 export const getVersions = (id: string) => request<SceneVersion[]>(`/api/scenes/${id}/versions`);
 /** Put published version `version` back — as the draft, or live at once with `publish`. */
 export const restoreVersion = (id: string, version: number, publish = true) =>
-  request<{ doc: SceneDoc; publish?: PublishResult }>(`/api/scenes/${id}/restore`, { method: 'POST', body: JSON.stringify({ version, publish }) });
+  request<{ doc: SceneDoc; publish?: PublishResult }>(`${sceneKey(id)}/restore`, { method: 'POST', body: JSON.stringify({ version, publish }) }, sceneKey(id));
 export const getGallery = () => request<GalleryItem[]>('/api/gallery');
 /** Draw (or redraw) a space's floor plan from its scan; stored with the asset. */
 export const buildFloorPlan = (assetId: string, title: string) =>
@@ -619,13 +641,30 @@ export async function uploadAssetChunk(
   offset: number,
   chunk: Blob
 ): Promise<{ ok: boolean; bytesReceived: number }> {
-  const res = await send(
-    `/api/assets/${assetId}/files/chunk?relPath=${encodeURIComponent(relPath)}&offset=${offset}`,
-    { method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/octet-stream' }, body: chunk }
-  );
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok && res.status !== 409) throw new Error(body.error || `${res.status} ${res.statusText}`);
-  return { ok: res.ok, bytesReceived: body.bytesReceived };
+  const path = `/api/assets/${encodeURIComponent(assetId)}/files/chunk?relPath=${encodeURIComponent(relPath)}&offset=${offset}`;
+  const options = { method: 'PUT', credentials: 'include' as const, headers: { 'Content-Type': 'application/octet-stream' }, body: chunk };
+  for (let attempt = 0; ; attempt++) {
+    if (attempt) await new Promise(resolve => setTimeout(resolve, 200 * 2 ** (attempt - 1)));
+    let res: Response;
+    try {
+      // Resend the identical offset and bytes. If the first request arrived but
+      // its response was lost, the server returns 409 with the current offset.
+      res = await send(path, options);
+    } catch (error) {
+      if (attempt < 3) continue;
+      throw error;
+    }
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok && res.status !== 409) {
+      if (attempt < 3 && (res.status === 408 || res.status === 429 || res.status >= 500)) continue;
+      throw new Error(body.error || `${res.status} ${res.statusText}`);
+    }
+    const bytes = body.bytesReceived;
+    if (!Number.isSafeInteger(bytes) || bytes < 0 || (res.ok && bytes !== offset + chunk.size)) {
+      throw new Error('The upload server returned invalid progress. Try the upload again.');
+    }
+    return { ok: res.ok, bytesReceived: bytes };
+  }
 }
 
 export const finalizeAsset = (assetId: string) =>

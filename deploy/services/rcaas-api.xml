@@ -1,0 +1,15 @@
+<service>
+  <id>RcaasApi</id>
+  <name>RCAAS API</name>
+  <description>Single API process with persistent data outside code releases.</description>
+  <executable>C:\Program Files\nodejs\node.exe</executable>
+  <arguments>--env-file=C:\RCAAS\config\api.env src\index.js</arguments>
+  <workingdirectory>C:\RCAAS\current\server</workingdirectory>
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+  <onfailure action="restart" delay="10 sec" />
+  <stoptimeout>120 sec</stoptimeout>
+  <serviceaccount><domain>NT AUTHORITY</domain><user>LocalService</user></serviceaccount>
+  <logpath>C:\RCAAS\logs\api</logpath>
+  <log mode="roll-by-size"><sizeThreshold>10240</sizeThreshold><keepFiles>8</keepFiles></log>
+</service>

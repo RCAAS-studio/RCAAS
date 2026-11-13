@@ -10,6 +10,7 @@ import {
 } from '../scene/transform';
 import { scaleWalkerCfg, walkerCfg } from '../scene/walkerConfig';
 import { isTypingTarget } from '../scene/useLccWalker';
+import { enableHotspotMove, hotspotMove } from './hotspotMove';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- vendor SDK renderer handle
 type SdkRenderer = any;
@@ -129,6 +130,11 @@ export function Gizmo({ sceneId }: { sceneId: string }) {
     const onKey = (e: KeyboardEvent) => {
       snap(e.ctrlKey);
       if (e.type !== 'keydown' || isTypingTarget(e.target) || e.ctrlKey || e.metaKey || e.altKey) return;
+      // A selected hotspot owns G; model shortcuts must not move the scan behind it.
+      if (hotspotMove.sceneId === sceneId && hotspotMove.id) {
+        if (e.code === 'KeyG') enableHotspotMove(true);
+        return;
+      }
       if (e.code === 'KeyG') setGizmoMode('translate');
       else if (e.code === 'KeyR') setGizmoMode('rotate');
       else if (e.code === 'KeyT') setGizmoMode('scale');

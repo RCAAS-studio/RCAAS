@@ -299,28 +299,30 @@ function SpaceCard({ space: { scene, state, pic }, base, visits }: { space: Spac
   const edit = `${base}/edit?space=${encodeURIComponent(scene.id)}`;
   return (
     <article className="ph-space">
-      <a className="ph-pic" href={edit} aria-label={`Edit ${scene.title || scene.id}`}>
-        {/* a published space's picture, from the API (next/image isn't set up for it) */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {pic ? <img src={pic} alt="" loading="lazy" /> : <span className="ph-pic-none" aria-hidden />}
-        <span className={`ph-state ${state?.status === 'published' ? 'is-live' : ''}`}>
-          {state?.status === 'published' ? `Live · v${state.publishedVersion}` : 'Draft'}
-        </span>
-      </a>
-      <div className="ph-space-txt">
-        <a className="ph-space-name" href={edit}>{scene.title || scene.id}</a>
-        {ready.length > 0 && (
-          <span className="ph-ready" title={ready.map((c) => `${c.done ? '✓' : '○'} ${c.label}`).join('\n')}>
-            <span className="ph-ticks" aria-hidden>{ready.map((c) => <i key={c.key} className={c.done ? 'is-on' : undefined} />)}</span>
-            {done === ready.length ? 'Ready' : `${done} of ${ready.length} ready`}
+      <a className="ph-space-open" href={edit} aria-label={`Edit ${scene.title || scene.id}`}>
+        <div className="ph-pic">
+          {/* a published space's picture, from the API (next/image isn't set up for it) */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {pic ? <img src={pic} alt="" loading="lazy" /> : <span className="ph-pic-none" aria-hidden />}
+          <span className={`ph-state ${state?.status === 'published' ? 'is-live' : ''}`}>
+            {state?.status === 'published' ? `Live · v${state.publishedVersion}` : 'Draft'}
           </span>
-        )}
-        {visits !== undefined && <span className="pl-sub">{visits} {visits === 1 ? 'visit' : 'visits'} this month</span>}
-        <span className="ph-links">
-          <a href={edit}>Edit</a>
-          {state?.status === 'published' && <a href={`/tour?space=${encodeURIComponent(scene.id)}`} target="_blank" rel="noopener">Open the tour ↗</a>}
-        </span>
-      </div>
+        </div>
+        <div className="ph-space-txt">
+          <span className="ph-space-name">{scene.title || scene.id}</span>
+          {ready.length > 0 && (
+            <span className="ph-ready" title={ready.map((c) => `${c.done ? '✓' : '○'} ${c.label}`).join('\n')}>
+              <span className="ph-ticks" aria-hidden>{ready.map((c) => <i key={c.key} className={c.done ? 'is-on' : undefined} />)}</span>
+              {done === ready.length ? 'Ready' : `${done} of ${ready.length} ready`}
+            </span>
+          )}
+          {visits !== undefined && <span className="pl-sub">{visits} {visits === 1 ? 'visit' : 'visits'} this month</span>}
+        </div>
+      </a>
+      <span className="ph-links ph-space-actions">
+        <a href={edit}>Edit</a>
+        {state?.status === 'published' && <a href={`/tour?space=${encodeURIComponent(scene.id)}`} target="_blank" rel="noopener">Open the tour ↗</a>}
+      </span>
     </article>
   );
 }

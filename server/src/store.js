@@ -1,3 +1,4 @@
+import { serialized } from './writeQueue.js';
 /**
  * File-backed scene store. CLAUDE.md's actual plan is Django + DRF + Postgres;
  * this Node service is the pre-database stand-in, so the storage layer is
@@ -101,7 +102,7 @@ async function readRaw(file) {
 /** `creator`: the account saving a new space. It's recorded as the space's
  *  `ownerId`, which decides who may see it while it's in no project
  *  (access.js); the editor can't change it, like the publish fields. */
-export async function saveScene(id, doc, { creator = null } = {}) {
+export const saveScene = serialized('documents', async (id, doc, { creator = null } = {}) => {
   if (doc.id && doc.id !== id) throw Object.assign(new Error('id mismatch'), { status: 400 });
   // Publish state is owned by the publish routes below, not by the editor: a
   // studio tab opened before a publish would otherwise save its stale
@@ -117,7 +118,7 @@ export async function saveScene(id, doc, { creator = null } = {}) {
   await fs.mkdir(SCENES_DIR, { recursive: true });
   await writeFileWhole(sceneFile(id), JSON.stringify(withId, null, 2));
   return withId;
-}
+});
 
 /* ------------------------------------------------------------------ */
 /* Publishing (§7.5) — immutable snapshots, visitors read only these   */
@@ -188,7 +189,7 @@ export function publishChecks(doc) {
 /** Only http(s) links reach a visitor's page — never javascript: or data:. */
 export const isWebUrl = (u) => typeof u === 'string' && /^https?:\/\/\S+$/i.test(u.trim());
 
-export async function publishScene(id) {
+export const publishScene = serialized('documents', async (id) => {
   const draft = await getScene(id);
   if (!draft) return null;
   const { blockers, warnings } = publishChecks(draft);
@@ -203,16 +204,16 @@ export async function publishScene(id) {
   const raw = await readRaw(sceneFile(id));
   await writeFileWhole(sceneFile(id), JSON.stringify({ ...raw, status: 'published', publishedVersion: version, publishedAt }, null, 2));
   return { published: true, version, publishedAt, warnings };
-}
+});
 
-export async function unpublishScene(id) {
+export const unpublishScene = serialized('documents', async (id) => {
   const raw = await readRaw(sceneFile(id));
   if (!raw) return null;
   // Snapshots stay on disk as history; the draft just stops pointing at one.
   const { publishedVersion, publishedAt, ...rest } = raw;
   await writeFileWhole(sceneFile(id), JSON.stringify({ ...rest, status: 'draft' }, null, 2));
   return { published: false, lastVersion: publishedVersion ?? null };
-}
+});
 
 /** The live published document, or null if the space isn't published. */
 export async function getPublishedScene(id) {
@@ -223,11 +224,11 @@ export async function getPublishedScene(id) {
 }
 
 /** Throw away draft edits: the draft becomes the published snapshot again. */
-export async function revertToPublished(id) {
+export const revertToPublished = serialized('documents', async (id) => {
   const raw = await readRaw(sceneFile(id));
   if (!raw || raw.status !== 'published' || !raw.publishedVersion) return null;
   return restoreVersion(id, raw.publishedVersion);
-}
+});
 
 /** Every published version of a space, newest first: { version, publishedAt, title }. */
 export async function listVersions(id) {
@@ -250,7 +251,7 @@ export async function listVersions(id) {
  * un-retire snippets retired since) — and so does the project the space is
  * in. Everything else is that version's.
  */
-export async function restoreVersion(id, n) {
+export const restoreVersion = serialized('documents', async (id, n) => {
   const draft = await readRaw(sceneFile(id));
   if (!draft || !Number.isInteger(n)) return null;
   const snap = await readRaw(sceneFile(id, n));
@@ -262,7 +263,7 @@ export async function restoreVersion(id, n) {
   }
   await writeFileWhole(sceneFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /**
  * Move a space into a property (or out of all of them, with null). Patches
@@ -271,14 +272,14 @@ export async function restoreVersion(id, n) {
  */
 /** Moving a space out of its project makes it the mover's (`by`): out of a
  *  project, only its owner sees it. */
-export async function setSceneProperty(id, propertyId, by = null) {
+export const setSceneProperty = serialized('documents', async (id, propertyId, by = null) => {
   const raw = await readRaw(sceneFile(id));
   if (!raw) return null;
   if (propertyId !== null && !(await getProperty(propertyId))) throw badRequest('That project does not exist.');
   const next = { ...raw, propertyId, ...(propertyId === null && by ? { ownerId: by } : {}) };
   await writeFileWhole(sceneFile(id), JSON.stringify(next, null, 2));
   return { id, propertyId };
-}
+});
 
 /** A space's embed settings (routes/embed.js): `version` is bumped to retire
  *  every snippet handed out before; `sites` limits which websites may frame
@@ -288,13 +289,13 @@ export async function getEmbed(id) {
   return raw ? { version: 0, sites: [], ...(raw.embed ?? {}) } : null;
 }
 
-export async function setEmbed(id, patch) {
+export const setEmbed = serialized('documents', async (id, patch) => {
   const raw = await readRaw(sceneFile(id));
   if (!raw) return null;
   const embed = { version: 0, sites: [], ...(raw.embed ?? {}), ...patch };
   await writeFileWhole(sceneFile(id), JSON.stringify({ ...raw, embed }, null, 2));
   return embed;
-}
+});
 
 /* ------------------------------------------------------------------ */
 /* Properties (§5.1) — one per client: a hotel, a college, a campus.   */
@@ -325,7 +326,7 @@ const fillPropertyDefaults = (doc) => (doc ? { ownerId: null, members: [], staff
 export const FEATURES = ['enquiries', 'reservations', 'website', 'report', 'activity'];
 export const featuresOf = (p) => Object.fromEntries(FEATURES.map((k) => [k, p?.features?.[k] !== false]));
 /** Booleans for known features only; anything else is ignored. */
-export async function setPropertyFeatures(id, patch) {
+export const setPropertyFeatures = serialized('documents', async (id, patch) => {
   const p = await getProperty(id);
   if (!p) return null;
   const features = { ...p.features };
@@ -333,7 +334,7 @@ export async function setPropertyFeatures(id, patch) {
   const next = { ...p, features };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /** Where a project stands (2026-10-13), so the studio keeps a record of every
  *  client: in progress, delivered, or archived (finished or dropped; kept with
@@ -346,23 +347,23 @@ export const PROJECT_STATUSES = ['in-progress', 'delivered', 'archived'];
  *  anything; the studio adds the new kind's missing website sections itself. Older
  *  projects have none. */
 export const PLACE_KINDS = ['hotel', 'restaurant', 'venue', 'college', 'heritage', 'other'];
-export async function setPropertyKind(id, kind) {
+export const setPropertyKind = serialized('documents', async (id, kind) => {
   if (!PLACE_KINDS.includes(kind)) throw badRequest('Unknown kind of place.');
   const p = await getProperty(id);
   if (!p) return null;
   const next = { ...p, kind };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
-export async function setPropertyStatus(id, status) {
+export const setPropertyStatus = serialized('documents', async (id, status) => {
   if (!PROJECT_STATUSES.includes(status)) throw badRequest('Unknown status.');
   const p = await getProperty(id);
   if (!p) return null;
   const next = { ...p, status, statusAt: new Date().toISOString() };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /**
  * Can this session see the project in a list, or open it directly? Its owner
@@ -396,13 +397,13 @@ export function propertyIsManageable(property, session) {
  *  after which it's that account's alone. */
 export const propertyIsClaimable = (property, session) => !!session?.sub && property.ownerId === null;
 
-export async function claimProperty(id, userId) {
+export const claimProperty = serialized('documents', async (id, userId) => {
   const doc = await getProperty(id);
   if (!doc || doc.ownerId !== null) return null;
   const next = { ...doc, ownerId: userId };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 export async function listProperties() {
   let files;
@@ -434,7 +435,7 @@ function cleanTitle(title) {
 /** Throws 400 on a bad title, 409 if a property with the same id exists.
  *  `ownerId` is null for the legacy passwordless session, which has no
  *  account to own it — same as an old project's default, visible to all. */
-export async function createProperty(title, ownerId = null, kind = null) {
+export const createProperty = serialized('documents', async (title, ownerId = null, kind = null) => {
   const clean = cleanTitle(title);
   const id = propertyIdFor(clean);
   if (!id) throw badRequest('Use at least one letter or number in the name.');
@@ -450,20 +451,20 @@ export async function createProperty(title, ownerId = null, kind = null) {
     throw err;
   }
   return doc;
-}
+});
 
 /**
  * Rename keeps the id: it is what every space's `propertyId` and every studio
  * URL point at, so only the title a person reads changes (same rule as
  * renameScene on the client).
  */
-export async function renameProperty(id, title) {
+export const renameProperty = serialized('documents', async (id, title) => {
   const p = await getProperty(id);
   if (!p) return null;
   const next = { ...p, title: cleanTitle(title) };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /**
  * Deleting a property never deletes a space: its spaces go back to "not in a
@@ -472,7 +473,7 @@ export async function renameProperty(id, title) {
  */
 /** Its spaces are kept, out of any project, as the deleter's (`by`): they
  *  stay private to whoever had them. */
-export async function deleteProperty(id, by = null) {
+export const deleteProperty = serialized('documents', async (id, by = null) => {
   const p = await getProperty(id);
   if (!p) return null;
   let released = 0;
@@ -485,12 +486,12 @@ export async function deleteProperty(id, by = null) {
   }
   await fs.rm(propertyFile(id), { force: true });
   return { id, released };
-}
+});
 
 /** Add a teammate (by user id) to a project: as a member (full access), or
  *  as the client's staff (enquiries, reservations, report). Adding someone
  *  already on it moves them to the access asked for. */
-export async function addPropertyMember(id, userId, as = 'member') {
+export const addPropertyMember = serialized('documents', async (id, userId, as = 'member') => {
   const p = await getProperty(id);
   if (!p) return null;
   if (p.ownerId === userId) return p; // the owner already sees it
@@ -499,7 +500,7 @@ export async function addPropertyMember(id, userId, as = 'member') {
   const next = { ...p, members: as === 'staff' ? members : [...members, userId], staff: as === 'staff' ? [...staff, userId] : staff };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /** A project's branding on its tours (2026-09-25): the name shown over the
  *  place, one accent colour, a heading font, and a logo (an asset path, see
@@ -508,7 +509,7 @@ export async function addPropertyMember(id, userId, as = 'member') {
 // src/lib/brandFonts.ts: the ten (2026-10-07), then older projects' system faces
 export const BRAND_FONTS = ['inter', 'roboto', 'open-sans', 'poppins', 'montserrat', 'lato', 'nunito', 'playfair', 'merriweather', 'dm-sans', 'serif', 'sans', 'classic'];
 
-export async function setPropertyTheme(id, patch) {
+export const setPropertyTheme = serialized('documents', async (id, patch) => {
   const p = await getProperty(id);
   if (!p) return null;
   const theme = { ...(p.theme ?? {}) };
@@ -531,7 +532,7 @@ export async function setPropertyTheme(id, patch) {
   const next = { ...p, theme };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /** What a project says about its brand (2026-09-27): a tagline, a short
  *  "about", and how to reach it. Public by nature — its website shows it — so
@@ -539,7 +540,7 @@ export async function setPropertyTheme(id, patch) {
  *  empty field removes it. */
 export const INFO_FIELDS = { tagline: 120, about: 1200, phone: 40, whatsapp: 40, email: 200, address: 300, website: 300, facebook: 300, instagram: 300 };
 const URL_FIELDS = ['website', 'facebook', 'instagram'];
-export async function setPropertyInfo(id, patch) {
+export const setPropertyInfo = serialized('documents', async (id, patch) => {
   const p = await getProperty(id);
   if (!p) return null;
   const info = { ...(p.info ?? {}) };
@@ -569,10 +570,10 @@ export async function setPropertyInfo(id, patch) {
   const next = { ...p, info };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /** Who a project's enquiries are emailed to (routes/leads.js). Up to 10. */
-export async function setLeadEmails(id, emails) {
+export const setLeadEmails = serialized('documents', async (id, emails) => {
   const p = await getProperty(id);
   if (!p) return null;
   const clean = [...new Set((Array.isArray(emails) ? emails : []).map((e) => String(e).trim().toLowerCase()).filter(Boolean))];
@@ -582,12 +583,12 @@ export async function setLeadEmails(id, emails) {
   const next = { ...p, leadEmails: clean };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /** A removed account: the projects it owned pass to `toId` (the admin who
  *  removed it; null for the legacy session: open to all), and it leaves every
  *  member list. Returns how many projects changed owner. */
-export async function reassignProjects(userId, toId) {
+export const reassignProjects = serialized('documents', async (userId, toId) => {
   let moved = 0;
   for (const p of await listProperties()) {
     const owned = p.ownerId === userId;
@@ -601,15 +602,15 @@ export async function reassignProjects(userId, toId) {
     await writeFileWhole(propertyFile(p.id), JSON.stringify(next, null, 2));
   }
   return moved;
-}
+});
 
-export async function removePropertyMember(id, userId) {
+export const removePropertyMember = serialized('documents', async (id, userId) => {
   const p = await getProperty(id);
   if (!p) return null;
   const next = { ...p, members: p.members.filter((m) => m !== userId), staff: p.staff.filter((m) => m !== userId) };
   await writeFileWhole(propertyFile(id), JSON.stringify(next, null, 2));
   return next;
-}
+});
 
 /** Everything the public gallery shows, newest first. */
 export async function listPublished() {

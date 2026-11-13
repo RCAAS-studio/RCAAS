@@ -41,6 +41,53 @@ jobs:
       # The whole app, studio and tours included, as a Node host would run it.
       - run: npm run build
 
+  postgres:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [api.test.js, api-s3.test.js]
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: rcaas_test
+          POSTGRES_PASSWORD: disposable-ci-password
+          POSTGRES_DB: rcaas_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rcaas_test -d rcaas_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Each matrix job gets its own throwaway database; never use a repository secret here.
+      API_TEST_DATABASE_URL: postgresql://rcaas_test:disposable-ci-password@127.0.0.1:5432/rcaas_test
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci --prefix server
+      # This regression requires an empty database; API fixtures must run after it.
+      - run: node --test test/postgres.test.js
+        working-directory: server
+      - run: node --test test/${{ matrix.suite }}
+        working-directory: server
+
+  windows-deployment:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # Built-in Node modules only; exercises actual Windows tar and mocked service control.
+      - run: node --test test/deployment.test.mjs
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -65,7 +112,7 @@ jobs:
           path: out
 
   deploy:
-    needs: [check, build]
+    needs: [check, postgres, windows-deployment, build]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

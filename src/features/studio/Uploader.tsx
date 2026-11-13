@@ -159,7 +159,7 @@ export function Uploader({ propertyId = null, onClose, onCreated }: UploaderProp
       if (format === 'lcc2' && lcc(slots.medium.result)) variants.medium = { assetId: slots.medium.result!.assetId, meta: slots.medium.result!.meta };
       if (format === 'lcc2' && lcc(slots.low.result)) variants.low = { assetId: slots.low.result!.assetId, meta: slots.low.result!.meta };
 
-      await saveScene(id, blankSceneDoc(id, title.trim(), variants, propertyId, format));
+      await saveScene(id, blankSceneDoc(id, title.trim(), variants, propertyId, format), { createOnly: true });
       hydrateScenes(await getScenes()); // pulls the new scene (+ its assetId) into the runtime list
       onCreated(id);
     } catch (err) {

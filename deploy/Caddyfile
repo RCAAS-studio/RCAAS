@@ -1,0 +1,32 @@
+# Windows Server 2022. Replace example.com with the real domain before starting.
+# DNS must point to this VPS; inbound TCP 80 and 443 must reach Caddy.
+{
+    admin 127.0.0.1:2019
+}
+
+example.com {
+    # Allow 16 MiB upload chunks and 25 MiB website images.
+    request_body {
+        max_size 32MB
+    }
+    header Strict-Transport-Security "max-age=31536000"
+
+    # Keep /api/... intact. handle_path would incorrectly strip this prefix.
+    handle /api/* {
+        reverse_proxy 127.0.0.1:4000 {
+            # Direct-to-VPS deployment: do not trust incoming forwarding headers.
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+            transport http {
+                dial_timeout 5s
+                response_header_timeout 600s
+            }
+        }
+    }
+    handle {
+        reverse_proxy 127.0.0.1:3000 {
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}

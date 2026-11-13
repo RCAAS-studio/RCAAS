@@ -12,9 +12,21 @@ import path from 'path';
 // configuration → download), so the TLS connection is verified, not just encrypted.
 const ca = process.env.DATABASE_CA_FILE ? readFileSync(process.env.DATABASE_CA_FILE, 'utf8') : undefined;
 
+function positiveSetting(name, fallback) {
+  const value = process.env[name];
+  if (!value) return fallback;
+  const number = Number(value);
+  if (!Number.isSafeInteger(number) || number <= 0 || number > 2147483647) {
+    throw new Error(`${name} must be a positive integer.`);
+  }
+  return number;
+}
+
 export const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  max: Number(process.env.DATABASE_POOL_MAX) || 10,
+  max: positiveSetting('DATABASE_POOL_MAX', 10),
+  connectionTimeoutMillis: positiveSetting('DATABASE_CONNECTION_TIMEOUT_MS', 5000),
+  statement_timeout: positiveSetting('DATABASE_STATEMENT_TIMEOUT_MS', 15000),
   ...(ca && { ssl: { ca } })
 });
 // An idle connection the provider drops must not crash the server.
@@ -36,22 +48,25 @@ export async function tx(fn) {
   }
 }
 
-/** Applies server/db/*.sql not yet applied, in name order, each in its own
- *  transaction. ponytail: no lock between two servers starting at once;
- *  add pg_advisory_lock when more than one API process runs. */
+/** Applies pending migrations atomically. A transaction-scoped lock also
+ * protects initial schema creation when two instances start together. */
 export async function migrate() {
   const dir = path.join(import.meta.dirname, '..', 'db');
-  await pool.query(`create schema if not exists app;
-    create table if not exists app.schema_migrations (name text primary key, applied_at timestamptz not null default now());
-    alter table app.schema_migrations enable row level security;`);
-  const done = new Set((await pool.query('select name from app.schema_migrations')).rows.map((r) => r.name));
-  for (const name of (await fs.readdir(dir)).filter((f) => f.endsWith('.sql')).sort()) {
-    if (done.has(name)) continue;
-    const sql = await fs.readFile(path.join(dir, name), 'utf8');
-    await tx(async (c) => {
+  const applied = await tx(async (c) => {
+    await c.query('select pg_advisory_xact_lock(785355, 1)');
+    await c.query(`create schema if not exists app;
+      create table if not exists app.schema_migrations (name text primary key, applied_at timestamptz not null default now());
+      alter table app.schema_migrations enable row level security;`);
+    const done = new Set((await c.query('select name from app.schema_migrations')).rows.map((r) => r.name));
+    const names = [];
+    for (const name of (await fs.readdir(dir)).filter((f) => f.endsWith('.sql')).sort()) {
+      if (done.has(name)) continue;
+      const sql = await fs.readFile(path.join(dir, name), 'utf8');
       await c.query(sql);
       await c.query('insert into app.schema_migrations (name) values ($1)', [name]);
-    });
-    console.log(`[db] applied ${name}`);
-  }
+      names.push(name);
+    }
+    return names;
+  });
+  for (const name of applied) console.log(`[db] applied ${name}`);
 }

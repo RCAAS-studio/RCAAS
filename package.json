@@ -33,6 +33,11 @@
     "three-mesh-bvh": "^0.9.15",
     "zod": "^4.6.7"
   },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.1"
+    }
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@tailwindcss/cli": "^4.3.3",
