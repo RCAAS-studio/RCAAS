@@ -9,6 +9,7 @@
 import { getProperty, getScene, listScenes, propertyIsVisible } from './store.js';
 import { getUserById } from './usersStore.js';
 import { readSession } from './middleware/auth.js';
+import { mayManageAsset } from './assetAccess.js';
 
 /** The session's role read fresh from the account, not the JWT claim, so a
  *  promotion or demotion applies at once. The legacy passwordless session
@@ -44,11 +45,7 @@ export async function mayWorkOnScene(session, sceneId, intoPropertyId) {
  *  ponytail: reads every space to find its users; fine at tens of spaces,
  *  index asset -> space when there are hundreds. */
 export async function mayWorkOnAsset(session, assetId) {
-  for (const { id } of await listScenes()) {
-    const doc = await getScene(id);
-    if (doc && JSON.stringify(doc).includes(assetId) && !(await spaceAllows(session, doc.propertyId, doc.ownerId ?? null))) return false;
-  }
-  return true;
+  return mayManageAsset(session, assetId);
 }
 
 /** The spaces a session may see in the studio's lists. */

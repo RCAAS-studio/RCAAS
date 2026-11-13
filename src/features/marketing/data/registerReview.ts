@@ -3,7 +3,7 @@ import type { PlaceholderItem } from '../types';
 type Review = Pick<PlaceholderItem, 'status' | 'simulatedValue' | 'nextAction'>;
 // Evidence from the current source and its recorded owner decisions, 13 Nov 2026.
 // Local implementation and production verification are deliberately separate.
-export const REGISTER_REVIEW: Record<string, Review> = {
+export const REGISTER_REVIEW: Partial<Record<string, Review>> = {
   G01: { status: 'Confirmed', simulatedValue: 'RCAAS / RCAAS Technology; current wordmark.', nextAction: 'Keep the planned legal name separate until registration is complete.' },
   G02: { status: 'Confirmed', simulatedValue: 'Reality Capture as a Service (SITE_METADATA.nameMeaning).' },
   G03: { status: 'Confirmed', simulatedValue: 'Turn real places into experiences that move people. Owner-confirmed 3 Nov.' },

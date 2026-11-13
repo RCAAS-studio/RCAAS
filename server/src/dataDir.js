@@ -8,6 +8,7 @@ import path from 'path';
 import { promises as fs } from 'fs';
 import { randomUUID } from 'crypto';
 import { fileURLToPath } from 'url';
+import { assetsChanged } from './assetChanges.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -46,4 +47,5 @@ export async function writeFileWhole(file, text, { flag } = {}) {
     throw err;
   }
   if (flag === 'wx') await fs.unlink(tmp).catch(() => {});
+  assetsChanged();
 }

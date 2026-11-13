@@ -195,6 +195,8 @@ For a real recovery, stop `RcaasApi` and `RcaasWeb`, preserve the current data i
 
 ## 8. PostgreSQL gate, if selected
 
+Both database options, cutover and recovery are documented in [POSTGRESQL.md](POSTGRESQL.md). A disposable local PostgreSQL integration, real dump/restore and production API outage/recovery passed on 13 November 2026. This does not establish readiness of the selected VPS/provider. Copy `postgres-env.mjs` beside the backup worker: client tools need separate connection fields; a whole URL in `PGDATABASE` can select defaults instead.
+
 Before setting the production URL, provision a disposable database with the same PostgreSQL version and TLS setup. Run the API's local-storage and S3 suites **serially against separate fresh test databases**, since fixtures create/delete accounts with the same emails. Example from `server/` with a disposable `API_TEST_DATABASE_URL`: `node --test test/api.test.js`, then a different fresh test URL for `node --test test/api-s3.test.js`. Do not run the full parallel suite against one shared database. Include outage/recovery and dump/restore checks.
 
 For cutover, back up first, stop the API, set the intended production URL/CA in `api.env`, then from `C:\RCAAS\current\server` run:

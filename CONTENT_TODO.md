@@ -2,11 +2,11 @@
 
 Source inventory: 13 November 2026.
 
-Found **254 complete placeholder markers in 50 source files**. This includes comments, conditional fallbacks, draft content and repeated uses; it is not a count of visible defects or independent business decisions.
+Found **253 complete placeholder markers in 50 source files**. This includes comments, conditional fallbacks, draft content and repeated uses; it is not a count of visible defects or independent business decisions.
 
-Use PROJECT_READINESS.md for the launch checklist. Supply approved facts or deliberately remove the related claim/section. A noindex tag does not hide a page from visitors. Do not replace these markers with invented prices, results, equipment, dates or policy promises.
+The development Audit Register now has 41 reviewed items, real statuses, evidence and next actions. See PHASE_STATUS.md for current completion and launch gates. Confirmed contact details and office hours already have source values; some markers are inactive fallbacks.
 
-Confirm company/team details, project evidence and permission to publish, service deliverables, budget ranges, equipment and accuracy claims, hosting/retention terms, privacy and terms before launch. Contact details and office hours already have owner-confirmed values in siteData.ts; some matches below are their inactive fallbacks.
+Supply approved facts or deliberately remove the related claim/section. A noindex tag does not hide a page from visitors. Do not replace markers with invented prices, results, equipment, dates or policy promises.
 
 ## src/features/marketing/components/BlogCard.tsx
 
@@ -253,7 +253,7 @@ Confirm company/team details, project evidence and permission to publish, servic
 
 ## src/features/marketing/data/siteData.ts
 
-- Line 15: `[[TBI]]`
+- Line 16: `[[TBI]]`
 
 ## src/features/marketing/pages/AboutPage.tsx
 
@@ -266,7 +266,6 @@ Confirm company/team details, project evidence and permission to publish, servic
 - Line 254: `[[TBI: ${member.bioPending}]]`
 - Line 254: `[[TBI: bio]]`
 - Line 265: `[[TBI: LinkedIn]]`
-- Line 600: `[[TBI: combined years of experience, if you want to state it]]`
 
 ## src/features/marketing/pages/BlogHubPage.tsx
 

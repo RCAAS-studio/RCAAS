@@ -13,9 +13,13 @@ export const PlaceholderRegisterModal: React.FC<PlaceholderRegisterModalProps> =
   useEffect(() => {
     const element = dialog.current;
     if (!isOpen || !element) return;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     element.showModal();
     element.querySelector<HTMLInputElement>('input')?.focus();
-    return () => element.close();
+    return () => {
+      element.close();
+      if (previous?.isConnected) previous.focus({ preventScroll: true });
+    };
   }, [isOpen]);
   if (!isOpen) return null;
   const query = search.trim().toLowerCase();
@@ -27,6 +31,7 @@ export const PlaceholderRegisterModal: React.FC<PlaceholderRegisterModalProps> =
   );
   return (
     <dialog ref={dialog} className="audit-dialog" aria-labelledby="audit-register-title" aria-describedby="audit-register-description"
+      onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); onClose(); } }}
       onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="audit-dialog-content">
         <div className="flex items-start justify-between gap-4 border-b border-line bg-surface px-6 py-5">

@@ -24,7 +24,7 @@ export const SiteFx: React.FC<{ sweep: string; first: boolean }> = ({ sweep, fir
       { rootMargin: '0px 0px -8% 0px' }
     );
     const watch = () =>
-      root.querySelectorAll<HTMLImageElement>('img:not([data-fx])').forEach((img) => {
+      root.querySelectorAll<HTMLImageElement>('img:not([data-fx]):not(.team-portrait)').forEach((img) => {
         // Already on screen when the page opens: leave it be, the page has its own entrance.
         const r = img.getBoundingClientRect();
         img.setAttribute('data-fx', r.top < window.innerHeight && r.bottom > 0 ? 'seen' : '');

@@ -593,7 +593,7 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
 
             <div className="mt-3 flex items-center gap-2 text-xs text-zinc-300 font-mono">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Opens in your browser · No app needed</span>
+              <span>Illustrative canvas demo · No app needed</span>
             </div>
 
             <button
@@ -800,7 +800,7 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
                 {activeSpace.clientGoal}
               </p>
               <div className="mt-2 text-[11px] font-mono text-zinc-400 flex items-center gap-3">
-                <span>Live preview</span>
+                <span>Illustrative preview</span>
                 <span>·</span>
                 <span>{fps} FPS</span>
                 <span>·</span>

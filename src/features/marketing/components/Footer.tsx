@@ -15,7 +15,7 @@ interface FooterProps {
 
 type FooterLink = [label: string, path: RoutePath];
 
-// RCAAS content with the owner's reference: dark survey grid, three navigation
+// RCAAS content with the owner's reference: soft survey grid, three navigation
 // columns, contact icons and an inset legal bar. Keep navigation usable as links.
 const COLUMNS: { title: string; links: FooterLink[] }[] = [
   { title: 'What we create', links: [

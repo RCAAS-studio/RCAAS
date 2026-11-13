@@ -336,6 +336,7 @@ const REGISTER_ITEMS: PlaceholderItem[] = [
   { id: 'LEGAL01', item: 'Privacy, terms, consent and retention decisions', usedOn: 'Privacy, Terms', priority: 'B', status: 'To Be Confirmed' },
 ];
 
-export const PLACEHOLDER_REGISTER: PlaceholderItem[] = REGISTER_ITEMS.map(item => ({
-  ...item, status: 'To Be Confirmed', ...REGISTER_REVIEW[item.id]
-}));
+export const PLACEHOLDER_REGISTER: PlaceholderItem[] = REGISTER_ITEMS.map(item => {
+  const review = REGISTER_REVIEW[item.id];
+  return { ...item, ...review, status: review?.status ?? 'To Be Confirmed' };
+});
