@@ -498,7 +498,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                           <dd className="text-sm text-zinc-700 leading-relaxed">{step.youProvide}</dd>
                         </div>
                       )}
-                      <div className="rounded-xl border border-accent/25 bg-accent/4>
+                      <div className="rounded-xl border border-accent/25 bg-accent/4">
                         <dt className="text-xs font-mono uppercase tracking-wider text-accent mb-1">You receive</dt>
                         <dd className="text-sm text-zinc-900 font-medium leading-relaxed">{step.youReceive}</dd>
                       </div>
