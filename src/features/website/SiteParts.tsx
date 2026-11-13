@@ -84,7 +84,7 @@ export function AskAbout({ offer, preview = false }: { offer: string; preview?: 
   );
 }
 
-type Photo = { src: string; width: number; height: number };
+type Photo = { src: string; width: number; height: number; unoptimized?: boolean };
 
 /**
  * The photos: the client's own, in a masonry, each opening full size in a

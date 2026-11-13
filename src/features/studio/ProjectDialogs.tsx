@@ -7,7 +7,7 @@ import { useEscape } from '../../hooks/useEscape';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   getProperty, addPropertyMember, removePropertyMember, getActivity, getProjectLeads, setProjectLeadEmails, projectLeadsCsvUrl, sendTestEmail,
-  setProjectTheme, setProjectInfo, uploadProjectLogo, removeProjectLogo, uploadProjectFavicon, removeProjectFavicon, API_BASE_URL, type ProjectLeads, type ActivityEntry
+  setProjectTheme, setProjectInfo, uploadProjectLogo, removeProjectLogo, uploadProjectFavicon, removeProjectFavicon, assetPathUrl, type ProjectLeads, type ActivityEntry
 } from '../../lib/api';
 import { BrandInfoFields, infoProblem } from './BrandInfoFields';
 import { inkOn, paletteFromImage } from '../../lib/brandColor';
@@ -132,7 +132,7 @@ export function BrandingDialog({ project, onClose }: { project: Property; onClos
   const iconRef = useRef<HTMLInputElement | null>(null);
   const accent = theme.accent ?? '#b08d57';
   const font = theme.font ?? 'serif';
-  const logoUrl = theme.logo ? `${API_BASE_URL}/api/assets/${theme.logo}` : null;
+  const logoUrl = theme.logo ? assetPathUrl(theme.logo) : null;
   useEffect(() => {
     if (!logoUrl) { setLogoColours([]); return; }
     let live = true;
@@ -233,7 +233,7 @@ export function BrandingDialog({ project, onClose }: { project: Property; onClos
               onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) run(() => uploadProjectFavicon(project.id, f)); }} />
             <span className="pl-share-form">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              {theme.favicon && <img src={`${API_BASE_URL}/api/assets/${theme.favicon}`} alt="" width={32} height={32} />}
+              {theme.favicon && <img src={assetPathUrl(theme.favicon)} alt="" width={32} height={32} />}
               <button className="pl-btn" disabled={busy} onClick={() => iconRef.current?.click()}>{theme.favicon ? 'Replace favicon…' : 'Upload favicon…'}</button>
               {theme.favicon && <button className="pl-btn pl-btn-danger" disabled={busy} onClick={() => run(() => removeProjectFavicon(project.id))}>Remove</button>}
             </span>

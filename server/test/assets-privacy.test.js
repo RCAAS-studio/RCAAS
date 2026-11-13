@@ -124,7 +124,10 @@ for (const driver of ['local', 's3']) test(`private files, publication, referenc
   assert.equal(password.status, 200); owner.cookie = password.cookie;
   assert.equal((await f.read(replacement, 'chunk.bin', oldCookie)).status, 404, 'Password change revokes private asset reads too');
   assert.equal((await f.read(replacement, 'chunk.bin', owner.cookie)).status, 200);
-  await f.request('DELETE', '/api/scenes/owner-room', undefined, owner.cookie);
+  // Simulate an operator removing all retained content in this disposable
+  // fixture. The existing product has no individual-space deletion endpoint.
+  for (const name of ['owner-room.json', 'owner-room@1.json', 'owner-room@2.json']) await rm(path.join(f.data, 'scenes', name));
+  await new Promise(resolve => setTimeout(resolve, 1100));
   assert.equal((await f.request('DELETE', `/api/assets/${asset}`, undefined, owner.cookie)).status, 204);
   assert.equal((await f.request('DELETE', `/api/assets/${replacement}`, undefined, owner.cookie)).status, 204);
 

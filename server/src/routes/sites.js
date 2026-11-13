@@ -32,14 +32,20 @@ import { removeReservations } from '../reservations.js';
 import { EVENT_KINDS } from '../events.js';
 import { withWriteLock } from '../writeQueue.js';
 import { checkDraftRevision, draftRevision } from '../draftRevision.js';
+import { assertAssetReferences } from '../assetAccess.js';
+import { assetsChanged } from '../assetChanges.js';
 
 export const sitesRouter = Router();
-const wrap = (fn) => (req, res, next) => withWriteLock(`site:${req.params.id}`, async () => {
+const wrap = (fn) => (req, res, next) => withWriteLock('documents', () => withWriteLock(`site:${req.params.id}`, async () => {
   if (req.session && req.params.id && req.get('X-Expected-Revision') !== undefined) {
     checkDraftRevision(req.get('X-Expected-Revision'), cleanSite((await readSite(req.params.id))?.draft, req.params.id));
   }
+  if (req.session && ['PUT', 'POST'].includes(req.method) && !Buffer.isBuffer(req.body)) {
+    await assertAssetReferences(req.session, req.body);
+    if (req.path.endsWith('/publish') || req.path.endsWith('/schedule')) await assertAssetReferences(req.session, (await readSite(req.params.id))?.draft);
+  }
   return fn(req, res);
-}).catch(next);
+})).catch(next);
 
 const SITES_DIR = path.join(DATA_DIR, 'sites');
 const fileOf = (pid) => {
@@ -60,11 +66,12 @@ async function write(pid, data) {
   await fs.mkdir(SITES_DIR, { recursive: true });
   await writeFileWhole(fileOf(pid), JSON.stringify(data, null, 2));
 }
-export const removeSite = async (pid) => withWriteLock(`site:${pid}`, async () => {
+export const removeSite = async (pid) => withWriteLock('documents', () => withWriteLock(`site:${pid}`, async () => {
   await fs.rm(fileOf(pid), { force: true });
   await removeReservations(pid);
   await storage.remove(`site_${pid}`);
-});
+  assetsChanged();
+}));
 
 /** A scan's floor plan files (assets.js, floorplan.js), best first: the studio's upload, then the drawn ones. */
 const PLAN_FILES = ['uploaded.png', 'uploaded.jpg', 'uploaded.webp', 'plan.svg', 'plan-print.svg'];
@@ -420,7 +427,7 @@ export async function publishDue(now = Date.now()) {
   let done = 0;
   for (const f of files.filter((x) => x.endsWith('.json'))) {
     const pid = f.slice(0, -5);
-    await withWriteLock(`site:${pid}`, async () => {
+    await withWriteLock('documents', () => withWriteLock(`site:${pid}`, async () => {
     const saved = await readSite(pid);
     if (!saved?.scheduled || Date.parse(saved.scheduled.at) > now) return;
     const { scheduled, ...rest } = saved;
@@ -428,7 +435,7 @@ export async function publishDue(now = Date.now()) {
     const by = scheduled.by?.id ? { session: { sub: scheduled.by.id, name: scheduled.by.name } } : { session: null };
     await record(by, pid, 'published the website on schedule', (await getProperty(pid))?.title ?? pid, `set for ${scheduled.at}`);
     done += 1;
-    });
+    }));
   }
   return done;
 }

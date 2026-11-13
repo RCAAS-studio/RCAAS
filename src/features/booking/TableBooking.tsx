@@ -5,7 +5,7 @@ import { contactProblem } from '../../lib/contactRules';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import {
-  API_BASE_URL, getAvailability, getPreviewAvailability, reserveTable, type Availability, type SiteBooking, type SiteTable
+  assetPathUrl, getAvailability, getPreviewAvailability, reserveTable, type Availability, type SiteBooking, type SiteTable
 } from '../../lib/api';
 
 import { WaitlistForm } from './WaitlistForm';
@@ -293,7 +293,7 @@ export function TableBooking({ project, booking, tourSpace, preview = false, ini
         <div className="tb-view">
           <div className="tb-zoom" ref={zoom}>
             {/* eslint-disable-next-line @next/next/no-img-element -- the restaurant's own floor plan */}
-            <img src={`${API_BASE_URL}/api/assets/${booking.plan}`} alt="Floor plan of the restaurant" />
+            <img src={assetPathUrl(booking.plan)} alt="Floor plan of the restaurant" />
             {booking.tables.map((t) => {
               const st = stateOf(t);
               const on = pickedTable === t.id;

@@ -460,7 +460,8 @@ test('a project\'s spaces and their files are only for people who can see the pr
   assert.equal((await api('DELETE', `/api/assets/${assetId}/floorplan/upload`)).status, 403, 'cannot remove its plan');
   assert.equal((await api('PATCH', `/api/assets/${assetId}/floorplan/rooms`, { names: { r1: 'Mine' } })).status, 403, 'cannot rename its rooms');
   assert.equal((await api('DELETE', `/api/assets/${assetId}`)).status, 403, 'cannot delete its model');
-  assert.equal((await fetch(`${BASE}/api/assets/${assetId}/private-lobby.glb`)).status, 200, 'the model itself still streams to visitors');
+  assert.equal((await fetch(`${BASE}/api/assets/${assetId}/private-lobby.glb`)).status, 404, 'unpublished models are private');
+  assert.equal((await fetch(`${BASE}/api/assets/${assetId}/private-lobby.glb`, { headers: { cookie: owner.cookie } })).status, 200, 'the owner can preview it');
 
   cookie = owner.cookie; // naming rooms: a checked body, and only once there's a plan drawn from a scan
   assert.equal((await api('PATCH', `/api/assets/${assetId}/floorplan/rooms`, { names: ['Lobby'] })).status, 400);
@@ -936,12 +937,12 @@ test('a real .m4a uploads and streams back with ranges', async () => {
   assert.deepEqual(fin.json, { assetId, bytes: 4000, file: 'voice.m4a' });
   assert.ok(stagingGone(assetId), 'staging cleaned up');
 
-  const whole = await fetch(`${BASE}/api/assets/${assetId}/voice.m4a`);
+  const whole = await fetch(`${BASE}/api/assets/${assetId}/voice.m4a`, { headers: { cookie } });
   assert.equal(whole.status, 200);
   assert.equal(whole.headers.get('content-type'), 'audio/mp4');
   assert.equal((await whole.arrayBuffer()).byteLength, 4000);
 
-  const part = await fetch(`${BASE}/api/assets/${assetId}/voice.m4a`, { headers: { Range: 'bytes=0-11' } });
+  const part = await fetch(`${BASE}/api/assets/${assetId}/voice.m4a`, { headers: { cookie, Range: 'bytes=0-11' } });
   assert.equal(part.status, 206);
   assert.equal(new TextDecoder().decode((await part.arrayBuffer()).slice(4, 8)), 'ftyp');
 });
@@ -1033,11 +1034,11 @@ test('a converted .glb uploads, says mesh or point cloud, and is sent gzipped', 
   assert.deepEqual([fin.json.format, fin.json.kind, fin.json.meta], ['glb', 'mesh', 'lobby.glb']);
   assert.ok(stagingGone(assetId));
 
-  const gz = await fetch(`${BASE}/api/assets/${assetId}/lobby.glb`, { headers: { 'Accept-Encoding': 'gzip' } });
+  const gz = await fetch(`${BASE}/api/assets/${assetId}/lobby.glb`, { headers: { cookie, 'Accept-Encoding': 'gzip' } });
   assert.equal(gz.headers.get('content-encoding'), 'gzip');
   assert.ok(Number(gz.headers.get('content-length')) < fin.json.bytes / 10, 'the gzipped copy is what goes out');
   assert.equal((await gz.arrayBuffer()).byteLength, fin.json.bytes, 'and it unpacks to the same file');
-  const ranged = await fetch(`${BASE}/api/assets/${assetId}/lobby.glb`, { headers: { 'Accept-Encoding': 'gzip', Range: 'bytes=0-3' } });
+  const ranged = await fetch(`${BASE}/api/assets/${assetId}/lobby.glb`, { headers: { cookie, 'Accept-Encoding': 'gzip', Range: 'bytes=0-3' } });
   assert.equal(ranged.status, 206, 'a byte range still gets the raw file');
   assert.equal(ranged.headers.get('content-encoding'), null);
 
@@ -1090,7 +1091,7 @@ test('a space can carry its own floor plan image: PNG, JPEG or WebP, one at a ti
   const r = await up(png);
   assert.equal(r.status, 201, JSON.stringify(r.json));
   assert.equal(r.json.path, 'floorplan/uploaded.png');
-  const served = await fetch(`${BASE}/api/assets/${assetId}/floorplan/uploaded.png`);
+  const served = await fetch(`${BASE}/api/assets/${assetId}/floorplan/uploaded.png`, { headers: { cookie } });
   assert.equal(served.status, 200);
   assert.equal(served.headers.get('content-type'), 'image/png');
 
@@ -1102,7 +1103,7 @@ test('a space can carry its own floor plan image: PNG, JPEG or WebP, one at a ti
   assert.equal((await up(Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'))).status, 415);
   assert.equal((await up(Buffer.from('%PDF-1.7 ...'))).status, 415);
   assert.equal((await up(Buffer.alloc(0))).status, 400);
-  assert.equal((await fetch(`${BASE}/api/assets/${assetId}/floorplan/uploaded.jpg`)).status, 200, 'a refused upload keeps the one there');
+  assert.equal((await fetch(`${BASE}/api/assets/${assetId}/floorplan/uploaded.jpg`, { headers: { cookie } })).status, 200, 'a refused upload keeps the one there');
 
   assert.equal((await api('PUT', '/api/assets/ast_nothere/floorplan/upload', new Uint8Array(png), { 'Content-Type': 'application/octet-stream' })).status, 404);
 
@@ -1949,7 +1950,7 @@ test('a 360 camera video is a space: an MP4 in, streamed by byte range; raw INSV
   const ok = await send('lobby-360.mp4', mp4);
   assert.equal(ok.fin.status, 200, JSON.stringify(ok.fin.json));
   assert.deepEqual([ok.fin.json.format, ok.fin.json.meta, ok.fin.json.bytes], ['video360', 'lobby-360.mp4', mp4.length]);
-  const part = await fetch(`${BASE}/api/assets/${ok.assetId}/lobby-360.mp4`, { headers: { Range: 'bytes=0-99' } });
+  const part = await fetch(`${BASE}/api/assets/${ok.assetId}/lobby-360.mp4`, { headers: { cookie, Range: 'bytes=0-99' } });
   assert.equal(part.status, 206, 'streams by byte range, like the scans');
   assert.equal((await part.arrayBuffer()).byteLength, 100);
 

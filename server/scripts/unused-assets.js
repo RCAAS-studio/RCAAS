@@ -23,7 +23,10 @@ if (DRIVER !== 'local') { console.error('[unused] reads the local asset folder o
 
 async function files(dir) {
   const out = [];
-  for (const e of await fs.readdir(dir, { withFileTypes: true }).catch(() => [])) {
+  let entries;
+  try { entries = await fs.readdir(dir, { withFileTypes: true }); }
+  catch (error) { if (error.code === 'ENOENT') return out; throw error; }
+  for (const e of entries) {
     const full = path.join(dir, e.name);
     if (e.isDirectory()) out.push(...(await files(full)));
     else out.push({ full, bytes: (await fs.stat(full)).size });
@@ -32,7 +35,9 @@ async function files(dir) {
 }
 
 const assetRoot = path.resolve(ASSET_DIR);
-const data = (await files(DATA_DIR)).filter((f) => f.full.endsWith('.json') && !path.resolve(f.full).startsWith(assetRoot + path.sep));
+if (!(await fs.stat(DATA_DIR)).isDirectory()) throw new Error('DATA_DIR must be a readable directory.');
+const metadataRoots = ['asset-records', 'upload-owners', 'uploads-staging'].map(name => path.join(DATA_DIR, name) + path.sep);
+const data = (await files(DATA_DIR)).filter((f) => f.full.endsWith('.json') && !path.resolve(f.full).startsWith(assetRoot + path.sep) && !metadataRoots.some(root => f.full.startsWith(root)));
 const text = (await Promise.all(data.map((f) => fs.readFile(f.full, 'utf8')))).join('\n');
 const projects = new Set((await fs.readdir(path.join(DATA_DIR, 'properties')).catch(() => [])).map((f) => f.replace(/\.json$/, '')));
 

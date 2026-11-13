@@ -70,10 +70,13 @@ const scopeAllows = (graph, session, source) => {
 };
 function privatelyAllows(graph, session, id, record) {
   if (!session || session.role === 'staff') return false;
-  if (!session.sub || record?.ownerId === session.sub) return true;
+  if (!session.sub) return true;
   const projectId = /^(?:site|brand)_(.+)$/.exec(id)?.[1];
   if (projectId && scopeAllows(graph, session, { propertyId: projectId })) return true;
-  return (graph.references.get(id) ?? []).some(source => scopeAllows(graph, session, source));
+  const sources = graph.references.get(id) ?? [];
+  // Once attached to project content, current project membership controls
+  // access; the original uploader cannot retain access after removal.
+  return sources.length ? sources.some(source => scopeAllows(graph, session, source)) : record?.ownerId === session.sub;
 }
 
 export async function readAssetAccess(session, id, file) {

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment } from 'react';
-import { API_BASE_URL, photoSize, whatsappHref, type PublicSite, type SiteBooking, type SiteMenu } from '../../lib/api';
+import { API_BASE_URL, assetPathUrl, studioAssetContext, photoSize, whatsappHref, type PublicSite, type SiteBooking, type SiteMenu } from '../../lib/api';
 import { fontFamily, SCRIPT_FONT } from '../../lib/brandFonts';
 import { AskAbout, BookingDesk, BookThisHall, BookThisRoom, SiteEnquire, SiteGallery, SiteMap, SiteReveal, SiteTour, ViewIn3D } from './SiteParts';
 import { SiteNav } from './SiteNav';
@@ -13,11 +13,13 @@ import '../tour/viewer.css';
 import './website.css';
 
 
-const asset = (p: string) => `${API_BASE_URL}/api/assets/${p}`;
+const asset = assetPathUrl;
 /** A site photo for next/image: its own size when the name carries it, else a 3:2 guess. */
 const pic = (p: string) => {
   const [width, height] = photoSize(p) ?? [1600, 1067];
-  return { src: asset(p), width, height };
+  // The optimiser cannot forward the viewer's session cookie. Draft previews
+  // fetch the protected original directly on the authenticated studio host.
+  return { src: asset(p), width, height, unoptimized: studioAssetContext() };
 };
 const paragraphs = (t: string) => t.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 

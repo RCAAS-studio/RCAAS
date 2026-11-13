@@ -2,7 +2,28 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { knownMarketingPath } from '../src/features/marketing/routeMatch.ts';
 import { ROUTES } from '../src/features/marketing/types/index.ts';
-import { getScene, saveScene, publishSceneNow, getSiteDraft, saveSiteDraft, publishSite, uploadAssetChunk } from '../src/lib/api.ts';
+import { getScene, saveScene, publishSceneNow, getSiteDraft, saveSiteDraft, publishSite, uploadAssetChunk, assetUrl, assetPathUrl, studioAssetContext } from '../src/lib/api.ts';
+
+test('studio asset URLs keep host-only cookies on the studio origin; public URLs keep the public API', t => {
+  const previous = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  const settings = { studio: process.env.NEXT_PUBLIC_STUDIO_URL, base: process.env.NEXT_PUBLIC_BASE_PATH };
+  t.after(() => {
+    if (previous) Object.defineProperty(globalThis, 'window', previous); else delete globalThis.window;
+    for (const [name, value] of [['NEXT_PUBLIC_STUDIO_URL', settings.studio], ['NEXT_PUBLIC_BASE_PATH', settings.base]]) {
+      if (value === undefined) delete process.env[name]; else process.env[name] = value;
+    }
+  });
+  const at = (pathname, origin = 'https://rcaas.test') => Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { pathname, origin } } });
+  delete process.env.NEXT_PUBLIC_BASE_PATH;
+  at('/gallery'); const publicUrl = assetUrl('ast_fixture', 'scan.lcc2'); assert.match(publicUrl, /^https?:/);
+  at('/studio/project/edit'); assert.equal(assetUrl('ast_fixture', 'scan.lcc2'), '/api/assets/ast_fixture/scan.lcc2');
+  assert.equal(assetPathUrl('site_project/image.png?v=1'), '/api/assets/site_project/image.png?v=1');
+  process.env.NEXT_PUBLIC_STUDIO_URL = 'https://studio.rcaas.test';
+  at('/', 'https://studio.rcaas.test'); assert.equal(studioAssetContext(), true);
+  process.env.NEXT_PUBLIC_BASE_PATH = '/repo';
+  at('/repo/studio/project'); assert.equal(assetUrl('ast_fixture', 'scan.lcc2'), '/repo/api/assets/ast_fixture/scan.lcc2');
+  at('/repo/gallery'); assert.equal(assetUrl('ast_fixture', 'scan.lcc2'), publicUrl);
+});
 
 test('marketing routes accept every listed page but reject unknown descendants', () => {
   for (const path of ROUTES) {

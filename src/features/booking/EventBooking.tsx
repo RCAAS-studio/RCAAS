@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { contactProblem } from '../../lib/contactRules';
 import {
-  API_BASE_URL, getEventCalendar, requestEvent, sendBookingPlan, PLAN_FILES, type EventCalendar, type EventHall, type EventSession, type SiteEvents
+  assetPathUrl, getEventCalendar, requestEvent, sendBookingPlan, PLAN_FILES, type EventCalendar, type EventHall, type EventSession, type SiteEvents
 } from '../../lib/api';
 import { WaitlistForm } from './WaitlistForm';
 import { HallCalendar } from './HallCalendar';
 import './table-booking.css';
 
-const asset = (p: string) => `${API_BASE_URL}/api/assets/${p}`;
+const asset = assetPathUrl;
 const day = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
 const SESSIONS: [EventSession, string][] = [['day', 'Daytime'], ['evening', 'Evening'], ['full', 'Whole day']];
 /** The whole day clashes with either half (server/src/events.js). */

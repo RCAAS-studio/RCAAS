@@ -16,6 +16,7 @@ import path from 'path';
 import { migrateScene, CURRENT_VERSION } from './migrate.js';
 import { DATA_DIR, writeFileWhole } from './dataDir.js';
 import { phoneOf } from './notify.js';
+import { assetsChanged } from './assetChanges.js';
 
 const SCENES_DIR = path.join(DATA_DIR, 'scenes');
 const PROPERTIES_DIR = path.join(DATA_DIR, 'properties');
@@ -485,6 +486,7 @@ export const deleteProperty = serialized('documents', async (id, by = null) => {
     released += 1;
   }
   await fs.rm(propertyFile(id), { force: true });
+  assetsChanged();
   return { id, released };
 });
 

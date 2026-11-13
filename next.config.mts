@@ -14,6 +14,14 @@ const staticExport = !!process.env.NEXT_OUTPUT_EXPORT;
 const nextConfig: NextConfig = {
   basePath,
   ...(staticExport ? { output: 'export' as const } : {}),
+  // Direct Next development/staging also needs authenticated same-origin
+  // assets. The production reverse proxy normally handles /api first.
+  ...(staticExport ? {} : {
+    async rewrites() {
+      const target = (process.env.API_INTERNAL_URL || api.origin).replace(/\/$/, '');
+      return [{ source: '/api/:path*', destination: `${target}/api/:path*` }];
+    }
+  }),
 
   // Pin the workspace root to this repo — a lockfile in a parent folder on
   // this machine otherwise makes Next guess (and warn about) the wrong one.

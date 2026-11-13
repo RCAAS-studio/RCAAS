@@ -43,6 +43,8 @@ dist/
 # tracked as seed content.
 server/src/data/assets/
 server/src/data/uploads-staging/
+server/src/data/upload-owners/
+server/src/data/asset-records/
 server/src/data/leads/
 server/src/data/users/
 server/src/data/activity/

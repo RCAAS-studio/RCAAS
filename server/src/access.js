@@ -6,7 +6,7 @@
  * spaces that use it; one no space uses yet (an upload in progress) is open
  * to whoever is signed in, as it always was.
  */
-import { getProperty, getScene, listScenes, propertyIsVisible } from './store.js';
+import { getProperty, getScene, propertyIsVisible } from './store.js';
 import { getUserById } from './usersStore.js';
 import { readSession } from './middleware/auth.js';
 import { mayManageAsset } from './assetAccess.js';

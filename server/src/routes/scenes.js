@@ -10,6 +10,7 @@ import { withWriteLock } from '../writeQueue.js';
 import { checkDraftRevision, draftRevision, sceneDraft } from '../draftRevision.js';
 import { record, recordScene } from '../activity.js';
 import * as storage from '../storage.js';
+import { assertAssetReferences } from '../assetAccess.js';
 
 export const scenesRouter = Router();
 export const galleryRouter = Router();
@@ -21,6 +22,8 @@ const wrap = (fn) => (req, res, next) => withWriteLock('documents', async () => 
     const existing = await getScene(req.params.id);
     if (existing && req.get('If-None-Match') === '*') return res.status(409).json({ error: 'This space already exists. Choose a different name.' });
     checkDraftRevision(req.get('X-Expected-Revision'), existing ? sceneDraft(existing) : null);
+    if (req.method === 'PUT') await assertAssetReferences(req.access ?? req.session, req.body);
+    else if (req.path.endsWith('/publish') && existing) await assertAssetReferences(req.access ?? req.session, existing);
   }
   return fn(req, res);
 }).catch(next);

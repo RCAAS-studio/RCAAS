@@ -673,7 +673,22 @@ export const finalizeVideo360 = (assetId: string) =>
 
 export const deleteAsset = (assetId: string) => request(`/api/assets/${assetId}`, { method: 'DELETE' });
 
-export const assetUrl = (assetId: string, relPath: string) => `${API_BASE}/api/assets/${assetId}/${relPath}`;
+/** Private studio media must stay on the studio origin: SDK workers and
+ * native images/video then send the host-only cookie without custom SDK flags. */
+export function studioAssetContext(): boolean {
+  if (typeof window === 'undefined' || !window.location) return false;
+  const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const pathname = base && window.location.pathname.startsWith(`${base}/`) ? window.location.pathname.slice(base.length) : window.location.pathname;
+  if (/^\/studio(?:\/|$)/.test(pathname)) return true;
+  try { return !!process.env.NEXT_PUBLIC_STUDIO_URL && new URL(process.env.NEXT_PUBLIC_STUDIO_URL).origin === window.location.origin; }
+  catch { return false; }
+}
+export const assetUrl = (assetId: string, relPath: string) =>
+  `${studioAssetContext() ? process.env.NEXT_PUBLIC_BASE_PATH || '' : API_BASE}/api/assets/${assetId}/${relPath}`;
+export const assetPathUrl = (value: string) => {
+  const split = value.indexOf('/');
+  return assetUrl(value.slice(0, split), value.slice(split + 1));
+};
 
 /** A link that is safe to put in a visitor's page: http(s) only, never
  *  javascript: or data:. Anything else comes back null — don't render it. */
@@ -684,7 +699,7 @@ export function safeUrl(u: string | undefined | null): string | null {
 
 /** A path on the API (a gallery or view picture) as a full URL. Data URLs
  *  (the studio's own thumbnails) and full URLs pass through. */
-export const apiUrl = (path: string | null | undefined) => (path ? (path.startsWith('/') ? `${API_BASE}${path}` : path) : null);
+export const apiUrl = (path: string | null | undefined) => (path ? (path.startsWith('/api/assets/') ? assetPathUrl(path.slice('/api/assets/'.length)) : path.startsWith('/') ? `${API_BASE}${path}` : path) : null);
 
 /** A WhatsApp chat with the visitor's first line already typed. */
 export const whatsappHref = (number: string, text: string) =>

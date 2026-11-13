@@ -5,7 +5,7 @@ import { contactProblem } from '../../lib/contactRules';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import {
-  API_BASE_URL, getPreviewStayCalendar, getStayCalendar, requestStay, type SiteStays, type StayCalendar, type StayRoom
+  assetPathUrl, getPreviewStayCalendar, getStayCalendar, requestStay, type SiteStays, type StayCalendar, type StayRoom
 } from '../../lib/api';
 import { freeForStay, nightsBetween, roomsNeeded } from './booking';
 
@@ -16,7 +16,7 @@ gsap.registerPlugin(useGSAP);
 
 type RoomState = 'free' | 'full' | 'small';
 
-const asset = (p: string) => `${API_BASE_URL}/api/assets/${p}`;
+const asset = assetPathUrl;
 const utc = (d: string) => new Date(`${d}T12:00:00Z`);
 const fmt = (d: string, o: Intl.DateTimeFormatOptions) => utc(d).toLocaleDateString('en-GB', { ...o, timeZone: 'UTC' });
 const shortDay = (d: string) => fmt(d, { weekday: 'short', day: 'numeric', month: 'short' });

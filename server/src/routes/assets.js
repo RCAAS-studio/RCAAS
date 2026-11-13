@@ -16,17 +16,21 @@ import { Router } from 'express';
 import express from 'express';
 import { promises as fs, createWriteStream, createReadStream, mkdirSync } from 'fs';
 import path from 'path';
-import { randomUUID } from 'crypto';
+import { randomUUID, createHash } from 'crypto';
 import yauzl from 'yauzl';
 import zlib from 'zlib';
 import { Readable, pipeline } from 'stream';
-import { requireEditorSession } from '../middleware/auth.js';
-import { assetGuard, refuseStaff } from '../access.js';
+import { requireEditorSession, readSession, staleReason } from '../middleware/auth.js';
+import { assetGuard, refuseStaff, freshSession } from '../access.js';
 import { recordAsset } from '../activity.js';
 import * as storage from '../storage.js';
 import { buildFloorPlan, renameRooms, saveMarks } from '../floorplan.js';
 import { DATA_DIR } from '../dataDir.js';
 import { withWriteLock } from '../writeQueue.js';
+import { assetRecord, createAssetRecord, completeAssetRecord, removeAssetRecord } from '../assetCatalog.js';
+import { readAssetAccess, assertAssetUnreferenced, mayManageAsset } from '../assetAccess.js';
+import { cleanAssetPath } from '../assetReferences.js';
+import { assetsChanged } from '../assetChanges.js';
 
 export const assetsRouter = Router();
 
@@ -109,6 +113,7 @@ assetsRouter.post('/', requireEditorSession, async (req, res, next) => {
     await fs.mkdir(path.join(STAGING_DIR, assetId), { recursive: true });
     await fs.mkdir(OWNERS_DIR, { recursive: true });
     await fs.writeFile(ownerFile(assetId), JSON.stringify({ ownerId: req.session.sub ?? null }), { flag: 'wx' });
+    await createAssetRecord(assetId, req.session.sub ?? null);
     res.json({ assetId });
   } catch (err) {
     next(err);
@@ -251,6 +256,22 @@ async function listStagedFiles(assetId) {
     .map((e) => path.relative(root, path.join(e.parentPath ?? e.path, e.name)).replace(/\\/g, '/'));
 }
 
+/** Check every source before writing any object; hash in bounded streaming
+ * memory. Readiness is committed only after the entire copy succeeds. */
+async function copyStagedAsset(assetId, relPaths) {
+  const files = {};
+  for (const relPath of relPaths) {
+    const full = stagingFile(assetId, relPath);
+    const { size } = await fs.stat(full);
+    if (!size) throw Object.assign(new Error(`${relPath} uploaded empty. Upload the complete file before finalizing.`), { status: 400 });
+    const hash = createHash('sha256');
+    for await (const chunk of createReadStream(full)) hash.update(chunk);
+    files[relPath] = { bytes: size, sha256: hash.digest('hex') };
+  }
+  for (const relPath of relPaths) await storage.put(assetId, relPath, createReadStream(stagingFile(assetId, relPath)));
+  return files;
+}
+
 /* -------------------------------------------------------------------- */
 /* Audio (§6.3) — one AAC .m4a, at most 2 MB. Same upload, same asset ids */
 /* as a splat export; only the validation differs.                       */
@@ -298,7 +319,8 @@ async function finalizeVideo360(assetId, res) {
   const ok = ext === 'webm' ? head.readUInt32BE(0) === 0x1a45dfa3 : head.toString('latin1', 4, 8) === 'ftyp';
   if (!ok) return reject(`${relPath} isn’t really a video file of that kind. Export it again.`);
 
-  await storage.put(assetId, relPath, createReadStream(full));
+  const files = await copyStagedAsset(assetId, [relPath]);
+  await completeAssetRecord(assetId, files);
   await fs.rm(path.join(STAGING_DIR, assetId), { recursive: true, force: true });
   return res.json({ assetId, bytes: size, fileCount: 1, meta: relPath, format: 'video360', splatCount: null, bbox: null });
 }
@@ -322,7 +344,8 @@ async function finalizeAudio(assetId, res) {
   }
   if (!(await looksLikeMp4(full))) return reject(`${relPath} isn't really an .m4a file — export it again as AAC (.m4a).`);
 
-  await storage.put(assetId, relPath, createReadStream(full));
+  const files = await copyStagedAsset(assetId, [relPath]);
+  await completeAssetRecord(assetId, files);
   await fs.rm(path.join(STAGING_DIR, assetId), { recursive: true, force: true });
   return res.json({ assetId, bytes: size, file: relPath });
 }
@@ -382,10 +405,11 @@ async function finalizeGlb(assetId, relPath, res) {
   const found = inspectGlb(head, relPath);
   if (found.error) return reject(found.error);
 
-  await storage.put(assetId, relPath, createReadStream(full));
+  const files = await copyStagedAsset(assetId, [relPath]);
   // Meshopt data is laid out to compress well; the read route sends this
   // copy to any client that accepts gzip and didn't ask for a byte range.
   await storage.put(assetId, `${relPath}.gz`, createReadStream(full).pipe(zlib.createGzip({ level: 6 })));
+  await completeAssetRecord(assetId, files);
   await fs.rm(path.join(STAGING_DIR, assetId), { recursive: true, force: true });
   return res.json({ assetId, bytes: size, fileCount: 1, meta: relPath, format: 'glb', kind: found.kind, splatCount: null, bbox: null });
 }
@@ -480,19 +504,13 @@ assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, withUp
     const metaRelPath = chosen.relPath;
     const meta = chosen.meta;
 
-    let bytes = 0;
-    for (const relPath of relPaths) {
-      const full = stagingFile(assetId, relPath);
-      const { size } = await fs.stat(full);
-      if (size === 0) return res.status(400).json({ error: `${relPath} uploaded empty — never load a partial scan.` });
-      bytes += size;
-      // one at a time on purpose: a scan is dozens of files, not thousands
-      await storage.put(assetId, relPath, createReadStream(full));
-    }
+    const files = await copyStagedAsset(assetId, relPaths);
+    const bytes = Object.values(files).reduce((sum, file) => sum + file.bytes, 0);
 
     await fs.rm(path.join(STAGING_DIR, assetId), { recursive: true, force: true });
     // a floor plan from the export's own collision mesh; never fails the upload
     const floorPlan = await buildFloorPlan(assetId, meta.name && meta.name !== 'XGrids Lcc2 Splats' ? meta.name : 'Floor plan').catch(() => null);
+    await completeAssetRecord(assetId, files);
     res.json({
       floorPlan,
       assetId,
@@ -520,8 +538,18 @@ const send = (src, res) => pipeline(src, res, (err) => {
 // Serve a stored file (scan tiles, photos, audio), with byte ranges and a one-year cache.
 assetsRouter.get('/:assetId/*', async (req, res, next) => {
   try {
-    const relPath = safeRelPath(req.params[0]);
+    res.set('Cache-Control', 'private, no-store');
+    res.vary('Origin').vary('Cookie').vary('Accept-Encoding');
+    const relPath = cleanAssetPath(req.params[0]);
     if (!relPath) return res.status(400).json({ error: 'Invalid asset path.' });
+
+    let access = await readAssetAccess(null, req.params.assetId, relPath);
+    if (!access.allowed) {
+      const claims = readSession(req);
+      const session = claims && !(await staleReason(claims)) ? await freshSession(claims) : null;
+      if (session) access = await readAssetAccess(session, req.params.assetId, relPath);
+    }
+    if (!access.allowed) return res.status(404).json({ error: 'Asset not found.' });
 
     const { bytes, contentType } = await storage.stat(req.params.assetId, relPath);
     const range = req.headers.range;
@@ -530,10 +558,9 @@ assetsRouter.get('/:assetId/*', async (req, res, next) => {
     // Opened on its own, a file stays a file: an uploaded SVG with a script in
     // it can't run on this origin. <img>, <video> and fetch() are unaffected.
     res.setHeader('Content-Security-Policy', "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox");
-    res.setHeader('Vary', 'Accept-Encoding');
     // A scan's files are written once, at upload, so browsers and a CDN may
     // keep them for good; only the floor plan is redrawn in place.
-    res.setHeader('Cache-Control', relPath.startsWith('floorplan/') ? 'no-cache' : 'public, max-age=31536000, immutable');
+    res.setHeader('Cache-Control', access.public ? 'public, no-cache' : 'private, no-store');
 
     // A whole-file read of a model: send the gzipped copy finalizeGlb made.
     // Byte ranges (the LCC SDK's tiles) always get the raw file.
@@ -548,9 +575,10 @@ assetsRouter.get('/:assetId/*', async (req, res, next) => {
 
     if (range) {
       const match = /^bytes=(\d*)-(\d*)$/.exec(range);
-      const start = match?.[1] ? Number(match[1]) : 0;
-      const end = match?.[2] ? Number(match[2]) : bytes - 1;
-      if (!match || start > end || end >= bytes) {
+      const suffix = match && !match[1] && !!match[2];
+      const start = suffix ? Math.max(0, bytes - Number(match[2])) : Number(match?.[1] || 0);
+      const end = suffix || !match?.[2] ? bytes - 1 : Math.min(Number(match[2]), bytes - 1);
+      if (!match || (!match[1] && !match[2]) || !Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start > end || start >= bytes) {
         res.setHeader('Content-Range', `bytes */${bytes}`);
         return res.status(416).end();
       }
@@ -566,6 +594,16 @@ assetsRouter.get('/:assetId/*', async (req, res, next) => {
     if (err.code === 'ENOENT') return res.status(404).json({ error: 'Asset not found.' });
     next(err);
   }
+});
+
+// Studio-only provenance and source-file checksums; never exposes ownership IDs.
+assetsRouter.get('/:assetId', requireEditorSession, assetGuard, async (req, res, next) => {
+  try {
+    const record = await assetRecord(req.params.assetId);
+    if (!record && !(await storage.exists(req.params.assetId))) return res.status(404).json({ error: 'Asset not found.' });
+    const { ownerId: _owner, ...metadata } = record ?? { assetId: req.params.assetId, status: 'ready', legacy: true, files: null };
+    res.set('Cache-Control', 'private, no-store').json(metadata);
+  } catch (error) { next(error); }
 });
 
 /** (Re)build a space's floor plan, e.g. for a scan uploaded before plans existed. */
@@ -714,12 +752,18 @@ assetsRouter.delete('/:assetId/floorplan/upload', requireEditorSession, assetGua
 });
 
 // Delete an asset and all its files.
-assetsRouter.delete('/:assetId', requireEditorSession, assetGuard, async (req, res, next) => {
+assetsRouter.delete('/:assetId', requireEditorSession, assetGuard, (req, res, next) => withWriteLock('documents', () => withWriteLock(`upload:${req.params.assetId}`, async () => {
   try {
+    // Recheck after acquiring the same lock used by saves and publication.
+    if (!(await mayManageAsset(req.access, req.params.assetId))) return res.status(403).json({ error: 'This asset is not available to your account.' });
+    await assertAssetUnreferenced(req.params.assetId);
+    if ((await assetRecord(req.params.assetId))?.status === 'staging') return res.status(409).json({ error: 'This upload has not finished.' });
     await recordAsset(req, req.params.assetId, 'deleted a model', req.params.assetId);
     await storage.remove(req.params.assetId);
+    await removeAssetRecord(req.params.assetId);
+    assetsChanged();
     res.status(204).end();
   } catch (err) {
     next(err);
   }
-});
+})).catch(next));
