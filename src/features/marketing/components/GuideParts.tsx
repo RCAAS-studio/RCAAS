@@ -82,7 +82,7 @@ export const ShortAnswer: React.FC<{ text: React.ReactNode }> = ({ text }) => (
   <motion.section
     {...fadeUp}
     aria-label="Short answer"
-    className="max-w-4xl mb-20 sm:mb-24 rounded-2xl border border-accent/25 bg-accent/[0.04] p-6 sm:p-8"
+    className="max-w-4xl mb-20 sm:mb-24 rounded-2xl border border-accent/25 bg-accent/4 p-6 sm:p-8"
   >
     <p className="text-xs font-mono uppercase tracking-wider text-accent font-semibold mb-2">Short answer</p>
     <p className="text-base sm:text-lg text-zinc-800 leading-relaxed">{text}</p>

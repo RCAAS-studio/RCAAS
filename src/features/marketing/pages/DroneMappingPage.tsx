@@ -197,7 +197,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
       {/* 1. HERO + ANSWER SUMMARY */}
       <section className="relative pt-12 pb-16 md:pt-16 md:pb-24 border-b border-zinc-200 overflow-hidden">
         {/* Subtle grid backdrop */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_65%_55%_at_50%_0%,#000_70%,transparent_100%)] opacity-75 pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-size-[3.5rem_3.5rem] mask-[radial-gradient(ellipse_65%_55%_at_50%_0%,#000_70%,transparent_100%)]ty-75 pointer-events-none" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Breadcrumb */}
@@ -449,7 +449,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
                   alt={showcaseMode === 'ortho' ? 'True-scale aerial orthomosaic map' : 'Digital surface model elevation gradient'}
                   className="w-full h-full object-cover opacity-90 transition-opacity duration-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/35" />
+                <div className="absolute inset-0 bg-linear-to-trom-black/85 via-black/25 to-black/35" />
 
                 {/* Aerial Telemetry HUD */}
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-xs font-mono">
@@ -890,7 +890,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
       {/* 12. CTA BAND */}
       <section className="py-20 bg-zinc-900 text-white relative overflow-hidden">
         {/* Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1506h-150accent/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-zinc-700 bg-zinc-800 mb-6">

@@ -278,7 +278,7 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
                       onClick={() => toggleFactor(factor.id)}
                       className={`group h-full w-full text-left rounded-lg border p-5 flex items-start gap-4 transition-all ${
                         isOn
-                          ? 'border-accent bg-accent/[0.04] shadow-[0_8px_24px_-6px_rgba(225,29,72,0.18)]'
+                          ? 'border-accent bg-accent/4ow-[0_8px_24px_-6px_rgba(225,29,72,0.18)]'
                           : 'border-line bg-white hover:border-line-strong hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.08)]'
                       }`}
                     >
@@ -333,7 +333,7 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
                   </p>
                 )}
               </div>
-              <button type="button" onClick={askForQuote} className={`${primaryButtonClass} sm:!w-auto shrink-0 !py-3`}>
+              <button type="button" onClick={askForQuote} className={`${primaryButtonClass} sm:w-auto! shrink-0 py-3!`}>
                 <span>Ask for a quote</span>
                 <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" />
               </button>
@@ -427,7 +427,7 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
 
             <motion.div
               {...fadeUp}
-              className="mt-8 rounded-xl border border-accent/25 bg-accent/[0.04] p-5 flex items-start gap-3"
+              className="mt-8 rounded-xl border border-accent/25 bg-accent/4flex items-start gap-3"
             >
               <CalendarClock className="w-5 h-5 text-accent shrink-0 mt-0.5" aria-hidden="true" />
               <p className="text-sm text-zinc-700 leading-relaxed">
@@ -443,13 +443,13 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
               {...fadeUp}
               className="grid grid-cols-1 lg:grid-cols-12 gap-0 rounded-2xl border border-line bg-surface overflow-hidden"
             >
-              <div className="lg:col-span-5 relative min-h-[240px] bg-zinc-900">
+              <div className="lg:col-span-5 relative min-h-60inc-900">
                 <img loading="lazy" decoding="async"
                   src={IMG['cost-guide/team-member-capturing-a-heritage-square-with-a-h']}
                   alt="Team member capturing a heritage square with a handheld laser scanner"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-trom-black/70 via-black/10 to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5 bg-white/95 border border-line p-4 rounded-xl shadow-sm">
                   <p className="text-xs font-mono text-zinc-500 mb-1.5" aria-live="polite">
                     {prepDone.length} of {PREPARATION.length} ready

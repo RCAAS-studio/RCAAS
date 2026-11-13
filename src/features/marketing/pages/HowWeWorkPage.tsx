@@ -476,9 +476,9 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                   transition={{ duration: 0.3 }}
                   className="grid grid-cols-1 lg:grid-cols-12 gap-0 rounded-2xl border border-line bg-white overflow-hidden shadow-sm"
                 >
-                  <div className="lg:col-span-5 relative min-h-[220px] bg-zinc-900">
+                  <div className="lg:col-span-5 relative min-h-55 bg-zinc-900">
                     <img loading="lazy" decoding="async" src={step.image} alt={step.imageAlt} className="absolute inset-0 w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 bg-white/95 border border-line px-3 py-1.5 rounded-md text-xs font-mono text-zinc-900 shadow-xs">
                       Step {step.number} · {step.title}
                     </div>
@@ -498,7 +498,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                           <dd className="text-sm text-zinc-700 leading-relaxed">{step.youProvide}</dd>
                         </div>
                       )}
-                      <div className="rounded-xl border border-accent/25 bg-accent/[0.04] p-4">
+                      <div className="rounded-xl border border-accent/25 bg-accent/4>
                         <dt className="text-xs font-mono uppercase tracking-wider text-accent mb-1">You receive</dt>
                         <dd className="text-sm text-zinc-900 font-medium leading-relaxed">{step.youReceive}</dd>
                       </div>
@@ -562,7 +562,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                         alt={discipline.imageAlt}
                         className="w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-700"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
                       <div className="absolute bottom-4 left-5 flex items-center gap-2.5">
                         <span className="w-9 h-9 rounded-lg bg-white/95 flex items-center justify-center shadow-xs">
                           <Icon className="w-4 h-4 text-accent" aria-hidden="true" />
@@ -659,7 +659,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
               <button
                 type="button"
                 onClick={planProject}
-                className="h-full w-full rounded-lg border border-dashed border-accent/40 bg-accent/[0.03] p-6 flex flex-col text-left hover:bg-accent/[0.06] hover:border-accent transition-colors"
+                className="h-full w-full rounded-lg border border-dashed border-accent/40 bg-accent/3 p-6 flex flex-col text-left hover:bg-accent/6 hover:border-accent transition-colors"
               >
                 <span className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center mb-4">
                   <MessageCircleQuestion className="w-4.5 h-4.5 text-white" aria-hidden="true" />
@@ -728,7 +728,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
 
               {accuracyConfirmed && (
                 <div className="mt-6 rounded-xl border border-line bg-white overflow-x-auto">
-                  <table className="w-full min-w-[480px] text-left">
+                  <table className="w-full min-w-120 text-left">
                     <thead className="border-b border-line">
                       <tr className="text-xs font-mono uppercase tracking-wider text-zinc-500">
                         <th scope="col" className="px-5 py-3 font-semibold">Method</th>
@@ -800,7 +800,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                       alt={explainer.imageAlt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
                   </div>
                   <article className="p-6 sm:p-8 flex flex-col flex-1">
                     <h3 className="text-xl font-semibold text-zinc-900 font-display mb-3">{explainer.title}</h3>

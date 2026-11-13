@@ -30,7 +30,7 @@ export const LoginScreen: React.FC = () => (
           alt=""
           className="login-drift absolute inset-0 h-full w-full object-cover opacity-70"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/45 to-zinc-950/25" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/45 to-zinc-950/25" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(225,29,72,0.22),transparent_55%)]" />
         <div aria-hidden="true" className="login-grid absolute inset-0" />
         <div aria-hidden="true" className="login-scan absolute inset-x-0 h-px" />
@@ -92,7 +92,7 @@ export const LoginScreen: React.FC = () => (
         </div>
 
         <div className="flex flex-1 items-center justify-center py-12">
-          <div className="login-rise w-full max-w-[26rem]">
+          <div className="login-rise w-full max-w-104">
             <span className="mb-6 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-1 text-[11px] font-mono text-zinc-700 shadow-xs">
               <ShieldCheck className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
               RCAAS Studio · for teams and clients

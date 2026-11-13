@@ -325,13 +325,13 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
           {/* Hero Visual Card */}
           <div className="lg:col-span-5">
             <div className="relative rounded-2xl overflow-hidden border border-line bg-surface p-3 shadow-lg group">
-              <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-zinc-900">
+              <div className="relative rounded-xl overflow-hidden aspect-4/3 bg-zinc-900">
                 <img loading="lazy" decoding="async"
                   src={IMG['virtual-tours/3d-virtual-tour-interface-walkthrough-on-modern']}
                   alt="3D virtual tour interface walkthrough on modern screen"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
 
                 <div className="absolute top-4 left-4 bg-white/90 border border-line px-3 py-1 rounded-md text-xs font-mono text-zinc-900 flex items-center gap-2 shadow-xs">
                   <span className="h-2 w-2 rounded-full bg-accent animate-ping" />
@@ -729,13 +729,13 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
 
               {/* Sector image */}
               <div className="lg:col-span-5">
-                <div className="relative rounded-xl overflow-hidden aspect-[4/3] border border-line group shadow-xs">
+                <div className="relative rounded-xl overflow-hidden aspect-4/3 border border-line group shadow-xs">
                   <img loading="lazy" decoding="async"
                     src={selectedSectorData.image}
                     alt={selectedSectorData.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
                   <div className="absolute bottom-3 left-3 right-3 text-xs font-medium text-white bg-black/75 p-2.5 rounded-lg border border-white/10 font-mono">
                     {selectedSectorData.sampleClient || selectedSectorData.name}
                   </div>

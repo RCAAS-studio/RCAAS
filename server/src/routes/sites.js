@@ -20,6 +20,7 @@ import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
 import { Readable } from 'stream';
+import { randomUUID } from 'node:crypto';
 import { DATA_DIR, writeFileWhole } from '../dataDir.js';
 import * as storage from '../storage.js';
 import { getProperty, getPublishedScene, getEmbed, listScenes, listPublished } from '../store.js';
@@ -91,7 +92,7 @@ const STYLES = ['heritage', 'classic', 'modern', 'minimal', 'night'];
 export function cleanSite(d, pid) {
   const s = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
   const list = (a, n, f) => (Array.isArray(a) ? a : []).slice(0, n).map(f);
-  const img = (v) => (typeof v === 'string' && new RegExp(`^site_${pid}/img-\\d+(-\\d+x\\d+)?\\.(png|jpg|webp)$`).test(v) ? v : '');
+  const img = (v) => (typeof v === 'string' && new RegExp(`^site_${pid}/img-\\d+(?:-[a-f0-9]{8})?(-\\d+x\\d+)?\\.(png|jpg|webp)$`).test(v) ? v : '');
   const id = (v) => (typeof v === 'string' && /^[\w-]{1,80}$/.test(v) ? v : '');
   // A booking plan: an uploaded photo, or a space's floor plan (spacePlans).
   // Scan files are public anyway (the tour reads them), so the format is the check.
@@ -450,7 +451,7 @@ sitesRouter.post('/:id/images', requireEditorSession, express.raw({ type: () => 
   if (!kind) return res.status(415).json({ error: 'Use a PNG, JPEG or WebP photo.' });
   // Its size goes in the name, so the page can hold its place before it loads.
   const size = imageSize(req.body, kind);
-  const rel = `img-${Date.now()}${size ? `-${size[0]}x${size[1]}` : ''}.${kind}`;
+  const rel = `img-${Date.now()}-${randomUUID().slice(0, 8)}${size ? `-${size[0]}x${size[1]}` : ''}.${kind}`;
   await storage.put(`site_${p.id}`, rel, Readable.from([req.body]));
   res.json({ path: `site_${p.id}/${rel}` });
 }), (err, req, res, next) => {

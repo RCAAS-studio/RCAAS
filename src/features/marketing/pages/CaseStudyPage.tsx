@@ -137,7 +137,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
               className="lg:col-span-6"
             >
               <div className="relative rounded-2xl overflow-hidden border border-line bg-surface p-3 shadow-lg">
-                <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-zinc-900">
+                <div className="relative rounded-xl overflow-hidden aspect-4/3g-zinc-900">
                   <img loading="lazy" decoding="async" src={study.image} alt={study.imageAlt} className="w-full h-full object-cover" />
                 </div>
               </div>
@@ -188,7 +188,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
           {/* CHALLENGE → STORY → WHAT WE BUILT */}
           <section className="mb-20 sm:mb-24">
             <ol className="relative space-y-6 max-w-4xl">
-              <span className="absolute left-[1.375rem] top-4 bottom-4 w-px bg-line" aria-hidden="true" />
+              <span className="absolute left-5.5 top-4 bottom-4 w-px bg-line" aria-hidden="true" />
               {STORY_STEPS.map((step, i) => {
                 const Icon = step.icon;
                 return (
@@ -256,7 +256,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-ink font-display mb-6">Gallery</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {study.gallery.map((view) => (
-                <figure key={view} className="rounded-2xl border-2 border-dashed border-line bg-surface aspect-[4/3] flex flex-col items-center justify-center gap-2 p-4 text-center">
+                <figure key={view} className="rounded-2xl border-2 border-dashed border-line bg-surface aspect-4/3 flex flex-col items-center justify-center gap-2 p-4 text-center">
                   <Camera className="w-6 h-6 text-zinc-300" aria-hidden="true" />
                   <figcaption>
                     <Placeholder>[[TBI: {view}]]</Placeholder>
@@ -307,7 +307,7 @@ export const CaseStudyPage: React.FC<CaseStudyPageProps> = ({ study, onNavigate 
           onClick={goToLink(caseStudyPath(next))}
           className="group mb-16 grid grid-cols-1 md:grid-cols-12 rounded-2xl border border-line bg-white overflow-hidden hover:border-line-strong hover:shadow-[0_16px_32px_-12px_rgba(0,0,0,0.18)] transition-all"
         >
-          <div className="md:col-span-4 aspect-[16/9] md:aspect-auto overflow-hidden bg-zinc-900">
+          <div className="md:col-span-4 aspect-videomd:aspect-auto overflow-hidden bg-zinc-900">
             <img loading="lazy" decoding="async" src={next.image} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           </div>
           <div className="md:col-span-8 p-6 sm:p-8 flex items-center justify-between gap-4">

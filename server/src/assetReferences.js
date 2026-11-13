@@ -4,8 +4,7 @@ export const validAssetId = id => typeof id === 'string' && /^[A-Za-z0-9_-]+$/.t
 
 export function cleanAssetPath(value) {
   if (typeof value !== 'string' || !value) return null;
-  let rel;
-  try { rel = decodeURIComponent(value.split(/[?#]/)[0]).replace(/\\/g, '/'); } catch { return null; }
+  let rel = value.replace(/\\/g, '/');
   if (rel.startsWith('/') || rel.split('/').includes('..') || /[:\0]/.test(rel)) return null;
   rel = path.posix.normalize(rel);
   return rel === '.' ? null : rel;
@@ -27,10 +26,16 @@ export function assetReferences(value, out = new Map()) {
       else assetReferences(item, out);
     }
   } else if (typeof value === 'string' && value.length < 8192) {
-    let match = /^asset:\/\/([A-Za-z0-9_-]+)\/(.+)$/.exec(value);
-    if (!match) match = /^(?:https?:\/\/[^/]+)?\/api\/assets\/([A-Za-z0-9_-]+)\/(.+)$/.exec(value);
-    if (!match) match = /^((?:ast|site|brand)_[A-Za-z0-9_-]+)\/(.+)$/.exec(value);
-    if (match) add(match[1], match[2]);
+    const raw = /^asset:\/\/([A-Za-z0-9_-]+)\/(.+)$/.exec(value);
+    if (raw) add(raw[1], raw[2]);
+    else {
+      const url = /^(?:https?:\/\/[^/]+)?\/api\/assets\/([A-Za-z0-9_-]+)\/(.+)$/.exec(value);
+      if (url) { try { add(url[1], decodeURIComponent(url[2].split(/[?#]/)[0])); } catch { /* invalid URL grants nothing */ } }
+      else {
+        const stored = /^((?:ast|site|brand)_[A-Za-z0-9_-]+)\/(.+)$/.exec(value);
+        if (stored) add(stored[1], stored[2].split(/[?#]/)[0]);
+      }
+    }
   }
   return out;
 }

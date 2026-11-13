@@ -49,7 +49,7 @@ const Card: React.FC<{ href: string; pic: string | null | undefined; title: stri
           {title.trim()[0]}
         </span>
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
       <div className="absolute top-4 right-4 text-xs font-mono">
         <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-accent/90 text-white text-[10px] uppercase font-semibold">
           {icon}

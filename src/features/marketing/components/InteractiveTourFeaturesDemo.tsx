@@ -143,7 +143,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
       {/* Main Interactive Stage */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left: Viewport Simulation */}
-        <div className="lg:col-span-8 relative aspect-[16/10] sm:aspect-[16/9] rounded-xl overflow-hidden border border-zinc-300 bg-zinc-950 shadow-inner group select-none">
+        <div className="lg:col-span-8 relative aspect-16/10 sm:aspect-video rounded-xl overflow-hidden border border-zinc-300 bg-zinc-950 shadow-inner group select-none">
           {/* Main Backdrop Image */}
           <img loading="lazy" decoding="async"
             src={IMG['interactive-tour-features-demo/interactive-3d-virtual-tour-space']}
@@ -154,7 +154,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
           />
 
           {/* Semi-transparent Grid Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
 
           {/* Top HUD Bar */}
           <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
@@ -291,7 +291,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
                     style={{ left: '50%', top: '48%' }}
                   >
                     <div className="w-4 h-4 rounded-full bg-accent ring-4 ring-accent/40 shadow-lg" />
-                    <div className="w-24 h-24 -mt-2 bg-gradient-to-t from-accent/30 to-transparent clip-path-cone" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} />
+                    <div className="w-24 h-24 -mt-2 bg-linear-to-t from-accent/30 to-transparent clip-path-cone" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} />
                   </motion.div>
                 </div>
               </div>

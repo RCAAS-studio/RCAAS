@@ -59,7 +59,7 @@ async function fixture(t, driver) {
 }
 
 const chunk = Buffer.from('A complete test scan chunk');
-const scanFiles = () => [['scan.lcc2', Buffer.from(JSON.stringify({ root: { splatFiles: ['chunk.bin'] } }))], ['chunk.bin', chunk]];
+const scanFiles = () => [['scan.lcc2', Buffer.from(JSON.stringify({ root: { splatFiles: ['chunk.bin', 'tile%20literal.bin', 'tile with spaces.bin'] } }))], ['chunk.bin', chunk], ['tile%20literal.bin', chunk], ['tile with spaces.bin', chunk]];
 const doc = (id, project, asset) => ({ id, version: 2, title: id, propertyId: project,
   splat: { format: 'lcc2', variants: { high: { assetId: asset, meta: 'scan.lcc2' } } },
   spawn: { position: [1, 1.7, 3], yaw: 0, eyeHeight: 1.65 }, hotspots: [], tracks: [] });
@@ -74,6 +74,8 @@ for (const driver of ['local', 's3']) test(`private files, publication, referenc
   assert.equal((await f.read(asset, 'chunk.bin', other.cookie)).status, 404);
   const privateRead = await f.read(asset, 'chunk.bin', owner.cookie);
   assert.equal(privateRead.status, 200);
+  assert.equal((await f.read(asset, 'tile%2520literal.bin', owner.cookie)).status, 200, 'Express-decoded filenames are not decoded a second time');
+  assert.equal((await f.read(asset, 'tile%20with%20spaces.bin', owner.cookie)).status, 200);
   assert.match(privateRead.headers.get('cache-control'), /private.*no-store/);
   assert.match(privateRead.headers.get('vary'), /Cookie/i);
   const metadata = await f.request('GET', `/api/assets/${asset}`, undefined, owner.cookie);
@@ -105,8 +107,12 @@ for (const driver of ['local', 's3']) test(`private files, publication, referenc
   assert.equal((await f.read(replacement, 'chunk.bin')).status, 404);
   await f.request('POST', `/api/properties/${project}/members`, { email: other.email, as: 'member' }, owner.cookie);
   assert.equal((await f.read(replacement, 'chunk.bin', other.cookie)).status, 200, 'Project collaborators can preview');
+  const collaboratorAsset = await f.upload(other.cookie, scanFiles());
+  assert.equal((await f.request('PUT', '/api/scenes/collaborator-room', doc('collaborator-room', project, collaboratorAsset), other.cookie)).status, 200);
   await f.request('DELETE', `/api/properties/${project}/members/${other.id}`, undefined, owner.cookie);
   assert.equal((await f.read(replacement, 'chunk.bin', other.cookie)).status, 404, 'Membership revocation applies immediately');
+  assert.equal((await f.read(collaboratorAsset, 'chunk.bin', other.cookie)).status, 404, 'The original uploader loses project-bound access after removal');
+  assert.equal((await f.read(collaboratorAsset, 'chunk.bin', owner.cookie)).status, 200);
 
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3foAAAAASUVORK5CYII=', 'base64');
   const photo = async () => { const r = await f.request('POST', `/api/sites/${project}/images`, png, owner.cookie); assert.equal(r.status, 200); return r.json.path; };

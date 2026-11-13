@@ -197,7 +197,7 @@ const TeamCard: React.FC<{ member: TeamMember }> = ({ member }) => {
             className="team-portrait absolute inset-0 w-full h-full object-cover"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/85 via-zinc-950/20 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-950/85 via-zinc-950/20 to-transparent" />
 
         {/* Discipline badge */}
         <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 border border-line pl-1.5 pr-2.5 py-1 text-[11px] font-mono text-zinc-800 shadow-xs">
@@ -386,7 +386,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                 alt="A heritage courtyard during restoration, and the same courtyard being scanned"
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-trom-black/60 via-transparent to-transparent" />
               <span className="absolute bottom-4 left-4 bg-white/95 border border-line px-3 py-1.5 rounded-md text-xs font-mono text-zinc-900 shadow-xs">
                 Monuments weather and change
               </span>
@@ -434,10 +434,10 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                     key={half.title}
                     {...fadeUp}
                     transition={{ duration: 0.45, delay: i * 0.1 }}
-                    className="relative rounded-2xl overflow-hidden border border-line bg-zinc-900 aspect-[4/5] group"
+                    className="relative rounded-2xl overflow-hidden border border-line bg-zinc-900 aspect-4/5roup"
                   >
                     <img loading="lazy" decoding="async" src={half.image} alt="" className="absolute inset-0 w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-trom-black/75 via-black/10 to-transparent" />
                     <figcaption className="absolute bottom-4 left-4 right-4">
                       <span className="w-9 h-9 rounded-lg bg-white/95 flex items-center justify-center shadow-xs mb-2">
                         <Icon className="w-4 h-4 text-accent" />
@@ -518,7 +518,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
 
             {/* Eighth tile completes the grid */}
             <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.18 }} className="hidden lg:block">
-              <div className="h-full rounded-lg border border-dashed border-accent/40 bg-accent/[0.03] p-6 flex flex-col justify-between">
+              <div className="h-full rounded-lg border border-dashed border-accent/40 bg-accent/3flex flex-col justify-between">
                 <MapPinned className="w-6 h-6 text-accent" aria-hidden="true" />
                 <p className="text-sm font-bold text-zinc-900 font-display">Based in Kathmandu. Working with places across Nepal.</p>
               </div>
@@ -539,7 +539,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
 
           {/* Interactive roadmap; every goal stays in the DOM */}
           <div className="relative">
-            <div className="hidden md:block absolute left-0 right-0 top-[1.375rem] h-1 rounded-full bg-surface-sunken" aria-hidden="true">
+            <div className="hidden md:block absolute left-0 right-0 top-5.5unded-full bg-surface-sunken" aria-hidden="true">
               <motion.div
                 className="h-full w-full origin-left rounded-full bg-accent"
                 initial={false}

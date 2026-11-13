@@ -100,7 +100,8 @@ const local = {
     return out;
   },
   async exists(assetId) {
-    return fs.stat(resolvePath(assetId)).then(() => true, () => false);
+    try { await fs.stat(resolvePath(assetId)); return true; }
+    catch (error) { if (error.code === 'ENOENT') return false; throw error; }
   },
   async remove(assetId, relPath) {
     if (relPath) return fs.rm(resolvePath(assetId, relPath), { force: true });

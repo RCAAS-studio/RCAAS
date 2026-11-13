@@ -558,7 +558,7 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
     <div
       ref={containerRef}
       className={`relative w-full overflow-hidden rounded-xl border border-zinc-800 bg-[#0E0E12] shadow-2xl ${
-        isFullscreen ? 'h-dvh rounded-none' : 'h-[520px]'
+        isFullscreen ? 'h-dvh rounded-none' : 'h-130'
       }`}
     >
       {!isLoaded ? (
@@ -570,7 +570,7 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
             className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-black/40 to-black/20" />
+          <div className="absolute inset-0 bg-linear-to-trom-ink via-black/40 to-black/20" />
 
           {/* Active Canvas Scanlines & Reticles */}
           <div className="absolute inset-0 pointer-events-none">
@@ -609,7 +609,7 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
           </div>
 
           {/* Bottom Telemetry Bar */}
-          <div className="absolute bottom-0 inset-x-0 p-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3 bg-gradient-to-t from-ink to-transparent z-10">
+          <div className="absolute bottom-0 inset-x-0 p-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3 bg-linear-to-trom-ink to-transparent z-10">
             <div>
               <div className="text-[11px] font-mono text-accent-soft uppercase tracking-wider">
                 {activeSpace.tag} · {activeSpace.location}

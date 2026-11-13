@@ -1199,13 +1199,13 @@ test('a project website: draft, photos, publish, and a public page that only sho
 
   const png = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(32, 3)]);
   const photo = (await api('POST', `/api/sites/${pid}/images`, new Uint8Array(png), { 'Content-Type': 'application/octet-stream' })).json.path;
-  assert.ok(photo.startsWith(`site_${pid}/img-`) && /^img-\d+\.png$/.test(photo.split('/')[1]), photo);
+  assert.ok(photo.startsWith(`site_${pid}/img-`) && /^img-\d+-[a-f0-9]{8}\.png$/.test(photo.split('/')[1]), photo);
   assert.equal((await api('POST', `/api/sites/${pid}/images`, new Uint8Array([1, 2, 3]), { 'Content-Type': 'application/octet-stream' })).status, 415);
   const ihdr = Buffer.alloc(33);
   ihdr.writeUInt32BE(0x89504e47, 0); ihdr.writeUInt32BE(0x0d0a1a0a, 4); ihdr.write('IHDR', 12, 'latin1');
   ihdr.writeUInt32BE(2400, 16); ihdr.writeUInt32BE(1600, 20);
   const wide = (await api('POST', `/api/sites/${pid}/images`, new Uint8Array(ihdr), { 'Content-Type': 'application/octet-stream' })).json.path;
-  assert.match(wide, /\/img-\d+-2400x1600\.png$/, 'its size in the name, for the page to hold its place');
+  assert.match(wide, /\/img-\d+-[a-f0-9]{8}-2400x1600\.png$/, 'its size in the name, for the page to hold its place');
   assert.equal(draft.draft.style, 'heritage', 'the default look');
 
   const saved = await api('PUT', `/api/sites/${pid}/draft`, {

@@ -57,7 +57,7 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
         viewport={{ once: true, margin: '-60px' }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         aria-label={`${current.title}: view the story`}
-        className="group relative block aspect-[4/3] overflow-hidden rounded-[1.75rem] bg-zinc-900 ring-1 ring-white/10 lg:order-2 lg:col-span-7 lg:aspect-auto lg:min-h-[32rem] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        className="group relative block aspect-4/3 overflow-hidden rounded-[1.75rem] bg-zinc-900 ring-1 ring-white/10 lg:order-2 lg:col-span-7 lg:aspect-auto lg:min-h-128 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
         {studies.map((study, i) => (
           <img
@@ -67,14 +67,14 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
             aria-hidden={i === active ? undefined : true}
             loading="lazy"
             decoding="async"
-            className={`absolute inset-0 h-full w-full object-cover saturate-[0.85] brightness-105 transition-[opacity,transform,filter] duration-[1100ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:saturate-100 ${
+            className={`absolute inset-0 h-full w-full object-cover saturate-[0.85] brightness-105 transition-[opacity,transform,filter] duration-1100 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:saturate-100 ${
               i === active ? 'opacity-100 scale-100' : 'opacity-0 scale-[1.04]'
             }`}
           />
         ))}
         {/* Light mask: keeps the photograph bright while the words on it lead. */}
         <div className="absolute inset-0 bg-ink/15 transition-opacity duration-500 group-hover:opacity-0" aria-hidden="true" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" aria-hidden="true" />
+        <div className="absolute inset-0 bg-linear-to-t from-ink/80 via-ink/10 to-transparent" aria-hidden="true" />
 
         <span className="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-ink">
           {current.tag}
@@ -101,7 +101,7 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
           return (
             <li key={study.slug} className="relative border-b border-white/10">
               {/* Progress line for the story on screen */}
-              <span className="absolute left-0 top-[-1px] h-px w-full overflow-hidden" aria-hidden="true">
+              <span className="absolute left-0 -top-px h-px w-full overflow-hidden" aria-hidden="true">
                 {isActive && (
                   <span
                     key={`${active}-${autoPlay}`}
