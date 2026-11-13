@@ -4,7 +4,7 @@
  *   rcaas.tech                    the public site (the (site) catch-all); www.rcaas.tech → here
  *   studio.rcaas.tech             /studio/**, /login (and /tour, which the studio's previews frame)
  *   tours.rcaas.tech              /{project}[/{space}] (served by /t/…), /tour?space=
- *   {project}.sites.rcaas.tech    / , /{space}, /review (served by /s/{project}/…), /tour in its frames
+ *   {project}.sites.rcaas.tech    / , /{space} (served by /s/{project}/…), /tour in its frames
  *
  * Off unless NEXT_PUBLIC_STUDIO_URL, NEXT_PUBLIC_TOURS_URL and NEXT_PUBLIC_SITES_DOMAIN are all set:
  * then everything stays on one origin, exactly as before (development, the GitHub Pages copy, a
@@ -155,7 +155,7 @@ export const projectToursHref = (project: string, space?: string, absolute = fal
   return MULTI_HOST ? `${HOSTS.tours!.origin}/${rest}` : `${absolute ? here() : ''}/t/${rest}`;
 };
 
-/** A client website, or a page under it: `rest` is "", "/<space>", "/review?key=…" or "?src=qr". */
+/** A client website, or a page under it: `rest` is "", "/<space>" or "?src=qr". */
 export const siteHref = (project: string, rest = '', absolute = false) => {
   if (MULTI_HOST && LABEL.test(project)) return `${siteOrigin(HOSTS, project)}${rest.startsWith('/') ? rest : `/${rest}`}`;
   return `${absolute ? here() : ''}/s/${enc(project)}${rest}`;

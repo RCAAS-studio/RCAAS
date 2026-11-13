@@ -79,17 +79,13 @@ const WhatsAppIcon = () => (
  *
  * (2026-10-06) Laid out as numbered chapters: the photo opening with the
  * facts along its foot, the live tour in a window, then the story, the
- * spaces, the plan, stay, eat, events, offers, photos, reviews, questions
+ * spaces, the plan, stay, eat, events, offers, photos, questions
  * and contact, each only when it has something in it. A rail down the left
  * (ChapterRail) and the nav's menu card (SiteNav) list the same chapters.
  * Its look (`site.style`: heritage, modern, night) and the brand's accent,
  * font and logo make each client's site its own. Styles: website.css.
  */
-export function SiteView({ data, preview = false, review = false }: {
-  data: PublicSite; preview?: boolean;
-  /** The client's review link (/s/<project>/review): a draft, without the studio's banner. */
-  review?: boolean;
-}) {
+export function SiteView({ data, preview = false }: { data: PublicSite; preview?: boolean }) {
   const { project, site, tour, plan } = data;
   const { info, name, reach, logo, style, asks, cta, navReach } = siteBasics(data);
   const spaces = data.spaces ?? [];
@@ -104,7 +100,7 @@ export function SiteView({ data, preview = false, review = false }: {
   // A chapter whose 3D space is also a room the hotel lets online offers it for booking.
   const bookable = (space: string) => (space ? site.stays?.rooms.find((r) => r.space === space) : undefined);
   const hallIn = (space: string) => (space ? site.events?.halls.find((h) => h.space === space) : undefined);
-  const { offers, reviews, faq } = site;
+  const { offers, faq } = site;
   const hero = site.hero.image ? pic(site.hero.image) : null;
   const dineName = site.booking?.name || menu?.title || 'Eat and drink';
   // Highlights: what the place sells, each a picture and a jump to its chapter
@@ -158,7 +154,6 @@ export function SiteView({ data, preview = false, review = false }: {
     ...dining.map((o) => [`menu-${o.id}`, o.name]),
     site.events && ['events', 'Events'],
     offers.length && ['offers', 'Offers'],
-    reviews.items.length && ['reviews', 'Guests say'],
     faq.length && ['faq', 'Good to know'],
     site.gallery.length && ['gallery', 'Photos'],
     ['contact', 'Contact']
@@ -166,7 +161,6 @@ export function SiteView({ data, preview = false, review = false }: {
   const [lead, ...rest] = story ? paragraphs(story.body) : [];
 
   // What search engines read: the place, and the FAQ as questions and answers.
-  // The reviews stay out: Google ignores a business's own reviews of itself.
   const photos = [site.hero.image, ...site.gallery].filter(Boolean).slice(0, 3).map(asset);
   const ld = {
     '@context': 'https://schema.org',
@@ -191,7 +185,7 @@ export function SiteView({ data, preview = false, review = false }: {
         // <: nothing a client typed can close the script tag
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
       )}
-      {preview && !review && (
+      {preview && (
         <p className="ws-preview" role="status">
           <b>Preview</b> of your saved draft. Visitors see it after you publish.
           {/* plain <a>: the studio wants a full page load */}
@@ -351,23 +345,6 @@ export function SiteView({ data, preview = false, review = false }: {
               </article>
             ))}
           </div>
-        </section>
-      )}
-
-      {reviews.items.length > 0 && (
-        <section id="reviews" className="ws-chap ws-reviews ws-reveal" data-chapter="Guests say">
-          <Head kicker="Guests say" title="In their words" />
-          <div className="ws-quotes">
-            {reviews.items.map((r, i) => (
-              <figure key={i}>
-                <blockquote>{r.quote}</blockquote>
-                {(r.name || r.from) && <figcaption>{r.name && <b>{r.name}</b>}{r.from && <span>{r.from}</span>}</figcaption>}
-              </figure>
-            ))}
-          </div>
-          {reviews.link && (
-            <p className="ws-caption"><a href={reviews.link} target="_blank" rel="noopener noreferrer">Read more reviews ↗</a></p>
-          )}
         </section>
       )}
 

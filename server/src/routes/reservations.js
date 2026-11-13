@@ -38,7 +38,7 @@ import { DATA_DIR, writeFileWhole } from '../dataDir.js';
 import { engineBooked } from '../engine.js';
 import { requireEditorSession } from '../middleware/auth.js';
 import { visibleProject, staffProject } from './properties.js';
-import { readSite, liveBooking, liveStays, publicStays, liveEvents, publicEvents, cleanSite, reviewed } from './sites.js';
+import { readSite, liveBooking, liveStays, publicStays, liveEvents, publicEvents, cleanSite } from './sites.js';
 import { sendMail, teamRecipients, venueMail } from '../mailer.js';
 import { record } from '../activity.js';
 import {
@@ -110,24 +110,8 @@ reservationsRouter.get('/:id/availability', wrap(async (req, res) => {
   await sendAvailability(req, res, await bookingOf(req.params.id, outletOf(req.query.outlet)));
 }));
 
-/** The draft's booking for a client reviewing it (?key=, the review link's): no account, the key is the pass.
- *  Without a key, the route goes on to the studio's own (a session). Never books either way. */
-const byReviewKey = (answer) => (req, res, next) => {
-  if (typeof req.query.key !== 'string') return next();
-  (async () => {
-    const p = await getProperty(req.params.id);
-    const saved = p && (await reviewed(p.id, req.query.key));
-    if (!saved) return res.status(404).json({ error: 'This review link doesn’t work any more.' });
-    await answer(req, res, p, cleanSite(saved.draft, p.id));
-  })().catch(next);
-};
-
 /** Studio preview: the draft's tables and hours, against the real bookings. Never books. */
-reservationsRouter.get('/:id/preview/availability', byReviewKey(async (req, res, p, draft) => {
-  const outlet = outletOf(req.query.outlet);
-  const cfg = liveBooking(draft, outlet);
-  await sendAvailability(req, res, cfg ? { p, cfg, outlet } : null);
-}), requireEditorSession, wrap(async (req, res) => {
+reservationsRouter.get('/:id/preview/availability', requireEditorSession, wrap(async (req, res) => {
   const p = await visibleProject(req, res);
   if (!p) return;
   const outlet = outletOf(req.query.outlet);
@@ -160,10 +144,7 @@ reservationsRouter.get('/:id/stays/availability', wrap(async (req, res) => {
 }));
 
 /** Studio preview: the draft's rooms, against the real bookings. Never books. */
-reservationsRouter.get('/:id/preview/stays/availability', byReviewKey(async (req, res, p, draft) => {
-  const cfg = liveStays(draft);
-  await sendCalendar(res, cfg ? { p, cfg } : null);
-}), requireEditorSession, wrap(async (req, res) => {
+reservationsRouter.get('/:id/preview/stays/availability', requireEditorSession, wrap(async (req, res) => {
   const p = await visibleProject(req, res);
   if (!p) return;
   const cfg = liveStays(cleanSite((await readSite(p.id))?.draft, p.id));

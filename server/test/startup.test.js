@@ -1,10 +1,31 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { spawn } from 'node:child_process';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { spawn, spawnSync } from 'node:child_process';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+
+test('the configured database CA survives conflicting connection URL SSL parameters', async t => {
+  const data = await mkdtemp(path.join(tmpdir(), 'rcaas-db-ca-'));
+  t.after(() => rm(data, { recursive: true, force: true }));
+  const ca = path.join(data, 'database-ca.pem');
+  await writeFile(ca, 'configuration-test-ca');
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e', `
+    import assert from 'node:assert/strict';
+    import pg from 'pg';
+    const { pool } = await import('./src/db.js');
+    const client = new pg.Client(pool.options);
+    assert.equal(client.connectionParameters.ssl.ca, 'configuration-test-ca');
+    assert.notEqual(client.connectionParameters.ssl.rejectUnauthorized, false);
+    assert.equal(new URL(pool.options.connectionString).searchParams.get('sslmode'), 'verify-full');
+    await pool.end();
+  `], {
+    cwd: path.resolve(import.meta.dirname, '..'), windowsHide: true, encoding: 'utf8',
+    env: { ...process.env, DATABASE_URL: 'postgresql://fixture:fixture@database.example.test/accounts?sslmode=disable&sslrootcert=missing-file', DATABASE_CA_FILE: ca }
+  });
+  assert.equal(result.status, 0, result.stderr || result.error?.message);
+});
 
 test('production refuses an occupied port instead of silently moving the API', async t => {
   const data = await mkdtemp(path.join(tmpdir(), 'rcaas-startup-'));

@@ -1,0 +1,48 @@
+import type { PlaceholderItem } from '../types';
+
+type Review = Pick<PlaceholderItem, 'status' | 'simulatedValue' | 'nextAction'>;
+// Evidence from the current source and its recorded owner decisions, 13 Nov 2026.
+// Local implementation and production verification are deliberately separate.
+export const REGISTER_REVIEW: Record<string, Review> = {
+  G01: { status: 'Confirmed', simulatedValue: 'RCAAS / RCAAS Technology; current wordmark.', nextAction: 'Keep the planned legal name separate until registration is complete.' },
+  G02: { status: 'Confirmed', simulatedValue: 'Reality Capture as a Service (SITE_METADATA.nameMeaning).' },
+  G03: { status: 'Confirmed', simulatedValue: 'Turn real places into experiences that move people. Owner-confirmed 3 Nov.' },
+  G04: { status: 'Needs verification', simulatedValue: 'Host routing and URL helpers exist; public DNS/TLS has not been verified.', nextAction: 'Configure the intended production hosts, rebuild and check HTTPS and redirects.' },
+  G05: { status: 'Implemented locally', simulatedValue: 'Existing RCAAS logo, favicon and light/red palette are wired into the site.' },
+  G06: { status: 'Confirmed', simulatedValue: 'Phone, WhatsApp, email, Kageshwori-Manohara address and office hours come from SITE_METADATA; owner-confirmed.' },
+  G07: { status: 'To Be Input', simulatedValue: 'Company social profiles have no confirmed URLs.', nextAction: 'Supply official company profiles. Personal team links do not establish company profiles.' },
+  G08: { status: 'To Be Input', nextAction: 'Supply the verified Google Business Profile URL and approved categories.' },
+  G09: { status: 'Confirmed', simulatedValue: 'Founded 2026; registration remains pending. Source keeps registrationPending=true.' },
+  G10: { status: 'Needs verification', simulatedValue: 'Company story is written on About.', nextAction: 'Approve the factual story and any remaining heritage/experience claims.' },
+  G11: { status: 'Needs verification', simulatedValue: 'Forms use /api/leads; local analytics and Windows deployment tools exist.', nextAction: 'Complete VPS/TLS, off-server restore and verified email-sender checks.' },
+  G12: { status: 'Needs verification', simulatedValue: 'Tour UI supports EN/NE/ZH. Company pages currently use English.', nextAction: 'Decide whether company-page translation is required; do not claim it exists.' },
+  G13: { status: 'Implemented locally', simulatedValue: 'robots.txt currently permits all crawlers, including named AI crawlers.', nextAction: 'Owner may review this policy before launch.' },
+  G14: { status: 'Confirmed', simulatedValue: 'Aim to reply within one working day; owner-confirmed, not a delivery guarantee.' },
+  G15: { status: 'To Be Confirmed', nextAction: 'Confirm actual international delivery coverage before broadening areaServed claims.' },
+  G16: { status: 'Needs verification', simulatedValue: 'Hero and OG assets exist. Some demo imagery and the older share image need review.', nextAction: 'Approve the image identity, rights and final share image.' },
+  E01: { status: 'Needs verification', simulatedValue: 'Engineering and game-development content exists; team cards have individual records.', nextAction: 'Confirm every published role, bio, portrait and permission to publish.' },
+  E02: { status: 'To Be Confirmed', nextAction: 'Confirm which Unreal Engine/Unity deliverables are actually offered.' },
+  E03: { status: 'Needs verification', simulatedValue: 'Viewer navigation, authored tracks and hotspots work; gamified paths are a separate delivery claim.' },
+  E04: { status: 'To Be Confirmed', simulatedValue: 'Current copy assesses AR per project.', nextAction: 'Confirm feasible deliverables with the client before quoting them.' },
+  E05: { status: 'Needs verification', simulatedValue: 'FAQ separates reported standalone Quest work from this platform, which has no VR mode.', nextAction: 'Require headset evidence before claiming platform VR support.' },
+  E06: { status: 'Needs verification', simulatedValue: 'Narrated/captioned viewer tracks exist.', nextAction: 'Confirm film/voiceover deliverables and production examples.' },
+  S01: { status: 'To Be Confirmed', simulatedValue: 'Turnaround is agreed per project.', nextAction: 'Supply approved turnaround wording; avoid invented fixed times.' },
+  S02: { status: 'To Be Confirmed', simulatedValue: 'Custom quotes are described; NPR budget ranges still contain placeholders.', nextAction: 'Supply approved ranges or remove those optional ranges.' },
+  S03: { status: 'To Be Confirmed', simulatedValue: 'Accuracy is project-specific.', nextAction: 'Supply measured evidence for any numeric accuracy claims.' },
+  S04: { status: 'Needs verification', simulatedValue: 'Survey export formats are service deliverables; the browser uploader supports a different subset.', nextAction: 'Confirm delivered LAS/E57/OBJ/FBX/IFC/DXF formats independently of viewer compatibility.' },
+  S05: { status: 'To Be Input', nextAction: 'Confirm capture equipment and GNSS specifications before replacing the About/service placeholders.' },
+  P01: { status: 'Implemented locally', simulatedValue: 'Tour embed snippets exist. The marketing SplatEmbed canvas is an illustrative demo.' },
+  P02: { status: 'Implemented locally', simulatedValue: 'Branding, hotspots, calls to action and studio reports exist.', nextAction: 'Check final public claims against the specific product being sold.' },
+  P03: { status: 'Needs verification', simulatedValue: 'Marketing demos and current project publications are separate.', nextAction: 'Approve working public demo URLs and verify each asset before launch.' },
+  P05: { status: 'Needs verification', simulatedValue: 'FAQ describes a 14-day grace period and 30-day retention; automatic enforcement/reminders are not implemented.', nextAction: 'Define the operational owner and contract process before promising automatic handling.' },
+  P06: { status: 'Needs verification', simulatedValue: 'No verified typical mobile payload is recorded.', nextAction: 'Measure first-load bytes and timing on representative scans and a real phone.' },
+  H01: { status: 'To Be Confirmed', nextAction: 'Agree heritage permissions, archive formats and handover responsibilities.' },
+  H02: { status: 'To Be Confirmed', simulatedValue: 'Hosted access and survey/heritage handover are described separately.', nextAction: 'Approve ownership, retention and handover terms in the client contract.' },
+  W01: { status: 'Needs verification', simulatedValue: 'Chilancho has an XGRIDS link; methods/results still need input and its 2025 date predates the 2026 founding.', nextAction: 'Resolve the date attribution and supply measured case-study evidence.' },
+  W02: { status: 'To Be Input', nextAction: 'Complete Nepathya case facts, media, permissions and working 3D link.' },
+  W03: { status: 'To Be Input', nextAction: 'Complete Madan Ashrit case facts, media, permissions and working 3D link.' },
+  W04: { status: 'To Be Input', nextAction: 'Approve the Basera case facts and final demo; a project record is not proof of a public case study.' },
+  T01: { status: 'Needs verification', simulatedValue: 'Team data and publication checks exist; optional experience statistics were removed.', nextAction: 'Confirm all remaining profile fields and the decision to publish individual profiles.' },
+  L01: { status: 'To Be Input', nextAction: 'Complete guide author, update date and project observations where still missing.' },
+  LEGAL01: { status: 'To Be Confirmed', simulatedValue: 'Privacy and Terms remain explicitly marked drafts and noindex.', nextAction: 'Approve privacy, consent, retention, deletion and client publishing-rights wording.' }
+};

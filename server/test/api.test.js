@@ -1222,7 +1222,7 @@ test('a project website: draft, photos, publish, and a public page that only sho
     faq: [{ q: 'Parking?', a: 'Free, on site.' }, { q: 'No answer?' }]
   });
   assert.equal(saved.status, 200);
-  assert.deepEqual(saved.json.draft.reviews, { link: '', items: [{ quote: 'Lovely stay', name: 'Asha', from: 'Pokhara' }] }, 'only https links, only quotes with words');
+  assert.equal(saved.json.draft.reviews, undefined, 'guest reviews were removed (2026-11-13): an old draft loses them');
   assert.deepEqual(saved.json.draft.offers, [{ title: 'Honeymoon', body: '', price: 'Rs 18,000', image: '' }]);
   assert.deepEqual(saved.json.draft.faq, [{ q: 'Parking?', a: 'Free, on site.' }]);
   assert.equal(saved.json.draft.hero.title, 'Site Hotel');
@@ -1757,64 +1757,20 @@ test('a website scheduled to go live does, as it was when scheduled; a cancelled
   assert.equal((await api('POST', `/api/sites/${pid}/schedule`, { at })).status, 401);
 });
 
-test('a client reviews the draft by a private link: comments pinned to sections, an approval tied to that draft', async () => {
+// The client review link was removed on 2026-11-13 (code kept on the local branch keep/client-reviews-2026-11-13).
+test('the client review link is gone: none of its routes answer, and a key opens no draft or booking preview', async () => {
   signIn();
-  const pid = (await api('POST', '/api/properties', { title: 'Review Lodge' })).json.id;
-  await api('PUT', `/api/sites/${pid}/draft`, { hero: { title: 'First draft' } });
-  const key = (await api('POST', `/api/sites/${pid}/review`)).json.key;
-  assert.match(key, /^[0-9a-f]{48}$/);
-  assert.equal((await api('POST', `/api/sites/${pid}/review`)).json.key, key, 'the same link each time');
-
-  cookie = ''; // the client has no account: the key is the pass
-  assert.equal((await api('GET', `/api/sites/${pid}/review?key=${'0'.repeat(48)}`)).status, 404);
-  assert.equal((await api('GET', `/api/sites/${pid}/review`)).status, 404);
-  const draft = (await api('GET', `/api/sites/${pid}/review?key=${key}`)).json;
-  assert.equal(draft.site.hero.title, 'First draft');
-  assert.equal(draft.preview, true);
-  assert.equal((await api('GET', `/api/sites/${pid}`)).status, 404, 'still nothing public');
-
-  const comment = (b) => api('POST', `/api/sites/${pid}/review/comments?key=${key}`, { name: 'Mr Thapa', text: 'Bigger logo, please', sec: 2, x: 0.25, y: 0.5, where: 'First draft', ...b });
-  const c = await comment();
-  assert.equal(c.status, 201);
-  assert.deepEqual([c.json.sec, c.json.x, c.json.y, c.json.resolved], [2, 0.25, 0.5, false]);
-  assert.equal((await comment({ text: '' })).status, 400);
-  assert.equal((await comment({ name: '' })).status, 400);
-  assert.equal((await comment({ text: '<script>x</script>ok' })).json.text, 'scriptx/scriptok', 'no HTML');
-  assert.equal((await api('POST', `/api/sites/${pid}/review/approve?key=${key}`, { name: 'Mr Thapa' })).json.name, 'Mr Thapa');
-
-  // the draft's table booking shows its free times on the review page too, with the key
-  signIn();
-  const png = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(32, 3)]);
-  const plan = (await api('POST', `/api/sites/${pid}/images`, new Uint8Array(png), { 'Content-Type': 'application/octet-stream' })).json.path;
-  await api('PUT', `/api/sites/${pid}/draft`, { hero: { title: 'First draft' }, booking: { on: true, plan, timezone: 'UTC', first: '12:00', last: '12:30', tables: [{ id: 't1', label: 'T1', seats: 2, x: 0.5, y: 0.5 }] } });
-  cookie = '';
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
-  assert.deepEqual((await api('GET', `/api/sites/${pid}/preview/availability?date=${tomorrow}&key=${key}`)).json.slots.map((s) => s.time), ['12:00', '12:30']);
-  assert.equal((await api('GET', `/api/sites/${pid}/preview/availability?key=${'f'.repeat(48)}`)).status, 404);
-  assert.equal((await api('GET', `/api/sites/${pid}/preview/availability`)).status, 401, 'without a key, the studio’s session');
-  assert.equal((await api('PUT', `/api/sites/${pid}/draft?key=${key}`, {})).status, 401, 'the key never edits');
-  signIn();
-  await api('PUT', `/api/sites/${pid}/draft`, { hero: { title: 'First draft' } }); // back as the client approved it
-
-  signIn();
-  let fb = (await api('GET', `/api/sites/${pid}/review/feedback`)).json;
-  assert.equal(fb.comments.length, 2);
-  assert.deepEqual([fb.approval.name, fb.approvedThisDraft], ['Mr Thapa', true]);
-  assert.ok((await api('GET', `/api/properties/${pid}/activity`)).json.some((e) => e.action === 'approved the website draft' && e.who.name === 'Mr Thapa'));
-  assert.equal((await api('PATCH', `/api/sites/${pid}/review/comments/${c.json.id}`, { resolved: true })).json.resolved, true);
-  // a change after the approval: it's an earlier draft that was approved
-  await api('PUT', `/api/sites/${pid}/draft`, { hero: { title: 'Second draft' } });
-  fb = (await api('GET', `/api/sites/${pid}/review/feedback`)).json;
-  assert.equal(fb.approvedThisDraft, false);
-
-  // the link stopped: the client can't get in, the comments stay
-  await api('DELETE', `/api/sites/${pid}/review`);
-  cookie = '';
-  assert.equal((await api('GET', `/api/sites/${pid}/review?key=${key}`)).status, 404);
-  assert.equal((await comment()).status, 404);
-  signIn();
-  assert.equal((await api('GET', `/api/sites/${pid}/review/feedback`)).json.comments.length, 2);
-  assert.notEqual((await api('POST', `/api/sites/${pid}/review`)).json.key, key, 'a new link, not the old one');
+  const pid = (await api('POST', '/api/properties', { title: 'No Review Cafe' })).json.id;
+  await api('PUT', `/api/sites/${pid}/draft`, { hero: { title: 'Draft' } });
+  const key = 'a'.repeat(48);
+  for (const [m, p, b] of [['POST', `/api/sites/${pid}/review`], ['DELETE', `/api/sites/${pid}/review`], ['GET', `/api/sites/${pid}/review/feedback`],
+    ['GET', `/api/sites/${pid}/review?key=${key}`], ['POST', `/api/sites/${pid}/review/comments?key=${key}`, { name: 'X', text: 'Hi' }],
+    ['POST', `/api/sites/${pid}/review/approve?key=${key}`, { name: 'X' }], ['PATCH', `/api/sites/${pid}/review/comments/c1`, { resolved: true }]]) {
+    assert.equal((await api(m, p, b)).status, 404, `${m} ${p}`);
+  }
+  cookie = null; // signed out
+  assert.equal((await api('GET', `/api/sites/${pid}/preview/availability?key=${key}`)).status, 401, 'a key is no pass to the draft');
+  assert.equal((await api('GET', `/api/sites/${pid}/preview/stays/availability?key=${key}`)).status, 401);
 });
 
 test('the concierge answers from what the project published, and only sends visitors to real published places', async () => {

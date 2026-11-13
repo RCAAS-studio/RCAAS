@@ -98,6 +98,7 @@ export interface PlaceholderItem {
   item: string;
   usedOn: string;
   priority: 'B' | 'H' | 'N';
-  status: 'Simulated in Production' | 'To Be Input' | 'To Be Confirmed';
+  status: 'Simulated in Production' | 'To Be Input' | 'To Be Confirmed' | 'Confirmed' | 'Implemented locally' | 'Needs verification';
   simulatedValue?: string;
+  nextAction?: string;
 }

@@ -34,7 +34,7 @@ All three host settings must be set together (`MULTI_HOST`). The `NEXT_PUBLIC_*`
 | tours | `/{p}`, `/{p}/{s}` | served by `/t/{p}[/{s}]` (rewrite) |
 | tours | `/tour`, `/t/**` | served |
 | tours | deeper paths, invalid ids | 404 |
-| {p}.sites | `/` , `/{space}`, `/review` | served by `/s/{p}…` (rewrite) |
+| {p}.sites | `/` , `/{space}` | served by `/s/{p}…` (rewrite) |
 | {p}.sites | `/tour` | served (the website frames its tour on its own host: postMessage stays same-origin) |
 | {p}.sites | `/s/{p}/**` | served (in-page links still use these paths; the canonical is the clean URL) |
 | {p}.sites | `/s/{other}/**` | **404**: no project is reachable from another project's host |
@@ -48,7 +48,7 @@ Next's own files, `/api/*` and any path with a dot (pictures, `robots.txt`, `sit
 
 - **The browser calls `/api` on its own host** when hosts are split (`src/lib/api.ts FETCH_BASE`). The studio's session cookie is then set on the studio's host only. Tours and websites never receive it, and the cookie never gets a `Domain=.rcaas.tech`. Server components fetch through `API_INTERNAL_URL` (`SERVER_API_URL`). Pictures, scan files and link previews keep the absolute `NEXT_PUBLIC_API_URL`.
 - **The API's origin rule** (`server/src/publicUrls.js originAllowed`): it allows the main site, our studio, tours and `*.sites` hosts (https only, valid labels), and same-host requests (`req.hostname`, from Host or a loopback proxy's `X-Forwarded-Host`). Before, a studio on its own host would have been refused every write (403), and the tours host couldn't read scan files (CORS).
-- **Links:** embed snippet and share link → tours host; the website QR code, review link and "Open site" → the website's host; canonicals for `/s/` and `/t/` pages and the sitemap → their own hosts; password-reset mail → studio; booking mails → website and tours hosts.
+- **Links:** embed snippet and share link → tours host; the website QR code and "Open site" → the website's host; canonicals for `/s/` and `/t/` pages and the sitemap → their own hosts; password-reset mail → studio; booking mails → website and tours hosts.
 - **Unchanged on purpose:**
   - The website's in-page links still use `/s/{p}/…`. They're served on its own host, so a clean-URL rewrite of them is left to Phase 07.
   - Plain links to `/login`, `/s/`, `/t/` and `/tour` elsewhere rely on the one redirect.
@@ -73,7 +73,7 @@ Next's own files, `/api/*` and any path with a dot (pictures, `robots.txt`, `sit
 
 ## Known limits
 
-- A project or space id equal to `t`, `s`, `tour`, `studio`, `login` or `review` collides with a fixed path on the tours or website host. This was already true for `review` under `/s/{p}/`.
+- A project or space id equal to `t`, `s`, `tour`, `studio` or `login` collides with a fixed path on the tours or website host.
 - Same-host requests are matched by host name only, not port.
 - Static files are served on any Host (the proxy skips them). Caddy only answers configured hosts.
 - On rcaas.tech the header always shows "Sign in", because the session cookie lives on the studio host. This is intended.

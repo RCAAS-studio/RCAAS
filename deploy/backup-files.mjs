@@ -4,6 +4,7 @@ import { createReadStream } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
+import { postgresEnv } from './postgres-env.mjs';
 
 const output = path.resolve(process.argv[2] || '.');
 const { DATA_DIR, ASSET_DIR, ASSET_DRIVER, DATABASE_URL, DATABASE_CA_FILE } = process.env;
@@ -27,8 +28,7 @@ try {
   run('tar', ['-czf', 'data.tar.gz', '-C', path.resolve(DATA_DIR), '.']);
   if (ASSET_DRIVER === 'local') run('tar', ['-czf', 'assets.tar.gz', '-C', path.resolve(ASSET_DIR), '.']);
   if (DATABASE_URL) {
-    const env = { ...process.env, PGDATABASE: DATABASE_URL, PGCONNECT_TIMEOUT: '15' };
-    if (DATABASE_CA_FILE) Object.assign(env, { PGSSLROOTCERT: DATABASE_CA_FILE, PGSSLMODE: 'verify-full' });
+    const env = postgresEnv(DATABASE_URL, DATABASE_CA_FILE);
     // Set PG_DUMP_EXE to the absolute PostgreSQL bin/pg_dump.exe path on Windows.
     run(process.env.PG_DUMP_EXE || 'pg_dump', ['--no-password', '--format=custom', '--lock-wait-timeout=60s', '--file=accounts.dump'], env);
   }

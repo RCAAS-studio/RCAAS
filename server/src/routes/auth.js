@@ -12,7 +12,7 @@
  */
 import { Router } from 'express';
 import { timingSafeEqual } from 'crypto';
-import { issueSession, issueLegacySession, clearSession, readSession, staleReason } from '../middleware/auth.js';
+import { issueSession, issueLegacySession, clearSession, readSession, staleReason, sharedLoginAllowed } from '../middleware/auth.js';
 import { createUser, verifyUser, getUserById, getUserByEmail, resetPassword, setPassword, createResetToken } from '../usersStore.js';
 import { sendMail } from '../mailer.js';
 import { rateLimiter } from '../rateLimit.js';
@@ -73,6 +73,9 @@ authRouter.post('/login', async (req, res, next) => {
     const { email, password } = req.body || {};
 
     if (!email) {
+      if (!sharedLoginAllowed()) {
+        return res.status(403).json({ error: 'Sign in with your email and password. The shared team sign-in is switched off on this server.' });
+      }
       if (!process.env.EDITOR_PASSWORD) {
         return res.status(500).json({ error: 'EDITOR_PASSWORD is not set on the server.' });
       }

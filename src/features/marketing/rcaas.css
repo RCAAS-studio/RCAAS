@@ -10,6 +10,92 @@
 @import "tailwindcss/utilities.css" layer(utilities) source(none);
 @source "./**/*.{ts,tsx}";
 
+/* Company pages only: a soft grid with a pointer-following, gently shifted patch. */
+.rcaas .company-grid { position: fixed; inset: 0; z-index: 21; pointer-events: none; overflow: hidden; contain: strict; }
+.rcaas .company-grid::before, .rcaas .company-grid-halo { position: absolute; inset: -12px; background-size: 72px 72px; filter: blur(.45px); }
+.rcaas .company-grid::before { content: ''; background-image: linear-gradient(rgba(82,82,91,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(82,82,91,.035) 1px, transparent 1px); }
+.rcaas .company-grid-halo { opacity: 0; background-image: linear-gradient(rgba(225,29,72,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(225,29,72,.2) 1px, transparent 1px); background-position: var(--grid-shift-x,0) var(--grid-shift-y,0); mask-image: radial-gradient(240px circle at var(--grid-x,50%) var(--grid-y,50%), #000, transparent); transition: opacity .45s ease; }
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) { .rcaas .company-grid[data-active="true"] .company-grid-halo { opacity: 1; } }
+.rcaas .team-portrait { filter: grayscale(1); transform: scale(1); transition: filter .7s ease, transform .7s cubic-bezier(.22,1,.36,1); }
+.rcaas .team-card:is(:hover,:focus-within) .team-portrait { filter: grayscale(0); transform: scale(1.035); }
+.rcaas .audit-dialog { position: fixed; inset: 0; margin: auto; width: min(calc(100vw - 2rem), 1180px); max-height: 85dvh; padding: 0; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; color: var(--color-ink); box-shadow: 0 25px 90px #09090b30; }
+.rcaas .audit-dialog::backdrop { background: #09090b80; backdrop-filter: blur(6px); }
+.rcaas .audit-dialog-content { display: flex; flex-direction: column; max-height: 85dvh; }
+.rcaas .audit-dialog-scroll { min-height: 0; overflow: auto; padding: 12px; }
+.rcaas .audit-dialog :is(button, input, select):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .rcaas .company-grid-halo { display: none; } .rcaas .team-portrait, .rcaas .team-card { transition: none; } .rcaas .team-card:is(:hover,:focus-within) .team-portrait { transform: none; } }
+
+/* Footer: reference layout with the original RCAAS light colours. */
+.rcaas .rc-footer {
+  --footer-ink: var(--color-ink);
+  --footer-muted: var(--color-muted);
+  position: relative;
+  color: var(--footer-ink);
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-line);
+}
+.rcaas .rc-footer-inner { max-width: 1328px; margin-inline: auto; padding: 72px 40px 0; }
+.rcaas .rc-footer-main { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 2fr); gap: 88px; }
+.rcaas .rc-footer-brand { max-width: 320px; }
+.rcaas .rc-footer-logo { display: inline-flex; padding-block: 4px; }
+.rcaas .rc-footer-logo img { width: 160px; height: auto; }
+.rcaas .rc-footer-description { margin-top: 23px; max-width: 290px; color: var(--footer-ink); font-size: 17px; line-height: 1.6; }
+.rcaas .rc-footer-location { margin-top: 10px; color: var(--footer-muted); font-size: 12px; line-height: 1.8; }
+.rcaas .rc-footer-signup-title { margin-top: 30px; color: var(--footer-ink); font-size: 13px; font-weight: 600; }
+.rcaas .rc-footer-signup-copy { margin-top: 6px; color: var(--footer-muted); font-size: 12px; line-height: 1.7; }
+.rcaas .rc-footer-form { margin-top: 13px; }
+.rcaas .rc-footer-input-row { display: flex; gap: 7px; }
+.rcaas .rc-footer-email { flex: 1; min-width: 0; min-height: 44px; border: 1px solid var(--color-line); border-radius: 8px; padding: 11px 12px; background: #fff; color: var(--footer-ink); font-size: 12px; }
+.rcaas .rc-footer-email::placeholder { color: var(--footer-muted); }
+.rcaas .rc-footer-submit { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 10px 12px; border-radius: 8px; background: var(--color-ink); color: #fff; font-size: 12px; font-weight: 600; transition: background-color .2s; }
+.rcaas .rc-footer-submit:hover { background: #27272a; }
+.rcaas .rc-footer-submit:disabled { opacity: .6; cursor: wait; }
+.rcaas .rc-footer-form-message { margin-top: 12px; color: var(--footer-ink); font-size: 12px; line-height: 1.7; }
+.rcaas .rc-footer-error { color: var(--color-accent-strong); }
+.rcaas .rc-footer-contact { margin-top: 24px; }
+.rcaas .rc-footer-icons { display: flex; gap: 10px; }
+.rcaas .rc-footer-icons a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border: 1px solid var(--color-line); border-radius: 50%; background: #fff; color: var(--footer-ink); transition: background-color .2s, border-color .2s; }
+.rcaas .rc-footer-icons a:hover { background: #fff; border-color: var(--color-line-strong); }
+.rcaas .rc-footer-contact-email { display: inline-block; margin-top: 12px; color: var(--footer-muted); font-size: 12px; overflow-wrap: anywhere; }
+.rcaas .rc-footer-columns { display: grid; grid-template-columns: 1.15fr 1.15fr 1fr; gap: 32px; }
+.rcaas .rc-footer-columns h3 { margin: 0 0 19px; color: var(--footer-muted); font-size: 12px; font-weight: 500; line-height: 1.6; }
+.rcaas .rc-footer-columns ul, .rcaas .rc-footer-bottom ul { list-style: none; margin: 0; padding: 0; }
+.rcaas .rc-footer-columns li + li { margin-top: 3px; }
+.rcaas .rc-footer-columns a { display: inline-flex; align-items: center; gap: 5px; padding-block: 7px; color: var(--footer-ink); font-size: 12px; line-height: 1.55; text-decoration: none; }
+.rcaas .rc-footer a:hover { color: var(--color-accent); }
+.rcaas .rc-footer :is(a, button, input):focus-visible { outline: 2px solid #fb7185; outline-offset: 5px; }
+.rcaas .rc-footer-divider { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 22px; margin-top: 39px; padding-bottom: 27px; color: var(--footer-muted); font-size: 11px; }
+.rcaas .rc-footer-divider > span:last-child { text-align: right; }
+.rcaas .rc-footer-divider button { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--color-line); border-radius: 50%; color: var(--footer-ink); transition: background-color .2s; }
+.rcaas .rc-footer-divider button:hover { background: #fff; }
+.rcaas .rc-footer-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 32px; padding: 25px 28px; border: 1px solid var(--color-line); border-bottom: 0; border-radius: 22px 22px 0 0; background: #fff; font-size: 11px; line-height: 1.7; }
+.rcaas .rc-footer-bottom p { color: var(--footer-muted); }
+.rcaas .rc-footer-bottom ul { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+.rcaas .rc-footer-bottom a { display: inline-block; padding-block: 5px; color: var(--footer-ink); }
+.rcaas .rc-footer-register { color: var(--footer-muted); text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 1100px) {
+  .rcaas .rc-footer-inner { padding-inline: 28px; }
+  .rcaas .rc-footer-main { grid-template-columns: minmax(0, .85fr) minmax(0, 2fr); gap: 42px; }
+  .rcaas .rc-footer-columns { gap: 22px; }
+}
+@media (max-width: 850px) {
+  .rcaas .rc-footer-main { grid-template-columns: 1fr; gap: 48px; }
+  .rcaas .rc-footer-brand { max-width: 360px; }
+  .rcaas .rc-footer-columns { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .rcaas .rc-footer-bottom { align-items: flex-start; flex-direction: column; gap: 12px; padding: 23px; }
+}
+@media (max-width: 540px) {
+  .rcaas .rc-footer-inner { padding: 48px 22px 0; }
+  .rcaas .rc-footer-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 24px; }
+  .rcaas .rc-footer-columns a { padding-block: 8px; }
+  .rcaas .rc-footer-divider { margin-top: 28px; gap: 10px; }
+  .rcaas .rc-footer-bottom { margin-inline: -8px; padding-inline: 20px; }
+  .rcaas .rc-footer-bottom ul { gap: 9px 19px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rcaas .rc-footer * { transition: none; }
+}
+
 /* One face, Inter (2026-11-01), served by next/font: the root layout sets
    --font-inter on <html>. Helvetica if it fails. Inline, so they
    resolve on the element rather than on :root. */

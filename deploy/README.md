@@ -55,7 +55,7 @@ Keep `ASSET_DRIVER=local` initially unless the R2 paths have been populated and 
 
 ## 3. Configure production values
 
-Copy `web.env.example` to `C:\RCAAS\config\web.env`, `api.env.example` to `C:\RCAAS\config\api.env`, and `Caddyfile` to `C:\RCAAS\config\Caddyfile`. Copy `with-env.mjs`, `check-config.mjs`, `backup-files.mjs` and `Backup.ps1` into `C:\RCAAS\ops`.
+Copy `web.env.example` to `C:\RCAAS\config\web.env`, `api.env.example` to `C:\RCAAS\config\api.env`, and `Caddyfile` to `C:\RCAAS\config\Caddyfile`. Copy `with-env.mjs`, `check-config.mjs`, `backup-files.mjs`, `postgres-env.mjs`, `restore-check.mjs` and `Backup.ps1` into `C:\RCAAS\ops`.
 
 Set the real domain in all three configurations. `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_URL` and `CLIENT_ORIGIN` must be the same HTTPS origin, with no `/api` suffix or trailing slash. This keeps browser cookies on the same origin. Frontend values are embedded during the build, so changing them requires rebuilding.
 

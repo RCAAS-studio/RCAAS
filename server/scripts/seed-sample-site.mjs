@@ -6,7 +6,7 @@
  * for its café tables and the loft as an event hall. The website has every
  * section filled: brand and logo, opening photo, facts, story, chapters with
  * View in 3D, gallery, café menu with table booking on a floor plan, rooms
- * with room booking, the loft as an event hall, offers, reviews, questions,
+ * with room booking, the loft as an event hall, offers, questions,
  * and the enquiry section. Its photos are frames of the scan
  * (scripts/sample-site/); swap them for real ones in the studio.
  *
@@ -144,14 +144,6 @@ const draft = cleanSite({
     },
     booking: { on: false }
   }],
-  reviews: {
-    link: 'https://chyasalhouse.example.test/reviews',
-    items: [
-      { quote: 'We booked the loft for a two-day workshop after walking it in 3D. It was exactly as big and as bright as it looked.', name: 'A workshop host', from: 'Kathmandu' },
-      { quote: 'The courtyard room was quiet, the breakfast was the best bara we had in Patan, and the square is ten minutes away.', name: 'A guest', from: 'Pune' },
-      { quote: 'Our exhibition opening fitted 90 people with room to move. The window wall is made for photographs.', name: 'An artist', from: 'Lalitpur' }
-    ]
-  },
   offers: [
     { title: 'Two nights, one long dinner', body: 'Two nights in a courtyard room and dinner for two at the long table in the loft.', price: 'Rs 14,500 for two', image: img['loft-6'] },
     { title: 'A workshop day in the loft', body: 'The loft from nine to six, chairs and tables as you want them, coffee and lunch for twenty.', price: 'Rs 38,000 a day', image: img['loft-2'] },

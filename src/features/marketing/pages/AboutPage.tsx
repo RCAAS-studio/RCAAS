@@ -186,7 +186,7 @@ const TeamCard: React.FC<{ member: TeamMember }> = ({ member }) => {
   return (
     <article
       id={member.slug}
-      className="group h-full flex flex-col rounded-2xl border border-line bg-white overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_16px_32px_-12px_rgba(0,0,0,0.18)] scroll-mt-24"
+      className="team-card group h-full flex flex-col rounded-2xl border border-line bg-white overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_16px_32px_-12px_rgba(0,0,0,0.18)] scroll-mt-24"
     >
       {/* Portrait */}
       <div className="relative aspect-4/5 overflow-hidden bg-surface-sunken">
@@ -194,7 +194,7 @@ const TeamCard: React.FC<{ member: TeamMember }> = ({ member }) => {
           <img loading="lazy" decoding="async"
             src={withBase(member.photo)}
             alt={member.photoIsPlaceholder ? '' : member.name ?? 'Team member'}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="team-portrait absolute inset-0 w-full h-full object-cover"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/85 via-zinc-950/20 to-transparent" />
@@ -597,7 +597,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
               <SectionHeading eyebrow="Team" title="The people behind RCAAS" className="mb-3" />
               <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
                 Geomatics engineers and game developers who share one belief: Nepal's places deserve to be recorded well and seen
-                widely. <Placeholder>[[TBI: combined years of experience, if you want to state it]]</Placeholder>
+                widely.
               </p>
             </div>
             <Users className="hidden md:block w-10 h-10 text-zinc-200 shrink-0" aria-hidden="true" />

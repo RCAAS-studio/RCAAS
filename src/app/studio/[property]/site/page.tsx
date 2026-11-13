@@ -1,11 +1,10 @@
 'use client';
 
-import { ask, toast } from '../../../../components/ui/Ask';
 import { use, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
-  API_BASE_URL, cancelSiteSchedule, setProjectTheme, getProperty, getReviewFeedback, getSiteDraft, publishSite, resolveReviewComment, saveSiteDraft,
-  scheduleSite, shareSiteForReview, stopSiteReview, uploadSiteImage, type ReviewFeedback,
+  API_BASE_URL, cancelSiteSchedule, setProjectTheme, getProperty, getSiteDraft, publishSite, saveSiteDraft,
+  scheduleSite, uploadSiteImage,
   type DiningPlace, type EventHall, type SiteBooking, type SiteDoc, type SiteEvents, type SiteMenu, type SiteSpace, type SiteStays, type SiteStyle, type SiteTable, type StayRoom
 } from '../../../../lib/api';
 import { siteHref } from '../../../../lib/hosts';
@@ -50,7 +49,6 @@ export default function SiteEditorPage({ params }: { params: Promise<{ property:
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [scheduling, setScheduling] = useState(false); // the date-and-time row is open
   const [when, setWhen] = useState('');
-  const [reviewing, setReviewing] = useState(false); // the client review row is open
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState<'' | 'saving' | 'publishing'>('');
   const [note, setNote] = useState('');
@@ -174,7 +172,6 @@ export default function SiteEditorPage({ params }: { params: Promise<{ property:
     ['Offers and packages', doc.offers.length > 0],
     ['Floor plan', doc.plan],
     ['Photos', doc.gallery.length > 0],
-    ['Guest reviews', doc.reviews.items.length > 0],
     ['Menu or prices', doc.menu.items.length > 0],
     ['Table booking', doc.booking.on],
     ['More dining places', doc.dining.length > 0],
@@ -200,7 +197,6 @@ export default function SiteEditorPage({ params }: { params: Promise<{ property:
         <button onClick={save} disabled={!!busy || !dirty}>{busy === 'saving' ? 'Saving…' : 'Save'}</button>
         <button className="se-main" onClick={publish} disabled={!!busy}>{busy === 'publishing' ? 'Publishing…' : 'Publish'}</button>
         <button onClick={() => { setScheduling(!scheduling); setError(''); }} disabled={!!busy} aria-expanded={scheduling}>Schedule…</button>
-        <button onClick={() => setReviewing(!reviewing)} aria-expanded={reviewing}>Client review…</button>
         <button onClick={preview} disabled={!!busy}>Preview ↗</button>
         {publishedAt && <a className="se-open" href={siteHref(id)} target="_blank" rel="noopener">Open site ↗</a>}
         <a className="se-open" href={`/studio/${encodeURIComponent(id)}/reservations`}>Reservations</a>
@@ -228,7 +224,6 @@ export default function SiteEditorPage({ params }: { params: Promise<{ property:
         </div>
       )}
 
-      {reviewing && <ReviewPanel id={id} dirty={dirty} onSave={save} onError={setError} />}
 
       <div className="se-layout">
       <nav className="se-index" aria-label="Sections">
@@ -407,33 +402,6 @@ export default function SiteEditorPage({ params }: { params: Promise<{ property:
                 onError={setError} />
             )}
           </div>
-        </Card>
-
-        <Card title="Guest reviews" hint="Up to eight things guests said, word for word, with their name. Link to where more are (Google, TripAdvisor) so visitors can check.">
-          {doc.reviews.items.map((r, i) => {
-            const items = doc.reviews.items;
-            const set = (patch: Partial<typeof r>) => change({ reviews: { ...doc.reviews, items: items.map((x, j) => (j === i ? { ...x, ...patch } : x)) } });
-            return (
-              <div key={i} className="se-item">
-                <div className="se-item-head">
-                  <b>{r.name || `Review ${i + 1}`}</b>
-                  <Tools onUp={() => change({ reviews: { ...doc.reviews, items: move(items, i, -1) } })}
-                    onDown={() => change({ reviews: { ...doc.reviews, items: move(items, i, 1) } })}
-                    onRemove={() => change({ reviews: { ...doc.reviews, items: items.filter((_, j) => j !== i) } })} />
-                </div>
-                <Text label="What they said" value={r.quote} max={600} long placeholder="The staff remembered our names by the second morning…" onChange={(quote) => set({ quote })} />
-                <div className="se-row">
-                  <Text label="Name" value={r.name} max={60} placeholder="Asha K." onChange={(name) => set({ name })} />
-                  <Text label="From" value={r.from} max={60} placeholder="Stayed in March · Google" onChange={(from) => set({ from })} />
-                </div>
-              </div>
-            );
-          })}
-          {doc.reviews.items.length < 8 && (
-            <button className="se-add" onClick={() => change({ reviews: { ...doc.reviews, items: [...doc.reviews.items, { quote: '', name: '', from: '' }] } })}>＋ Add a review</button>
-          )}
-          <Text label="Where to read more (https:// link)" value={doc.reviews.link} max={300} placeholder="https://g.page/r/…"
-            onChange={(link) => change({ reviews: { ...doc.reviews, link } })} />
         </Card>
 
         <Card title="Menu or prices" hint="For a restaurant, its dishes; for a hotel, its rooms and rates. Leave empty to hide.">
@@ -674,70 +642,6 @@ function PlanPick({ spaces, value, onPick }: { spaces: SiteSpace[]; value: strin
         {opts.map(([p, label]) => <option key={p} value={p}>{label}</option>)}
       </select>
     </label>
-  );
-}
-
-/**
- * Client review: a private link to the saved draft for the client, who pins
- * comments on it and approves it (s/[property]/review). Their comments land
- * here, to resolve as they're done; the approval shows whether it was this
- * draft or an earlier one.
- */
-function ReviewPanel({ id, dirty, onSave, onError }: { id: string; dirty: boolean; onSave: () => Promise<void>; onError: (m: string) => void }) {
-  const [fb, setFb] = useState<ReviewFeedback | null>(null);
-  const [copied, setCopied] = useState(false);
-  const load = () => getReviewFeedback(id).then(setFb).catch((e: Error) => onError(e.message));
-  useEffect(() => { load(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps -- once per project
-  const link = fb?.key ? siteHref(id, `/review?key=${fb.key}`, true) : '';
-  const share = async () => {
-    if (dirty) await onSave();
-    try { await shareSiteForReview(id); load(); } catch (e) { onError((e as Error).message); }
-  };
-  const stop = async () => {
-    if (!(await ask({ title: 'Stop the review link?', body: 'Whoever has it can no longer open the draft. Their comments stay here.', action: 'Stop the link', danger: true }))) return;
-    try { await stopSiteReview(id); toast('The review link is stopped.'); load(); } catch (e) { onError((e as Error).message); }
-  };
-  const resolve = async (cid: string, resolved: boolean) => {
-    try { await resolveReviewComment(id, cid, resolved); load(); } catch (e) { onError((e as Error).message); }
-  };
-  if (!fb) return <div className="se-schedule">Loading the review…</div>;
-  const open = fb.comments.filter((c) => !c.resolved);
-  return (
-    <div className="se-schedule se-review" role="region" aria-label="Client review">
-      {fb.key ? (
-        <div className="se-review-link">
-          <span>Your client’s link to the saved draft (no account needed):</span>
-          <input readOnly value={link} onFocus={(e) => e.target.select()} aria-label="Review link" />
-          <button onClick={() => { navigator.clipboard?.writeText(link).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }); }}>{copied ? 'Copied' : 'Copy'}</button>
-          <a className="se-open" href={link} target="_blank" rel="noopener">Open ↗</a>
-          <button onClick={stop}>Stop the link</button>
-        </div>
-      ) : (
-        <div className="se-review-link">
-          <span>Share the saved draft with your client: they pin comments on the page and approve it, before anything goes live.</span>
-          <button className="se-main" onClick={share}>Make a review link</button>
-        </div>
-      )}
-      {fb.approval && (
-        <p className={fb.approvedThisDraft ? 'se-review-ok' : 'se-hint'}>
-          {fb.approvedThisDraft ? '✓ ' : ''}Approved by <b>{fb.approval.name}</b>, {new Date(fb.approval.at).toLocaleString()}
-          {fb.approvedThisDraft ? ': this draft.' : '. The draft has changed since; share it again for a new approval.'}
-        </p>
-      )}
-      {fb.comments.length > 0 && (
-        <ol className="se-review-list">
-          {[...open, ...fb.comments.filter((c) => c.resolved)].map((c) => (
-            <li key={c.id} className={c.resolved ? 'is-resolved' : ''}>
-              <label>
-                <input type="checkbox" checked={c.resolved} onChange={(e) => resolve(c.id, e.target.checked)} aria-label="Resolved" />
-                <span><b>{c.name}</b>{c.where && <> on “{c.where}”</>}: {c.text} <small>{new Date(c.at).toLocaleString()}</small></span>
-              </label>
-            </li>
-          ))}
-        </ol>
-      )}
-      {fb.key && !fb.comments.length && <p className="se-hint">No comments yet.</p>}
-    </div>
   );
 }
 

@@ -7,6 +7,7 @@ import path from 'node:path';
 import { randomBytes, createHash } from 'node:crypto';
 import { parseEnv } from 'node:util';
 import { checkConfig } from '../deploy/check-config.mjs';
+import { postgresEnv } from '../deploy/postgres-env.mjs';
 import { readFileAccounts, importAccounts } from '../server/scripts/import-users-data.js';
 
 const repo = path.resolve(import.meta.dirname, '..');
@@ -16,6 +17,26 @@ const valid = () => ({
   api: { NODE_ENV: 'production', CLIENT_ORIGIN: 'https://tours.business.test', HOST: '127.0.0.1', PORT: '4000',
     DATA_DIR: 'C:/RCAAS/data', ASSET_DIR: 'C:/RCAAS/assets', ASSET_DRIVER: 'local',
     ...Object.fromEntries(['SESSION_SECRET', 'EMBED_TOKEN_SECRET', 'EDITOR_PASSWORD'].map(key => [key, randomBytes(32).toString('hex')])) }
+});
+
+test('PostgreSQL backup selects the URL database, decodes credentials and enforces the supplied CA', () => {
+  const env = postgresEnv('postgresql://team%40rcaas:p%3Ass%2Fword@127.0.0.1:55439/accounts?sslmode=require&application_name=backup',
+    'C:/private/database-ca.pem', { PATH: 'tools', PGHOST: 'wrong-host', pgdatabase: 'wrong-database', PGSERVICE: 'wrong-service' });
+  assert.equal(env.PGHOST, '127.0.0.1');
+  assert.equal(env.PGPORT, '55439');
+  assert.equal(env.PGDATABASE, 'accounts');
+  assert.equal(env.PGUSER, 'team@rcaas');
+  assert.equal(env.PGPASSWORD, 'p:ss/word');
+  assert.equal(env.PGSSLMODE, 'verify-full');
+  assert.equal(env.PGSSLROOTCERT, 'C:/private/database-ca.pem');
+  assert.equal(env.PGAPPNAME, 'backup');
+  assert.equal(env.PGSERVICE, undefined);
+  assert.equal(env.pgdatabase, undefined);
+  assert.equal(env.PATH, 'tools');
+  assert.equal(postgresEnv('postgres://user:pass@[::1]/accounts').PGHOST, '::1');
+  for (const url of ['not a url', 'https://example.com/accounts', 'postgres://localhost/', 'postgres://localhost/db?unknown=value']) {
+    assert.throws(() => postgresEnv(url), /Invalid PostgreSQL backup connection settings/);
+  }
 });
 
 test('deployment gate rejects shipped placeholders and mismatched or unsafe production settings', async () => {
@@ -29,6 +50,28 @@ test('deployment gate rejects shipped placeholders and mismatched or unsafe prod
     { SESSION_SECRET: 'change-me' }, { EMBED_TOKEN_SECRET: good.api.SESSION_SECRET }, { ASSET_DRIVER: 's3' }
   ]) assert.ok(checkConfig(good.web, { ...good.api, ...change }).errors.length);
   assert.ok(checkConfig({ ...good.web, NEXT_OUTPUT_EXPORT: '1' }, good.api).errors.length);
+  // Phase 02: the shared team sign-in is refused for production.
+  assert.ok(checkConfig(good.web, { ...good.api, SHARED_TEAM_LOGIN: '1' }).errors.some(e => e.includes('SHARED_TEAM_LOGIN')));
+  assert.ok(checkConfig({ ...good.web, LEGACY_REDIRECT_STATUS: '301' }, good.api).errors.length);
+});
+
+test('separate hosts: all three or none, the same in both files, HTTPS subdomains of the site', () => {
+  const good = valid();
+  const webHosts = { NEXT_PUBLIC_STUDIO_URL: 'https://studio.tours.business.test', NEXT_PUBLIC_TOURS_URL: 'https://view.tours.business.test',
+    NEXT_PUBLIC_SITES_DOMAIN: 'sites.tours.business.test', API_INTERNAL_URL: 'http://127.0.0.1:4000' };
+  const apiHosts = { STUDIO_URL: webHosts.NEXT_PUBLIC_STUDIO_URL, TOURS_URL: webHosts.NEXT_PUBLIC_TOURS_URL, SITES_DOMAIN: webHosts.NEXT_PUBLIC_SITES_DOMAIN };
+  const web = { ...good.web, ...webHosts }, api = { ...good.api, ...apiHosts };
+  assert.deepEqual(checkConfig(web, api).errors, []);
+  assert.ok(checkConfig(web, api).warnings.some(w => w.includes('wildcard certificate')));
+  for (const [w, a] of [
+    [{ NEXT_PUBLIC_TOURS_URL: '' }, {}],                                     // only two of three
+    [{}, { STUDIO_URL: 'https://studio.other.test' }],                       // API differs from the site
+    [{ NEXT_PUBLIC_STUDIO_URL: 'http://studio.tours.business.test' }, { STUDIO_URL: 'http://studio.tours.business.test' }], // not https
+    [{ NEXT_PUBLIC_STUDIO_URL: 'https://studio.elsewhere.test' }, { STUDIO_URL: 'https://studio.elsewhere.test' }],        // not under the site
+    [{ NEXT_PUBLIC_SITES_DOMAIN: 'sites.elsewhere.test' }, { SITES_DOMAIN: 'sites.elsewhere.test' }],
+    [{ API_INTERNAL_URL: '' }, {}]
+  ]) assert.ok(checkConfig({ ...web, ...w }, { ...api, ...a }).errors.length, JSON.stringify([w, a]));
+  assert.ok(checkConfig(good.web, { ...good.api, SITES_DOMAIN: 'sites.tours.business.test' }).errors.length, 'API set alone');
 });
 
 test('backup archives restore all data and separate assets and refuse destructive destinations', async t => {

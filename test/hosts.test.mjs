@@ -60,14 +60,14 @@ test('each host serves its own paths and sends old links to the right host, quer
     ['rcaas.tech', '/t/basera/lobby', '?src=qr', to('https://tours.rcaas.tech/basera/lobby?src=qr')],
     ['rcaas.tech', '/s/basera', '?src=qr', to('https://basera.sites.rcaas.tech/?src=qr')],
     ['rcaas.tech', '/s/basera/lobby', '', to('https://basera.sites.rcaas.tech/lobby')],
-    ['rcaas.tech', '/s/basera/review', '?key=abc', to('https://basera.sites.rcaas.tech/review?key=abc')],
+    ['rcaas.tech', '/s/basera/lobby', '?src=qr', to('https://basera.sites.rcaas.tech/lobby?src=qr')],
     ['www.rcaas.tech', '/contact', '?a=1', to('https://rcaas.tech/contact?a=1')],
     // studio
     ['studio.rcaas.tech', '/', '', to('https://studio.rcaas.tech/studio')],
     ['studio.rcaas.tech', '/studio', '', next], ['studio.rcaas.tech', '/studio/basera/site', '', next],
     ['studio.rcaas.tech', '/login', '?reset=t', next], ['studio.rcaas.tech', '/tour', '?space=x', next],
     ['studio.rcaas.tech', '/about', '', to('https://rcaas.tech/about')],
-    ['studio.rcaas.tech', '/s/basera/review', '?key=k', to('https://basera.sites.rcaas.tech/review?key=k')],
+    ['studio.rcaas.tech', '/s/basera/lobby', '', to('https://basera.sites.rcaas.tech/lobby')],
     ['studio.rcaas.tech', '/s/bad-', '', to('https://rcaas.tech/s/bad-')],
     // tours
     ['tours.rcaas.tech', '/', '', to('https://rcaas.tech/gallery')],
@@ -79,7 +79,7 @@ test('each host serves its own paths and sends old links to the right host, quer
     // a client website
     ['basera.sites.rcaas.tech', '/', '', rewrite('/s/basera')],
     ['basera.sites.rcaas.tech', '/lobby', '', rewrite('/s/basera/lobby')],
-    ['basera.sites.rcaas.tech', '/review', '?key=k', rewrite('/s/basera/review')],
+    ['basera.sites.rcaas.tech', '/bar', '?src=qr', rewrite('/s/basera/bar')],
     ['basera.sites.rcaas.tech', '/tour', '?space=x&embed=1', next],
     ['basera.sites.rcaas.tech', '/s/basera/lobby', '', next],
     ['basera.sites.rcaas.tech', '/s/other', '', notFound], ['basera.sites.rcaas.tech', '/s/other/lobby', '', notFound],
@@ -93,7 +93,7 @@ test('each host serves its own paths and sends old links to the right host, quer
 test('every redirect lands where it is served: one move, never a loop', () => {
   const hosts = ['rcaas.tech', 'www.rcaas.tech', 'studio.rcaas.tech', 'tours.rcaas.tech', 'basera.sites.rcaas.tech'];
   const paths = ['/', '/about', '/gallery', '/studio', '/studio/basera', '/login', '/tour', '/t/basera', '/t/basera/lobby',
-    '/s/basera', '/s/basera/lobby', '/s/basera/review', '/basera', '/basera/lobby', '/lobby', '/review'];
+    '/s/basera', '/s/basera/lobby', '/s/basera/bar', '/basera', '/basera/lobby', '/lobby', '/bar'];
   for (const host of hosts) for (const path of paths) {
     const first = go(host, path, '?q=1');
     if (first.type !== 'redirect') continue;
@@ -113,7 +113,7 @@ test('links point at the host that serves them', () => {
   assert.equal(projectToursHref('basera', 'lobby'), 'https://tours.rcaas.tech/basera/lobby');
   assert.equal(siteHref('basera'), 'https://basera.sites.rcaas.tech/');
   assert.equal(siteHref('basera', '?src=qr'), 'https://basera.sites.rcaas.tech/?src=qr');
-  assert.equal(siteHref('basera', '/review?key=k'), 'https://basera.sites.rcaas.tech/review?key=k');
+  assert.equal(siteHref('basera', '/lobby'), 'https://basera.sites.rcaas.tech/lobby');
   assert.equal(siteHref('bad-'), '/s/bad-'); // not a DNS label: stays on the public site
   assert.equal(studioHref('/login'), 'https://studio.rcaas.tech/login');
   // A local trial keeps the port on client-website hosts.

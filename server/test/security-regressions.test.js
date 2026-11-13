@@ -110,25 +110,20 @@ test('only an upload creator can stage or finalize it; simultaneous retries cann
   assert.equal((await request('PUT', `/api/assets/${good}/files/chunk?relPath=voice.m4a&offset=0`, audio, owner)).status, 404, 'completed upload IDs cannot be reused');
 });
 
-test('website saves and publishing retain concurrent review comments; corruption refuses a replacement', async t => {
+// (Review comments were the concurrent writer here until the client review link was removed, 2026-11-13.)
+test('a website save and a publish at once keep each other\'s changes; corruption refuses a replacement', async t => {
   const { data, request, signup } = await fixture(t);
   const { cookie } = await signup('website@example.test');
   const pid = (await request('POST', '/api/properties', { title: 'Concurrent website' }, cookie)).json.id;
   await request('PUT', `/api/sites/${pid}/draft`, { hero: { title: 'Before' } }, cookie);
-  const key = (await request('POST', `/api/sites/${pid}/review`, {}, cookie)).json.key;
   const results = await Promise.all([
     request('PUT', `/api/sites/${pid}/draft`, { hero: { title: 'After' } }, cookie),
-    request('POST', `/api/sites/${pid}/publish`, {}, cookie),
-    ...Array.from({ length: 8 }, (_, i) => request('POST', `/api/sites/${pid}/review/comments?key=${key}`, { name: 'Reviewer', text: `Comment ${i}` }))
+    request('POST', `/api/sites/${pid}/publish`, {}, cookie)
   ]);
   for (const r of results) assert.ok([200, 201].includes(r.status), JSON.stringify(r));
   const saved = (await request('GET', `/api/sites/${pid}/draft`, undefined, cookie)).json;
   assert.equal(saved.draft.hero.title, 'After');
   assert.ok(saved.publishedAt);
-  const feedback = (await request('GET', `/api/sites/${pid}/review/feedback`, undefined, cookie)).json;
-  assert.equal(feedback.key, key);
-  assert.equal(feedback.comments.length, 8);
-  assert.equal(new Set(feedback.comments.map(c => c.text)).size, 8);
   const file = path.join(data, 'sites', `${pid}.json`);
   await writeFile(file, '{"broken":');
   assert.equal((await request('PUT', `/api/sites/${pid}/draft`, { hero: { title: 'Replacement' } }, cookie)).status, 500);
@@ -146,7 +141,7 @@ test('stale website tabs cannot overwrite, publish, schedule or share a newer dr
   const writes = await Promise.all(['First tab', 'Second tab'].map(title => request('PUT', `${url}/draft`, { ...first.json.draft, hero: { title } }, cookie, headers)));
   assert.deepEqual(writes.map(r => r.status).sort(), [200, 409]);
   const winner = writes.find(r => r.status === 200);
-  for (const [action, body] of [['publish', {}], ['schedule', { at: new Date(Date.now() + 86400000).toISOString() }], ['review', {}]]) {
+  for (const [action, body] of [['publish', {}], ['schedule', { at: new Date(Date.now() + 86400000).toISOString() }]]) {
     assert.equal((await request('POST', `${url}/${action}`, body, cookie, headers)).status, 409);
   }
   const latest = await request('GET', `${url}/draft`, undefined, cookie);

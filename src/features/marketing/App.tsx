@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { SiteFx } from './components/SiteFx';
+import { CompanyGrid } from './components/CompanyGrid';
 import { RoutePath } from './types';
 import { SITE_METADATA, INDUSTRIES } from './data/siteData';
 import { Header } from './components/Header';
@@ -1256,6 +1257,7 @@ export default function App() {
 
   return (
     <div className={`rcaas-app flex min-h-dvh flex-col bg-white text-zinc-950 ${showMobileBar ? 'pb-16 sm:pb-0' : ''}`}>
+      <CompanyGrid />
       
       {/* 3D LiDAR & Capture Mark Cursor */}
       <CaptureLidarCursor />

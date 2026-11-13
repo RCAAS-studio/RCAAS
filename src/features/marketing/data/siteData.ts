@@ -1,4 +1,5 @@
 import { IMG } from './images';
+import { REGISTER_REVIEW } from './registerReview';
 import { Pillar, Industry, CaseStudy, ToolkitItem, PlaceholderItem } from '../types';
 
 export const SITE_METADATA = {
@@ -291,7 +292,7 @@ export const TOOLKIT: ToolkitItem[] = [
   },
 ];
 
-export const PLACEHOLDER_REGISTER: PlaceholderItem[] = [
+const REGISTER_ITEMS: PlaceholderItem[] = [
   { id: 'G01', item: 'Short display form "RCAAS" confirmed; logo wordmark', usedOn: 'Global', priority: 'B', status: 'Simulated in Production' },
   { id: 'G02', item: 'Name meaning: "Reality Capture as a Service"', usedOn: 'Home, About, schema', priority: 'H', status: 'Simulated in Production' },
   { id: 'G03', item: 'Tagline: "Turn real places into experiences that move people." (owner-confirmed 2026-11-03)', usedOn: 'Home H1, schema slogan', priority: 'B', status: 'Simulated in Production' },
@@ -322,7 +323,7 @@ export const PLACEHOLDER_REGISTER: PlaceholderItem[] = [
   { id: 'P02', item: 'Platform features: custom branding, hotspots, CTAs, analytics', usedOn: 'Platform', priority: 'B', status: 'Simulated in Production' },
   { id: 'P03', item: 'Live demo models: Chilancho Stupa, Basera Hotel', usedOn: 'Home, Platform, Work', priority: 'B', status: 'Simulated in Production' },
   { id: 'P05', item: 'Hosting: term per project; 14-day grace, then 30 days retained; reminders planned', usedOn: 'Platform, FAQ', priority: 'B', status: 'Simulated in Production' },
-  { id: 'P06', item: 'Typical mobile data payload: ~8.4 MB', usedOn: 'SplatEmbed, FAQ', priority: 'N', status: 'Simulated in Production' },
+  { id: 'P06', item: 'Measured mobile first-load payload and time', usedOn: 'Viewer, performance claims', priority: 'N', status: 'Needs verification' },
   { id: 'H01', item: 'Heritage archive/handover protocols', usedOn: 'Heritage, Digital twins', priority: 'H', status: 'Simulated in Production' },
   { id: 'H02', item: 'Data: tour clients get hosted access only; survey/heritage handover per contract', usedOn: 'How we work, Terms', priority: 'B', status: 'Simulated in Production' },
   { id: 'W01', item: 'Chilancho Stupa verified case details', usedOn: 'Work', priority: 'B', status: 'Simulated in Production' },
@@ -330,4 +331,11 @@ export const PLACEHOLDER_REGISTER: PlaceholderItem[] = [
   { id: 'W03', item: 'Madan Ashrit Memorial Polytechnic Institute verified case details', usedOn: 'Work', priority: 'B', status: 'Simulated in Production' },
   { id: 'W04', item: 'Basera Boutique Hotel verified case details', usedOn: 'Work', priority: 'B', status: 'Simulated in Production' },
   { id: 'T01', item: 'Core engineering leadership & game developer profiles', usedOn: 'About', priority: 'B', status: 'Simulated in Production' },
+  { id: 'S05', item: 'Capture equipment and GNSS specifications', usedOn: 'About, Digital twins', priority: 'H', status: 'To Be Input' },
+  { id: 'L01', item: 'Guide author, date and supporting project observations', usedOn: 'Learn', priority: 'H', status: 'To Be Input' },
+  { id: 'LEGAL01', item: 'Privacy, terms, consent and retention decisions', usedOn: 'Privacy, Terms', priority: 'B', status: 'To Be Confirmed' },
 ];
+
+export const PLACEHOLDER_REGISTER: PlaceholderItem[] = REGISTER_ITEMS.map(item => ({
+  ...item, status: 'To Be Confirmed', ...REGISTER_REVIEW[item.id]
+}));

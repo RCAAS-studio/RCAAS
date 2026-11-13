@@ -215,7 +215,6 @@ export interface SiteDoc {
   /** More dining places; the main one is menu and booking. */
   dining: DiningPlace[];
   /** What guests said, and where to read more (an https link: Google, TripAdvisor). */
-  reviews: { link: string; items: { quote: string; name: string; from: string }[] };
   /** Packages and offers; each asks about itself through the enquiry form. */
   offers: { title: string; body: string; price: string; image: string }[];
   faq: { q: string; a: string }[];
@@ -278,23 +277,6 @@ export const getSiteDraft = (id: string) => request<SiteDraft>(`${sitePath(id)}/
 export const saveSiteDraft = (id: string, draft: Partial<SiteDoc>) =>
   request<{ draft: SiteDoc; publishedAt: string | null }>(`${sitePath(id)}/draft`, { method: 'PUT', body: JSON.stringify(draft) }, sitePath(id));
 export const publishSite = (id: string) => request<{ publishedAt: string }>(`${sitePath(id)}/publish`, { method: 'POST' }, sitePath(id));
-/* Client review (server/src/routes/sites.js): a private link to the draft; comments pinned on it; an approval. */
-/** A comment pinned on the draft: in the page's section `sec` (its heading `where`), at x across the page and y down the section. */
-export interface ReviewComment { id: string; name: string; text: string; where: string; sec: number; x: number; y: number; at: string; resolved: boolean }
-export interface ReviewApproval { name: string; at: string; draft: string }
-export interface ReviewFeedback { key: string | null; comments: ReviewComment[]; approval: ReviewApproval | null; approvedThisDraft: boolean }
-export const shareSiteForReview = (id: string) => request<{ key: string }>(`${sitePath(id)}/review`, { method: 'POST' }, sitePath(id));
-export const stopSiteReview = (id: string) => request<{ key: null }>(`${sitePath(id)}/review`, { method: 'DELETE' });
-export const getReviewFeedback = (id: string) => request<ReviewFeedback>(`${sitePath(id)}/review/feedback`);
-export const resolveReviewComment = (id: string, cid: string, resolved: boolean) =>
-  request<ReviewComment>(`${sitePath(id)}/review/comments/${encodeURIComponent(cid)}`, { method: 'PATCH', body: JSON.stringify({ resolved }) });
-export const getSiteReview = (id: string, key: string) =>
-  request<PublicSite & { preview: true; review: Omit<ReviewFeedback, 'key'> }>(`${sitePath(id)}/review?key=${encodeURIComponent(key)}`);
-export const postReviewComment = (id: string, key: string, c: Pick<ReviewComment, 'name' | 'text' | 'where' | 'sec' | 'x' | 'y'>) =>
-  request<ReviewComment>(`${sitePath(id)}/review/comments?key=${encodeURIComponent(key)}`, { method: 'POST', body: JSON.stringify(c) });
-export const approveSiteReview = (id: string, key: string, name: string) =>
-  request<ReviewApproval>(`${sitePath(id)}/review/approve?key=${encodeURIComponent(key)}`, { method: 'POST', body: JSON.stringify({ name }) });
-
 /** Put the saved draft, as it is now, live at `at` (an ISO time); or cancel that. */
 export const scheduleSite = (id: string, at: string) =>
   request<{ scheduledAt: string }>(`${sitePath(id)}/schedule`, { method: 'POST', body: JSON.stringify({ at }) }, sitePath(id));
@@ -305,14 +287,12 @@ export const uploadSiteImage = (id: string, file: File) =>
 /** What's free: the bookable days, and each start time on one of them with its free tables. */
 export interface Availability { today: string; dates: { date: string; closed: boolean }[]; date: string; slots: { time: string; free: string[] }[] }
 export const getSitePreview = (id: string) => request<PublicSite & { preview: true }>(`${sitePath(id)}/preview`);
-/** On a client's review page (s/[property]/review), the draft's booking is read with the link's key. */
-let reviewKey = '';
-export const setReviewKey = (key: string) => { reviewKey = key; };
-const withKey = (q: URLSearchParams) => { if (reviewKey) q.set('key', reviewKey); const s = q.toString(); return s ? `?${s}` : ''; };
+/** "?a=b" from a query, or nothing. */
+const qs = (q: URLSearchParams) => { const t = q.toString(); return t ? `?${t}` : ''; };
 /** `outlet`: a dining place's id (SiteBooking.outlet); none, the main one. */
 const withOutlet = (q: URLSearchParams, outlet?: string) => { if (outlet) q.set('outlet', outlet); return q; };
 export const getPreviewAvailability = (id: string, date?: string, outlet?: string) =>
-  request<Availability>(`${sitePath(id)}/preview/availability${withKey(withOutlet(new URLSearchParams(date ? { date } : {}), outlet))}`);
+  request<Availability>(`${sitePath(id)}/preview/availability${qs(withOutlet(new URLSearchParams(date ? { date } : {}), outlet))}`);
 /** The published website's dining places taking table bookings (the main one first), for the tour's Reserve a table. */
 export const getSiteTables = (id: string) =>
   request<{ places: SiteBooking[] }>(`${sitePath(id)}/booking`).then((r) => r?.places ?? []).catch(() => [] as SiteBooking[]);
@@ -343,7 +323,7 @@ export interface StayCalendar { today: string; lastCheckin: string; dates: strin
 export const getSiteStays = (id: string) =>
   request<{ stays: SiteStays | null }>(`${sitePath(id)}/stays`).then((r) => r?.stays ?? null).catch(() => null);
 export const getStayCalendar = (id: string) => request<StayCalendar>(`${sitePath(id)}/stays/availability`);
-export const getPreviewStayCalendar = (id: string) => request<StayCalendar>(`${sitePath(id)}/preview/stays/availability${withKey(new URLSearchParams())}`);
+export const getPreviewStayCalendar = (id: string) => request<StayCalendar>(`${sitePath(id)}/preview/stays/availability${qs(new URLSearchParams())}`);
 export interface StayRequest {
   room: string; checkin: string; checkout: string; guests: number; name: string; phone: string; email?: string; notes?: string;
   website?: string; formRenderedAt: number;

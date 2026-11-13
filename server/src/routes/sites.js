@@ -13,21 +13,10 @@
  *   POST /api/sites/:id/schedule  studio: { at } put the draft, as it is now, live then
  *   DELETE /api/sites/:id/schedule  studio: cancel that
  *
- * Client review (2026-09-28): a private link to the draft for the client,
- * who pins comments on it and approves it; no account needed, the link's key
- * is the pass.
- *   POST   /api/sites/:id/review                      studio: the review link's key (made once, kept)
- *   DELETE /api/sites/:id/review                      studio: the link stops working (comments are kept)
- *   GET    /api/sites/:id/review/feedback             studio: comments, the approval, and whether it's this draft
- *   PATCH  /api/sites/:id/review/comments/:cid        studio: { resolved }
- *   GET    /api/sites/:id/review?key=                 the client: the draft, shaped like the public site, and its comments
- *   POST   /api/sites/:id/review/comments?key=        the client: { name, text, sec, x, y, where }
- *   POST   /api/sites/:id/review/approve?key=         the client: { name }
  *   POST /api/sites/:id/images    studio: a photo (PNG, JPEG or WebP body) -> { path }
  */
 import { Router } from 'express';
 import express from 'express';
-import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'crypto';
 import fs from 'fs/promises';
 import path from 'path';
 import { Readable } from 'stream';
@@ -41,7 +30,6 @@ import { embedKey } from './embed.js';
 import { record } from '../activity.js';
 import { removeReservations } from '../reservations.js';
 import { EVENT_KINDS } from '../events.js';
-import { rateLimiter } from '../rateLimit.js';
 import { withWriteLock } from '../writeQueue.js';
 import { checkDraftRevision, draftRevision } from '../draftRevision.js';
 
@@ -126,13 +114,9 @@ export function cleanSite(d, pid) {
       id: typeof o?.id === 'string' && /^[a-z0-9-]{1,24}$/i.test(o.id) ? o.id : '',
       name: s(o?.name, 60), menu: menu(o?.menu), booking: cleanBooking(o?.booking, { s, img, id, plan })
     })).filter((o, i, all) => o.id && o.name && all.findIndex((x) => x.id === o.id) === i),
-    // What sells a stay besides the rooms (2026-09-30): what guests said (and
-    // where to read more of it), packages and offers, and the questions every
-    // guest asks. The FAQ also goes to search engines as FAQPage data.
-    reviews: {
-      link: typeof d.reviews?.link === 'string' && /^https:\/\/\S{1,300}$/.test(d.reviews.link.trim()) ? d.reviews.link.trim() : '',
-      items: list(d.reviews?.items, 8, (r) => ({ quote: s(r?.quote, 600), name: s(r?.name, 60), from: s(r?.from, 60) })).filter((r) => r.quote)
-    },
+    // What sells a stay besides the rooms (2026-09-30): packages and offers, and the questions every
+    // guest asks. The FAQ also goes to search engines as FAQPage data. (Guest reviews were removed
+    // 2026-11-13; the code is on the local branch keep/client-reviews-2026-11-13.)
     offers: list(d.offers, 6, (o) => ({ title: s(o?.title, 80), body: s(o?.body, 400), price: s(o?.price, 40), image: img(o?.image) }))
       .filter((o) => o.title),
     faq: list(d.faq, 12, (f) => ({ q: s(f?.q, 160), a: s(f?.a, 800) })).filter((f) => f.q && f.a),
@@ -448,120 +432,6 @@ export async function publishDue(now = Date.now()) {
   }
   return done;
 }
-
-/* ---------------------------------------------------------------- client review */
-
-const draftHash = (draft) => createHash('sha1').update(JSON.stringify(draft ?? null)).digest('hex').slice(0, 16);
-const emptyReview = () => ({ key: null, comments: [], approval: null });
-
-/** The site file and its review, if `key` is its link's key (compared in constant time). */
-export async function reviewed(pid, key) {
-  const saved = await readSite(pid);
-  const real = saved?.review?.key;
-  if (!real || typeof key !== 'string' || Buffer.byteLength(key) !== Buffer.byteLength(real)) return null;
-  return timingSafeEqual(Buffer.from(key), Buffer.from(real)) ? saved : null;
-}
-
-// Make, or keep, the client review link for the draft.
-sitesRouter.post('/:id/review', requireEditorSession, wrap(async (req, res) => {
-  const p = await visibleProject(req, res);
-  if (!p) return;
-  const saved = (await readSite(p.id)) ?? {};
-  const review = { ...emptyReview(), ...saved.review };
-  if (!review.key) {
-    review.key = randomBytes(24).toString('hex');
-    await write(p.id, { ...saved, review });
-    await record(req, p.id, 'shared the website draft for review', p.title);
-  }
-  res.json({ key: review.key });
-}));
-
-// Turn the client review link off.
-sitesRouter.delete('/:id/review', requireEditorSession, wrap(async (req, res) => {
-  const p = await visibleProject(req, res);
-  if (!p) return;
-  const saved = await readSite(p.id);
-  if (saved?.review?.key) {
-    await write(p.id, { ...saved, review: { ...saved.review, key: null } });
-    await record(req, p.id, 'stopped the review link', p.title);
-  }
-  res.json({ key: null });
-}));
-
-// The client's comments and approval, for the team.
-sitesRouter.get('/:id/review/feedback', requireEditorSession, wrap(async (req, res) => {
-  const p = await visibleProject(req, res);
-  if (!p) return;
-  const saved = await readSite(p.id);
-  const review = { ...emptyReview(), ...saved?.review };
-  res.json({
-    key: review.key, comments: review.comments, approval: review.approval,
-    approvedThisDraft: !!review.approval && review.approval.draft === draftHash(cleanSite(saved?.draft, p.id))
-  });
-}));
-
-// Mark a client's comment resolved (`resolved: true`) or open again.
-sitesRouter.patch('/:id/review/comments/:cid', requireEditorSession, wrap(async (req, res) => {
-  const p = await visibleProject(req, res);
-  if (!p) return;
-  const saved = await readSite(p.id);
-  const c = saved?.review?.comments?.find((x) => x.id === req.params.cid);
-  if (!c) return res.status(404).json({ error: 'That comment does not exist.' });
-  c.resolved = req.body?.resolved === true;
-  await write(p.id, saved);
-  res.json(c);
-}));
-
-// The draft website for a client's review link (?key=), no account needed.
-sitesRouter.get('/:id/review', wrap(async (req, res) => {
-  const p = await getProperty(req.params.id);
-  const saved = p && (await reviewed(p.id, req.query.key));
-  if (!saved) return res.status(404).json({ error: 'This review link doesn’t work any more. Ask for a new one.' });
-  const draft = cleanSite(saved.draft, p.id);
-  res.json({
-    ...(await renderSite(p, draft, saved.publishedAt ?? null)), preview: true,
-    review: { comments: saved.review.comments, approval: saved.review.approval, approvedThisDraft: saved.review.approval?.draft === draftHash(draft) }
-  });
-}));
-
-const reviewLimited = rateLimiter(Number(process.env.REVIEW_RATE_MAX) || 60); // per IP, per 10 minutes
-const plain = (v, max) => String(v ?? '').replace(/[<>]/g, '').trim().slice(0, max);
-const frac = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.min(1, Math.max(0, Math.round(n * 10000) / 10000)) : 0.5; };
-
-// A client's comment on the draft, pinned to a section (review link key).
-sitesRouter.post('/:id/review/comments', wrap(async (req, res) => {
-  if (reviewLimited(req.ip || 'unknown')) return res.status(429).json({ error: 'That’s a lot of comments at once. Try again in a few minutes.' });
-  const p = await getProperty(req.params.id);
-  const saved = p && (await reviewed(p.id, req.query.key));
-  if (!saved) return res.status(404).json({ error: 'This review link doesn’t work any more. Ask for a new one.' });
-  const text = plain(req.body?.text, 1000), name = plain(req.body?.name, 60);
-  if (!text) return res.status(400).json({ error: 'Write your comment first.' });
-  if (!name) return res.status(400).json({ error: 'Add your name, so the team knows who it’s from.' });
-  const review = { ...emptyReview(), ...saved.review };
-  if (review.comments.length >= 500) return res.status(409).json({ error: 'This draft has 500 comments. Ask the team to resolve some first.' });
-  const c = {
-    id: randomUUID(), name, text, where: plain(req.body?.where, 80),
-    sec: Math.max(0, Math.min(99, Math.round(Number(req.body?.sec)) || 0)), x: frac(req.body?.x), y: frac(req.body?.y),
-    at: new Date().toISOString(), resolved: false
-  };
-  review.comments.push(c);
-  await write(p.id, { ...saved, review });
-  res.status(201).json(c);
-}));
-
-// The client approves the draft as it is now (review link key).
-sitesRouter.post('/:id/review/approve', wrap(async (req, res) => {
-  if (reviewLimited(req.ip || 'unknown')) return res.status(429).json({ error: 'Try again in a few minutes.' });
-  const p = await getProperty(req.params.id);
-  const saved = p && (await reviewed(p.id, req.query.key));
-  if (!saved) return res.status(404).json({ error: 'This review link doesn’t work any more. Ask for a new one.' });
-  const name = plain(req.body?.name, 60);
-  if (!name) return res.status(400).json({ error: 'Add your name to approve it.' });
-  const approval = { name, at: new Date().toISOString(), draft: draftHash(cleanSite(saved.draft, p.id)) };
-  await write(p.id, { ...saved, review: { ...emptyReview(), ...saved.review, approval } });
-  await record({ session: { sub: null, name } }, p.id, 'approved the website draft', p.title, 'from the review link');
-  res.json(approval);
-}));
 
 // Originals, straight from the camera: the website serves each screen a resized copy (next/image).
 const IMAGE_MAX = 25 * 1024 * 1024;

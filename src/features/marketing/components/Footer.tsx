@@ -1,362 +1,197 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { ArrowUp, ArrowUpRight, Mail, MessageCircle, Phone } from 'lucide-react';
 import { RoutePath } from '../types';
 import { SITE_METADATA } from '../data/siteData';
 import { BLOG_LAUNCHED } from '../content/blog';
 import { withBase } from '../../../lib/basePath';
+import { studioHref } from '../../../lib/hosts';
+import { emailProblem } from '../../../lib/contactRules';
+import { sendLead } from '../lib/leads';
 
 interface FooterProps {
   onNavigate: (path: RoutePath) => void;
   onOpenRegister: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenRegister }) => {
+type FooterLink = [label: string, path: RoutePath];
+
+// RCAAS content with the owner's reference: dark survey grid, three navigation
+// columns, contact icons and an inset legal bar. Keep navigation usable as links.
+const COLUMNS: { title: string; links: FooterLink[] }[] = [
+  { title: 'What we create', links: [
+    ['Immersive Experiences', '/services/immersive-experiences/'],
+    ['3D Virtual Tours', '/services/immersive-experiences/3d-virtual-tours/'],
+    ['Visual Storytelling', '/services/visual-storytelling/'],
+    ['Digital Twins & Survey', '/services/digital-twins/'],
+    ['3D Laser Scanning', '/services/digital-twins/3d-laser-scanning/'],
+    ['Drone Mapping', '/services/digital-twins/drone-mapping/'],
+    ['Game Worlds & Assets', '/services/game-worlds-assets/']
+  ] },
+  { title: 'Industries', links: [
+    ['Hotels & Tourism', '/industries/hospitality-tourism/'],
+    ['Education & Campuses', '/industries/education/'],
+    ['Real Estate & Architecture', '/industries/real-estate-architecture/'],
+    ['Factories', '/industries/factories/'],
+    ['Heritage & Culture', '/industries/heritage-culture/'],
+    ['Government & Municipalities', '/industries/government-municipalities/'],
+    ['Non-life Insurance', '/industries/non-life-insurance/'],
+    ['Gaming', '/industries/gaming/'],
+    ['Filmmaking', '/industries/filmmaking/'],
+    ['Nonprofit & Development', '/industries/nonprofit-international-development/'],
+    ['Banks & Financial Institutions', '/industries/banking-financial-institutions/']
+  ] },
+  { title: 'Company', links: [
+    ['About RCAAS', '/about/'],
+    ['How We Work', '/how-we-work/'],
+    ['Case Studies & Projects', '/work/'],
+    ['Live 3D Tours', '/gallery/'],
+    ['Cloud 3D Platform', '/platform/'],
+    ['Guides & Articles', '/learn/'],
+    ...(BLOG_LAUNCHED ? [['Blog', '/blog/'] as FooterLink] : []),
+    ['FAQ', '/faq/'],
+    ['Contact & Enquiry', '/contact/']
+  ] }
+];
+
+const LEGAL: FooterLink[] = [
+  ['Privacy policy', '/privacy/'], ['Terms of service', '/terms/'],
+  ['Cookies', '/cookies/'], ['Security', '/security/']
+];
+
+/** Email only: filed as an enquiry (lib/leads.ts), so it reaches the team's inbox like every other form. */
+function SignUp() {
+  const renderedAt = useRef(Date.now());
+  const [email, setEmail] = useState('');
+  const [trap, setTrap] = useState('');
+  const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
+  const [problem, setProblem] = useState('');
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const wrong = email.trim() ? emailProblem(email) : 'Enter your email address.';
+    if (wrong) { setProblem(wrong); return; }
+    setProblem('');
+    setState('sending');
+    try {
+      await sendLead('updates sign-up', renderedAt.current, {
+        name: 'Updates sign-up', phone: '', email: email.trim(), website: trap,
+        details: { Request: 'Email me when RCAAS has news.' }
+      });
+      setState('done');
+      setEmail('');
+    } catch {
+      setState('error');
+    }
+  };
+
+  if (state === 'done') {
+    return <p className="rc-footer-form-message" role="status">Thanks. We’ll write when there’s news.</p>;
+  }
   return (
-    <footer className="border-t border-line bg-surface text-muted">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        
-        {/* Main 5-Column Grid */}
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-5">
-          
-          {/* Brand Col */}
-          <div className="col-span-2 lg:col-span-2">
-            <button
-              onClick={() => onNavigate('/')}
-              className="flex items-center py-1 text-left"
-              aria-label="RCAAS Technology, home"
-            >
-              <img src={withBase('/logo.png')} alt="" width="522" height="106" loading="lazy" decoding="async" className="h-8 w-auto" />
-            </button>
-            <p className="mt-4 max-w-sm text-xs leading-relaxed text-zinc-600">
-              {SITE_METADATA.boilerplate}
+    <form onSubmit={submit} className="rc-footer-form" noValidate aria-busy={state === 'sending'}>
+      <div className="rc-footer-input-row">
+        <label className="sr-only" htmlFor="footer-email">Email address</label>
+        <input
+          id="footer-email" type="email" required autoComplete="email" placeholder="Email address…" value={email}
+          onChange={(e) => { setEmail(e.target.value); setProblem(''); if (state === 'error') setState('idle'); }}
+          aria-invalid={!!problem} aria-describedby={problem ? 'footer-email-problem' : undefined}
+          className="rc-footer-email"
+        />
+        {/* honeypot: people never see it; the API drops a filled one */}
+        <input type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" value={trap} onChange={(e) => setTrap(e.target.value)} className="hidden" />
+        <button type="submit" disabled={state === 'sending'} className="rc-footer-submit">
+          {state === 'sending' ? 'Sending…' : 'Sign up'}
+          <ArrowUpRight size={15} aria-hidden="true" />
+        </button>
+      </div>
+      {problem && <p id="footer-email-problem" className="rc-footer-form-message rc-footer-error" role="alert">{problem}</p>}
+      {state === 'error' && <p className="rc-footer-form-message rc-footer-error" role="alert">That didn’t send. Try again, or write to {SITE_METADATA.email}.</p>}
+    </form>
+  );
+}
+
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenRegister }) => {
+  const contact = SITE_METADATA.contactConfirmed;
+  const navigate = (event: React.MouseEvent<HTMLAnchorElement>, path: RoutePath) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    onNavigate(path);
+  };
+  const backToTop = () => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  return (
+    <footer className="rc-footer">
+      <div className="rc-footer-inner">
+        <div className="rc-footer-main">
+
+          {/* Brand, sign-up, contact */}
+          <div className="rc-footer-brand">
+            <a href={withBase('/')} onClick={(event) => navigate(event, '/')} className="rc-footer-logo" aria-label="RCAAS Technology, home">
+              <img src={withBase('/logo.png')} alt="" width="522" height="106" loading="lazy" decoding="async" />
+            </a>
+            <p className="rc-footer-description">{SITE_METADATA.tagline}</p>
+            <p className="rc-footer-location">Reality capture & immersive experiences.<br />{SITE_METADATA.location}</p>
+            <h3 className="rc-footer-signup-title">Stay in the loop</h3>
+            <p className="rc-footer-signup-copy">
+              New work, straight to your inbox. No spam.
             </p>
-            {/* Phone and email show only once confirmed (SITE_METADATA.contactConfirmed); until then, the contact page. */}
-            <div className="mt-5 flex items-center gap-3 text-xs font-mono text-zinc-500">
-              <span>{SITE_METADATA.location}</span>
-              {SITE_METADATA.contactConfirmed && (
-                <>
-                  <span>·</span>
-                  <span>{SITE_METADATA.phone}</span>
-                </>
-              )}
-            </div>
-            <div className="mt-1.5 text-xs font-mono">
-              {SITE_METADATA.contactConfirmed ? (
-                <a href={`mailto:${SITE_METADATA.email}`} className="inline-block py-2.5 text-zinc-700 hover:text-accent transition-colors">
-                  {SITE_METADATA.email}
+            <SignUp />
+            {contact && (
+              <div className="rc-footer-contact">
+                <div className="rc-footer-icons">
+                <a href={SITE_METADATA.whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp ${SITE_METADATA.whatsapp}`}>
+                  <MessageCircle size={17} aria-hidden="true" />
                 </a>
-              ) : (
-                <button
-                  onClick={() => onNavigate('/contact/')}
-                  className="inline-block py-2.5 text-zinc-700 hover:text-accent transition-colors"
-                >
-                  Get in touch &rarr;
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* What we create */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-ink font-mono">
-              What we create
-            </h4>
-            <ul className="mt-3 text-xs">
-              <li>
-                <button
-                  onClick={() => onNavigate('/services/immersive-experiences/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Immersive Experiences
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/services/immersive-experiences/3d-virtual-tours/')}
-                  className="text-zinc-500 hover:text-ink text-left transition-colors pl-2 border-l border-line block py-2.5"
-                >
-                  3D Virtual Tours
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/services/visual-storytelling/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Visual Storytelling
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/services/digital-twins/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Digital Twins &amp; Survey
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/services/digital-twins/3d-laser-scanning/')}
-                  className="text-zinc-500 hover:text-ink text-left transition-colors pl-2 border-l border-line block py-2.5"
-                >
-                  3D Laser Scanning
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/services/digital-twins/drone-mapping/')}
-                  className="text-zinc-500 hover:text-ink text-left transition-colors pl-2 border-l border-line block py-2.5"
-                >
-                  Drone Mapping
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/services/game-worlds-assets/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Game Worlds &amp; Assets
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Industries */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-ink font-mono">
-              Industries
-            </h4>
-            <ul className="mt-3 text-xs">
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/hospitality-tourism/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Hotels &amp; Tourism
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/education/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Education &amp; Campuses
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/real-estate-architecture/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Real Estate &amp; Architecture
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/factories/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Factories
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/heritage-culture/')}
-                  className="text-accent font-medium hover:underline text-left transition-colors block py-2.5"
-                >
-                  Heritage &amp; Culture
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/government-municipalities/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Government &amp; Municipalities
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/non-life-insurance/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Non-life Insurance
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/gaming/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Gaming
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/filmmaking/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Filmmaking
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/nonprofit-international-development/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Nonprofit & Development
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/industries/banking-financial-institutions/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Banks & Financial Institutions
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company & Knowledge */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-ink font-mono">
-              Company &amp; Know-how
-            </h4>
-            <ul className="mt-3 text-xs">
-              <li>
-                <button
-                  onClick={() => onNavigate('/about/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  About RCAAS
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/how-we-work/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  How We Work
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/work/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Case Studies &amp; Projects
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/gallery/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Live 3D Tours
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/platform/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Cloud 3D Platform
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/learn/')}
-                  className="hover:text-ink text-left transition-colors block py-2.5"
-                >
-                  Guides &amp; Articles
-                </button>
-              </li>
-              {BLOG_LAUNCHED && (
-                <li>
-                  <button
-                    onClick={() => onNavigate('/blog/')}
-                    className="hover:text-ink text-left transition-colors block py-2.5"
-                  >
-                    Blog
-                  </button>
-                </li>
-              )}
-              <li>
-                <button
-                  onClick={() => onNavigate('/faq/')}
-                  className="hover:text-ink text-left transition-colors block min-w-11 py-2.5"
-                >
-                  FAQ
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('/contact/')}
-                  className="text-accent font-medium hover:underline text-left transition-colors block py-2.5"
-                >
-                  Contact &amp; Enquiry
-                </button>
-              </li>
-              <li>
-                {/* plain <a>: the studio is its own app and needs a full page load */}
-                <a href="/login" className="hover:text-ink text-left transition-colors block py-2.5">
-                  Studio sign in
+                <a href={`mailto:${SITE_METADATA.email}`} aria-label={`Email ${SITE_METADATA.email}`}>
+                  <Mail size={17} aria-hidden="true" />
                 </a>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-
-        {/* Lower Legal Bar & Auditor Trigger */}
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-line pt-8 text-xs font-mono text-zinc-500">
-          <div>
-            &copy; {new Date().getFullYear()} {SITE_METADATA.displayName}. All rights reserved.
-          </div>
-          
-          <div className="flex flex-wrap items-center justify-center gap-x-4">
-            <button
-              onClick={() => onNavigate('/privacy/')}
-              className="hover:text-ink transition-colors py-2.5 px-1"
-            >
-              Privacy
-            </button>
-            <span>·</span>
-            <button
-              onClick={() => onNavigate('/terms/')}
-              className="hover:text-ink transition-colors py-2.5 px-1"
-            >
-              Terms
-            </button>
-            <span>·</span>
-            <button
-              onClick={() => onNavigate('/cookies/')}
-              className="hover:text-ink transition-colors py-2.5 px-1"
-            >
-              Cookies
-            </button>
-            <span>·</span>
-            <button
-              onClick={() => onNavigate('/security/')}
-              className="hover:text-ink transition-colors py-2.5 px-1"
-            >
-              Security
-            </button>
-            {/* Placeholder register (§13): a review tool, shown only in local development. */}
-            {process.env.NODE_ENV !== 'production' && <span>·</span>}
-            {process.env.NODE_ENV !== 'production' && (
-            <button
-              onClick={onOpenRegister}
-              className="inline-flex items-center gap-1.5 rounded border border-line bg-white px-2 py-1 text-[11px] text-zinc-600 hover:border-zinc-400 hover:text-zinc-950 transition-colors"
-              title="Inspect Section 13 Placeholder & Simulation Register"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-accent"></span>
-              <span>Audit Register (§13)</span>
-            </button>
+                <a href={`tel:${SITE_METADATA.phone.replace(/[^\d+]/g, '')}`} aria-label={`Call ${SITE_METADATA.phone}`}>
+                  <Phone size={17} aria-hidden="true" />
+                </a>
+                </div>
+                <a className="rc-footer-contact-email" href={`mailto:${SITE_METADATA.email}`}>{SITE_METADATA.email}</a>
+              </div>
             )}
           </div>
+
+          {/* Link columns */}
+          <div className="rc-footer-columns">
+            {COLUMNS.map((col) => (
+              <nav key={col.title} aria-label={col.title}>
+                <h3>{col.title}</h3>
+                <ul>
+                  {col.links.map(([label, path]) => (
+                    <li key={path}>
+                      <a href={withBase(path)} onClick={(event) => navigate(event, path)}>
+                        {label}
+                      </a>
+                    </li>
+                  ))}
+                  {col.title === 'Company' && (
+                    <li><a href={studioHref('/login')}>Sign in <ArrowUpRight size={13} aria-hidden="true" /></a></li>
+                  )}
+                </ul>
+              </nav>
+            ))}
+          </div>
         </div>
 
+        <div className="rc-footer-divider">
+          <span>Namaste <span aria-hidden="true">🙏</span></span>
+          <button type="button" onClick={backToTop} aria-label="Back to top"><ArrowUp size={19} aria-hidden="true" /></button>
+          <span>Made in Nepal.</span>
+        </div>
+        <div className="rc-footer-bottom">
+          <p>&copy; {new Date().getFullYear()} {SITE_METADATA.displayName}. All rights reserved.</p>
+          <nav aria-label="Legal"><ul>{LEGAL.map(([label, path]) => (
+            <li key={path}><a href={withBase(path)} onClick={(event) => navigate(event, path)}>{label}</a></li>
+          ))}</ul></nav>
+            {/* Placeholder register (§13): a review tool, shown only in local development. */}
+            {process.env.NODE_ENV !== 'production' && (
+              <button onClick={onOpenRegister} className="rc-footer-register" title="Inspect Section 13 Placeholder & Simulation Register">
+                Audit register
+              </button>
+            )}
+        </div>
       </div>
     </footer>
   );

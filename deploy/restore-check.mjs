@@ -14,7 +14,7 @@
 import { mkdir, readFile, readdir, stat } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import path from 'node:path';
 
 const args = process.argv.slice(2);
@@ -35,12 +35,15 @@ async function walk(dir, base = dir) {
   return out;
 }
 
-function extract(archive, target) {
-  // Relative, forward-slash archive path from inside the target: GNU tar (Git Bash) reads "C:\…" as a host.
-  const rel = path.relative(target, archive).split(path.sep).join('/');
-  const r = spawnSync('tar', ['-xzf', rel], { cwd: target, encoding: 'utf8', windowsHide: true });
-  if (r.error || r.status !== 0) throw new Error(`tar could not extract ${path.basename(archive)}`);
-}
+// The archive goes in on stdin: no path to read wrongly (GNU tar from Git Bash takes "C:\…" for a host,
+// and a snapshot on another drive or a UNC share has no relative path from the drill folder).
+const extract = (archive, target) => new Promise((ok, fail) => {
+  const tar = spawn('tar', ['-xzf', '-'], { cwd: target, stdio: ['pipe', 'ignore', 'ignore'], windowsHide: true });
+  const why = new Error(`tar could not extract ${path.basename(archive)}`);
+  tar.on('error', () => fail(why)).on('close', (code) => (code === 0 ? ok() : fail(why)));
+  tar.stdin.on('error', () => {}); // tar quitting early reports through 'close'
+  createReadStream(archive).on('error', () => fail(why)).pipe(tar.stdin);
+});
 
 async function main() {
   if (!snapshotArg || !drillArg) throw new Error('Usage: restore-check.mjs <snapshot-dir> <empty-drill-dir> [--assets <dir>] [--live <DATA_DIR>]');
@@ -62,9 +65,9 @@ async function main() {
   // 2. extract
   const data = path.join(drill, 'data'), assetsOut = path.join(drill, 'assets');
   await mkdir(data, { recursive: true });
-  extract(path.join(snapshot, 'data.tar.gz'), data);
+  await extract(path.join(snapshot, 'data.tar.gz'), data);
   let assets = assetsOpt ? path.resolve(assetsOpt) : null;
-  if (manifest.files['assets.tar.gz']) { await mkdir(assetsOut, { recursive: true }); extract(path.join(snapshot, 'assets.tar.gz'), assetsOut); assets = assetsOut; }
+  if (manifest.files['assets.tar.gz']) { await mkdir(assetsOut, { recursive: true }); await extract(path.join(snapshot, 'assets.tar.gz'), assetsOut); assets = assetsOut; }
   if (manifest.files['accounts.dump']) warnings.push('accounts are in accounts.dump: restore it into a new empty database with pg_restore (deploy/README.md §7) and check sign-in there');
 
   // 3. every store file parses
@@ -119,7 +122,8 @@ async function main() {
 
   // 5. compare with live data
   if (live) {
-    const liveFiles = (await walk(path.resolve(live))).filter((f) => !f.endsWith('.tmp'));
+    // An assets/ folder inside the live data (this PC's layout) is checked by the scan checks, not here.
+    const liveFiles = (await walk(path.resolve(live))).filter((f) => !f.endsWith('.tmp') && !f.startsWith('assets/'));
     const restored = new Set(files);
     const diff = [];
     for (const f of liveFiles) {

@@ -18,7 +18,7 @@ function Invoke-RestMethod { param($Uri, $TimeoutSec) return @{ ok = $true } }
 foreach ($name in 'data','assets','config','ops') {
     New-Item -ItemType Directory -Path (Join-Path $Root $name) | Out-Null
 }
-foreach ($name in 'with-env.mjs','backup-files.mjs') {
+foreach ($name in 'with-env.mjs','backup-files.mjs','postgres-env.mjs') {
     Copy-Item -LiteralPath (Join-Path $Deploy $name) -Destination (Join-Path $Root "ops\$name")
 }
 $envFile = Join-Path $Root 'config\api.env'

@@ -28,8 +28,16 @@ export function issueSession(res, user) {
   signSession(res, { role: user.role, sub: user.id, name: user.name, email: user.email, iatMs: Date.now() });
 }
 
+/** The shared team sign-in (the team access code, no account) sees every client's projects, names
+ *  nobody in the activity log and can't be revoked, and its code is the one handed out for sign-up
+ *  (2026-11-13, Phase 02). Off in production unless SHARED_TEAM_LOGIN=1; on in development (the API
+ *  tests, this PC) unless SHARED_TEAM_LOGIN=0. Off, the cookies it already issued stop counting too. */
+export const sharedLoginAllowed = () =>
+  process.env.SHARED_TEAM_LOGIN === '1' || (process.env.SHARED_TEAM_LOGIN !== '0' && process.env.NODE_ENV !== 'production');
+
 /** Only the explicit shared-password login can create an unscoped session. */
 export function issueLegacySession(res) {
+  if (!sharedLoginAllowed()) throw Object.assign(new Error('The shared team sign-in is switched off.'), { status: 403 });
   signSession(res, { role: 'admin' });
 }
 
@@ -51,7 +59,9 @@ export function readSession(req) {
   const token = req.cookies?.[SESSION_COOKIE];
   if (!token) return null;
   try {
-    return jwt.verify(token, secret(), { algorithms: ['HS256'] });
+    const claims = jwt.verify(token, secret(), { algorithms: ['HS256'] });
+    // An account-less (shared team) session counts only while that sign-in is allowed.
+    return claims.sub || sharedLoginAllowed() ? claims : null;
   } catch {
     return null;
   }

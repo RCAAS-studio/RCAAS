@@ -11,6 +11,18 @@ import path from 'path';
 // DATABASE_CA_FILE: the provider's CA certificate (Supabase: Database → SSL
 // configuration → download), so the TLS connection is verified, not just encrypted.
 const ca = process.env.DATABASE_CA_FILE ? readFileSync(process.env.DATABASE_CA_FILE, 'utf8') : undefined;
+let connectionString = process.env.DATABASE_URL;
+if (ca && connectionString) {
+  // pg lets URL SSL parameters override the explicit `ssl` object. Put the
+  // required CA and verification mode into the URL too, so sslmode=disable
+  // or a provider's default cannot silently discard DATABASE_CA_FILE.
+  let url;
+  try { url = new URL(connectionString); } catch { throw new Error('DATABASE_URL must be a PostgreSQL URL.'); }
+  if (!['postgres:', 'postgresql:'].includes(url.protocol)) throw new Error('DATABASE_URL must be a PostgreSQL URL.');
+  url.searchParams.set('sslrootcert', path.resolve(process.env.DATABASE_CA_FILE));
+  url.searchParams.set('sslmode', 'verify-full');
+  connectionString = url.href;
+}
 
 function positiveSetting(name, fallback) {
   const value = process.env[name];
@@ -23,11 +35,11 @@ function positiveSetting(name, fallback) {
 }
 
 export const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
   max: positiveSetting('DATABASE_POOL_MAX', 10),
   connectionTimeoutMillis: positiveSetting('DATABASE_CONNECTION_TIMEOUT_MS', 5000),
   statement_timeout: positiveSetting('DATABASE_STATEMENT_TIMEOUT_MS', 15000),
-  ...(ca && { ssl: { ca } })
+  ...(ca && { ssl: { ca, rejectUnauthorized: true } })
 });
 // An idle connection the provider drops must not crash the server.
 pool.on('error', (err) => console.error('[db] idle connection error:', err.message));
