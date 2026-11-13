@@ -159,6 +159,16 @@ No snapshots are automatically deleted. After a successful restore drill, config
 
 ### Restore drill (new empty directories first)
 
+**Automated check (2026-11-13):** `restore-check.mjs` performs the steps below and verifies the result. It checks every manifest hash and refuses unlisted files. It extracts into a new empty folder and parses every store file and activity line. Every published space must have its snapshot file and its scan files. With `--live`, it lists whatever differs from the live data. It prints a JSON report and exits 1 on anything that would break a restore. Warnings cover known data debts, such as an owner account that is gone or a draft without its scan. Run it after the first backup and then monthly:
+
+```powershell
+node C:\RCAAS\app\current\deploy\restore-check.mjs C:\RCAAS\backups\snapshot-REPLACE C:\RCAAS\restore-drill\REPLACE-DATE
+# Straight after a backup, also compare with live data: add --live C:\RCAAS\data
+# With ASSET_DRIVER=s3 the snapshot has no scans: add --assets <a local copy of the bucket> to check them.
+```
+
+The manual steps follow, for reference and for the PostgreSQL dump.
+
 Copy a completed snapshot from the off-machine share to a scratch directory. Verify every manifest hash before extraction:
 
 ```powershell
