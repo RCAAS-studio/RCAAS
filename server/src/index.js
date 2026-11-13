@@ -15,6 +15,7 @@ import { studioAiRouter } from './routes/studioAi.js';
 import { sitesRouter, publishDue } from './routes/sites.js';
 import { reservationsRouter } from './routes/reservations.js';
 import { demoEngineRouter } from './routes/demoEngine.js';
+import { originAllowed } from './publicUrls.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -35,13 +36,11 @@ for (const [k, min] of [['SESSION_SECRET', 32], ['EMBED_TOKEN_SECRET', 32], ['ED
     process.exit(1);
   }
 }
-// The Next app's own origin, so the editor's session cookie survives a
-// cross-origin fetch (dev: Next on 3000, API on 4000). In development any
-// localhost port is the site too: Next moves to 3001 by itself when 3000 is
-// taken, and refusing it there broke every request.
-const ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:3000';
-const LOCALHOST = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-const allowed = (origin) => !origin || origin === ORIGIN || (DEV && LOCALHOST.test(origin));
+// Which pages may call the API (publicUrls.js originAllowed): the site (CLIENT_ORIGIN), our own
+// studio, tours and client-website hosts, the API's own host (each public host hands /api to the
+// API, so the studio's cookie stays on the studio's host), and in development any localhost port
+// (Next on 3000, API on 4000; Next moves to 3001 by itself when 3000 is taken).
+const allowed = (req) => originAllowed(req.headers.origin, req.hostname, DEV);
 
 // Behind nginx on the same machine (deploy/nginx.conf), req.ip is the
 // visitor's, not 127.0.0.1 — or every rate limit would be one bucket shared
@@ -55,10 +54,10 @@ app.use((req, res, next) => {
   res.set({ 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'DENY' });
   next();
 });
-app.use(cors({ origin: (origin, done) => done(null, allowed(origin)), credentials: true, exposedHeaders: ['X-Draft-Revision'] }));
+app.use(cors((req, done) => done(null, { origin: allowed(req), credentials: true, exposedHeaders: ['X-Draft-Revision'] })));
 // CORS alone only prevents reading a response; refuse cross-origin cookie writes too.
 app.use((req, res, next) => {
-  if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method) && req.headers.origin && !allowed(req.headers.origin)) {
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method) && req.headers.origin && !allowed(req)) {
     return res.status(403).json({ error: 'This request origin is not allowed.' });
   }
   next();

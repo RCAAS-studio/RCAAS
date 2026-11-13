@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { API_BASE_URL, apiUrl, type GalleryItem } from '../../lib/api';
+import { API_BASE_URL, SERVER_API_URL, apiUrl, type GalleryItem } from '../../lib/api';
 import { brandIcons, shareMeta } from '../../lib/shareMeta';
 import TourClient from './TourClient';
 
@@ -14,11 +14,11 @@ export async function generateMetadata({ searchParams }: {
   const space = (await searchParams).space;
   if (typeof space !== 'string') return {};
   try {
-    const list: GalleryItem[] = await (await fetch(`${API_BASE_URL}/api/gallery`, { cache: 'no-store' })).json();
+    const list: GalleryItem[] = await (await fetch(`${SERVER_API_URL}/api/gallery`, { cache: 'no-store' })).json();
     const g = list.find((x) => x.id === space);
     if (!g) return {};
     const t = g.propertyId
-      ? await fetch(`${API_BASE_URL}/api/properties/${encodeURIComponent(g.propertyId)}/theme`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null))
+      ? await fetch(`${SERVER_API_URL}/api/properties/${encodeURIComponent(g.propertyId)}/theme`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null))
       : null;
     const brand: string = t?.theme?.brand || t?.title || '';
     return {

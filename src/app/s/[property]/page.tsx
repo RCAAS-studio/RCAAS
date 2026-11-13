@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { connection } from 'next/server';
-import { API_BASE_URL, apiUrl, type PublicSite } from '../../../lib/api';
+import { API_BASE_URL, SERVER_API_URL, apiUrl, type PublicSite } from '../../../lib/api';
+import { siteHref } from '../../../lib/hosts';
 import { SiteView } from '../../../features/website/SiteView';
 import { brandIcons, shareMeta } from '../../../lib/shareMeta';
 
@@ -15,7 +16,7 @@ import { brandIcons, shareMeta } from '../../../lib/shareMeta';
 
 async function load(id: string): Promise<PublicSite | null> {
   try {
-    const r = await fetch(`${API_BASE_URL}/api/sites/${encodeURIComponent(id)}`, { cache: 'no-store' });
+    const r = await fetch(`${SERVER_API_URL}/api/sites/${encodeURIComponent(id)}`, { cache: 'no-store' });
     return r.ok ? await r.json() : null;
   } catch {
     return null;
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ property:
     s.site.hero.lede || `${name}, in 3D.`,
     photo ? `${API_BASE_URL}/api/assets/${photo}` : apiUrl(s.tour?.thumb)
     ),
-    alternates: { canonical: `/s/${encodeURIComponent(property)}` },
+    alternates: { canonical: siteHref(property) },
     ...brandIcons(s.project.theme.favicon, API_BASE_URL)
   };
 }

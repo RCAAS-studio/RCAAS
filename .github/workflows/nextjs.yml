@@ -99,7 +99,7 @@ jobs:
       - run: npm ci
       # A static export can't build routes that need a request or the API.
       - name: Leave out what needs the API
-        run: rm -rf 'src/app/studio/[property]' src/app/s src/app/t src/app/tour
+        run: rm -rf 'src/app/studio/[property]' src/app/s src/app/t src/app/tour src/proxy.ts
       - name: Build the static copy
         run: npm run build
         env:

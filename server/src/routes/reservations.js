@@ -49,6 +49,7 @@ import { SESSIONS, SESSION_LABEL, eventCalendar, eventProblem, hallFree, hallHot
 import { WAIT_STATUSES, waitersWithSpace } from '../waitlist.js';
 import { textGuest, validPhone, validEmail, PHONE_WRONG } from '../notify.js';
 import { rateLimiter } from '../rateLimit.js';
+import { siteLink, tourLink } from '../publicUrls.js';
 
 export const reservationsRouter = Router();
 const wrap = (fn) => (req, res, next) => fn(req, res).catch(next);
@@ -229,8 +230,6 @@ function tellTheTeam(p, r, subject, heading, rows) {
 
 const dayName = (date) => new Date(`${date}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
 const shortDay = (date) => new Date(`${date}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
-const siteLink = (pid) => `${(process.env.CLIENT_ORIGIN || 'http://localhost:3000').replace(/\/$/, '')}/s/${pid}`;
-const tourLink = (pid, space) => `${(process.env.CLIENT_ORIGIN || 'http://localhost:3000').replace(/\/$/, '')}/t/${pid}/${space}`;
 const venueOf = (p) => p.theme?.brand || p.title;
 
 // A guest's table booking request from the website.

@@ -11,17 +11,31 @@ import type { BrandFont, ProjectFeatures, ProjectInfo, ProjectTheme } from '../@
 import type { HotspotWords } from '../@types/hotspot.types';
 import type { Intent } from './stats';
 
+/** The API's public address: pictures, scan files and link previews point here. */
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000').replace(/\/$/, '');
+/** The studio, tours and client websites on their own hosts (lib/hosts.ts MULTI_HOST; the same
+ *  three names, read here so this file keeps no value imports for the tests that load it). */
+const MULTI_HOST = !!(process.env.NEXT_PUBLIC_STUDIO_URL && process.env.NEXT_PUBLIC_TOURS_URL && process.env.NEXT_PUBLIC_SITES_DOMAIN);
+/** Where fetch() goes. In a browser on separate hosts, the page's own host, whose /api the proxy
+ *  hands to the API: the studio's session cookie then belongs to the studio's host alone. On the
+ *  server, the API directly when API_INTERNAL_URL says where (no trip out through the public name). */
+const FETCH_BASE = typeof window === 'undefined'
+  ? (process.env.API_INTERNAL_URL || API_BASE).replace(/\/$/, '')
+  : MULTI_HOST ? '' : API_BASE;
+/** For server components that fetch the API themselves. */
+export const SERVER_API_URL = (process.env.API_INTERNAL_URL || API_BASE).replace(/\/$/, '');
+/** Links that need the studio's session cookie (downloads): same host as the page on separate hosts. */
+const SIGNED_IN_BASE = MULTI_HOST ? '' : API_BASE;
 
 /** fetch() throws a bare "Failed to fetch" for every network-level failure —
  *  server down, wrong port, CORS refusal — which tells a creator nothing.
  *  Name the address we actually tried so the next step is obvious. */
 async function send(path: string, options: RequestInit): Promise<Response> {
   try {
-    return await fetch(`${API_BASE}${path}`, options);
+    return await fetch(`${FETCH_BASE}${path}`, options);
   } catch {
     throw new Error(
-      `Can't reach the API at ${API_BASE}. Start it with "cd server && npm run dev", ` +
+      `Can't reach the API at ${FETCH_BASE || 'this site\'s /api'}. Start it with "cd server && npm run dev", ` +
       'and open the studio on the same host it allows (CLIENT_ORIGIN in server/.env).'
     );
   }
@@ -146,7 +160,7 @@ export interface Lead {
 export interface ProjectLeads { leads: Lead[]; emails: string[]; emailOn: boolean }
 export const getProjectLeads = (id: string) => request<ProjectLeads>(`/api/properties/${encodeURIComponent(id)}/leads`);
 /** A plain link: the browser sends the studio's cookie with a top-level download. */
-export const projectLeadsCsvUrl = (id: string) => `${API_BASE}/api/properties/${encodeURIComponent(id)}/leads.csv`;
+export const projectLeadsCsvUrl = (id: string) => `${SIGNED_IN_BASE}/api/properties/${encodeURIComponent(id)}/leads.csv`;
 /** A test email to where the project's enquiries go; rejects with the reason it couldn't send. */
 export const sendTestEmail = (id: string) =>
   request<{ sent: true; to: string[] }>(`/api/properties/${encodeURIComponent(id)}/lead-emails/test`, { method: 'POST' });
@@ -422,7 +436,7 @@ export const getReservations = (id: string) =>
 export type MarkBooked = { space?: string; hotspot?: string; hall?: string; room?: string; date?: string; session?: EventSession; checkin?: string; checkout?: string; time?: string; note?: string };
 export const markBooked = (id: string, m: MarkBooked) =>
   request<Reservation>(`${sitePath(id)}/reservations/mark`, { method: 'POST', body: JSON.stringify(m) });
-export const bookingPlanUrl = (id: string, rid: string) => `${API_BASE_URL}${sitePath(id)}/reservations/${encodeURIComponent(rid)}/attachment`;
+export const bookingPlanUrl = (id: string, rid: string) => `${SIGNED_IN_BASE}${sitePath(id)}/reservations/${encodeURIComponent(rid)}/attachment`;
 export const setReservationStatus = (id: string, rid: string, status: ReservationStatus) =>
   request<Reservation & { waitlistTold?: number }>(`${sitePath(id)}/reservations/${encodeURIComponent(rid)}`, { method: 'PATCH', body: JSON.stringify({ status }) });
 

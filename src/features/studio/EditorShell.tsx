@@ -28,6 +28,7 @@ import {
   resolveAsset, safeUrl, getProperties, assetUrl, buildFloorPlan, uploadFloorPlan, removeFloorPlan, getEmbed, setEmbed,
   getSiteDraft, renameFloorPlanRooms, ROLE_NAME, type SiteDoc
 } from '../../lib/api';
+import { tourHref } from '../../lib/hosts';
 import { forgetPlan } from '../tour/floorMapData';
 import type { PublishState, EmbedSettings, SceneVersion } from '../../lib/api';
 import { HotspotMarkers } from '../hotspots/HotspotMarkers';
@@ -489,7 +490,7 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
     });
   };
 
-  const url = `${location.origin}/tour?space=${encodeURIComponent(sceneId)}`;
+  const url = tourHref(sceneId, true);
   const s = EMBED_SIZES[size];
   // The key lets this snippet (and no hand-made one) show the tour; see embed.js.
   const embedSrc = `${url}&embed=1&key=${encodeURIComponent(embed?.key ?? '')}`;

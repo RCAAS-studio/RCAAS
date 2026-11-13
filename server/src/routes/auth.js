@@ -16,6 +16,7 @@ import { issueSession, issueLegacySession, clearSession, readSession, staleReaso
 import { createUser, verifyUser, getUserById, getUserByEmail, resetPassword, setPassword, createResetToken } from '../usersStore.js';
 import { sendMail } from '../mailer.js';
 import { rateLimiter } from '../rateLimit.js';
+import { studioLink } from '../publicUrls.js';
 
 export const authRouter = Router();
 
@@ -156,7 +157,7 @@ authRouter.post('/forgot', async (req, res, next) => {
     const user = await getUserByEmail(email);
     if (!user) return;
     const link = await createResetToken(user.id);
-    const url = `${(process.env.CLIENT_ORIGIN || 'http://localhost:3000').replace(/\/$/, '')}/login?reset=${link.token}`;
+    const url = studioLink(`/login?reset=${link.token}`);
     const sent = await sendMail({
       to: [user.email],
       subject: 'Reset your RCAAS.tech password',

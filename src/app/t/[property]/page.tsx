@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { connection } from 'next/server';
-import { API_BASE_URL, apiUrl, withoutNightVersions, type GalleryItem } from '../../../lib/api';
+import { API_BASE_URL, SERVER_API_URL, apiUrl, withoutNightVersions, type GalleryItem } from '../../../lib/api';
+import { projectToursHref } from '../../../lib/hosts';
 import { EnquiryPanel } from '../../../features/enquiry/EnquiryPanel';
 import type { ProjectTheme } from '../../../@types/config.types';
 import { inkOn } from '../../../lib/brandColor';
@@ -25,10 +26,10 @@ type Hub = { title: string; theme: ProjectTheme; whatsapp: string | null; enquir
 async function load(id: string): Promise<Hub | null> {
   const opts = { cache: 'no-store' } as const;
   try {
-    const t = await fetch(`${API_BASE_URL}/api/properties/${encodeURIComponent(id)}/theme`, opts);
+    const t = await fetch(`${SERVER_API_URL}/api/properties/${encodeURIComponent(id)}/theme`, opts);
     if (!t.ok) return null;
     const { title, theme, whatsapp, features } = await t.json();
-    const g = await fetch(`${API_BASE_URL}/api/gallery?property=${encodeURIComponent(id)}`, opts);
+    const g = await fetch(`${SERVER_API_URL}/api/gallery?property=${encodeURIComponent(id)}`, opts);
     return { title, theme: theme ?? {}, whatsapp: whatsapp ?? null, enquiries: features?.enquiries !== false, spaces: g.ok ? withoutNightVersions(await g.json()) : [] };
   } catch {
     return null;
@@ -46,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ property:
     `Walk ${name} in 3D: ${hub.spaces.map((s) => s.title).join(', ')}. Send an enquiry from inside the room.`,
     apiUrl(hub.spaces.find((s) => s.thumb)?.thumb) ?? (hub.theme.logo ? `${API_BASE_URL}/api/assets/${hub.theme.logo}` : null)
     ),
-    alternates: { canonical: `/t/${encodeURIComponent(property)}` },
+    alternates: { canonical: projectToursHref(property) },
     ...brandIcons(hub.theme.favicon, API_BASE_URL)
   };
 }

@@ -1,4 +1,5 @@
-import { API_BASE_URL, type GalleryItem } from '../../lib/api';
+import { SERVER_API_URL, type GalleryItem } from '../../lib/api';
+import { projectToursHref, siteHref } from '../../lib/hosts';
 import { SITE_URL } from '../../lib/shareMeta';
 
 /** The marketing pages, every published client website (/s/), and every
@@ -25,7 +26,7 @@ const PAGES_MODIFIED = '2026-10-13';
 
 async function get<T>(path: string): Promise<T[]> {
   try {
-    const r = await fetch(`${API_BASE_URL}${path}`, { next: { revalidate } });
+    const r = await fetch(`${SERVER_API_URL}${path}`, { next: { revalidate } });
     return r.ok ? await r.json() : [];
   } catch {
     return []; // API down at build time: the marketing pages still go out
@@ -47,8 +48,8 @@ export async function GET() {
   }
   const urls: { loc: string; lastmod?: string | null; priority: number }[] = [
     ...PAGES.map((p) => ({ loc: `${SITE_URL}${p === '/' ? '' : p}`, lastmod: PAGES_MODIFIED, priority: p === '/' ? 1 : p === '/learn/what-is-gaussian-splatting' ? 0.9 : 0.7 })),
-    ...sites.map((s) => ({ loc: `${SITE_URL}/s/${encodeURIComponent(s.id)}`, lastmod: s.publishedAt, priority: 0.8 })),
-    ...[...hubs].map(([id, d]) => ({ loc: `${SITE_URL}/t/${encodeURIComponent(id)}`, lastmod: d, priority: 0.6 }))
+    ...sites.map((s) => ({ loc: siteHref(s.id, '', true), lastmod: s.publishedAt, priority: 0.8 })),
+    ...[...hubs].map(([id, d]) => ({ loc: projectToursHref(id, undefined, true), lastmod: d, priority: 0.6 }))
   ];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

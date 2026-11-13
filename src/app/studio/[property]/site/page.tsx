@@ -8,6 +8,7 @@ import {
   scheduleSite, shareSiteForReview, stopSiteReview, uploadSiteImage, type ReviewFeedback,
   type DiningPlace, type EventHall, type SiteBooking, type SiteDoc, type SiteEvents, type SiteMenu, type SiteSpace, type SiteStays, type SiteStyle, type SiteTable, type StayRoom
 } from '../../../../lib/api';
+import { siteHref } from '../../../../lib/hosts';
 import type { BrandFont, ProjectFeatures } from '../../../../@types/config.types';
 import { BRAND_FONTS, fontChoices } from '../../../../lib/brandFonts';
 import { useStudioSession } from '../../../../features/auth/useStudioSession';
@@ -201,7 +202,7 @@ export default function SiteEditorPage({ params }: { params: Promise<{ property:
         <button onClick={() => { setScheduling(!scheduling); setError(''); }} disabled={!!busy} aria-expanded={scheduling}>Schedule…</button>
         <button onClick={() => setReviewing(!reviewing)} aria-expanded={reviewing}>Client review…</button>
         <button onClick={preview} disabled={!!busy}>Preview ↗</button>
-        {publishedAt && <a className="se-open" href={`/s/${encodeURIComponent(id)}`} target="_blank" rel="noopener">Open site ↗</a>}
+        {publishedAt && <a className="se-open" href={siteHref(id)} target="_blank" rel="noopener">Open site ↗</a>}
         <a className="se-open" href={`/studio/${encodeURIComponent(id)}/reservations`}>Reservations</a>
       </header>
 
@@ -687,7 +688,7 @@ function ReviewPanel({ id, dirty, onSave, onError }: { id: string; dirty: boolea
   const [copied, setCopied] = useState(false);
   const load = () => getReviewFeedback(id).then(setFb).catch((e: Error) => onError(e.message));
   useEffect(() => { load(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps -- once per project
-  const link = fb?.key ? `${location.origin}/s/${encodeURIComponent(id)}/review?key=${fb.key}` : '';
+  const link = fb?.key ? siteHref(id, `/review?key=${fb.key}`, true) : '';
   const share = async () => {
     if (dirty) await onSave();
     try { await shareSiteForReview(id); load(); } catch (e) { onError((e as Error).message); }
