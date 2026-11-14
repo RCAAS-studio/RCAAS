@@ -54,6 +54,16 @@ const rememberRevision = (key: string | undefined, res: Response) => {
   if (key && revision) draftRevisions.set(key, revision);
 };
 
+/** Keep HTTP status so the studio can offer recovery without matching prose. */
+export class ApiError extends Error {
+  readonly status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}, draftKey?: string): Promise<T | null> {
   const headers = Object.fromEntries(new Headers(options.headers).entries());
   const res = await send(path, {
@@ -67,7 +77,7 @@ async function request<T>(path: string, options: RequestInit = {}, draftKey?: st
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `${res.status} ${res.statusText}`);
+    throw new ApiError(body.error || `${res.status} ${res.statusText}`, res.status);
   }
   const body = res.status === 204 ? null : await res.json();
   rememberRevision(draftKey, res);
@@ -503,7 +513,7 @@ export async function publishSceneNow(id: string): Promise<PublishResult> {
   const body = await res.json().catch(() => ({}));
   if (res.ok) { rememberRevision(key, res); return body as PublishResult; }
   if (res.status === 422) return body as PublishResult;
-  throw new Error(body.error || `${res.status} ${res.statusText}`);
+  throw new ApiError(body.error || `${res.status} ${res.statusText}`, res.status);
 }
 export const unpublishScene = (id: string) => request(`/api/scenes/${id}/unpublish`, { method: 'POST' });
 export const revertScene = (id: string) => request<SceneDoc>(`${sceneKey(id)}/revert`, { method: 'POST' }, sceneKey(id));
@@ -616,7 +626,8 @@ export const submitLead = (payload: Record<string, unknown>) =>
 /* Asset upload (CLAUDE.md §7.1, §9). Editor-only.                     */
 /* ------------------------------------------------------------------ */
 
-export const createAsset = () => request<{ assetId: string }>('/api/assets', { method: 'POST' });
+export const createAsset = (files?: { relPath: string; bytes: number }[]) =>
+  request<{ assetId: string }>('/api/assets', { method: 'POST', body: files ? JSON.stringify({ files }) : undefined });
 
 /** Reports bytes already staged for `relPath` — 0 for a fresh file, more if
  *  resuming a dropped connection. Never throws on a not-yet-started file. */

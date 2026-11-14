@@ -14,23 +14,25 @@
  */
 import { Router } from 'express';
 import express from 'express';
-import { promises as fs, createWriteStream, createReadStream, mkdirSync } from 'fs';
+import { promises as fs, createWriteStream, createReadStream } from 'fs';
 import path from 'path';
 import { randomUUID, createHash } from 'crypto';
 import yauzl from 'yauzl';
 import zlib from 'zlib';
-import { Readable, pipeline } from 'stream';
+import { Readable, Transform, pipeline } from 'stream';
+import { pipeline as pipelineAsync } from 'node:stream/promises';
 import { requireEditorSession, readSession, staleReason } from '../middleware/auth.js';
 import { assetGuard, refuseStaff, freshSession } from '../access.js';
 import { recordAsset } from '../activity.js';
 import * as storage from '../storage.js';
 import { buildFloorPlan, renameRooms, saveMarks } from '../floorplan.js';
-import { DATA_DIR } from '../dataDir.js';
+import { DATA_DIR, writeFileWhole } from '../dataDir.js';
 import { withWriteLock } from '../writeQueue.js';
 import { assetRecord, createAssetRecord, completeAssetRecord, removeAssetRecord } from '../assetCatalog.js';
 import { readAssetAccess, assertAssetUnreferenced, mayManageAsset } from '../assetAccess.js';
 import { cleanAssetPath } from '../assetReferences.js';
 import { assetsChanged } from '../assetChanges.js';
+import { uploadPath, uploadManifest, checkUploadSize, stagedInventory, verifyUpload, uploadError, LCC_INDEX_MAX_BYTES } from '../uploadPolicy.js';
 
 export const assetsRouter = Router();
 
@@ -62,6 +64,10 @@ const withUpload = (fn) => (req, res, next) => withWriteLock(`upload:${req.param
   if (!owner || !Object.hasOwn(owner, 'ownerId') || owner.ownerId !== (req.session.sub ?? null)) {
     return res.status(403).json({ error: 'Only the account that started this upload can change it.' });
   }
+  req.uploadOwner = owner;
+  if ((await assetRecord(req.params.assetId))?.status === 'ready') {
+    return res.status(409).json({ error: 'This upload has already finished. Start a new upload to replace it.' });
+  }
   try {
     return await fn(req, res, next);
   } finally {
@@ -81,10 +87,7 @@ function newAssetId() {
 
 /** No `..`, no leading slash, no backslashes — a relPath is a posix-relative path. */
 function safeRelPath(relPath) {
-  if (typeof relPath !== 'string' || !relPath) return null;
-  const normalized = relPath.replace(/\\/g, '/');
-  if (normalized.startsWith('/') || normalized.split('/').includes('..') || /[:\0]/.test(normalized)) return null;
-  return normalized;
+  return uploadPath(relPath);
 }
 
 function stagingFile(assetId, relPath) {
@@ -109,10 +112,11 @@ async function stagedBytes(assetId, relPath) {
 assetsRouter.post('/', requireEditorSession, async (req, res, next) => {
   try {
     if (await refuseStaff(req, res)) return;
+    const files = uploadManifest(req.body?.files);
     const assetId = newAssetId();
     await fs.mkdir(path.join(STAGING_DIR, assetId), { recursive: true });
     await fs.mkdir(OWNERS_DIR, { recursive: true });
-    await fs.writeFile(ownerFile(assetId), JSON.stringify({ ownerId: req.session.sub ?? null }), { flag: 'wx' });
+    await fs.writeFile(ownerFile(assetId), JSON.stringify({ ownerId: req.session.sub ?? null, files }), { flag: 'wx' });
     await createAssetRecord(assetId, req.session.sub ?? null);
     res.json({ assetId });
   } catch (err) {
@@ -149,17 +153,30 @@ assetsRouter.put(
       const relPath = safeRelPath(req.query.relPath);
       const offset = Number(req.query.offset);
       if (!relPath) return res.status(400).json({ error: 'relPath is required and must be a relative path.' });
-      if (!Number.isInteger(offset) || offset < 0) {
+      if (!Number.isSafeInteger(offset) || offset < 0) {
         return res.status(400).json({ error: 'offset must be a non-negative integer.' });
       }
       if (!Buffer.isBuffer(req.body) || !req.body.length) {
         return res.status(400).json({ error: 'Empty chunk body.' });
+      }
+      const expected = req.uploadOwner.files;
+      if (expected && (!Object.hasOwn(expected, relPath) || offset + req.body.length > expected[relPath])) {
+        return res.status(400).json({ error: 'This chunk does not match the declared upload files.' });
       }
 
       const current = await stagedBytes(req.params.assetId, relPath);
       if (current !== offset) {
         // Caller's view of the file is stale — tell it where to actually resume.
         return res.status(409).json({ error: 'Offset does not match bytes already staged.', bytesReceived: current });
+      }
+      // A declared package was budgeted at creation and each chunk is bounded
+      // above. Only legacy uploads need a disk inventory on every chunk.
+      if (!expected) {
+        const inventory = await stagedInventory(path.join(STAGING_DIR, req.params.assetId));
+        if ([...inventory.files.keys()].some(file => file !== relPath && file.toLowerCase() === relPath.toLowerCase())) {
+          return res.status(400).json({ error: 'Duplicate upload paths are not allowed.' });
+        }
+        checkUploadSize(inventory.total + req.body.length, inventory.files.size + (inventory.files.has(relPath) ? 0 : 1), offset + req.body.length);
       }
 
       const dest = stagingFile(req.params.assetId, relPath);
@@ -187,30 +204,53 @@ assetsRouter.put(
 /* on the exact same code path from here on).                           */
 /* -------------------------------------------------------------------- */
 
-/** Extracts every file entry into the same asset's staging dir. Skips
- *  directory entries and anything that fails the same relPath safety check
- *  a normal upload gets — a hostile path inside the zip doesn't get a pass. */
+/** Extract serially with bounded expanded bytes and entries. Reject ambiguous
+ * paths, links and attempts to overwrite the archive being read. */
 function extractZipToStaging(assetId, zipRelPath) {
   const zipPath = stagingFile(assetId, zipRelPath);
   return new Promise((resolve, reject) => {
     yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
       if (err) return reject(err);
-      zipfile.on('error', reject);
+      let failed = false, expanded = 0, count = 0;
+      const names = new Set();
+      const fail = (error) => {
+        if (failed) return;
+        failed = true;
+        zipfile.close();
+        reject(error);
+      };
+      zipfile.on('error', fail);
       zipfile.on('end', resolve);
-      zipfile.on('entry', (entry) => {
-        if (/\/$/.test(entry.fileName)) { zipfile.readEntry(); return; } // directory entry
-        const relPath = safeRelPath(entry.fileName);
-        if (!relPath) { zipfile.readEntry(); return; } // traversal attempt inside the zip — drop it
-        zipfile.openReadStream(entry, (err2, readStream) => {
-          if (err2) return reject(err2);
-          const dest = stagingFile(assetId, relPath);
-          mkdirSync(path.dirname(dest), { recursive: true });
-          const ws = createWriteStream(dest);
-          readStream.on('error', reject);
-          ws.on('error', reject);
-          ws.on('finish', () => zipfile.readEntry());
-          readStream.pipe(ws);
-        });
+      zipfile.on('entry', async (entry) => {
+        try {
+          if (failed) return;
+          count++;
+          expanded += entry.uncompressedSize;
+          checkUploadSize(expanded, count, entry.uncompressedSize);
+          const directory = /\/$/.test(entry.fileName);
+          const relPath = safeRelPath(directory ? entry.fileName.slice(0, -1) : entry.fileName);
+          const type = (entry.externalFileAttributes >>> 16) & 0xf000;
+          if (!relPath || relPath.toLowerCase() === zipRelPath.toLowerCase()
+            || names.has(relPath.toLowerCase()) || (type && type !== (directory ? 0x4000 : 0x8000))) {
+            throw uploadError('The ZIP contains an unsafe or duplicate path.');
+          }
+          names.add(relPath.toLowerCase());
+          if (!directory) {
+            const readStream = await new Promise((yes, no) => zipfile.openReadStream(entry, (error, stream) => error ? no(error) : yes(stream)));
+            const dest = stagingFile(assetId, relPath);
+            await fs.mkdir(path.dirname(dest), { recursive: true });
+            let crc = 0;
+            const checksum = new Transform({ transform(chunk, encoding, done) {
+              crc = zlib.crc32(chunk, crc);
+              done(null, chunk);
+            } });
+            // yauzl verifies actual expanded length; pipeline closes both handles
+            // before cleanup, including on Windows and corrupt ZIPs.
+            await pipelineAsync(readStream, checksum, createWriteStream(dest, { flags: 'wx' }));
+            if (crc !== entry.crc32) throw uploadError('The ZIP contains a corrupt file.');
+          }
+          if (!failed) zipfile.readEntry();
+        } catch (error) { fail(error); }
       });
       zipfile.readEntry();
     });
@@ -419,6 +459,7 @@ async function finalizeGlb(assetId, relPath, res) {
 assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, withUpload(async (req, res, next) => {
   const { assetId } = req.params;
   try {
+    await verifyUpload(path.join(STAGING_DIR, assetId), req.uploadOwner.files);
     if (req.query.kind === 'audio') return await finalizeAudio(assetId, res);
     if (req.query.kind === 'video360') return await finalizeVideo360(assetId, res);
     let relPaths = await listStagedFiles(assetId);
@@ -432,14 +473,19 @@ assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, withUp
     if (zipRelPath) {
       try {
         await extractZipToStaging(assetId, zipRelPath);
-      } catch {
+      } catch (error) {
         // Don't leak yauzl's raw error text (§11: no exception strings), and
         // don't leave a half-extracted zip's files sitting in staging forever
         // — every other rejection path below cleans up before returning.
         await fs.rm(path.join(STAGING_DIR, assetId), { recursive: true, force: true });
-        return res.status(400).json({ error: 'That zip looks corrupt or unreadable — re-export it and try again.' });
+        return res.status(error.status === 413 ? 413 : 400).json({ error: error.status === 413 ? error.message : 'That zip looks corrupt or unsafe — re-export it and try again.' });
       }
       await fs.rm(stagingFile(assetId, zipRelPath), { force: true });
+      // The original archive is now replaced by extracted files. Persist their
+      // lengths so a cloud copy failure can retry finalization safely.
+      const extracted = await stagedInventory(path.join(STAGING_DIR, assetId));
+      req.uploadOwner.files = Object.fromEntries(extracted.files);
+      await writeFileWhole(ownerFile(assetId), JSON.stringify(req.uploadOwner));
       relPaths = await listStagedFiles(assetId);
       if (!relPaths.length) {
         await fs.rm(path.join(STAGING_DIR, assetId), { recursive: true, force: true });
@@ -477,12 +523,17 @@ assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, withUp
       try {
         // ~100 KB of JSON: the index, not the scan (§7.1's "never load a scan
         // into server memory" still holds).
+        if ((await fs.stat(stagingFile(assetId, relPath))).size > LCC_INDEX_MAX_BYTES) continue;
         meta = JSON.parse(await fs.readFile(stagingFile(assetId, relPath), 'utf8'));
+        if (!meta?.root || typeof meta.root !== 'object' || Array.isArray(meta.root)) continue;
       } catch {
         continue; // not readable JSON — try the next candidate
       }
       const dir = path.posix.dirname(relPath);
-      const missing = [...collectReferencedFiles(meta.root)].filter(
+      let references;
+      try { references = [...collectReferencedFiles(meta.root)]; } catch { continue; }
+      if (!references.length || references.some(file => !safeRelPath(file))) continue;
+      const missing = references.filter(
         (rel) => !staged.has(dir === '.' ? rel : `${dir}/${rel}`)
       );
       if (!missing.length) { chosen = { relPath, meta }; break; }
@@ -507,10 +558,10 @@ assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, withUp
     const files = await copyStagedAsset(assetId, relPaths);
     const bytes = Object.values(files).reduce((sum, file) => sum + file.bytes, 0);
 
-    await fs.rm(path.join(STAGING_DIR, assetId), { recursive: true, force: true });
     // a floor plan from the export's own collision mesh; never fails the upload
     const floorPlan = await buildFloorPlan(assetId, meta.name && meta.name !== 'XGrids Lcc2 Splats' ? meta.name : 'Floor plan').catch(() => null);
     await completeAssetRecord(assetId, files);
+    await fs.rm(path.join(STAGING_DIR, assetId), { recursive: true, force: true });
     res.json({
       floorPlan,
       assetId,
@@ -526,7 +577,7 @@ assetsRouter.post('/:assetId/finalize', requireEditorSession, assetGuard, withUp
 }));
 
 /* -------------------------------------------------------------------- */
-/* Read — public, range-capable (the SDK streams tiles with 206s)        */
+/* Read — publication/session scoped, range-capable (SDK tile 206s)     */
 /* -------------------------------------------------------------------- */
 
 /** Stream a stored file to the response. With the cloud driver a read can
@@ -535,7 +586,7 @@ const send = (src, res) => pipeline(src, res, (err) => {
   if (err && err.code !== 'ERR_STREAM_PREMATURE_CLOSE') console.warn('[assets] read:', err.message);
 });
 
-// Serve a stored file (scan tiles, photos, audio), with byte ranges and a one-year cache.
+// Serve authorized files with ranges; revalidate public access after unpublish.
 assetsRouter.get('/:assetId/*', async (req, res, next) => {
   try {
     res.set('Cache-Control', 'private, no-store');
@@ -558,8 +609,8 @@ assetsRouter.get('/:assetId/*', async (req, res, next) => {
     // Opened on its own, a file stays a file: an uploaded SVG with a script in
     // it can't run on this origin. <img>, <video> and fetch() are unaffected.
     res.setHeader('Content-Security-Policy', "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox");
-    // A scan's files are written once, at upload, so browsers and a CDN may
-    // keep them for good; only the floor plan is redrawn in place.
+    // File bytes may be stable, but publication and membership can change.
+    // Public caches must revalidate; authenticated private bytes are not stored.
     res.setHeader('Cache-Control', access.public ? 'public, no-cache' : 'private, no-store');
 
     // A whole-file read of a model: send the gzipped copy finalizeGlb made.

@@ -26,7 +26,8 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
  * `{ flag: 'wx' }` keeps writeFile's meaning, refusing a file that's there
  * (EEXIST): a hard link, then the temporary name goes. Windows can refuse a
  * rename for a moment while another program (an antivirus) has the file
- * open, so that's tried again a few times.
+ * open. Retry sharing/permission failures for a bounded ~1.8 seconds; the old
+ * 300 ms window could expire under normal concurrent reads on Windows.
  */
 export async function writeFileWhole(file, text, { flag } = {}) {
   const tmp = `${file}.${randomUUID()}.tmp`;
@@ -38,8 +39,8 @@ export async function writeFileWhole(file, text, { flag } = {}) {
         else await fs.rename(tmp, file);
         break;
       } catch (err) {
-        if (i >= 5 || !['EPERM', 'EACCES', 'EBUSY'].includes(err.code)) throw err;
-        await wait(20 * (i + 1));
+        if (i >= 10 || !['EPERM', 'EACCES', 'EBUSY'].includes(err.code)) throw err;
+        await wait(Math.min(20 * 2 ** i, 250));
       }
     }
   } catch (err) {

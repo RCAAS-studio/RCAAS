@@ -2,6 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, readFile, readdir, writeFile, rm } from 'node:fs/promises';
+import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { writeFileWhole } from '../src/dataDir.js';
@@ -34,4 +35,27 @@ test('a data file is replaced whole, a create-only one is never overwritten, and
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('temporary Windows sharing failures retry without deleting the old file; permanent failures preserve it', async t => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'rcaas-sharing-'));
+  const file = path.join(dir, 'p.json');
+  const rename = fs.rename;
+  let failures = 6;
+  await writeFile(file, '{"previous":true}');
+  const mocked = t.mock.method(fs, 'rename', async (from, to) => {
+    if (to === file && failures-- > 0) {
+      assert.equal(await readFile(file, 'utf8'), '{"previous":true}', 'old data remains available during retry');
+      throw Object.assign(new Error('Simulated Windows file sharing conflict'), { code: 'EPERM' });
+    }
+    return rename(from, to);
+  });
+  try {
+    await writeFileWhole(file, '{"replacement":true}');
+    assert.equal(await readFile(file, 'utf8'), '{"replacement":true}');
+    mocked.mock.mockImplementation(async () => { throw Object.assign(new Error('Persistent permission failure'), { code: 'EACCES' }); });
+    await assert.rejects(writeFileWhole(file, '{"mustNotReplace":true}'), { code: 'EACCES' });
+    assert.equal(await readFile(file, 'utf8'), '{"replacement":true}');
+    assert.deepEqual(await readdir(dir), ['p.json'], 'failed replacement leaves no temporary file');
+  } finally { mocked.mock.restore(); await rm(dir, { recursive: true, force: true }); }
 });

@@ -10,6 +10,8 @@ import { SCENE_BY_ID, renameScene, setNight, setPlace, setSessionSpawn, visibleS
 import { walkerCfg } from '../scene/walkerConfig';
 import { subscribeViewpoints, loadTracks, updateSessionViewpoint } from '../scene/viewpoints';
 import { canRedo, canUndo, redo, subscribeHistory, undo, watchHistory } from './history';
+import { saveDraft, reloadDraft, matchesHierarchy } from './draftActions';
+import { DraftRecovery } from './DraftRecovery';
 import {
   hotspotsFor, subscribeDoc, sceneDocFor, loadSceneDoc, markSaved, hasUnsavedChanges, bookingFor, setBooking, setHotspots, copyHotspotId,
   collidersFor, updateCollider, removeCollider, selectCollider, colliderUi, hotspotUi,
@@ -26,7 +28,7 @@ import { uiConfig, setUiConfig, useUiConfig } from '../../lib/uiConfig';
 import {
   saveScene, logout, getPublishState, publishSceneNow, unpublishScene, revertScene, getVersions, restoreVersion,
   resolveAsset, safeUrl, getProperties, assetUrl, buildFloorPlan, uploadFloorPlan, removeFloorPlan, getEmbed, setEmbed,
-  getSiteDraft, renameFloorPlanRooms, ROLE_NAME, type SiteDoc
+  getSiteDraft, renameFloorPlanRooms, ROLE_NAME, ApiError, type SiteDoc
 } from '../../lib/api';
 import { tourHref } from '../../lib/hosts';
 import { forgetPlan } from '../tour/floorMapData';
@@ -163,7 +165,7 @@ export function EditorShell({ state, property, onPreview }: {
   return (
     <div className="ed2">
       <LeaveGuard dirty={dirty} />
-      <TopBar onPreview={onPreview} onMeasure={() => setMeasuring(true)} sceneId={state.activeId} property={property} />
+      <TopBar key={state.activeId} onPreview={onPreview} onMeasure={() => setMeasuring(true)} sceneId={state.activeId} property={property} />
       {measuring && (
         <MeasureTool
           editor={state.editor} unitScale={walkerCfg.unitScale || 1} onClose={closeMeasure}
@@ -415,6 +417,7 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
   const [info, setInfo] = useState<PublishState | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const [conflict, setConflict] = useState(false);
   const [note, setNote] = useState('');
   const [size, setSize] = useState(0);
   const [copied, setCopied] = useState('');
@@ -434,12 +437,13 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
   });
 
   const run = async (label: string, fn: () => Promise<string | void>) => {
-    setBusy(label); setError(''); setNote('');
+    setBusy(label); setError(''); setNote(''); setConflict(false);
     try {
       const msg = await fn();
       if (msg) setNote(msg);
       await refresh();
     } catch (e) {
+      setConflict(e instanceof ApiError && e.status === 409);
       setError(e instanceof Error ? e.message : 'That didn’t work. Try again.');
     } finally {
       setBusy(null);
@@ -448,13 +452,11 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
 
   const publish = () => run('publish', async () => {
     if (hasUnsavedChanges(sceneId)) {
-      await loadSceneDoc(sceneId);
-      const sent = sceneDocFor(sceneId);
-      await saveScene(sceneId, sent);
-      markSaved(sceneId, sent);
+      await saveDraft(sceneId);
     }
     const r = await publishSceneNow(sceneId);
     if (!r.published) throw new Error(r.blockers?.join(' ') || 'Publish was refused.');
+    await loadVersions();
     return `Published version ${r.version}. Visitors see it now.`;
   });
   const unpublish = () => run('unpublish', async () => {
@@ -464,10 +466,7 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
   // The studio's copy of the space follows a draft the server just replaced.
   const adopt = async (doc: SceneDoc | null | undefined) => {
     if (!doc) return;
-    await loadSceneDoc(sceneId, 'draft', { force: true });
-    renameScene(sceneId, doc.title);
-    const p = doc.spawn?.position;
-    if (Array.isArray(p) && p.length === 3) setSessionSpawn(sceneId, p as [number, number, number], doc.spawn.yaw ?? 0);
+    await reloadDraft(sceneId);
   };
   const revert = async () => {
     if (!(await ask({ title: 'Throw away your changes?', body: 'Every change since the last publish is lost. The live tour stays as it is.', action: 'Throw them away', danger: true }))) return;
@@ -554,6 +553,7 @@ function PublishPanel({ sceneId, onClose }: { sceneId: string; onClose: () => vo
         </div>
         {note && <p className="pub-note">{note}</p>}
         {error && <p className="up-error">{error}</p>}
+        {conflict && <DraftRecovery sceneId={sceneId} conflict onReload={() => { setError(''); setConflict(false); setNote('Loaded the server draft.'); void refresh(); }} />}
 
         {!!versions?.length && (
           <details className="pub-history">
@@ -1062,7 +1062,7 @@ function CopyToSpaces({ sceneId, propertyId, onClose }: { sceneId: string; prope
         setHotspots(target, [...hotspotsFor(target), ...newHs]);
         const newTr = tracks.filter((t) => pickTr.has(t.id)).map((t) => ({ ...structuredClone(t), id: `${t.id}-${target}-${Date.now().toString(36)}` }));
         if (newTr.length) loadTracks(target, [...sceneDocFor(target).tracks, ...newTr], { replace: true });
-        const sent = sceneDocFor(target);
+        const sent = structuredClone(sceneDocFor(target));
         await saveScene(target, sent);
         markSaved(target, sent);
         n += 1;
@@ -1121,6 +1121,7 @@ function CopyToSpaces({ sceneId, propertyId, onClose }: { sceneId: string; prope
 function SaveToServerButton({ sceneId }: { sceneId: string }) {
   const [status, setStatus] = useState<'idle' | 'saving' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const [conflict, setConflict] = useState(false);
   const [lastSaved, setLastSaved] = useState<{ at: Date; summary: string } | null>(null);
   const dirty = hasUnsavedChanges(sceneId);
 
@@ -1132,14 +1133,11 @@ function SaveToServerButton({ sceneId }: { sceneId: string }) {
   }, [lastSaved]);
 
   const save = async () => {
-    setStatus('saving');
+    setStatus('saving'); setConflict(false);
     try {
       // Read the saved doc first: saving blind would overwrite fields the
       // studio doesn't edit (uploaded variants, transform, status).
-      await loadSceneDoc(sceneId);
-      const sent = sceneDocFor(sceneId);
-      await saveScene(sceneId, sent);
-      markSaved(sceneId, sent);
+      const sent = await saveDraft(sceneId);
       const n = (k: number, one: string) => `${k} ${one}${k === 1 ? '' : 's'}`;
       setLastSaved({
         at: new Date(),
@@ -1147,6 +1145,7 @@ function SaveToServerButton({ sceneId }: { sceneId: string }) {
       });
       setStatus('idle');
     } catch (err) {
+      setConflict(err instanceof ApiError && err.status === 409);
       setStatus('error');
       setMessage(err instanceof Error ? err.message : 'Save failed.');
     }
@@ -1165,11 +1164,12 @@ function SaveToServerButton({ sceneId }: { sceneId: string }) {
         {status === 'saving' ? 'Saving…' : 'Save space'}
       </button>
       {(lastSaved || status === 'error') && (
-        <p className={`ed2-save-toast ${status === 'error' ? 'is-err' : ''}`} role="status">
-          {status === 'error'
+        <div className={`ed2-save-toast ${status === 'error' ? 'is-err' : ''}`}>
+          <p role="status">{status === 'error'
             ? `Not saved: ${message}`
-            : `Saved at ${lastSaved!.at.toLocaleTimeString()}. ${lastSaved!.summary}.`}
-        </p>
+            : `Saved at ${lastSaved!.at.toLocaleTimeString()}. ${lastSaved!.summary}.`}</p>
+          {status === 'error' && <DraftRecovery sceneId={sceneId} conflict={conflict} onReload={() => { setStatus('idle'); setConflict(false); setLastSaved(null); }} />}
+        </div>
       )}
     </div>
   );

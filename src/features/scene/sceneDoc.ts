@@ -9,7 +9,7 @@
  * splat variants, transform, status…) survive a save untouched.
  */
 import * as THREE from 'three';
-import { spawnFor, SCENE_BY_ID } from './scenes';
+import { spawnFor, SCENE_BY_ID, hydrateScenes, setSessionSpawn } from './scenes';
 import { getScene, getPublishedScene } from '../../lib/api';
 import { liveViewpoints, loadTracks } from './viewpoints';
 import { transformFor, loadTransform } from './transform';
@@ -261,6 +261,8 @@ type SavedDoc = SceneDoc & Record<string, unknown>;
 const serverDocs: Record<string, SavedDoc> = {};
 const savedJson: Record<string, string> = {}; // what the server holds, to spot unsaved edits
 const loading: Record<string, Promise<SceneDoc | null>> = {};
+const resetListeners = new Set<(sceneId: string) => void>();
+export const subscribeDraftReset = (fn: (sceneId: string) => void) => { resetListeners.add(fn); return () => { resetListeners.delete(fn); }; };
 
 /**
  * Fetch a scene's document once and adopt its tracks, hotspots and
@@ -274,11 +276,11 @@ const loading: Record<string, Promise<SceneDoc | null>> = {};
 export function loadSceneDoc(
   sceneId: string,
   source: 'draft' | 'published' = 'draft',
-  { force = false }: { force?: boolean } = {}
+  { force = false, strict = false }: { force?: boolean; strict?: boolean } = {}
 ): Promise<SceneDoc | null> {
   const key = `${source}:${sceneId}`;
   if (force) delete loading[key];
-  return (loading[key] ??= (source === 'draft' ? getScene(sceneId) : getPublishedScene(sceneId))
+  const pending = (loading[key] ??= (source === 'draft' ? getScene(sceneId) : getPublishedScene(sceneId))
     .then((saved) => {
       if (!saved) return null;
       loadTracks(sceneId, saved.tracks ?? [], { replace: force });
@@ -289,18 +291,33 @@ export function loadSceneDoc(
       booking[sceneId] = saved.booking ?? null;
       colliders[sceneId] = (Array.isArray(saved.colliders) ? saved.colliders : []).map(cleanCollider);
       looks[sceneId] = cleanLook(saved.look);
-      if (force) delete scaleFix[sceneId];
+      if (force) {
+        delete scaleFix[sceneId];
+        hydrateScenes([{ ...saved, title: saved.title, night: saved.night ?? null,
+          building: saved.building ?? '', floor: saved.floor ?? '',
+          assetId: saved.splat?.variants?.high?.assetId, meta: saved.splat?.variants?.high?.meta, format: saved.splat?.format }]);
+        const position = saved.spawn?.position;
+        if (Array.isArray(position) && position.length === 3 && position.every(Number.isFinite)) {
+          setSessionSpawn(sceneId, position as [number, number, number], Number.isFinite(saved.spawn.yaw) ? saved.spawn.yaw : 0);
+        }
+        scaleWalkerCfg(saved.unitScale > 0 && Number.isFinite(saved.unitScale) ? saved.unitScale : 1);
+      }
       if (source === 'draft') {
         serverDocs[sceneId] = saved as SavedDoc;
         savedJson[sceneId] = JSON.stringify(sceneDocFor(sceneId));
       }
       emit();
+      if (force && source === 'draft') resetListeners.forEach(fn => fn(sceneId));
       return saved;
     })
     .catch(() => {
       delete loading[key]; // retry on the next call, once the API is back
       return null;
     }));
+  return strict ? pending.then(saved => {
+    if (!saved) throw new Error('The saved draft could not be loaded. Your local changes are still here; check your connection and access, then try again.');
+    return saved;
+  }) : pending;
 }
 
 /** Call after a successful save, with the exact doc that was sent. */

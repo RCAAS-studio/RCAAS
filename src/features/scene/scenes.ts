@@ -76,13 +76,14 @@ export function renameScene(sceneId: string, name: string): boolean {
   const next = name.trim();
   if (!s || !next || next === s.name) return false;
   s.name = next;
+  spawnListeners.forEach((f) => f());
   return true;
 }
 
 /* --- session spawn overrides, set from the editor panel --- */
 const sessionSpawn: Record<string, SpawnState> = {};
 const spawnListeners = new Set<() => void>();
-/** A start view was set (undo in the editor records it, history.ts). */
+/** Start view or scene metadata changed (recorded by studio history). */
 export const subscribeSpawn = (fn: () => void) => { spawnListeners.add(fn); return () => { spawnListeners.delete(fn); }; };
 
 export function setSessionSpawn(sceneId: string, spawn: [number, number, number], yaw = 0): SpawnState {
@@ -176,6 +177,7 @@ export function setPlace(sceneId: string, patch: { building?: string; floor?: st
   if (!s) return;
   if (patch.building !== undefined) s.building = patch.building.slice(0, 60);
   if (patch.floor !== undefined) s.floor = patch.floor.slice(0, 60);
+  spawnListeners.forEach((f) => f());
 }
 
 /** A floor's place in the building, from how it's named: basement below ground, "2nd" above "1st". */
@@ -233,5 +235,5 @@ export function sameTimeOfDay(from: string, to: string): string {
 /** Studio: link (or unlink) a night version. Saved with the space, like its title. */
 export function setNight(sceneId: string, night: string | null) {
   const s = SCENE_BY_ID[sceneId];
-  if (s) s.night = night && night !== sceneId ? night : null;
+  if (s) { s.night = night && night !== sceneId ? night : null; spawnListeners.forEach((f) => f()); }
 }

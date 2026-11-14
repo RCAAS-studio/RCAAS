@@ -1,6 +1,6 @@
 # Current implementation and next work
 
-Review date: 13 November 2026. Compared the attached 26-page product blueprint and its Markdown companion with the current checkout, existing phase reports and fresh checks. The attachments are planning references; their proposed features and approval prompts are not evidence of completion. No 90% readiness score is claimed.
+Review date: 14 November 2026. Current phase: **04, in progress**. Rechecked the attached 26-page PDF against the current checkout and earlier phase reports; this pass did not receive a separate Markdown companion. The attachment is a planning reference; its proposed features and approval prompts are not evidence of completion or authorization to deploy. The user requested actual file changes as well as a review. No 90% readiness score is claimed.
 
 ## What exists
 
@@ -10,7 +10,7 @@ Review date: 13 November 2026. Compared the attached 26-page product blueprint a
 | 01 Hosts and links | Central host map/proxy, same-origin browser API, link builders, negative host tests. | Public DNS, proxy configuration, wildcard TLS and staged link checks. |
 | 02 Identity and isolation | PostgreSQL/file adapters, owner/member/staff guards, secure cookies, reset/invite flows, rate limits; production shared login disabled. Real PostgreSQL API checks passed. | Actual deployment/provider check; reviewer role, MFA and individual-device session revocation are not implemented. |
 | 03 Data and recovery | Atomic writes, one-process queues, scene/site revision conflicts, transactional account import, Windows backup and restore verification. Actual account dump/restore and outage recovery passed locally. | Scheduled off-server restore and secrets/config recovery on the VPS. PostgreSQL holds accounts only. |
-| 04 R2/assets | Local and S3 drivers, chunk retry/resume, upload ownership, ranges and fake-S3 integration tests. | Private draft asset access, scoped read access, dependency-safe deletion and live R2 verification. |
+| 04 R2/assets | Existing private draft reads, project/session revocation, snapshot-scoped public reads, checksums and reference-safe whole-asset deletion were verified. Added declared upload sizes, bounded ZIP extraction with CRC checks, stricter LCC validation and cloud-copy retry coverage. See `PHASE_04_ASSETS.md`. | Live R2 and browser/GPU verification; persistent resume UI, processing queue, usage/quota accounting and a complete retention/purge policy. Legacy clients without manifests still cannot prove original file lengths. |
 | 05 Studio/publishing | Existing authoring, undo, snapshots, ready checks and website preview. | Full authoring workflow browser/device evidence and additional planned UX. |
 | 06 Viewer | Existing navigation, auto quality, hotspots, translations and reduced-motion paths. | Real GPU/mobile/4G timing and accessibility checks. |
 | 07 Client websites | Existing templates, draft/publish, preview and host helpers. | Final client content, clean links and actual host/TLS checks. |
@@ -24,6 +24,8 @@ Review date: 13 November 2026. Compared the attached 26-page product blueprint a
 | 15 Release signoff | Pending. | Clear the real deployment/recovery/content/device gates before scoring readiness. |
 
 ## Changes completed in this pass
+
+The following company-site/database entries record the **13 November pass**. The **14 November phase-4 changes** are in `PHASE_04_ASSETS.md`; fresh validation is recorded below separately from historical results.
 
 - Footer combines the supplied column/legal-bar reference with the original light RCAAS palette, signup and contact links. Empty signup now shows a required-email error.
 - Company pages have a subtle blurred grid, with a localized mouse response that stops when idle. Touch and reduced-motion visitors get a static grid. It is confined to the company frontend.
@@ -51,9 +53,17 @@ Read-only inventory found 3 projects (`basera`, `chyasal-house`, `office-chyasal
 
 ## Next implementation slice
 
-Continue with Phase 04's server-enforced draft/private asset access and reference-safe asset handling, preserving public tour streaming and byte ranges. In parallel, rehearse the selected VPS setup and off-machine restore. Broader product additions follow those checks; the register records business decisions that code cannot supply.
+Continue Phase 04 using `PHASE_04_ASSETS.md`: verify real private R2 delivery and browser uploads, then add usage/catalog reporting, deliberate abandoned-upload cleanup and a persistent resume workflow. Draft privacy and whole-asset reference protection already exist; do not reimplement them. Keep staging/restore deployment gates open and do not advance to Phase 05 based on test totals alone.
 
 ## Validation
+
+### 14 November phase-4 review
+
+- Fresh `npm.cmd test`: 245 passed, 0 failed, 2 intentional skips. Type check and production build passed; lint has 0 errors and 6 existing warnings. Evidence and the Windows atomic-write retry fix are documented in `PHASE_04_ASSETS.md`.
+- Earlier-phase host, authentication/isolation, write-conflict and backup/restore regressions were included in the full suite. This does not revalidate real PostgreSQL, public hosts/TLS or off-machine recovery.
+- No deployment, live R2 operation, production-data edit, commit or push was performed.
+
+### Historical validation from 13 November
 
 - `npm test`: 234 passed, 0 failed, 2 intentional skips (the optional PostgreSQL run and its file-only counterpart). PostgreSQL was tested separately below.
 - `npx tsc --noEmit` and the production build passed.

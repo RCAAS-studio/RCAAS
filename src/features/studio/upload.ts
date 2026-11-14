@@ -140,6 +140,9 @@ async function uploadOneFile(
   const { relPath, file } = staged;
   const initial = await initAssetFile(assetId, relPath);
   let offset = initial?.bytesReceived ?? 0;
+  if (!initial || !Number.isSafeInteger(offset) || offset < 0 || offset > file.size) {
+    throw new Error('The server could not confirm upload progress. Try the upload again.');
+  }
   onBytes(offset);
 
   let retries = 0;
@@ -148,6 +151,7 @@ async function uploadOneFile(
     const chunk = file.slice(offset, end);
      
     const result = await uploadAssetChunk(assetId, relPath, offset, chunk);
+    if (result.bytesReceived > file.size) throw new Error('The staged file is larger than the selected file. Start a new upload.');
 
     if (result.ok) {
       offset = result.bytesReceived;
@@ -199,7 +203,7 @@ export async function uploadVariant(
 
 /** Create an asset, push every file 8 MB at a time, finalize. */
 async function sendFiles(files: StagedFile[], onProgress: (p: UploadProgress) => void): Promise<UploadResult> {
-  const created = await createAsset();
+  const created = await createAsset(files.map(({ relPath, file }) => ({ relPath, bytes: file.size })));
   if (!created?.assetId) throw new Error('Could not start the upload — the server is unreachable.');
   const { assetId } = created;
 
@@ -245,10 +249,10 @@ export function validateAudio(file: File): string | null {
 export async function uploadAudio(file: File, onProgress: (p: UploadProgress) => void): Promise<string> {
   const invalid = validateAudio(file);
   if (invalid) throw new Error(invalid);
-  const created = await createAsset();
-  if (!created?.assetId) throw new Error('Could not start the upload: the server is unreachable.');
   // Keep the name readable in the inspector, but nothing a path could trip on.
   const relPath = file.name.replace(/[^A-Za-z0-9._-]+/g, '-');
+  const created = await createAsset([{ relPath, bytes: file.size }]);
+  if (!created?.assetId) throw new Error('Could not start the upload: the server is unreachable.');
   await uploadOneFile(created.assetId, { relPath, file }, (bytesSent) => onProgress({ bytesSent, bytesTotal: file.size }));
   const result = await finalizeAudio(created.assetId);
   if (!result) throw new Error('Upload finished but the server did not confirm it. Try again.');
@@ -294,9 +298,9 @@ export async function checkVideo360(file: File): Promise<string | null> {
 export async function uploadVideo360(file: File, onProgress: (p: UploadProgress) => void): Promise<UploadResult> {
   const invalid = await checkVideo360(file);
   if (invalid) throw new Error(invalid);
-  const created = await createAsset();
-  if (!created?.assetId) throw new Error('Could not start the upload: the server is unreachable.');
   const relPath = file.name.replace(/[^A-Za-z0-9._-]+/g, '-');
+  const created = await createAsset([{ relPath, bytes: file.size }]);
+  if (!created?.assetId) throw new Error('Could not start the upload: the server is unreachable.');
   await uploadOneFile(created.assetId, { relPath, file }, (bytesSent) => onProgress({ bytesSent, bytesTotal: file.size }));
   const result = await finalizeVideo360(created.assetId);
   if (!result) throw new Error('Upload finished but the server did not confirm it. Try again.');

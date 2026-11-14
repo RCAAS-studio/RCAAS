@@ -9,7 +9,7 @@
 import http from 'node:http';
 import { signV4 } from '../src/storage-s3.js';
 
-export async function startFakeS3({ bucket, accessKeyId, secretAccessKey, pageSize = 3 }) {
+export async function startFakeS3({ bucket, accessKeyId, secretAccessKey, pageSize = 3, failRequest = () => false }) {
   const objects = new Map(); // key -> { body: Buffer, type }
   const stats = { requests: 0, badSignatures: 0 };
 
@@ -42,6 +42,7 @@ export async function startFakeS3({ bucket, accessKeyId, secretAccessKey, pageSi
     const parts = rawPath.split('/').filter(Boolean).map(decodeURIComponent);
     if (parts[0] !== bucket) return error(res, 404, 'NoSuchBucket');
     const key = parts.slice(1).join('/');
+    if (failRequest(req.method, key)) return error(res, 503, 'ServiceUnavailable');
 
     if (!key && req.method === 'GET' && query['list-type'] === '2') {
       const all = [...objects.keys()].filter((k) => k.startsWith(query.prefix ?? '')).sort();
