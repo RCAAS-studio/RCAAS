@@ -305,6 +305,13 @@
   color: var(--ed-text-dim); padding: 16px 8px 8px;
 }
 .ed2-tree-grp:first-child { padding-top: 8px; }
+.ed2-tree-search { padding: 8px; color: var(--ed-text-dim); font: 500 11px/1.5 var(--sans); }
+.ed2-tree-search label { display: block; margin-bottom: 5px; }
+.ed2-tree-search > div { display: flex; gap: 4px; }
+.ed2-tree-search input { min-width: 0; width: 100%; padding: 8px; color: var(--ed-text); background: var(--ed-raise); border: 1px solid var(--ed-line); border-radius: 6px; font: inherit; }
+.ed2-tree-search button { border: 0; border-radius: 6px; background: var(--ed-raise); color: var(--ed-text); min-width: 28px; cursor: pointer; }
+.ed2-tree-search p { margin: 7px 0 0; }
+.ed2-tree-search :focus-visible, .ed2-recovery button:focus-visible { outline: 2px solid var(--ed-signal); outline-offset: 2px; }
 .ed2-tree-n {
   font: 500 10.5px/1 var(--mono, monospace); font-variant-numeric: tabular-nums;
   letter-spacing: 0; color: var(--ed-text-dim);
@@ -500,6 +507,12 @@
   background: var(--ed-panel); border: 1px solid #2E6B4B; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
 }
 .ed2-save-toast.is-err { border-color: var(--ed-danger); color: var(--ed-danger); }
+.ed2-save-toast > p { margin: 0; }
+.ed2-recovery { margin-top: 10px; color: var(--ed-text); font: 400 12px/1.5 var(--sans); }
+.ed2-recovery p { margin: 6px 0; }
+.ed2-recovery-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.ed2-recovery button { font: inherit; color: var(--ed-text); background: var(--ed-raise); border: 1px solid var(--ed-line); border-radius: 6px; padding: 7px 9px; cursor: pointer; }
+.ed2-recovery button:disabled { opacity: 0.6; cursor: default; }
 .ed2-viewactions { margin-top: 14px; }
 
 /* inputs */

@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { transformFor, setTransform, subscribeTransform, gizmo, setGizmoMode } from '../scene/transform';
-import { SCENE_BY_ID, renameScene, setNight, setPlace, setSessionSpawn, visibleScenes } from '../scene/scenes';
+import { SCENE_BY_ID, renameScene, setNight, setPlace, visibleScenes } from '../scene/scenes';
 import { walkerCfg } from '../scene/walkerConfig';
 import { subscribeViewpoints, loadTracks, updateSessionViewpoint } from '../scene/viewpoints';
 import { canRedo, canUndo, redo, subscribeHistory, undo, watchHistory } from './history';
@@ -848,13 +848,29 @@ interface SceneTreeProps {
 
 function SceneTree({ state, tracks, hotspots, colliders, sel, onSelect, onAddTrack, onAddHotspot, onAddCollider, onNewSpace, onRename, onCopy }: SceneTreeProps) {
   const [addOpen, setAddOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const search = useRef<HTMLInputElement>(null);
+  const scenes = visibleScenes().filter(s => matchesHierarchy(query, s.name, s.id, s.building, s.floor));
+  const shownHotspots = hotspots.filter(h => matchesHierarchy(query, h.label, h.id, h.type));
+  const shownColliders = colliders.filter(c => matchesHierarchy(query, c.label, c.id, 'collision box'));
+  const shownTracks = tracks.filter(t => matchesHierarchy(query, t.label, t.id, 'camera track'));
+  const count = scenes.length + shownHotspots.length + shownColliders.length + shownTracks.length;
   return (
     <div className="ed2-left">
+      <div className="ed2-tree-search">
+        <label htmlFor="studio-hierarchy-search">Search hierarchy</label>
+        <div>
+          <input ref={search} id="studio-hierarchy-search" type="search" value={query} placeholder="Name, type or location"
+            onChange={e => setQuery(e.target.value)} onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); setQuery(''); } }} />
+          {query && <button type="button" aria-label="Clear hierarchy search" onClick={() => { setQuery(''); search.current?.focus(); }}>×</button>}
+        </div>
+        {query.trim() && <p role="status">{count ? `${count} matching item${count === 1 ? '' : 's'}` : 'No matching items. Try another name or clear the search.'}</p>}
+      </div>
       <div className="ed2-tree-grp">
-        Scenes
+        Scenes <span className="ed2-tree-n">{scenes.length}</span>
         <button type="button" className="ed2-tree-add" onClick={onNewSpace} title="New space" aria-label="New space">＋</button>
       </div>
-      {visibleScenes().map((s) => (
+      {scenes.map((s) => (
         <SceneRow
           key={s.id}
           scene={s}
@@ -865,7 +881,7 @@ function SceneTree({ state, tracks, hotspots, colliders, sel, onSelect, onAddTra
       ))}
 
       <div className="ed2-tree-grp">
-        Hotspots <span className="ed2-tree-n">{hotspots.length}</span>
+        Hotspots <span className="ed2-tree-n">{shownHotspots.length}</span>
         {onCopy && <button type="button" className="ed2-tree-add ed2-tree-copy" onClick={onCopy} title="Copy hotspots and tracks to other spaces" aria-label="Copy hotspots and tracks to other spaces">⧉</button>}
         <button type="button" className="ed2-tree-add" onClick={() => setAddOpen((v) => !v)} title="Add a hotspot" aria-label="Add a hotspot" aria-expanded={addOpen}>＋</button>
       </div>
@@ -878,10 +894,11 @@ function SceneTree({ state, tracks, hotspots, colliders, sel, onSelect, onAddTra
           ))}
         </div>
       )}
-      {hotspots.map((h) => (
+      {shownHotspots.map((h) => (
         <button
           key={h.id}
-          className={`ed2-tree-row ${sel?.id === h.id ? 'on' : ''}`}
+          className={`ed2-tree-row ${sel?.type === 'hotspot' && sel.id === h.id ? 'on' : ''}`}
+          aria-pressed={sel?.type === 'hotspot' && sel.id === h.id}
           onClick={() => onSelect({ type: 'hotspot', id: h.id })}
         >
           <span className="ed2-tree-ic"><HotspotIcon type={h.type} /></span>
@@ -893,13 +910,14 @@ function SceneTree({ state, tracks, hotspots, colliders, sel, onSelect, onAddTra
       )}
 
       <div className="ed2-tree-grp">
-        Collision boxes <span className="ed2-tree-n">{colliders.length}</span>
+        Collision boxes <span className="ed2-tree-n">{shownColliders.length}</span>
         <button type="button" className="ed2-tree-add" onClick={onAddCollider} title="Add an invisible wall or floor" aria-label="Add a collision box">＋</button>
       </div>
-      {colliders.map((c) => (
+      {shownColliders.map((c) => (
         <button
           key={c.id}
-          className={`ed2-tree-row ${sel?.id === c.id ? 'on' : ''}`}
+          className={`ed2-tree-row ${sel?.type === 'collider' && sel.id === c.id ? 'on' : ''}`}
+          aria-pressed={sel?.type === 'collider' && sel.id === c.id}
           onClick={() => onSelect({ type: 'collider', id: c.id })}
         >
           <span className="ed2-tree-ic" style={{ color: c.color }}>■</span>
@@ -911,13 +929,14 @@ function SceneTree({ state, tracks, hotspots, colliders, sel, onSelect, onAddTra
       )}
 
       <div className="ed2-tree-grp">
-        Camera tracks <span className="ed2-tree-n">{tracks.length}</span>
+        Camera tracks <span className="ed2-tree-n">{shownTracks.length}</span>
         <button type="button" className="ed2-tree-add" onClick={onAddTrack} title="Add a camera track from this view" aria-label="Add a camera track">＋</button>
       </div>
-      {tracks.map((t) => (
+      {shownTracks.map((t) => (
         <button
           key={t.id}
-          className={`ed2-tree-row ${sel?.id === t.id ? 'on' : ''}`}
+          className={`ed2-tree-row ${sel?.type === 'track' && sel.id === t.id ? 'on' : ''}`}
+          aria-pressed={sel?.type === 'track' && sel.id === t.id}
           onClick={() => onSelect({ type: 'track', id: t.id })}
         >
           <span className="ed2-tree-ic">▸</span>

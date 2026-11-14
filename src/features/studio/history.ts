@@ -108,7 +108,10 @@ export function redo(sceneId: string) {
  *  (typing in a box keeps the browser's own undo). Returns the cleanup. */
 export function watchHistory(sceneId: string): () => void {
   let t: ReturnType<typeof setTimeout> | undefined;
-  const settle = () => { clearTimeout(t); t = setTimeout(() => record(sceneId), 400); };
+  const settle = () => {
+    if (!past[sceneId]?.length && docLoaded(sceneId)) record(sceneId);
+    clearTimeout(t); t = setTimeout(() => record(sceneId), 400);
+  };
   const offs = [subscribeDoc(settle), subscribeViewpoints(settle), subscribeTransform(settle), subscribeSpawn(settle)];
   record(sceneId); // capture the initial state before the first quick edit
   const keys = (e: KeyboardEvent) => {
