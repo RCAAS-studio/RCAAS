@@ -72,3 +72,7 @@ Continue Phase 04 using `PHASE_04_ASSETS.md`: usage reporting, deliberate idle-u
 - Local PostgreSQL: account concurrency/migration regression, 64 local-asset API checks and 65 fake-S3 API checks passed; actual database dump/restore and production outage/recovery passed.
 
 Logs/screenshots are in the ignored `qa-bug-hunt/` directory. A successful local run does not prove live DNS, public HTTPS, real email delivery, managed-provider TLS or mobile GPU performance. Nothing was deployed, and no production account or database was changed.
+
+## Architecture acceptance follow-up — 15 November 2026
+
+The final architecture audit is recorded in `docs/ARCHITECTURE_COMPLETION.md`, with the actual Feature Book comparison and changed-file inventory beside it. Real desktop authenticated editor/GPU/save/publish/tour and prior-snapshot checks now pass in disposable data; this extends the earlier fixture-only evidence. This does not advance the product blueprint phase or close physical-mobile, PostgreSQL/provider, hosting/TLS, recovery or client-content gates. No push or deployment was performed.

@@ -1,2 +1,2 @@
-// Compatibility import for the existing marketing router.
+// Legacy import path retained for compatibility; native home routes use home/ directly.
 export { HomePage } from '../home/HomePage';

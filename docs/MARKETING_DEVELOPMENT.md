@@ -28,3 +28,11 @@ Commands:
 The default browser server copies source/public/config into an ignored workspace QA directory and injects `test/browser/fixtures/StudioFixture.tsx` there. This route is absent from production source. It uses actual Studio controls/publishing and intercepted API responses; tests verify draft revisions and asset references without writing real data. Public-site tests also block API writes and mock reads. Never use a production endpoint to test real submissions.
 
 Reports/traces are ignored under `playwright-report` and `test-results`; CI installs Chromium explicitly. Root Node checks and `/RCAAS` exported-artifact checks serve different deployment targets. Physical-device/GPU, full authenticated-editor, database and delivery verification remain separate tasks.
+
+## Final architecture verification
+
+The final report is [ARCHITECTURE_COMPLETION.md](ARCHITECTURE_COMPLETION.md). Run `node scripts/architecture-audit.mjs qa-bug-hunt/final-architecture-audit.json` for a read-only structural scan. Candidate unused exports/duplicates require manual review.
+
+For real Studio verification, install Chromium and run `node scripts/critical-studio-runtime.mjs <source-scene.json> <local-asset-root>`. The input scene and referenced capture are read-only; the harness copies them into ignored workspace QA storage, creates a synthetic account/project with providers and PostgreSQL disabled, builds/starts an isolated production frontend, runs `playwright.critical.config.ts`, verifies source hashes and removes its own runtime. Never substitute a live API/database or client account. Logs remain under `qa-bug-hunt/critical-*`; browser artifacts stay under `test-results/critical-studio` and `playwright-report/critical-studio`. `RCAAS_CRITICAL_CONFIG` is an internal disposable runtime configuration used by this test runner; do not point it at live data.
+
+When running browser targets concurrently, assign distinct `--output` directories and `PLAYWRIGHT_HTML_OUTPUT_DIR` values. The default shared report directories can otherwise collide. Physical-device/provider verification remains separate.

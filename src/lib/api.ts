@@ -1,9 +1,9 @@
 /**
- * Client for the Node API in /server — the CLAUDE.md-planned Django + DRF
- * backend, not started yet, stood up here in Node instead. Every call is
- * best-effort from the app's point of view: the viewer must keep working off
- * the scenes baked into lib/scenes.js if the API is unreachable, because
- * "time to first frame under 5s" (CLAUDE.md) can't wait on a second server.
+ * Client for the Express API in /server. Published tours hydrate their
+ * permitted scenes before the renderer mounts; Studio reads authenticated
+ * drafts. There is no baked-in demo-scene fallback. Requests preserve draft
+ * revisions and report failures to their caller; optional consumers may
+ * deliberately handle those failures without blocking the rest of the UI.
  */
 import type { ApiScene, PlaceKind, ProjectStatus, Property, SceneDoc } from '../@types/scene.types';
 import type { AudioUploadResult, UploadResult } from '../@types/upload.types';

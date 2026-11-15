@@ -10,11 +10,6 @@ import { hotspotsFor, sceneDocFor, loadSceneDoc, markSaved, hasUnsavedChanges, s
 import { saveScene, ApiError } from "../../../lib/api";
 import { HotspotIcon } from "../../hotspots/HotspotIcon";
 
-/** Pushes the current scene doc to the Node API (server/src/routes/scenes.js
- *  PUT /api/scenes/:id). Requires an editor session cookie — there's no
- *  sign-in screen yet, so until one exists this only works once something
- *  (curl, a future login form) has called POST /api/auth/login. */
-/** Saves the OPEN space only, and says exactly what went to the server. */
 /**
  * Copy this space's hotspots and camera tracks into other spaces of the
  * project: 20 identical hotel rooms get the same "Minibar" and "Bathroom"
@@ -100,6 +95,7 @@ export function CopyToSpaces({ sceneId, propertyId, onClose }: { sceneId: string
   );
 }
 
+/** Explicitly saves the open draft through the signed-in Studio session. */
 export function SaveToServerButton({ sceneId }: { sceneId: string }) {
   const [status, setStatus] = useState<'idle' | 'saving' | 'error'>('idle');
   const [message, setMessage] = useState('');

@@ -67,3 +67,5 @@ docs/                         architecture and developer guides
 Common homepage edits: hero → `home/components/HeroSection.tsx`; services → `ServicesSection.tsx`; industries → `IndustriesSection.tsx`; projects → `FeaturedWorkSection.tsx`; FAQ → `FaqSection.tsx`; footer → `marketing/components/Footer.tsx`. Real project evidence belongs in `marketing/content/work`.
 
 Use PascalCase for React components, `useSomething` for hooks and descriptive camelCase for utilities. Keep Next's route filenames. Prefer explicit imports and existing feature ownership over speculative barrel exports or empty folders. `@/` maps to `src/`.
+
+Final-audit entry points: `scripts/architecture-audit.mjs` (read-only graph/candidate report), `scripts/critical-studio-runtime.mjs` (isolated real API/production/browser workflow), `playwright.critical.config.ts` and `test/critical/studio.spec.ts`. Completion evidence, Feature Book discrepancies and changed-file inventory live beside this guide.

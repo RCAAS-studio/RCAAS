@@ -184,3 +184,5 @@ Built around **Three.js** and **React Three Fiber** for hyper-smooth real-time s
 # RCAAS
 
 Developer references: [Architecture](docs/ARCHITECTURE.md), [folder ownership and file locations](docs/FOLDER_STRUCTURE.md), and [marketing development](docs/MARKETING_DEVELOPMENT.md). The homepage route is `src/app/(marketing)/page.tsx`; its named sections are in `src/features/marketing/home/components`. Run `npm run test:e2e` for Playwright browser regressions after installing Chromium with `npx playwright install chromium`.
+
+Final architecture handoff: [completion assessment and requirement matrix](docs/ARCHITECTURE_COMPLETION.md), [actual Feature Book comparison](docs/FEATURE_BOOK_REVIEW.md), and [reviewed changed-file inventory](docs/ARCHITECTURE_CHANGED_FILES.md). The isolated real-workflow runner is `node scripts/critical-studio-runtime.mjs <source-scene.json> <local-asset-root>`; it copies the source capture read-only and creates disposable accounts/data.
