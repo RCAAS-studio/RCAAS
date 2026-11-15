@@ -83,8 +83,6 @@ export interface CaseStudy {
   resultMetric?: string;
   heroImage: string;
   embedDemoId: 'chilancho' | 'basera' | 'nepathya' | 'madan';
-  deliverables: string[];
-  techUsed: string[];
 }
 
 export interface ToolkitItem {

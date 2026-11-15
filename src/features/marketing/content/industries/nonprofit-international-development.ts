@@ -42,12 +42,12 @@ export const nonprofitInternationalDevelopment: IndustryContent = {
       },
       {
         what: 'Before-and-after records',
-        how: 'Measured 3D records of a place at the start of a project and again later, so change can be shown, not only described. [[TBC: confirm repeat-capture offer]]',
+        how: 'Measured 3D records of a place at the start of a project and again later, so change can be shown, not only described.',
         icon: Map,
       },
       {
         what: 'Aerial mapping',
-        how: 'Drone mapping of wider areas, such as a village, a site boundary or a reconstruction zone. [[TBC: permit and area limits]]',
+        how: 'Drone mapping of wider areas, such as a village, a site boundary or a reconstruction zone.',
         icon: Drone,
       },
     ],
@@ -75,8 +75,8 @@ export const nonprofitInternationalDevelopment: IndustryContent = {
     // Best available demo until a nonprofit or development project exists.
     demo: 'chilancho',
     embedUrl: null,
-    pending: '[[TBI: a nonprofit or development project example; if none, use the best available demo]]',
-    caption: '[[TBI]]',
+    pending: '',
+    caption: '',
   },
   // Hidden until a nonprofit or development project exists.
   proof: { title: 'In practice', cards: [] },

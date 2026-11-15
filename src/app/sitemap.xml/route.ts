@@ -1,6 +1,7 @@
 import { SERVER_API_URL, type GalleryItem } from '../../lib/api';
 import { projectToursHref, siteHref } from '../../lib/hosts';
 import { SITE_URL } from '../../lib/shareMeta';
+import { pageMeta } from '../../features/marketing/meta';
 
 /** The marketing pages, every published client website (/s/), and every
  *  project's tour page (/t/). Single tours redirect to /tour, so they're left
@@ -10,7 +11,7 @@ export const revalidate = 3600;
 
 // The rcaas.tech pages (src/features/marketing): their own sitemap's list, plus the live tours and two policies.
 // Their privacy and terms pages are drafts marked noindex, so they're left out, as in their sitemap.
-const PAGES = [
+const LISTED_PAGES = [
   '/', '/services', '/industries', '/work', '/platform', '/how-we-work', '/learn', '/about', '/faq', '/contact', '/gallery',
   '/industries/education', '/industries/filmmaking', '/industries/gaming', '/industries/government-municipalities',
   '/industries/heritage-culture', '/industries/hospitality-tourism', '/industries/nonprofit-international-development',
@@ -21,8 +22,14 @@ const PAGES = [
   '/services/visual-storytelling',
   '/cookies', '/security'
 ];
+// Only what the page itself says is indexable: a draft (a guide or industry awaiting approval) is marked noindex by
+// pageMeta (which wants the slash form, as the route entries pass it), so it can never be advertised here while it tells search engines to skip it.
+const PAGES = LISTED_PAGES.filter((p) => !/noindex/i.test(pageMeta(p === '/' ? p : `${p}/`).robots ?? ''));
 // when the pages' words last changed: bump it with a copy edit (a search engine uses it to decide when to re-read)
-const PAGES_MODIFIED = '2026-10-13';
+// The static export (GitHub Pages) serves and canonicalises every page with a trailing slash; the Node host
+// redirects to the slash-less form. The sitemap must list the form each host calls canonical.
+const TRAIL = process.env.NEXT_OUTPUT_EXPORT === '1' ? '/' : '';
+const PAGES_MODIFIED = '2026-11-15';
 
 async function get<T>(path: string): Promise<T[]> {
   try {
@@ -36,7 +43,9 @@ async function get<T>(path: string): Promise<T[]> {
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 export async function GET() {
-  const [sites, spaces] = await Promise.all([
+  // The Pages export has no /s/ or /t/ routes (the workflow removes them), so it lists only the marketing pages,
+  // even when an API happens to be reachable while it is built.
+  const [sites, spaces] = process.env.NEXT_OUTPUT_EXPORT === '1' ? [[], []] : await Promise.all([
     get<{ id: string; publishedAt: string | null }>('/api/sites'),
     get<GalleryItem>('/api/gallery')
   ]);
@@ -47,7 +56,7 @@ export async function GET() {
     if (!prev || s.publishedAt > prev) hubs.set(s.propertyId, s.publishedAt);
   }
   const urls: { loc: string; lastmod?: string | null; priority: number }[] = [
-    ...PAGES.map((p) => ({ loc: `${SITE_URL}${p === '/' ? '' : p}`, lastmod: PAGES_MODIFIED, priority: p === '/' ? 1 : p === '/learn/what-is-gaussian-splatting' ? 0.9 : 0.7 })),
+    ...PAGES.map((p) => ({ loc: `${SITE_URL}${p === '/' ? '' : p}${TRAIL}`, lastmod: PAGES_MODIFIED, priority: p === '/' ? 1 : p === '/learn/what-is-gaussian-splatting' ? 0.9 : 0.7 })),
     ...sites.map((s) => ({ loc: siteHref(s.id, '', true), lastmod: s.publishedAt, priority: 0.8 })),
     ...[...hubs].map(([id, d]) => ({ loc: projectToursHref(id, undefined, true), lastmod: d, priority: 0.6 }))
   ];

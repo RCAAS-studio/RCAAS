@@ -83,8 +83,8 @@ export const governmentMunicipalities: IndustryContent = {
     // Chilancho Stupa as a heritage-inventory example until a municipal or public-space project exists.
     demo: 'chilancho',
     embedUrl: null,
-    pending: '[[TBI: municipal or public-space project; otherwise Chilancho Stupa as a heritage-inventory example]]',
-    caption: '[[TBI]]',
+    pending: '',
+    caption: '',
   },
   workTogether: {
     id: 'work-together',
@@ -95,7 +95,6 @@ export const governmentMunicipalities: IndustryContent = {
       { model: 'Partnerships', description: 'Long-term collaboration on mapping, heritage or smart-city programmes.', icon: Handshake },
       { model: 'Joint ventures', description: 'Combine our capability with your institution or partners for larger projects.', icon: Combine },
     ],
-    note: '[[TBC: "We can respond to tenders and requests for proposals." — keep only if registered and eligible.]]',
     cta: { label: 'Partner with us', path: '/about/#partner' as RoutePath },
   },
   // Until a public-sector project exists (W05), Chilancho Stupa stands in as a heritage documentation example.
@@ -106,7 +105,7 @@ export const governmentMunicipalities: IndustryContent = {
         name: 'Chilancho Stupa',
         tag: 'Heritage documentation example',
         line: 'A cultural monument documented in 3D to preserve its form, proportions and detail.',
-        pending: '[[TBI: municipal or public-sector project]]',
+        pending: '',
         path: '/work/chilancho-stupa-digital-heritage/',
         image: IMG['industry-government-municipalities/chilancho-stupa'],
       },
@@ -118,16 +117,16 @@ export const governmentMunicipalities: IndustryContent = {
       {
         question: 'Can you map a whole municipality?',
         answer:
-          '[[TBI: largest areas you take on and how coverage is planned]]. For large areas, we usually start with a pilot ward or priority zone, then scale.',
+          'For large areas, we usually start with a pilot ward or priority zone, then scale.',
       },
       {
         question: 'Will the data work with our GIS systems?',
         answer:
-          'Yes. We deliver georeferenced data in standard GIS formats [[TBC: e.g. GeoTIFF, SHP, GeoPackage]] so it fits your existing systems.',
+          'Yes. We deliver georeferenced data in standard GIS formats so it fits your existing systems.',
       },
       {
         question: 'How do you handle drone permissions?',
-        answer: '[[TBI: approval process and typical lead time]]. We build approval time into the project plan.',
+        answer: 'Approvals depend on the site and the authority involved. We build approval time into the project plan.',
       },
       { question: 'Who owns the data?', answer: '[[TBI: ownership terms for public-sector projects]]' },
       {

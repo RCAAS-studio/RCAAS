@@ -37,7 +37,7 @@ return (<section id="live-experience" className="py-24 border-t border-line bg-s
           {/* Static HTML description for crawlers and accessibility */}
           <div className="mt-6 rounded-md border border-line bg-white p-4 text-xs text-zinc-600 font-mono shadow-sm">
             <p>
-              <WithPlaceholders text="An interactive, photorealistic 3D model of Chilancho Stupa in Kirtipur, Kathmandu Valley, Nepal, created by RCAAS Technology. Visitors can move freely through [[TBI: spaces shown, e.g. the lobby, rooms and courtyard]]." />
+              <WithPlaceholders text="An interactive, photorealistic 3D model of Chilancho Stupa in Kirtipur, Kathmandu Valley, Nepal, created by RCAAS Technology." />
             </p>
             <p className="mt-2">
               Built as in-house research by RCAAS Technology, to document the stupa's form and detail for study and for the public.

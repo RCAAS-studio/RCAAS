@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 import { RoutePath } from '../types';
-import { Placeholder } from './Placeholder';
 import { FaqDetails } from './FaqDetails';
 import { buttonClass, eyebrowClass, pageShellClass } from './ui';
 
@@ -59,20 +58,8 @@ export const GuideHeader: React.FC<{ eyebrow: string; title: string; minutes: nu
       {title}
     </motion.h1>
 
-    {/* L01 author and dates stay as placeholders until input. */}
+    {/* L01: the author and dates are shown once they are supplied; until then only the reading time. */}
     <p className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs font-mono text-zinc-500 pb-6 border-b border-line">
-      <span>
-        By <Placeholder>[[TBI: author name, role]]</Placeholder>
-      </span>
-      <span className="text-zinc-500" aria-hidden="true">·</span>
-      <span>
-        Published <Placeholder>[[TBI]]</Placeholder>
-      </span>
-      <span className="text-zinc-500" aria-hidden="true">·</span>
-      <span>
-        Updated <Placeholder>[[TBI]]</Placeholder>
-      </span>
-      <span className="text-zinc-500" aria-hidden="true">·</span>
       <span>{minutes} min read</span>
     </p>
   </header>
@@ -217,24 +204,9 @@ export const ComparisonTable: React.FC<{
   );
 };
 
-// L02: required before a guide is published.
-export const FromOurProjects: React.FC<{ title: string; items: string[] }> = ({ title, items }) => (
-  <section id="from-our-projects" className="mb-20 sm:mb-28 scroll-mt-20">
-    <SectionHeading eyebrow="From our projects" title={title} className="max-w-2xl mb-8" />
-    <div className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50/50 p-6 sm:p-8">
-      <p className="mb-4">
-        <Placeholder>[[TBI — required before publishing. Use real observations from RCAAS projects, for example:]]</Placeholder>
-      </p>
-      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono text-amber-900">
-        {items.map((item) => (
-          <li key={item} className="rounded-lg border border-amber-200 bg-white px-3.5 py-2.5">
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-);
+// L02: real observations from RCAAS projects. Nothing is shown until they exist: the prompts that guide
+// the author live with each guide's props, never on the public page.
+export const FromOurProjects: React.FC<{ title: string; items: string[] }> = () => null;
 
 export interface GuideFaqItem {
   question: string;

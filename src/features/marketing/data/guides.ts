@@ -47,8 +47,10 @@ export const GUIDES: Guide[] = [
     author: null,
     readingTime: null,
     updated: null,
-    // Brief: draft until pricing basis and timelines are input (S01, S02). Published early at the owner's request.
-    draft: false,
+    // Brief: draft until pricing basis and timelines are input (S01, S02). It was published early at the owner's
+    // request, but 31 unresolved placeholders were visible on it (publication-safety audit, 2026-11-15), so it is
+    // draft (noindex, out of the sitemap and /learn) again. Set false once S01/S02 are supplied and the check passes.
+    draft: true,
   },
 ];
 

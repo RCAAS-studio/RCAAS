@@ -40,7 +40,6 @@ const DELIVERABLES: DeliverableOutput[] = [
     deliverables: ['Custom Web Viewer', 'Interactive Waypoints', 'Booking / Lead Hotspots', 'Embed Code'],
     specs: [
       { label: 'Access', value: 'Instant via URL (No App)' },
-      { label: 'Load Time', value: '< 1.8 seconds' },
       { label: 'Compatibility', value: 'iOS, Android, Windows, Mac' },
     ],
     route: '/services/immersive-experiences/3d-virtual-tours/',
@@ -48,7 +47,7 @@ const DELIVERABLES: DeliverableOutput[] = [
     image: IMG['one-capture-multi-use-visualizer/compatibility'],
     overlayStyle: 'tour',
     hotspots: [
-      { id: 'h1', x: 38, y: 46, title: 'Central Courtyard Waypoint', telemetry: '360° HDR · 16K Panorama' },
+      { id: 'h1', x: 38, y: 46, title: 'Central Courtyard Waypoint', telemetry: 'Interactive waypoint' },
       { id: 'h2', x: 68, y: 32, title: 'Deluxe Suite Entrance', telemetry: 'Direct Room Booking Link' },
     ],
   },
@@ -57,12 +56,12 @@ const DELIVERABLES: DeliverableOutput[] = [
     number: '02',
     name: 'Cinematic Fly-Through Film',
     category: 'Visual Storytelling',
-    badge: '4K Narrative Video',
+    badge: 'Narrative Video',
     description: 'Ultra-smooth scripted camera flights generated directly from your 3D spatial capture. Scripted and narrated around what you want your audience to feel and do.',
     forWhom: 'Instagram Reels, YouTube, TV commercials, investor decks, and launch campaigns.',
-    deliverables: ['4K UHD Master Video', '9:16 Social Reels', 'Voiceover Audio', 'Colour Graded Stills'],
+    deliverables: ['Master Video', '9:16 Social Reels', 'Voiceover Audio', 'Colour Graded Stills'],
     specs: [
-      { label: 'Resolution', value: '4K 60fps Ultra HD' },
+      { label: 'Resolution', value: 'Agreed per brief' },
       { label: 'Sound', value: 'Spatial narration & sound design' },
       { label: 'Formats', value: '16:9 Landscape & 9:16 Portrait' },
     ],
@@ -71,8 +70,8 @@ const DELIVERABLES: DeliverableOutput[] = [
     image: IMG['one-capture-multi-use-visualizer/formats'],
     overlayStyle: 'film',
     hotspots: [
-      { id: 'h1', x: 50, y: 38, title: 'Dome Orbit Keyframe', telemetry: '4K ProRes 422 · Shutter 1/120' },
-      { id: 'h2', x: 26, y: 64, title: 'Plinth Elevation Track', telemetry: 'Drone Aerial Spline Path' },
+      { id: 'h1', x: 50, y: 38, title: 'Dome Orbit Keyframe', telemetry: 'Scripted camera keyframe' },
+      { id: 'h2', x: 26, y: 64, title: 'Plinth Elevation Track', telemetry: 'Scripted camera path' },
     ],
   },
   {
@@ -81,21 +80,20 @@ const DELIVERABLES: DeliverableOutput[] = [
     name: 'VR & Exhibition Immersion',
     category: 'Immersive Experiences',
     badge: '6DoF Virtual Reality',
-    description: 'Fully immersive 1:1 scale virtual reality for Meta Quest and Apple Vision Pro. Visitors step physically inside your spaces during trade expos and admissions fairs.',
+    description: 'Fully immersive 1:1 scale virtual reality for headsets, assessed for each project. Visitors can step inside your spaces at trade expos and admissions fairs.',
     forWhom: 'International trade expos, admissions fairs, VIP showrooms, and cultural museum kiosks.',
-    deliverables: ['Standalone VR App', 'Interactive Teleport Controls', 'Kiosk Auto-Reset Mode'],
+    deliverables: ['VR scene, assessed per project', 'Headset testing on Meta Quest'],
     specs: [
-      { label: 'Field of View', value: '110° Stereo 3D' },
-      { label: 'Framerate', value: '90 FPS smooth tracking' },
-      { label: 'Hardware', value: 'Meta Quest 3, Apple Vision Pro' },
+      { label: 'Hardware', value: 'Meta Quest 2, 3 and 3S (tested)' },
+      { label: 'Scope', value: 'Assessed per project' },
     ],
     route: '/services/immersive-experiences/',
     buttonText: 'Explore VR Experiences',
     image: IMG['one-capture-multi-use-visualizer/hardware'],
     overlayStyle: 'vr',
     hotspots: [
-      { id: 'h1', x: 42, y: 52, title: 'Teleport Node A (Main Quad)', telemetry: '6DoF Physical Boundary Active' },
-      { id: 'h2', x: 74, y: 44, title: 'STEM Laboratory Portal', telemetry: 'Interactive Equipment Hotspot' },
+      { id: 'h1', x: 42, y: 52, title: 'Teleport Node A (Main Quad)', telemetry: 'Illustrative hotspot' },
+      { id: 'h2', x: 74, y: 44, title: 'STEM Laboratory Portal', telemetry: 'Illustrative hotspot' },
     ],
   },
   {
@@ -106,10 +104,10 @@ const DELIVERABLES: DeliverableOutput[] = [
     badge: 'Handheld SLAM LiDAR',
     description: 'Clean, measured point clouds and CAD drawings ready for architects, engineers, and conservators. Cuts repeat site visits, with the accuracy agreed for your project.',
     forWhom: 'Architects, MEP engineers, interior fit-out teams, and heritage conservators.',
-    deliverables: ['Dense Point Cloud (.LAS/.E57)', '2D CAD Floor Plans (.DWG)', 'Revit/BIM IFC Model'],
+    deliverables: ['Point cloud, formats agreed per project', '2D CAD floor plans', 'BIM-ready model, where scoped'],
     specs: [
       { label: 'Accuracy', value: 'Agreed per project' },
-      { label: 'Density', value: '200,000 pts / second' },
+      { label: 'Scanner rating', value: '200,000 points/s (manufacturer)' },
       { label: 'Datum', value: 'Real-world coordinates, per project' },
     ],
     route: '/services/digital-twins/3d-laser-scanning/',
@@ -173,14 +171,14 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
 
           <div className="flex items-center gap-3 bg-zinc-50 p-2.5 px-3.5 rounded-xl border border-zinc-200/80">
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/10 text-accent font-mono text-xs font-bold border border-accent/20">
-              4x
+              1
             </div>
             <div>
               <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-semibold">
-                ROI Multiplier
+                One capture
               </div>
               <div className="text-[11px] font-semibold text-zinc-900 leading-none mt-0.5">
-                Zero duplicate visits
+                Several outputs
               </div>
             </div>
           </div>
@@ -339,7 +337,7 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
                         <span>Interactive 3D Walkthrough Mode</span>
                       </div>
                       <div className="bg-black/75 px-3 py-1.5 rounded-lg border border-white/20">
-                        Zero Plugins · 60 FPS
+                        Zero Plugins
                       </div>
                     </div>
                   </>
@@ -351,12 +349,12 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
                       <div className="flex items-center justify-between text-white font-mono text-[11px]">
                         <span className="flex items-center gap-1.5">
                           <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                          REC · 4K UHD 60FPS
+                          REC · ILLUSTRATIVE
                         </span>
-                        <span>SHUTTER 1/120 · ISO 200</span>
+                        <span>FLY-THROUGH PREVIEW</span>
                       </div>
                       <div className="flex items-center justify-between text-white font-mono text-[10px]">
-                        <span>PRORES 422 HQ</span>
+                        <span>SCRIPTED CAMERA PATH</span>
                         <span>FLY-THROUGH CRANE TRACK A</span>
                       </div>
                     </div>

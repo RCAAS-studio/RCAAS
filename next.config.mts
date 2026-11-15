@@ -13,6 +13,8 @@ const staticExport = !!process.env.NEXT_OUTPUT_EXPORT;
 
 const nextConfig: NextConfig = {
   basePath,
+  // Read by the schema.org URLs so they take the same slash form as each page's canonical link.
+  env: { NEXT_PUBLIC_TRAILING_SLASH: staticExport ? "1" : "" },
   // Directory indexes keep the public site's /services/.../ links working
   // on GitHub Pages, which cannot apply Next's extensionless-route rewrites.
   ...(staticExport ? { output: 'export' as const, trailingSlash: true } : {}),

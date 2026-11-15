@@ -390,10 +390,10 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-xs font-mono">
                   <div className="flex items-center space-x-2 bg-black/70 px-3 py-1.5 rounded border border-zinc-800">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>LIDAR PULSE FREQUENCY: 200 KHZ</span>
+                    <span>LIDAR SWEEP: ILLUSTRATION</span>
                   </div>
                   <div className="bg-black/70 px-3 py-1.5 rounded border border-zinc-800 text-zinc-300">
-                    RELATIVE DRIFT ERROR: &lt; 5MM
+                    ACCURACY AGREED PER PROJECT
                   </div>
                 </div>
 

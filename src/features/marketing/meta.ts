@@ -66,7 +66,7 @@ export function pageMeta(currentPath: string) {
     metaDesc = 'Films, guided 3D experiences and social content shaped around your place and audience. Explore a real Chilancho capture and discuss your project with RCAAS.';
   } else if (currentPath.startsWith('/services/digital-twins/3d-laser-scanning')) {
     title = '3D Laser Scanning in Nepal (SLAM LiDAR) | RCAAS';
-    metaDesc = 'Handheld 3D laser scanning in Kathmandu and across Nepal. Accurate point clouds, as-built drawings and 3D models of any building, captured in hours, not days.';
+    metaDesc = 'Handheld 3D laser scanning in Kathmandu and across Nepal. Point clouds, as-built drawings and 3D models of buildings, captured with SLAM LiDAR.';
   } else if (currentPath.startsWith('/services/digital-twins/drone-mapping')) {
     title = 'Drone Mapping & Aerial Survey in Nepal | RCAAS';
     metaDesc = 'Drone mapping and aerial survey across Nepal: true-scale maps, terrain models and 3D site models of land, buildings and heritage sites, ready for planning.';
@@ -77,7 +77,8 @@ export function pageMeta(currentPath: string) {
     title = 'Immersive 3D, VR & AR Experiences in Nepal | RCAAS';
     metaDesc = 'Photorealistic 3D tours, VR, AR and interactive experiences built from real places in Nepal, designed to help hotels, schools, developers and heritage sites.';
   } else if (currentPath.startsWith('/services')) {
-    title = 'Immersive Experiences, Storytelling, Digital Twins & Game Worlds | RCAAS';
+    title = 'Immersive Experiences, Digital Twins & Storytelling | RCAAS';
+    metaDesc = 'RCAAS captures real places in Nepal and turns them into 3D tours, VR and AR, films, survey data and game-ready worlds. See what we create.';
   } else if (findIndustryContent(currentPath.split(/[?#]/)[0])) {
     const industry = findIndustryContent(currentPath.split(/[?#]/)[0])!;
     title = industry.titleTag;

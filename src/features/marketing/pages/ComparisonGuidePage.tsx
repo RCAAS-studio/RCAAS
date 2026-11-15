@@ -6,7 +6,6 @@ import { ArrowRight, Box, Check, Film, Orbit } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { RoutePath } from '../types';
 import { isGuidePublished, readingMinutes } from '../data/guides';
-import { Placeholder } from '../components/Placeholder';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { eyebrowClass } from '../components/ui';
 import {
@@ -16,7 +15,6 @@ import {
   GuideCta,
   GuideFaq,
   GuideHeader,
-  GuideSources,
   SectionHeading,
   ShortAnswer,
   fadeUp,
@@ -432,9 +430,6 @@ export const ComparisonGuidePage: React.FC<ComparisonGuidePageProps> = ({ onNavi
           {/* 7. COMMON QUESTIONS */}
           <GuideFaq faqs={faqs} />
 
-          <GuideSources>
-            <Placeholder>[[TBI: any external sources used; if none, remove this section]]</Placeholder>
-          </GuideSources>
         </article>
 
         {/* 8. CALL TO ACTION BAND */}

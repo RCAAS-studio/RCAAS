@@ -40,7 +40,7 @@ const CAPABILITIES: CapabilitySection[] = [
     whatItIs:
       'A photorealistic, explorable 3D model of your place that opens from a link in any browser. Visitors move freely through the space instead of jumping between fixed photos.',
     audienceExperiences:
-      'The real feel of a room, a campus or a courtyard: its size, light and layout, from any angle, with smooth 60 FPS continuous movement.',
+      'The real feel of a room, a campus or a courtyard: its size, light and layout, from any angle.',
     youReceive: [
       'Hosted high-speed 3D tour on our dedicated cloud platform',
       'Shareable link with custom URL and branding',
@@ -78,7 +78,7 @@ const CAPABILITIES: CapabilitySection[] = [
       'Luxury Property Sales Galleries',
     ],
     madeWith:
-      'Your 3D capture dataset, mesh-optimised for 90 FPS rendering on headsets including Meta Quest 3, Apple Vision Pro, and HTC Vive.',
+      'Your 3D capture, prepared for headset experiences. We have tested on Meta Quest 2, 3 and 3S, and we check each experience.',
     image: IMG['immersive-experiences/showcase-2'],
   },
   {
@@ -92,10 +92,10 @@ const CAPABILITIES: CapabilitySection[] = [
     audienceExperiences:
       'A sacred medieval chaitya on their study table, an architectural campus masterplan scaled to room size, or interactive informational overlays while standing on site.',
     youReceive: [
-      'App-free WebAR links launching instantly on iOS Safari & Android Chrome',
-      'Apple Quick Look (.usdz) and Google Scene Viewer (.gltf) models',
-      'Physical QR launch stickers and tabletop display stands',
-      'Spatial measurement overlay calibrated to real dimensions',
+      'WebAR links that open in a phone browser, where the project supports it',
+      'AR models in the formats each project needs, assessed per project',
+      'QR codes to launch the experience',
+      'Measurement overlays, where the project calls for them',
     ],
     bestFor: [
       'Cultural Heritage Preservation & Education',
@@ -261,7 +261,7 @@ const FAQS = [
   },
   {
     q: 'Can you create a VR version from the same capture?',
-    a: 'Yes. Because our capture records true three-dimensional geometry and volumetric radiance, every project can be deployed directly to VR headsets (Meta Quest, Apple Vision Pro) without needing a second site visit.',
+    a: 'Often, yes. A capture can be the starting point for a VR experience, which we assess for each project. We have tested on Meta Quest 2, 3 and 3S and check every experience. The browser tour itself has no VR mode yet.',
   },
 ];
 
@@ -517,7 +517,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
                           <span className="bg-black/75 px-2 py-0.5 rounded">
                             RCAAS SPATIAL CAPTURE
                           </span>
-                          <span className="text-emerald-400">● 60 FPS</span>
+                          <span className="text-emerald-400">● DEMO</span>
                         </div>
                       </div>
 

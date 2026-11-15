@@ -9,6 +9,8 @@
     "dev:web": "next dev --webpack",
     "prebuild": "npm run css:rcaas",
     "build": "next build --webpack",
+    "postbuild": "node scripts/check-placeholders.mjs",
+    "check:placeholders": "node scripts/check-placeholders.mjs",
     "start": "next start",
     "lint": "eslint .",
     "pretest:e2e": "npm run css:rcaas",

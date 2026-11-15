@@ -8,9 +8,9 @@ import type { IndustryContent } from './types';
 export const gaming: IndustryContent = {
   slug: 'gaming',
   name: 'Gaming',
-  titleTag: 'Game Worlds & Assets from Real Places | RCAAS',
+  titleTag: '3D Capture for Game Studios & Developers | RCAAS',
   metaDescription:
-    'Real locations and heritage sites captured as Gaussian splats and turned into game-ready environments and props for Unreal, Unity and real-time scenes.',
+    'For game studios and developers: real places and objects captured in 3D and prepared as environments and props for Unreal, Unity and other real-time projects.',
   h1: 'Real places. Ready to play.',
   answer:
     'Game worlds feel real when they start from somewhere real. RCAAS Technology captures real locations, objects and heritage sites as Gaussian splats and turns them into game-ready environments and props for Unreal, Unity and real-time experiences.',
@@ -37,11 +37,11 @@ export const gaming: IndustryContent = {
       },
       {
         what: 'Props and environments',
-        how: 'Real objects and locations captured as Gaussian splats and turned into props and environments. [[TBC: object types and sizes]]',
+        how: 'Real objects and locations captured as Gaussian splats and turned into props and environments.',
         icon: Package,
       },
       {
-        what: 'Optimised exports [[TBC: formats]]',
+        what: 'Optimised exports',
         how: 'Assets prepared for real-time use in Unreal and Unity.',
         icon: Cpu,
       },
@@ -59,7 +59,7 @@ export const gaming: IndustryContent = {
     items: [
       { space: 'Game environments', why: 'Levels and worlds built on real captured places', icon: Gamepad2 },
       { space: 'Props and assets', why: 'Real objects turned into optimised game assets', icon: Boxes },
-      { space: 'Simulations', why: 'Realistic locations for simulation work [[TBC]]', icon: Zap },
+      { space: 'Simulations', why: 'Realistic locations for simulation work', icon: Zap },
       { space: 'Virtual production', why: 'Real locations as real-time backdrops', icon: Film },
       { space: 'Heritage in games', why: 'Heritage sites players can recognise and explore', icon: Landmark },
       { space: 'Real-time scenes', why: 'Interactive scenes that run in the engine', icon: Sparkles },
@@ -70,8 +70,8 @@ export const gaming: IndustryContent = {
     // Best available demo until a game or asset project exists.
     demo: 'chilancho',
     embedUrl: null,
-    pending: '[[TBI: a game-ready asset or environment example; if none, use the best available demo]]',
-    caption: '[[TBI]]',
+    pending: '',
+    caption: '',
   },
   // Hidden until a game or asset project exists.
   proof: { title: 'In practice', cards: [] },
@@ -80,7 +80,7 @@ export const gaming: IndustryContent = {
     items: [
       {
         question: 'Which game engines do you work with?',
-        answer: 'We build for Unreal and Unity, and for other real-time experiences. [[TBC: engine versions and other engines]]',
+        answer: 'We build for Unreal and Unity, and for other real-time experiences.',
       },
       {
         question: 'Can you capture heritage sites for a game?',

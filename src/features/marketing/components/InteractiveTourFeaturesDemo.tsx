@@ -160,7 +160,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
           <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-black/75 border border-white/10 text-[11px] font-mono text-white/90">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span>LIVE 3D ENGINE · 60 FPS</span>
+              <span>ILLUSTRATIVE 3D DEMO</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-mono text-white/70 bg-black/75 px-2 py-1 rounded border border-white/10">

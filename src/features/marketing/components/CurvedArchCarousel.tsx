@@ -27,7 +27,7 @@ const DEFAULT_CARDS: ArchCardItem[] = [
     metric: 'In-house research · October 2025',
     image: IMG['curved-arch-carousel/sacred-unesco-zone-monument'],
     link: '/work/chilancho-stupa-digital-heritage/',
-    deliverables: ['Web-based 3D visualisation', 'VR development'],
+    deliverables: ['Web-based 3D visualisation'],
   },
   {
     id: 'basera',

@@ -111,28 +111,8 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
 
   const jumpLinks = [...FAQ_GROUPS.map((g) => ({ id: g.id, title: g.title })), { id: 'by-topic', title: 'More answers by topic' }];
 
-  const faqSchema = useMemo(() => {
-    const mainEntities = FAQ_GROUPS.flatMap((group) =>
-      group.items.map((item) => ({
-        "@type": "Question",
-        "name": item.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": item.answer
-        }
-      }))
-    );
-    return {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": mainEntities
-    };
-  }, []);
-
   return (
     <div className={pageShellClass}>
-      {/* FAQ Schema for AI SEO */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }} />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 

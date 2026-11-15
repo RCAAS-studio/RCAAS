@@ -3,10 +3,8 @@
 export const GAME_WORLDS_FAQS = [
   {
     question: 'Which game engines do you work with?',
-    answer: 'We build for Unreal and Unity, and for other real-time experiences. [[TBC: engine versions and other engines]]',
+    answer: 'We build for Unreal and Unity, and for other real-time experiences.',
   },
-  { question: 'Which file formats do you deliver?', answer: '[[TBC: formats, e.g. engine-ready meshes and textures, splat files]]' },
-  { question: 'Who owns the assets?', answer: '[[TBI: ownership and licensing terms for captured assets]]' },
   {
     question: 'Can you capture heritage sites for a game?',
     answer:

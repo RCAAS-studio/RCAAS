@@ -807,7 +807,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
                 <div className="text-3xl font-bold font-mono text-accent mb-1">1 Flight Mission</div>
                 <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-2">Dual Project Output</div>
                 <p className="text-xs text-zinc-600 leading-relaxed">
-                  Engineers get GeoTIFF maps &amp; contours. Marketing gets 4K cinematic launch reels.
+                  Engineers get GeoTIFF maps &amp; contours. Marketing can get cinematic aerial views, subject to flight approvals.
                 </p>
               </div>
             </div>

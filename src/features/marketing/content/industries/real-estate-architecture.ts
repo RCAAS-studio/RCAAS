@@ -27,7 +27,7 @@ export const realEstateArchitecture: IndustryContent = {
       items: [
         { what: '3D property tour', how: 'Buyers walk show flats, finished units and amenities from a link.', icon: Box },
         {
-          what: 'Hotspots and enquiry buttons [[TBC]]',
+          what: 'Hotspots and enquiry buttons',
           how: 'Show unit details and send buyers straight to your sales team or WhatsApp.',
           icon: MousePointerClick,
         },
@@ -36,7 +36,7 @@ export const realEstateArchitecture: IndustryContent = {
           how: 'Show the building, the neighbourhood and the view for launches and ads.',
           icon: Clapperboard,
         },
-        { what: 'VR in your sales gallery [[TBC]]', how: 'Let visitors stand inside a finished unit.', icon: Glasses },
+        { what: 'VR for headsets, assessed per project', how: 'Let visitors stand inside a finished unit.', icon: Glasses },
       ],
       lists: [
         {
@@ -73,7 +73,7 @@ export const realEstateArchitecture: IndustryContent = {
       items: [
         { what: '3D laser scan', how: 'Every wall, opening, level and irregularity captured in one visit.', icon: ScanLine },
         {
-          what: 'As-built drawings and CAD-ready files [[TBC: scope, formats]]',
+          what: 'As-built drawings and CAD-ready files, with scope and formats agreed per project',
           how: 'Start design in your own software from real measurements.',
           icon: FileText,
         },
@@ -110,8 +110,8 @@ export const realEstateArchitecture: IndustryContent = {
     // Best available demo until a property or interior project exists.
     demo: 'basera',
     embedUrl: null,
-    pending: '[[TBI: property or interior project; if none, use the best available demo]]',
-    caption: '[[TBI]]',
+    pending: '',
+    caption: '',
   },
   // W05: until a real estate or architecture project exists, this section stays hidden (page stays P2, spec §3.3).
   proof: { title: 'In practice', cards: [] },
@@ -121,20 +121,20 @@ export const realEstateArchitecture: IndustryContent = {
       {
         question: "Can you show a building that isn't built yet?",
         answer:
-          'We capture what exists: the site, the surroundings and finished show flats or sample units. [[TBC: "Our game developers can also present your design model inside an interactive experience." — keep only if offered]]',
+          'We capture what exists: the site, the surroundings and finished show flats or sample units.',
       },
       {
         question: 'How quickly can you scan an existing building?',
         answer:
-          'Most buildings are scanned in a few hours to a day, depending on size. [[TBI: typical delivery time for data and drawings]].',
+          'Scanning time depends on the size and complexity of the building, and is agreed with you at the start.',
       },
       {
         question: 'Which files will our design team receive?',
-        answer: '[[TBC: formats, e.g. E57 and LAS point clouds, DWG/DXF drawings]]',
+        answer: 'Formats such as E57 and LAS point clouds and DWG or DXF drawings are common for this work. We agree the exact formats with you at the start.',
       },
       {
         question: 'How accurate is the scan?',
-        answer: '[[TBI: accuracy and conditions]]. We agree the accuracy your project needs at the start.',
+        answer: 'We agree the accuracy your project needs, and the conditions it depends on, at the start.',
       },
       {
         question: 'Can buyers abroad use the tour easily?',

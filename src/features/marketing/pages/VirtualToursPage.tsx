@@ -781,7 +781,7 @@ export const VirtualToursPage: React.FC<VirtualToursPageProps> = ({ onNavigate, 
                 </div>
                 <h3 className="text-base font-semibold text-zinc-900 font-display mb-2">On-site reality capture</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">
-                  Our engineers capture the premises with handheld mobile SLAM LiDAR and drone aerial photography. Takes between 2 hours and 1 day with zero guest disruption.
+                  Our engineers capture the premises with handheld mobile SLAM LiDAR and drone aerial photography. We plan the capture around your operations to keep disruption to a minimum.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-line text-[11px] font-mono text-zinc-500 flex items-center gap-1.5">

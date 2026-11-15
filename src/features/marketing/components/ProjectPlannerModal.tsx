@@ -22,7 +22,7 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
   const [spaceType, setSpaceType] = useState('Hotels & Tourism');
   const [deliverables, setDeliverables] = useState<string[]>([
     '3D Virtual Tour (Web)',
-    '4K Cinematic Fly-Through Film',
+    'Cinematic Fly-Through Film',
   ]);
   const [scaleArea, setScaleArea] = useState(sizeLabel(SIZES[1]));
   const [contactName, setContactName] = useState('');
@@ -175,7 +175,7 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {[
                       { name: '3D Virtual Tour (Web)', detail: 'Zero-app browser walkthrough' },
-                      { name: '4K Cinematic Fly-Through Film', detail: 'Drone + virtual camera direction' },
+                      { name: 'Cinematic Fly-Through Film', detail: 'Virtual camera direction, drone footage where approved' },
                       { name: 'SLAM LiDAR Point Cloud', detail: 'As-built engineering CAD/BIM' },
                       { name: 'VR Headset Experience (6DoF)', detail: 'Exhibitions and VR showrooms' },
                       { name: 'Heritage Archival Package', detail: 'Orthophotos, elevations & mesh' },

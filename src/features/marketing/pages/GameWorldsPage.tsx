@@ -48,7 +48,7 @@ const PIPELINE: { title: string; line: string; icon: LucideIcon }[] = [
   { title: 'Capture', line: 'Real locations, objects and heritage sites are captured on site.', icon: ScanLine },
   { title: 'Gaussian splat', line: 'Photoreal splats keep what makes the place feel real.', icon: Sparkles },
   { title: 'Clean and optimise', line: 'Assets are cleaned and optimised for real-time use.', icon: Layers },
-  { title: 'Game-ready assets', line: 'Delivered in formats ready for games, simulations and virtual production. [[TBC: formats]]', icon: Package },
+  { title: 'Game-ready assets', line: 'Delivered in formats ready for games, simulations and virtual production.', icon: Package },
   { title: 'In your engine', line: 'Built into environments and interactive worlds in Unreal, Unity and real-time scenes.', icon: Cpu },
 ];
 
@@ -213,7 +213,7 @@ export const GameWorldsPage: React.FC<GameWorldsPageProps> = ({ onNavigate }) =>
         <section id="live-example" className="mb-20 sm:mb-24 scroll-mt-24">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-6">
             <SectionHeading eyebrow="Live example" title="A real place, captured as a Gaussian splat" className="" />
-            <Placeholder>[[TBI: a game-ready asset or environment example; if none, use the best available demo]]</Placeholder>
+            <span className="text-xs font-mono text-zinc-500">Illustrative canvas demo, not a captured model of a game asset.</span>
           </div>
           <SplatEmbed initialDemo="chilancho" />
         </section>

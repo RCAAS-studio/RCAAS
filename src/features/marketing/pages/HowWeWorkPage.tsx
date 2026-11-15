@@ -28,7 +28,6 @@ import {
 } from 'lucide-react';
 import { RoutePath } from '../types';
 import { SITE_METADATA } from '../data/siteData';
-import { Placeholder } from '../components/Placeholder';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { buttonClass, eyebrowClass } from '../components/ui';
 
@@ -83,7 +82,7 @@ const PROCESS: ProcessStep[] = [
       'Back in the studio, engineers process and align the data and check it against control. Game developers turn the capture into the experience: a 3D tour, a VR scene, an interactive app or the raw material for a film. Together we shape the story: the path people take and the moments that matter.',
     youReceive: (
       <>
-        A preview to review <Placeholder>[[TBC: number of revision rounds]]</Placeholder>.
+        A preview to review and comment on.
       </>
     ),
   },
@@ -184,7 +183,7 @@ const TOOLKIT_ROWS: ToolkitRow[] = [
     whatItDoes: 'Places your data in real-world coordinates so it matches maps and drawings',
     examples: (
       <>
-        Survey-grade GNSS and ground control <Placeholder>[[TBI: equipment]]</Placeholder>
+        Ground control, where a project needs it
       </>
     ),
   },

@@ -1,8 +1,38 @@
-/** /llms.txt (llmstxt.org): the rcaas.tech site's own (public/llms.txt in
- *  github.com/meshuman/rcaas), served as written. */
+import { SITE_URL } from '../../lib/shareMeta';
+
+/** /llms.txt (llmstxt.org): a short, factual summary of the public site for AI crawlers.
+ *  Keep it to confirmed statements: no superlatives, no sectors whose pages are still drafts, and links built
+ *  from the site's own URL so a preview or a different host never advertises another domain. */
 export const dynamic = 'force-static';
 
-const BODY = "# RCAAS Technology\nRCAAS (Reality Capture as a Service) turns real places into 3D tours, VR, AR and stories that help hotels, schools, developers and heritage sites attract visitors and make lasting impact in Nepal and beyond.\n\n## Services\n- Virtual Tours & Immersive Experiences\n- 3D Laser Scanning (LiDAR)\n- Digital Twins for Architecture, Engineering & Construction\n- Drone Mapping\n- Visual Storytelling\n- Game Worlds & Assets (Gaussian splat assets, game environments, real-time scenes)\n\n## Key Links\n- Home: https://rcaas.tech/\n- Services: https://rcaas.tech/services/\n- Work/Case Studies: https://rcaas.tech/work/\n- Learn & Blog: https://rcaas.tech/learn/\n\n## Target Audience\nHotels, real estate developers, educational institutions, construction firms, game studios, filmmakers, nonprofits and development organisations, banks and financial institutions, and heritage sites seeking to digitize physical spaces.\n\n## Positioning\nRCAAS is the leading reality capture and 3D immersive experience provider in Nepal. We don't just capture photos; we create digital twins and interactive 3D spaces that allow users to walk through and experience locations remotely.\n";
+// Trailing slash on the static export, none on the Node host: the form each calls canonical.
+const T = process.env.NEXT_OUTPUT_EXPORT === '1' ? '/' : '';
+
+const BODY = `# RCAAS Technology
+RCAAS (Reality Capture as a Service) turns real places into 3D tours, VR, AR and stories that help hotels, schools, developers and heritage sites attract visitors and make lasting impact in Nepal and beyond.
+
+## Services
+- Virtual Tours & Immersive Experiences
+- 3D Laser Scanning (LiDAR)
+- Digital Twins for Architecture, Engineering & Construction
+- Drone Mapping
+- Visual Storytelling
+- Game Worlds & Assets (Gaussian splat assets, game environments, real-time scenes)
+
+## Key Links
+- Home: ${SITE_URL}/
+- Services: ${SITE_URL}/services${T}
+- Work: ${SITE_URL}/work${T}
+- Learn: ${SITE_URL}/learn${T}
+- FAQ: ${SITE_URL}/faq${T}
+- Contact: ${SITE_URL}/contact${T}
+
+## Who it is for
+Hotels, schools and colleges, real estate developers, heritage and cultural sites, government and municipal bodies, game studios, filmmakers, and nonprofit and development organisations.
+
+## What we do
+We capture real places and turn them into explorable 3D experiences, survey data and stories, so people can see them from wherever they are.
+`;
 
 export function GET() {
   return new Response(BODY, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });

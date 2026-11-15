@@ -201,7 +201,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
 
               {/* Note under grid */}
               <p className="mt-4 text-xs font-mono text-zinc-500">
-                Note: Each experience loads only when you open it. Typical size about 12–18 MB.
+                Note: Each experience loads only when you open it.
               </p>
             </section>
 

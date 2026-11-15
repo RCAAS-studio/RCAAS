@@ -47,10 +47,10 @@ const STEPS: ValueChainStep[] = [
     number: '03',
     phase: 'Tell',
     title: 'Spatial Storycraft',
-    detail: 'Interactive waypoints, curated 4K fly-through cameras, audio narratives, and custom visitor journey paths designed to convert.',
+    detail: 'Interactive waypoints, curated fly-through cameras, audio narratives, and custom visitor journey paths designed to convert.',
     tools: 'Game-Engine · Direction · Scripting',
     badge: 'Narrative Layer',
-    specs: ['Scripted cinematic camera paths', 'Spatial hotspot waypoint architecture', 'Bilingual English & Nepali narration'],
+    specs: ['Scripted cinematic camera paths', 'Spatial hotspot waypoint architecture', 'Narration and language agreed per brief'],
     iconSvg: (
       <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -62,9 +62,9 @@ const STEPS: ValueChainStep[] = [
     phase: 'Deliver',
     title: 'Multi-Format Delivery',
     detail: 'Instant browser tours via link, VR headsets for exhibitions, vertical social cuts for ads, and raw CAD/BIM data for architects.',
-    tools: 'Web (No apps) · VR · Social 4K · DWG/IFC',
+    tools: 'Web (No apps) · VR · Social · CAD/BIM',
     badge: 'Omni-channel',
-    specs: ['Zero-app instant browser streaming', 'Standalone Meta Quest & Vision Pro builds', 'Standardized DWG, DXF & IFC formats'],
+    specs: ['Zero-app instant browser streaming', 'VR assessed per project (tested on Meta Quest 2, 3 and 3S)', 'Survey and CAD formats agreed per project'],
     iconSvg: (
       <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />

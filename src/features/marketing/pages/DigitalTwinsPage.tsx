@@ -73,7 +73,7 @@ const CAPABILITIES: CapabilityItem[] = [
       'Orthomosaic maps (GeoTIFF) ready for GIS and CAD',
       'Digital Surface Models (DSM) and Digital Terrain Models (DTM)',
       '3D textured polygonal mesh of complex rooftops, facades and compound perimeters',
-      'Topographic contour vectors at custom intervals (0.25m, 0.5m, 1m) [[TBC]]',
+      'Topographic contour vectors at agreed intervals',
       'Aerial condition photography of inaccessible spires, cornices and tiles',
     ],
     bestFor: [
@@ -134,7 +134,7 @@ const CAPABILITIES: CapabilityItem[] = [
     youReceive: [
       'Georeferenced spatial data aligned with Nepal National Grid or WGS84 coordinates',
       'Survey benchmark control point documentation and datum reports',
-      'Topographic site survey drawings including spot heights and breaklines [[TBC]]',
+      'Topographic site survey drawings, with scope agreed per project',
       'GIS geodatabase layers ready for QGIS, ArcGIS, and municipal planning software',
       'Boundary verification overlays against cadastral maps',
     ],
@@ -166,7 +166,7 @@ const CAPABILITIES: CapabilityItem[] = [
       'Drone aerial record of multi-tiered pagoda roofs, finials (gajur) and courtyards, where approvals allow',
       'Structural deflection and lean analysis (out-of-plumb walls, timber beam sags)',
       'High-resolution photographic texture maps for condition and material assessment',
-      'Long-term archival bundle formatted for institutional preservation [[TBI: archive format]]',
+      'Long-term archival bundle, with the format agreed for your institution',
     ],
     bestFor: [
       'Department of Archaeology, heritage conservation trusts, and restoration architects',
@@ -311,7 +311,7 @@ const PROCESS_STEPS = [
   {
     step: '5',
     title: 'Repeat & Update',
-    line: 'Repeat captures to track change over time [[TBC]].',
+    line: 'Repeat captures can be planned to track change over time.',
     detail:
       'For ongoing construction or conservation monitoring, we perform repeat scans aligned to identical coordinates to produce delta reports and volume changes.',
   },
@@ -1200,9 +1200,9 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
 
               <div className="lg:col-span-4 bg-zinc-50 border border-zinc-200 rounded-xl p-5 text-center">
                 <div className="text-3xl font-bold font-mono text-accent mb-1">1 Capture</div>
-                <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-3">Multi-Discipline ROI</div>
+                <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider mb-3">Multi-discipline use</div>
                 <p className="text-xs text-zinc-600 leading-relaxed">
-                  Power CAD drawings, Revit models, Web 3D tours, and marketing reels from a single on-site deployment.
+                  Support CAD drawings, web 3D tours and marketing visuals from a single on-site capture, with the scope agreed per project.
                 </p>
               </div>
             </div>

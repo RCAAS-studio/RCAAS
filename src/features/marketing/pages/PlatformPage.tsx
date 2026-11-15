@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { RoutePath } from '../types';
 import { SITE_METADATA } from '../data/siteData';
 import { SplatEmbed } from '../components/SplatEmbed';
-import { Placeholder } from '../components/Placeholder';
 import { buttonClass, eyebrowClass } from '../components/ui';
 import { sendLead } from '../lib/leads';
 import { checkContactFields } from '../../../lib/contactRules';
@@ -90,10 +89,6 @@ const PLATFORM_FAQS: PlatformFaq[] = [
   {
     question: 'Can I put the experience on my own website?',
     answer: 'Yes. A tour can be embedded on your website, and its link can be shared in messages, on social media and through a QR code.',
-  },
-  {
-    question: 'Will it slow down my website?',
-    answer: <Placeholder>[[TBC: "No. The experience only loads when a visitor chooses to open it."]]</Placeholder>,
   },
   {
     question: 'How long is my experience hosted, and what happens if hosting ends?',
@@ -255,9 +250,6 @@ export const PlatformPage: React.FC<PlatformPageProps> = ({ onNavigate }) => {
             <a href={CHILANCHO_VIEWER} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent hover:text-accent-strong">
               open it in the XGRIDS viewer ↗
             </a>
-          </p>
-          <p className="mt-2 text-[11px] font-mono text-zinc-500">
-            <Placeholder>[[TBI: poster, file size]]</Placeholder>
           </p>
         </section>
 

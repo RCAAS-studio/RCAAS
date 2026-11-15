@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 } },
   description: 'Walkable 3D virtual tours of hotels, restaurants, venues, colleges and heritage sites, captured with LiDAR in Nepal, with enquiry and booking forms inside the tour.',
   applicationName: 'RCAAS.tech',
-  openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_US', images: [OG_IMAGE] },
+  openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_GB', images: [OG_IMAGE] },
   twitter: { card: 'summary_large_image', images: [OG_IMAGE.url] },
   // the RCAAS mark on every page; a client's tour and website can carry their own (Branding → Favicon)
   icons: { icon: withBase('/favicon.png'), apple: withBase('/apple-touch-icon.png') }
@@ -34,7 +34,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="light" data-scroll-behavior="smooth" suppressHydrationWarning className={`${inter.variable} ${ui.variable}`}>
+    <html lang="en-GB" data-theme="light" data-scroll-behavior="smooth" suppressHydrationWarning className={`${inter.variable} ${ui.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

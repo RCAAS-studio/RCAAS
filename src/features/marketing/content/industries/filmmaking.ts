@@ -38,12 +38,12 @@ export const filmmaking: IndustryContent = {
       },
       {
         what: 'Social and exhibition content',
-        how: 'Short cuts and visuals for campaigns, screens and events, made from the same capture. [[TBC: formats and lengths]]',
+        how: 'Short cuts and visuals for campaigns, screens and events, made from the same capture.',
         icon: Share2,
       },
       {
         what: 'Location scouting and planning',
-        how: 'Explore a captured location from a link before the shoot. [[TBC: confirm as a delivered service]]',
+        how: 'Explore a captured location from a link before the shoot.',
         icon: MapPin,
       },
     ],
@@ -58,11 +58,11 @@ export const filmmaking: IndustryContent = {
     position: 'beforeLive',
     title: 'Where it helps',
     items: [
-      { space: 'Feature and short films', why: 'Real locations to plan and create from [[TBC]]', icon: Clapperboard },
+      { space: 'Feature and short films', why: 'Real locations to plan and create from', icon: Clapperboard },
       { space: 'Documentaries', why: 'Places explored and explained on screen', icon: Camera },
       { space: 'Heritage films', why: 'Sites shown in detail without disturbing them', icon: Landmark },
       { space: 'Promotional films', why: 'Cinematic views of hotels, campuses and destinations', icon: Film },
-      { space: 'Virtual production', why: 'Real locations as real-time backdrops [[TBC]]', icon: Sparkles },
+      { space: 'Virtual production', why: 'Real locations as real-time backdrops', icon: Sparkles },
       { space: 'Social content', why: 'Short visuals made from one capture', icon: Share2 },
     ],
   },
@@ -71,8 +71,8 @@ export const filmmaking: IndustryContent = {
     // Best available demo until a film project exists.
     demo: 'chilancho',
     embedUrl: null,
-    pending: '[[TBI: a fly-through film or production example; if none, use the best available demo]]',
-    caption: '[[TBI]]',
+    pending: '',
+    caption: '',
   },
   // Hidden until a film project exists.
   proof: { title: 'In practice', cards: [] },

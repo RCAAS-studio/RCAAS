@@ -125,7 +125,7 @@ export function addServiceSchema(context: GraphContext): boolean {
       '@id': 'https://rcaas.tech/services/digital-twins/3d-laser-scanning/#service',
       url: 'https://rcaas.tech/services/digital-twins/3d-laser-scanning/',
       name: '3D Laser Scanning in Nepal (SLAM LiDAR) | RCAAS',
-      description: 'Handheld 3D laser scanning in Kathmandu and across Nepal. Accurate point clouds, as-built drawings and 3D models of any building, captured in hours, not days.',
+      description: 'Handheld 3D laser scanning in Kathmandu and across Nepal. Point clouds, as-built drawings and 3D models of buildings, captured with SLAM LiDAR.',
       provider: { '@id': 'https://rcaas.tech/#organization' },
       areaServed: { '@type': 'Country', name: 'Nepal' },
       serviceType: '3D Laser Scanning (SLAM LiDAR)',

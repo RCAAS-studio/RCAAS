@@ -23,7 +23,6 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { RoutePath } from '../types';
 import { readingMinutes } from '../data/guides';
-import { Placeholder } from '../components/Placeholder';
 import { SpotlightCard } from '../components/SpotlightCard';
 import {
   ComparisonTable,
@@ -631,9 +630,6 @@ export const GaussianGuidePage: React.FC<GaussianGuidePageProps> = ({ onNavigate
               >
                 https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/
               </a>
-            </p>
-            <p>
-              <Placeholder>[[TBI: any other sources used]]</Placeholder>
             </p>
           </GuideSources>
         </article>

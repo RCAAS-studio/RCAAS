@@ -7,7 +7,6 @@ import { ComparisonGuidePage, READING_MINUTES as COMPARISON_MINUTES } from './Co
 import { GaussianGuidePage, READING_MINUTES as GAUSSIAN_MINUTES } from './GaussianGuidePage';
 import { CostGuidePage, READING_MINUTES as COST_MINUTES } from './CostGuidePage';
 import { SpotlightCard } from '../components/SpotlightCard';
-import { Placeholder } from '../components/Placeholder';
 import { buttonClass } from '../components/ui';
 import { srcSetFor } from '../data/images';
 
@@ -114,11 +113,19 @@ const LearnHub: React.FC<{ onNavigate: (path: RoutePath) => void }> = ({ onNavig
 
                       <div className="mt-auto pt-4 border-t border-line flex flex-wrap items-center justify-between gap-3">
                         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-mono text-zinc-500">
-                          <span>{guide.author ?? <Placeholder>[[TBI: author]]</Placeholder>}</span>
-                          <span className="text-zinc-500" aria-hidden="true">·</span>
-                          <span>{guide.readingTime ?? AUTO_READING_TIMES[guide.path] ?? <Placeholder>[[TBI: reading time]]</Placeholder>}</span>
-                          <span className="text-zinc-500" aria-hidden="true">·</span>
-                          <span>Updated {guide.updated ?? <Placeholder>[[TBI: date]]</Placeholder>}</span>
+                          {guide.author && (
+                            <>
+                              <span>{guide.author}</span>
+                              <span className="text-zinc-500" aria-hidden="true">·</span>
+                            </>
+                          )}
+                          <span>{guide.readingTime ?? AUTO_READING_TIMES[guide.path]}</span>
+                          {guide.updated && (
+                            <>
+                              <span className="text-zinc-500" aria-hidden="true">·</span>
+                              <span>Updated {guide.updated}</span>
+                            </>
+                          )}
                         </p>
                         <span className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-accent">
                           Read the guide

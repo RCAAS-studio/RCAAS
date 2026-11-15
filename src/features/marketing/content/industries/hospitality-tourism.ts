@@ -62,7 +62,7 @@ export const hospitalityTourism: IndustryContent = {
     title: 'Explore a hotel in 3D',
     demo: 'basera',
     embedUrl: null,
-    pending: '[[TBI: embed URL, full-screen URL, poster, file size]]',
+    pending: '',
     caption: 'Basera Boutique Hotel · built so guests can look around before they book.',
   },
   audiences: [
@@ -77,7 +77,7 @@ export const hospitalityTourism: IndustryContent = {
     {
       title: 'For destinations and tourism boards',
       body: 'Let international travellers stand inside a temple courtyard, walk a heritage town or see a viewpoint before they plan their trip. Use VR at fairs and visitor centres, and 3D tours in destination campaigns online.',
-      capture: ['heritage squares and monuments', 'museums and cultural sites', 'trails and viewpoints [[TBC]]', 'visitor centres'],
+      capture: ['heritage squares and monuments', 'museums and cultural sites', 'visitor centres'],
       image: IMG['industry-hospitality-tourism/for-destinations-and-tourism-boards'],
       imageAlt: '3D view of a heritage monument',
       icon: Landmark,
@@ -101,7 +101,7 @@ export const hospitalityTourism: IndustryContent = {
         name: 'Basera Boutique Hotel',
         tag: 'Hospitality',
         line: 'A hotel sells atmosphere. We built an explorable 3D experience so guests can look around before they book.',
-        pending: '[[TBI: result once data exists]]',
+        pending: '',
         path: '/work/basera-boutique-hotel-3d-experience/',
         image: IMG['industry-hospitality-tourism/basera-boutique-hotel'],
       },

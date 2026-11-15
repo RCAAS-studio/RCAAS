@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, Check, HelpCircle, ScanLine } from 'lucide-react';
 import { RoutePath } from '../types';
 import { SITE_METADATA } from '../data/siteData';
-import type { IndustryContent, IndustryTrack } from '../content/industries';
+import { isResolvedAnswer, type IndustryContent, type IndustryTrack } from '../content/industries';
 import { Placeholder, WithPlaceholders } from '../components/Placeholder';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { SplatEmbed } from '../components/SplatEmbed';
@@ -532,12 +532,12 @@ export const IndustryPage: React.FC<IndustryPageProps> = ({ industry, onNavigate
                 Open in the XGRIDS viewer <ArrowUpRight className="ml-2 w-4 h-4" aria-hidden="true" />
               </a>
             ) : (
-              <Placeholder>{industry.liveExample.pending}</Placeholder>
+              <span className="text-xs font-mono text-zinc-500">{industry.liveExample.pending || "Illustrative canvas demo"}</span>
             )}
           </div>
           <SplatEmbed initialDemo={industry.liveExample.demo} />
           <p className="mt-3 text-xs font-mono text-zinc-500">
-            <WithPlaceholders text={industry.liveExample.caption} />
+            <WithPlaceholders text={industry.liveExample.caption || "Illustrative canvas demo, not a captured model of this sector."} />
           </p>
           {industry.liveExample.description && (
             <p className="mt-2 text-sm text-zinc-600 leading-relaxed max-w-3xl">
@@ -819,7 +819,7 @@ export const IndustryPage: React.FC<IndustryPageProps> = ({ industry, onNavigate
 
         {/* 8. FAQ (#faq) */}
         <div id="faq" className="scroll-mt-24">
-          <GuideFaq title={industry.faq.title} faqs={industry.faq.items.map((item) => ({ question: item.question, answer: <WithPlaceholders text={item.answer} /> }))} />
+          <GuideFaq title={industry.faq.title} faqs={industry.faq.items.filter((item) => industry.draft || isResolvedAnswer(item.answer)).map((item) => ({ question: item.question, answer: <WithPlaceholders text={item.answer} /> }))} />
         </div>
 
         {/* 9. CTA BAND */}

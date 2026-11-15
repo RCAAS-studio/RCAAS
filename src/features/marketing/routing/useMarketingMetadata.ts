@@ -2,7 +2,6 @@
 import { useEffect } from 'react';
 import { BLOG_LAUNCHED } from '../content/blog';
 import { pageMeta } from '../meta';
-import { buildMarketingGraph } from '../structuredData/buildMarketingGraph';
 import type { RoutePath } from '../types';
 
 export function useMarketingMetadata(currentPath: RoutePath) {
@@ -33,16 +32,5 @@ export function useMarketingMetadata(currentPath: RoutePath) {
       rssTag.href = '/blog/rss.xml';
       document.head.appendChild(rssTag);
     }
-
-    // Inject or update Schema.org JSON-LD
-    let scriptTag = document.getElementById('schema-jsonld') as HTMLScriptElement | null;
-    if (!scriptTag) {
-      scriptTag = document.createElement('script');
-      scriptTag.id = 'schema-jsonld';
-      scriptTag.type = 'application/ld+json';
-      document.head.appendChild(scriptTag);
-    }
-
-    scriptTag.textContent = JSON.stringify(buildMarketingGraph(currentPath, metadata));
   }, [currentPath]);
 }

@@ -14,6 +14,7 @@ import { CaptureLidarCursor } from './components/CaptureLidarCursor';
 import { withoutBase } from '../../lib/basePath';
 import { MarketingActionsContext } from './routing/MarketingActions';
 import { useMarketingMetadata } from './routing/useMarketingMetadata';
+import { MarketingJsonLd } from './routing/MarketingJsonLd';
 const withSlash = (path: string) => (path.endsWith('/') ? path : `${path}/`) as RoutePath;
 
 export default function MarketingShell({ children }: { children: React.ReactNode }) {
@@ -65,7 +66,7 @@ export default function MarketingShell({ children }: { children: React.ReactNode
     }
   };
 
-  // Dynamic Page Title & SEO Schema.org Graph
+  // Document title, robots and the RSS link on client moves (the schema.org graph is <MarketingJsonLd>)
   useMarketingMetadata(currentPath);
 
   // Route selector
@@ -77,6 +78,7 @@ export default function MarketingShell({ children }: { children: React.ReactNode
   return (
     <MarketingActionsContext.Provider value={{ currentPath, navigateTo, openPlanner: () => setPlannerOpen(true) }}>
     <div className={`rcaas-app flex min-h-dvh flex-col bg-white text-zinc-950 ${showMobileBar ? 'pb-16 sm:pb-0' : ''}`}>
+      <MarketingJsonLd path={currentPath} />
       <CompanyGrid />
       
       {/* 3D LiDAR & Capture Mark Cursor */}

@@ -7,7 +7,7 @@ export function marketingMetadata(path: string): Metadata {
   return {
     title: { absolute: title }, description,
     alternates: { canonical },
-    openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_US', title, description, url: canonical, images: [OG_IMAGE] },
+    openGraph: { siteName: 'RCAAS.tech', type: 'website', locale: 'en_GB', title, description, url: canonical, images: [OG_IMAGE] },
     twitter: { card: 'summary_large_image', title, description, images: [OG_IMAGE.url] },
     ...(robots ? { robots } : {}),
   };

@@ -204,8 +204,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     posterAlt: '3D view of Chilancho Stupa',
     heroImage: IMG['case-cards/chilancho-stupa'],
     embedDemoId: 'chilancho',
-    deliverables: ['Gaussian Splatting Web Tour', 'Point Cloud Archive (LAS)', 'Orthoimagery Map', 'Archival Dossier'],
-    techUsed: ['XGRIDS Lixel Kitty K1', 'DJI Mavic 3E RTK', 'CyberColor', 'LCC Studio'],
   },
   {
     id: 'nepathya-college',
@@ -219,8 +217,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     posterAlt: '3D view of Nepathya School and College campus',
     heroImage: IMG['case-cards/nepathya-school-and-college'],
     embedDemoId: 'nepathya',
-    deliverables: ['Web 3D Virtual Tour', 'Admissions Hotspots & Forms', '4K Cinematic Fly-Through Video'],
-    techUsed: ['SLAM LiDAR Handheld Scanner', 'Aerial Photogrammetry', 'RCAAS Web Platform'],
   },
   {
     id: 'madan-ashrit',
@@ -234,8 +230,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     posterAlt: '3D view of workshops at Madan Ashrit Memorial Polytechnic Institute',
     heroImage: IMG['case-cards/madan-ashrit-polytechnic-institute'],
     embedDemoId: 'madan',
-    deliverables: ['Interactive Workshop Walkthrough', 'Technical Equipment Tags', 'Mobile Web Experience'],
-    techUsed: ['LiDAR Surveying', 'High-Res HDR Imaging', 'Web 3D Engine'],
   },
   {
     id: 'basera-hotel',
@@ -249,8 +243,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     posterAlt: '3D view of Basera Boutique Hotel',
     heroImage: IMG['case-cards/basera-boutique-hotel'],
     embedDemoId: 'basera',
-    deliverables: ['3D Suite & Courtyard Walkthrough', 'Booking Engine Hotspot Integration', 'VR Headset Exhibition Tour'],
-    techUsed: ['SLAM LiDAR', 'Gaussian Splat Reconstruction', 'Unreal Engine Virtual Production'],
   },
 ];
 
