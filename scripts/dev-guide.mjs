@@ -264,7 +264,7 @@ ${table(['When', 'Do this', 'Read'], [
   ['Hour 3', 'Follow one request end to end, with the files open side by side: a guest\'s Book now on a table hotspot.', `${ch('flows')}. Files: <code>HotspotBookCard.tsx</code> → <code>lib/api.ts requestHere</code> → <code>server/src/routes/reservations.js</code> → <code>server/src/reservations.js</code>`],
   ['Hour 4', 'See the data. Open the data folder (<code>server/src/data</code> in development) and read a space\'s JSON, a published copy (<code>:id@n.json</code>), a website and a reservations file.', `${ch('data')}`],
   ['Hour 5', 'The 3D tour: how a scan loads, how the camera walks, how hotspots follow the view.', `${ch('three')}. Files: <code>App.tsx</code> (<code>Stage</code>), <code>useSceneManager.ts</code>, <code>useLccWalker.ts</code>, <code>sceneDoc.ts</code>, <code>HotspotMarkers.tsx</code>`],
-  ['Hour 6', 'The studio: how an edit becomes a save, and a save becomes a publish. Search <code>EditorShell.tsx</code>, don\'t read it top to bottom.', `${ch('flows')} (studio), ${ch('auth')}`],
+  ['Hour 6', 'The studio: start with the short <code>EditorShell.tsx</code> composition, then follow named modules under <code>studio/editor</code> and <code>studio/publishing</code>.', `${ch('flows')} (studio), ${ch('auth')}`],
   ['Hour 7', 'Read the tests as the specification: each test name is a rule the product keeps. Run <code>npm test</code>.', `${ch('tests')}. Files: <code>test/client.test.mjs</code>, <code>server/test/api.test.js</code>`],
   ['Hour 8', 'Make a small change with a recipe, then run the checks.', `${ch('recipes')}, ${ch('rules')}`]
 ].map(([a, b, c]) => `<tr><td>${a}</td><td>${b}</td><td>${c}</td></tr>`))}
@@ -398,7 +398,7 @@ ${table(['Folder', 'What is in it'], [
   ['src/features/scene', 'The 3D engine the tour and the studio share: <code>App.tsx</code> (the canvas), <code>sceneDoc.ts</code> (the scene document), loading scans, models and 360 video, the walker and collision.'],
   ['src/features/tour', 'The visitor\'s UI over the 3D (<code>Viewer.tsx</code>), the floor map and the AI concierge.'],
   ['src/features/enquiry', 'The enquiry form used in the tour, on project pages and on client websites.'],
-  ['src/features/studio', 'The studio UI (<code>EditorShell.tsx</code>, about 2,000 lines: search it, don\'t read it whole), gizmos, collision boxes, the uploader and model converter, dialogs, undo history.'],
+  ['src/features/studio', 'The 258-line <code>EditorShell.tsx</code> composition, named hierarchy/inspector/placement/draft/navigation modules under <code>editor</code>, <code>publishing</code>, gizmos, uploader, model converter, dialogs and undo history.'],
   ['src/features/website', 'Clients\' websites at <code>/s/:project</code>: <code>SiteView</code>, <code>SiteParts</code>, <code>website.css</code>.'],
   ['src/features/marketing', 'The marketing site: <code>layout/</code> (Navbar, AccountMenu, SitePage, ContactBand, Footer), <code>home/</code> and <code>work/</code> sections, policy pages, and the words (<code>siteContent.ts</code>).'],
   ['src/components/ui', 'Small pieces any page reuses: <code>Button</code>, <code>Section</code>, <code>PageHead</code>, <code>ThemeToggle</code>.'],
@@ -425,8 +425,11 @@ ${h('layout')}
     + features/marketing/home/HomeRoute.tsx: action adapter
       + features/marketing/home/HomePage.tsx: ten named section components
   + src/app/(marketing)/services/.../page.tsx: native service URL entries
-  + features/marketing/routing/: compatibility content adapter and metadata
-  + src/app/(marketing)/[...slug]/: moved/blog/unknown compatibility URLs</div>
+  + features/marketing/services/, learn/, routing/: named client page adapters
+  + src/app/(marketing)/industries/[slug]/ and work/[slug]/: validated content
+  + src/app/(marketing)/blog/[...slug]/: blog posts and valid pagination
+  + features/marketing/structuredData/: pure JSON-LD builders
+  + src/app/(marketing)/[...slug]/: moved URLs and unknown pages only</div>
 <h2>The tour and the studio</h2>
 <div class="tree">src/app/tour/page.tsx → TourClient.tsx → features/scene/App.tsx (browser only)
                                            ├─ Stage: the 3D canvas (scan, camera, hotspots)
@@ -589,7 +592,7 @@ ${h('recipes', 16)}
 <h3>Add a field to the scene document</h3>
 <p>Default it when absent, in <code>sceneDoc.ts</code> on load or in <code>migrate.js</code>. Sanitise any number that reaches the camera. Keep SDK concepts out of the schema. If a visitor needs it, make sure it survives publishing.</p>
 <h3>Add a studio edit</h3>
-<p>Add a store to <code>sceneDoc.ts</code> (load it in <code>loadSceneDoc</code>, write it in <code>sceneDocFor</code>), an entry in the history snapshot, and the UI in <code>EditorShell.tsx</code>.</p>
+<p>Add a store to <code>sceneDoc.ts</code> (load it in <code>loadSceneDoc</code>, write it in <code>sceneDocFor</code>), an entry in the history snapshot, and UI in the appropriate <code>studio/editor</code> component composed by <code>EditorShell.tsx</code>.</p>
 <h3>Add a database table</h3>
 <p>Add <code>server/db/00N_name.sql</code> (tables in the <code>app</code> schema, row-level security on), and keep the store's exports the same as its file version so routes don't change.</p>
 <h3>Add a marketing page</h3>
@@ -604,11 +607,11 @@ npm run docs:dev-guide        # if routes, modules or settings changed</code></p
 ${h('improve')}
 <p>The code works and is tested, but a few places make it harder to learn and to change than it needs to be. In order of how much each would help:</p>
 <ol>
-<li><b>Split the studio's one big file.</b> <code>EditorShell.tsx</code> is about 2,000 lines: the top bar, the scene tree, every inspector, publishing and the account menu. Move each into its own file under the studio feature folder (<code>SceneTree</code>, <code>HotspotInspector</code>, <code>ColliderInspector</code>, <code>TrackInspector</code>, <code>PublishPanel</code>, <code>StudioAccount</code>), as the marketing site's sections were split on 2026-10-05. Do <code>Viewer.tsx</code> the same way. This is the single biggest help to a new developer.</li>
+<li><b>Continue clarifying the shared scene boundary.</b> The editor shell is now a 258-line composition. Hierarchy, inspectors, floor-plan tools, model placement, draft controls and navigation live in named <code>studio/editor</code> modules; publishing lives in <code>studio/publishing</code>. Desktop/phone fixtures cover editing and publication contracts. Apply the same staged approach to <code>Viewer.tsx</code> and scene orchestration, preserving SDK lifecycle, serialization and history.</li>
 <li><b>One source for rules both sides use.</b> Booking rules exist twice: in the browser (<code>booking.ts</code>) and on the server (<code>reservations.js</code>, <code>stays.js</code>, <code>events.js</code>). When they drift, guests see errors: the Book now card picks "today" from the visitor's clock while the server uses the venue's (found 2026-10-05). Move the shared rules into one module both import.</li>
 <li><b>Type the server.</b> The API is plain JavaScript. Adding <code>// @ts-check</code> and JSDoc types to the stores and routes, or moving to TypeScript one file at a time, would catch wrong field names before a guest does.</li>
 <li><b>Move the rest of the data to Postgres,</b> one store at a time behind the same exports, bookings first. Today the per-project write queue (<code>withReservations</code>) only works with one server process, and a database transaction would remove that limit.</li>
-<li><b>Browser tests for the money paths.</b> The unit and API tests are strong. Add a few Playwright tests that click through sign-in, publishing, Book now and a website booking, so a layout change can't silently break them.</li>
+<li><b>Extend browser coverage for the money paths.</b> Playwright now covers public routes/navigation and isolated Studio controls/publishing with mocked APIs. Full sign-in, authenticated 3D editing, Book now and website booking still need dedicated fixtures; the component tests do not certify GPU rendering or provider delivery.</li>
 <li><b>Errors you can see.</b> Before launch, add error reporting for the browser and the API, and an uptime check, so a broken booking form is noticed in minutes, not days.</li>
 <li><b>Keep the documents honest automatically.</b> Run <code>npm run docs:dev-guide</code> in CI and fail the build when a route or a file has no comment explaining it.</li>
 </ol>

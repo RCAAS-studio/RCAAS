@@ -11,7 +11,7 @@ export default defineConfig({
     { name: 'phone', use: { ...devices['iPhone 13'], defaultBrowserType: 'chromium' } },
   ],
   webServer: process.env.PLAYWRIGHT_BASE_URL ? undefined : {
-    command: 'npm run dev:web -- --hostname 127.0.0.1 --port 3471',
+    command: 'node scripts/browser-test-server.mjs',
     url: 'http://127.0.0.1:3471',
     reuseExistingServer: false,
     timeout: 120000,

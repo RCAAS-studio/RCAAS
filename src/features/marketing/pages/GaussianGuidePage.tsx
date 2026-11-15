@@ -1,3 +1,4 @@
+import { GAUSSIAN_FAQS } from '../content/pageFaqs';
 import React, { useMemo, useState } from 'react';
 import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
@@ -196,27 +197,7 @@ const USES: { use: string; why: string; image: string; imageAlt: string }[] = [
   },
 ];
 
-export const GAUSSIAN_FAQS = [
-  {
-    question: 'Is Gaussian splatting the same as a 360° photo?',
-    answer:
-      'No. A 360° photo is a panorama seen from one point. A Gaussian splat scene is a full 3D scene you can move through and view from any angle.',
-  },
-  {
-    question: 'Is it the same as NeRF?',
-    answer:
-      'They are related. Both create photorealistic 3D scenes from images. NeRF uses a neural network to represent the scene, while Gaussian splatting uses explicit Gaussians, which makes real-time viewing much more practical.',
-  },
-  {
-    question: 'Can I measure from a Gaussian splat scene?',
-    answer:
-      'Not reliably on its own. For measurements, the scene should be combined with laser scanning or survey control, which is how we work.',
-  },
-  {
-    question: 'Does it need special software to view?',
-    answer: 'No. Scenes can be viewed in a modern web browser on a phone, tablet or computer. VR needs a headset.',
-  },
-];
+export { GAUSSIAN_FAQS };
 
 const CTA_BODY =
   "Explore a photorealistic 3D scene captured by our team, then tell us about the place you'd like to show.";

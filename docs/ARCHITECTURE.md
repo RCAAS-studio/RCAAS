@@ -1,21 +1,21 @@
 # RCAAS architecture
 
-Reviewed 15 November 2026. This describes the checkout, including existing uncommitted booking, storage and notification work. It is not a deployment signoff.
+Reviewed 15 November 2026. This describes the current checkout, including earlier booking, storage and notification work. It is not a deployment signoff.
 
 ## Dependency map and ownership
 
 ```mermaid
 flowchart TD
   Routes[Next app routes] --> Marketing[Marketing layout and shell]
-  Marketing --> Sections[Page content and home sections]
-  Marketing --> Metadata[Metadata and structured data]
+  Marketing --> Entries[Named page adapters and homepage sections]
+  Marketing --> Metadata[Metadata and pure structured-data builders]
   Routes --> Studio[Studio authoring]
   Routes --> Viewer[Tour and client websites]
   Studio --> Scene[Shared scene stores and renderers]
   Viewer --> Scene
   Studio --> ClientAPI[lib/api.ts]
   Viewer --> ClientAPI
-  Sections --> Leads[Marketing lead adapter]
+  Entries --> Leads[Marketing lead adapter]
   Leads --> ClientAPI
   ClientAPI --> Express[Express routes]
   Express --> Stores[Document and account stores]
@@ -24,44 +24,48 @@ flowchart TD
   Stores --> Accounts[PostgreSQL or JSON accounts]
 ```
 
-Routes do request-time metadata, redirects, parameters and not-found decisions. Marketing has no dependency on the 3D renderer for ordinary pages. Interactive marketing demos retain their own ownership. Studio and public tours intentionally share scene stores, camera, collision and loader modules; separating those by copying them would risk divergent serialization and rendering behavior.
+Routes own parameters, server metadata, redirects and not-found decisions. Ordinary marketing pages do not depend on the 3D renderer. Interactive demos keep their own ownership. Studio and tours intentionally share scene documents, rendering, camera, collision and loaders: duplicating those would risk divergent serialization and rendering behavior.
 
-The Express entry point configures middleware and mounts domain routers. Routes already delegate persistence to stores and delivery to dedicated mail/notification/outbox modules. Accounts use `usersStore.js` to select PostgreSQL or file storage. The shared `visibleProject` HTTP guard now lives in `middleware/projectAccess.js`, breaking the properties/sites router initialization cycle. The old export remains compatible. No authentication behavior, persistence, API contract or data directory was changed.
+Express configures middleware and mounts domain routers. Routes delegate persistence to stores and delivery to mail/notification/outbox modules. `usersStore.js` selects PostgreSQL or file accounts. The shared `visibleProject` guard lives in `middleware/projectAccess.js`, breaking the properties/sites router initialization cycle; the old export remains compatible. Authentication, persistence contracts and data directories were not changed by the architecture refactor.
 
-## Original problems and changes
+## Public website
 
-The marketing App combined browser history, shared chrome, all page selection and roughly a thousand lines of structured-data logic. The 670-line homepage mixed ten sections, copy and responsive masonry state. A catch-all hid every ordinary public URL from the route tree.
+The former marketing App combined custom browser history, shared chrome, page selection and about a thousand lines of structured data. The homepage combined ten sections, copy and responsive masonry state. A catch-all hid ordinary public URLs from the route tree.
 
-The `(marketing)` route group now contains native entries for all 42 listed public URLs, including `/`. The layout owns one `MarketingShell`, one main landmark, the header/footer, planner/register state and existing transition effects. Navigation uses Next's router. `routing/MarketingPage.tsx` is a retained compatibility adapter for existing callback-based content; it no longer owns URL history or layout. `routing/useMarketingMetadata.ts` preserves existing client structured-data behavior separately. Server metadata uses `routing/metadata.ts` for native entries.
+All 42 listed public URLs now have native ownership under `app/(marketing)`. Ordinary routes import named client adapters directly. Industry and case-study detail URLs use `[slug]` routes with server validation and `generateStaticParams`. Blog posts and pagination use a blog-scoped `[...slug]` route, preserving draft previews, pagination rules and publication metadata. The root `[...slug]` handles only the two existing moved URLs and unknown-page handling. It no longer selects content.
 
-The non-optional `[...slug]` fallback retains moved URLs, blog posts/pagination, and server 404 handling. Its static parameter list excludes the explicit native entries, preventing overlaps. Blog/content fallbacks remain deliberately available until their own migration has full coverage; this is not a claim that every content component has become a Server Component.
+The persistent layout owns `MarketingShell`, the header/footer, planner/register state, transition effects and one main landmark. Navigation uses Next's router. Existing content still receives navigation/planner callbacks through `useMarketingPageProps`; adapters retain `next/dynamic` page loading. Nonserializable industry content, such as icon functions, is resolved in its client adapter from a validated slug.
 
-Homepage sections live in `features/marketing/home/components`, with a short composition, local copy and local types. `pages/HomePage.tsx` and `App.tsx` are compatibility exports. They are retained to protect existing imports rather than deleted based on filenames alone.
+The old `marketing/App.tsx` and `routing/MarketingPage.tsx` were removed after replacement routes passed browser and build checks. `pages/HomePage.tsx` remains a compatibility re-export. The actual homepage is a short composition of ten named sections in `home/components`, with local copy and types. Existing content compositions stay in `pages`; moving them merely to rename concurrently edited files provides little benefit.
 
-## Preserved boundaries and risks
+Server metadata uses `routing/metadata.ts`. `routing/useMarketingMetadata.ts` owns only client document updates. Pure JSON-LD builders live in `structuredData`: services, places/work, editorial and company data. Shared FAQ arrays live in `content/pageFaqs.ts`, so metadata no longer imports entire UI page modules to read answers. The extracted graph matched the prior output in 98 route/query cases; publication gates and unresolved-answer filtering have unit coverage.
 
-Studio's editor shell, scene lifecycle and `lib/api.ts` remain large. They carry coupled selection/history, rendering and HTTP/revision behaviors and need targeted extraction tests before further work. The import scan inspected 335 modules and 1,031 relative import/export edges. Its two frontend cycles pass through a type-only `Intent` import and are not runtime initialization cycles; the real properties/sites cycle was removed by extracting the shared guard. SDK files, Three version, asset references, undo/redo, drafts, publishing snapshots and booking behavior are unchanged by this work.
+## Studio and shared platform
 
-The current service/industry content components remain in `marketing/pages`; their native entries are under `app/(marketing)`. Moving those concurrently edited files just for naming would add risk without changing ownership. Do future moves one feature at a time, preserving compatibility imports until callers migrate.
+`EditorShell.tsx` is now a 258-line composition and selection/lifecycle coordinator. `studio/editor` owns named modules for the hierarchy/filmstrip, hotspot/collision/track/scene inspectors, floor-plan tools, model placement, draft controls and top bar/account navigation. These modules range from 64 to 310 lines. Shared numeric controls/options live in `controls.tsx`; Selection/Pose contracts live in `types.ts`. All 29 function bodies checked in this extraction matched the preceding implementation exactly. Publishing and its private dialog remain in `studio/publishing/PublishButton.tsx`, retaining draft saving, expected revisions, conflict recovery, versions, embeds and portals.
 
-## Verification and remaining work
+The browser fixture exercises actual extracted components and scene/draft actions, with every API request intercepted and a mocked renderer bridge. It verifies numeric commit/cancel/clamping, selection controls, hierarchy filtering/selection and rename commit/cancel, hotspot coordinate/payload preservation, collision-size limits, editable versus baked tracks, saving dirty edits before publishing, asset-reference preservation, blockers, unpublishing and revision conflicts on desktop and phone. This is focused workflow coverage, not a claim of a complete authenticated editor or GPU test.
 
-`npm test`, `npm run lint`, `npx tsc --noEmit`, `npm run build` and `npm run test:e2e` are the checks. Browser tests isolate network writes, cover the complete listed URL matrix, home composition/planner, unknown routes, enquiry query/history and service controls on desktop and phone. They do not certify actual email delivery, database deployment, GPU rendering or the remaining booking redesign.
+Scene lifecycle, rendering and `lib/api.ts` retain their existing boundaries. SDK files, Three version, asset references, history, drafts, publishing snapshots and booking behavior are unchanged. The earlier import scan inspected 335 modules and 1,031 relative edges. Its two frontend cycles used type-only `Intent` imports; the runtime backend router cycle was removed through the shared guard.
 
-The existing CI static build still excludes only API-dependent platform routes. Marketing remains compatible with `/RCAAS` and root hosting; base-path behavior must be tested on the exported artifact as well as the Node build. Native entries must have unique URL ownership.
+## Verification and deployment boundaries
 
-Reference reviewed: `prabhatbhusal/polk_road` main, homepage `src/app/page.tsx` (commit tree `0e152c5`), which composes named landing sections. RCAAS adopts that discoverability while retaining feature boundaries required by the platform. The current checkout remains authoritative over remote main. The Developer Guide generator and blueprint text were reviewed; both guide PDFs are present, but the Feature Book binary was not independently text-extracted in this pass.
+Run `npm test`, `npm run lint`, `npx tsc --noEmit`, `npm run build` and `npm run test:e2e`. Playwright is the only added dependency, development-only and explicitly approved. CI installs Chromium before browser checks.
 
-Further staged work: direct per-page adapters replacing the remaining selection adapter; dedicated dynamic blog/work/industry route families; smaller structured-data builders; focused EditorShell/scene/API extractions with editor/browser fixtures. The booking calendar, tour booking-card design, multi-select, track timeline and conflict-merge screen are separate feature tasks, not completed by this architecture change.
+`scripts/browser-test-server.mjs` creates a disposable checkout under ignored `qa-bug-hunt`, links dependencies and adds the test-only Studio route there. Fixtures are absent from the real application route tree and production export. Test API calls never reach a live provider. `PLAYWRIGHT_BASE_URL` targets an existing preview and skips Studio fixture tests, which require the isolated checkout.
 
-## Change inventory and phase handoff
+Browser coverage checks the listed URL matrix plus visible blog posts, per-page metadata, draft noindex, unknown content, aliases, homepage sections/planner, enquiry query/hash/history, service controls and login/Studio entry URLs. Export validation also uses the `/RCAAS` base path. The existing static deployment excludes API-dependent platform routes; the full Node build retains them.
 
-The route group moved from `(site)` to `(marketing)` and its optional catch-all became `[...slug]`. Forty-two explicit entries now own the listed URLs. New homepage files are `HomeRoute`, `HomePage`, `data`, `types` and ten section components. New shell/routing files isolate action context, structured data, metadata and a standalone not-found adapter. `App.tsx` and the former HomePage path remain compatibility exports. The shared backend guard moved into middleware, with a re-export for existing callers.
+Live database accounts, mail/provider delivery, actual bookings, GPU rendering and public deployment require separate evidence. No commit, push or deployment was performed by the agent.
 
-Playwright is the only added dependency (`@playwright/test`, development-only). `playwright.config.ts`, `test/browser/marketing.spec.ts`, the npm command and CI browser steps provide repeatable coverage. Browser reports are ignored by both Git and ESLint. Architecture Markdown is explicitly tracked while generated PDFs and other existing document assets remain ignored. The developer-guide generator's route map and instructions were updated; no new claim is made about regenerating the PDF binary.
+## References and next boundaries
 
-Phases 1–3 delivered the audit, conventions and home extraction. Service/industry ownership stays in the existing feature rather than renaming concurrent content edits; native entries make those URLs discoverable. Routing and shared-shell changes are covered by tests. Studio/scene boundaries were reviewed and intentionally retained pending dedicated editor fixtures. Backend changes are limited to the verified guard extraction. Compatibility files were retained rather than deleting unverified consumers. This is a tested architecture foundation, not a claim that every oversized module or planned feature is finished.
+Reviewed `prabhatbhusal/polk_road` main, homepage `src/app/page.tsx` (commit tree `0e152c5`): named section composition is useful, while RCAAS retains feature boundaries needed by its platform. The local checkout remains authoritative. The Developer Guide generator and blueprint text were reviewed. Both guide PDFs exist locally, but the Feature Book binary was not independently text-extracted; its existence is not proof of implementation.
 
-Validation record: 67 client/tooling tests plus 192 server tests passed (259 total, two intentional skips). TypeScript and the full production build passed. Lint passed with six pre-existing warnings. The public route/home/navigation suite passed eight checks across desktop/phone on both the Node preview and `/RCAAS` static preview; the final expanded run additionally checks login/studio entry URLs and the rendered 404. The production and static-export commands are recorded under ignored `qa-bug-hunt/architecture-*`. Live database authentication, actual GPU rendering, mail/provider delivery, real booking submission, editor interactions and public deployment were not verified by this suite. Nothing was committed, pushed or deployed by the agent.
+The architecture foundation, native routing, structured-data separation, Studio component extraction and backend guard extraction are implemented. Scene orchestration and the shared API module still merit staged extraction with dedicated behavior checks. Authentication, tours, booking, storage and integrations retain their established feature/store ownership instead of acquiring empty layers. The hall calendar, tour booking-card redesign, multi-selection, camera timeline and conflict-merge screen remain separate feature work.
 
-The default `npm run test:e2e` command passed with Playwright's installed Chromium, without a Chrome channel override. All ten extracted homepage section JSX trees matched the saved pre-refactor source exactly. Browser startup reports harmless colour-environment warnings; requesting the Studio entry also exposes an existing React warning about a script tag rendered as a component. The suite does not treat that as proof the script executes or as an authenticated editor test.
+Routing/metadata phase validation: 70 client/tooling tests and 192 server tests passed (262 total, two server skips). TypeScript and the full Node production build passed. Lint has zero errors and six existing warnings. All 16 desktop/phone browser checks passed in the isolated Node checkout; the `/RCAAS` static export built and passed its 10 applicable checks (six Studio fixture checks intentionally skip against an external preview). No fixture route appears in the production route manifest. JSON-LD matched the original in 98 cases and all six initially extracted Studio function bodies matched exactly. Commands/results are retained under ignored `qa-bug-hunt/architecture-next-*`.
+
+Editor component phase validation: all 29 checked function bodies matched the preceding source. Types, full Node production build and 262 unit/API tests passed (two server skips). Lint retained zero errors and six warnings. All 12 affected desktop/phone Studio browser checks passed, including six new hierarchy/inspector checks. Marketing and static-export behavior was unchanged by this editor-only phase, so its earlier passing coverage was not rerun. Results are under `qa-bug-hunt/editor-phase-two-*`.
+
+The long-running development server retained a stale webpack reference after `MarketingPage.tsx` was deleted, despite clean builds passing. Restarting the verified project development stack and clearing only `.next/dev` resolved the live HTTP 500. Home, About, How We Work and Visual Storytelling returned HTTP 200 afterward. Restart development after route/module deletions; a clean isolated test checkout cannot certify the hot-reload state of an already running server.

@@ -1,3 +1,4 @@
+import { COMPARISON_FAQS } from '../content/pageFaqs';
 import React from 'react';
 import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
@@ -150,28 +151,7 @@ const CHOOSE: Record<FormatId, { heading: string; reasons: string[] }> = {
 const COMBINATION =
   'Video gets attention; a 3D tour helps people decide. A common pattern is to use a short fly-through film on social media and in ads, and link it to the full 3D tour on your website, where interested visitors can explore in their own time. When both come from the same 3D capture, they look consistent, and you pay for one site visit instead of two.';
 
-export const COMPARISON_FAQS: { question: string; answer: string }[] = [
-  {
-    question: 'Is a 3D tour just a better 360° tour?',
-    answer:
-      'Not exactly. They are different formats. A 360° tour is a set of panoramas; a 3D tour is a full model of the space. 3D gives more freedom and a truer sense of space, while 360° is quicker and lighter. Each fits different needs.',
-  },
-  {
-    question: 'Will a 3D tour work on phones?',
-    answer:
-      'Yes. Photorealistic 3D tours run in modern mobile browsers with nothing to install. They are heavier than photos, so they work best when loaded only when the viewer chooses to open them.',
-  },
-  {
-    question: 'Can I make a video from a 3D tour?',
-    answer:
-      "Yes. Once a place is captured in 3D, cinematic fly-through films and still images can be produced from the model, including camera moves a normal camera can't make.",
-  },
-  {
-    question: 'Which is cheapest?',
-    answer:
-      'Usually a 360° photo tour, then 3D, with video varying the most depending on production. The better question is which one will help your audience decide.',
-  },
-];
+export { COMPARISON_FAQS };
 
 const CTA_BODY =
   "Tell us about your place and your audience. We'll recommend the right format, or mix, and explain why.";

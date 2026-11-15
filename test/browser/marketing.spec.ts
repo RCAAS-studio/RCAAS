@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { ROUTES } from '../../src/features/marketing/types';
+import { VISIBLE_POSTS, postPath } from '../../src/features/marketing/content/blog';
+import { pageMeta, blogPageCount } from '../../src/features/marketing/meta';
 
 test.beforeEach(async ({ page }) => {
   // Keep browser regressions independent of live providers and production data.
@@ -20,10 +22,26 @@ test('home keeps its sections, one main landmark and working planner', async ({ 
 
 test('every published marketing URL resolves with its own metadata', async ({ request, page }) => {
   test.setTimeout(180000);
-  for (const route of ROUTES) {
+  const paths = [...ROUTES, ...VISIBLE_POSTS.map(postPath), ...Array.from({ length: blogPageCount() - 1 }, (_, index) => `/blog/page/${index + 2}/`)];
+  for (const route of paths) {
     const response = await request.get(`.${route}`);
     expect(response.ok(), route).toBeTruthy();
-    expect(await response.text(), route).toContain('<link rel="canonical"');
+    const head = await page.evaluate(html => {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return {
+        title: doc.title,
+        description: doc.querySelector('meta[name="description"]')?.getAttribute('content'),
+        canonical: doc.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+        robots: doc.querySelector('meta[name="robots"]')?.getAttribute('content'),
+      };
+    }, await response.text());
+    const expected = pageMeta(route);
+    expect(head.title, route).toBe(expected.title);
+    expect(head.description, route).toBe(expected.description);
+    expect(head.canonical, route).toBeTruthy();
+    const prefix = new URL(process.env.PLAYWRIGHT_BASE_URL || 'http://localhost').pathname.replace(/\/$/, '');
+    expect(new URL(head.canonical!).pathname.replace(/\/$/, ''), route).toBe(prefix + route.replace(/\/$/, ''));
+    if (expected.robots?.includes('noindex')) expect(head.robots, route).toContain('noindex');
   }
   const missing = await request.get('./services/does-not-exist/');
   expect(missing.status()).toBe(404);
@@ -33,6 +51,20 @@ test('every published marketing URL resolves with its own metadata', async ({ re
   }
   for (const route of ['./login/', './studio/']) {
     expect((await request.get(route)).ok(), route).toBeTruthy();
+  }
+});
+
+test('content families reject missing slugs and legacy aliases retain redirects', async ({ request }) => {
+  for (const route of ['/industries/unknown-industry/', '/work/unknown-project/', '/blog/unknown-post/', '/blog/page/0/', '/blog/page/1/', `/blog/page/${blogPageCount() + 1}/`]) {
+    expect((await request.get(`.${route}`)).status(), route).toBe(404);
+  }
+  // The static export provides an HTML redirect; Next supplies HTTP 308.
+  if (!process.env.PLAYWRIGHT_BASE_URL) {
+    for (const [from, to] of [['/how-it-works/', '/how-we-work'], ['/gaussian-splatting/', '/learn/what-is-gaussian-splatting']]) {
+      const response = await request.get(`.${from}`);
+      expect(response.ok(), from).toBeTruthy();
+      expect(new URL(response.url()).pathname.replace(/\/$/, '')).toBe(to);
+    }
   }
 });
 

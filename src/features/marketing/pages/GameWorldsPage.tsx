@@ -1,3 +1,4 @@
+import { GAME_WORLDS_FAQS } from '../content/pageFaqs';
 import React from 'react';
 import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
@@ -52,19 +53,7 @@ const PIPELINE: { title: string; line: string; icon: LucideIcon }[] = [
 ];
 
 // Only the first and last answers are resolved; the rest wait for confirmation (Register).
-export const GAME_WORLDS_FAQS = [
-  {
-    question: 'Which game engines do you work with?',
-    answer: 'We build for Unreal and Unity, and for other real-time experiences. [[TBC: engine versions and other engines]]',
-  },
-  { question: 'Which file formats do you deliver?', answer: '[[TBC: formats, e.g. engine-ready meshes and textures, splat files]]' },
-  { question: 'Who owns the assets?', answer: '[[TBI: ownership and licensing terms for captured assets]]' },
-  {
-    question: 'Can you capture heritage sites for a game?',
-    answer:
-      "Yes, with proper permission from the people who care for the site. We follow each site's rules and capture without touching or disturbing the structure.",
-  },
-];
+export { GAME_WORLDS_FAQS };
 
 export const GameWorldsPage: React.FC<GameWorldsPageProps> = ({ onNavigate }) => {
   const goToLink = (path: RoutePath) => linkHandler(onNavigate, path);

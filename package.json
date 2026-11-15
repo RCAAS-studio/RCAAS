@@ -11,6 +11,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
+    "pretest:e2e": "npm run css:rcaas",
     "test:e2e": "playwright test",
     "test": "node --test test/*.test.mjs && cd server && npm test",
     "docs:dev-guide": "node scripts/dev-guide.mjs",

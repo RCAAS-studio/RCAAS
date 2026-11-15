@@ -1,4 +1,8 @@
-import { MarketingPage } from '@/features/marketing/routing/MarketingPage';
+import { CookiesEntry } from '@/features/marketing/routing/PageEntries';
 import { marketingMetadata } from '@/features/marketing/routing/metadata';
+
 export const metadata = marketingMetadata('/cookies/');
-export default function Page() { return <MarketingPage />; }
+
+export default function Page() {
+  return <CookiesEntry />;
+}

@@ -12,3 +12,9 @@ export function useMarketingActions() {
   if (!actions) throw new Error('Marketing content must be inside MarketingShell');
   return actions;
 }
+
+/** Existing content keeps its callback props while route entries own selection. */
+export function useMarketingPageProps() {
+  const { currentPath, navigateTo, openPlanner } = useMarketingActions();
+  return { currentPath, onNavigate: navigateTo, onOpenPlanner: openPlanner };
+}
