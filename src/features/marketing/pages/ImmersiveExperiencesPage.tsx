@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import { RoutePath } from '../types';
 import { SITE_METADATA } from '../data/siteData';
@@ -508,7 +508,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
                       {/* Image Preview Container */}
                       <div className="relative aspect-[16/10] rounded-lg overflow-hidden border border-white/15 mb-6 group">
                         <img loading="lazy" decoding="async"
-                          src={cap.image}
+                          src={cap.image} srcSet={srcSetFor(cap.image)}
                           alt={cap.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />

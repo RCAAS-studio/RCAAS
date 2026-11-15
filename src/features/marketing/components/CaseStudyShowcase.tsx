@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, MapPin } from 'lucide-react';
 import type { RoutePath } from '../types';
 import { linkHandler } from './GuideParts';
+import { srcSetFor } from '../data/images';
 
 export interface ShowcaseStudy {
   slug: string;
@@ -62,7 +63,7 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
         {studies.map((study, i) => (
           <img
             key={study.slug}
-            src={study.image}
+            src={study.image} srcSet={srcSetFor(study.image)}
             alt={i === active ? study.imageAlt : ''}
             aria-hidden={i === active ? undefined : true}
             loading="lazy"

@@ -11,6 +11,7 @@ import { Placeholder, WithPlaceholders } from '../components/Placeholder';
 import { SplatEmbed } from '../components/SplatEmbed';
 import { fadeUp, linkHandler, pageShellClass, primaryButtonClass } from '../components/GuideParts';
 import { withBase } from '../../../lib/basePath';
+import { srcSetFor } from '../data/images';
 
 interface BlogPostPageProps {
   post: BlogPost;
@@ -49,7 +50,7 @@ const Block: React.FC<{ block: BlogBlock }> = ({ block }) => {
       return (
         <figure className="my-10">
           <div className="rounded-2xl overflow-hidden border border-line bg-surface-sunken aspect-[16/9]">
-            <img loading="lazy" decoding="async" src={withBase(block.src)} alt={altText(block.alt)} className="w-full h-full object-cover" />
+            <img loading="lazy" decoding="async" src={withBase(block.src)} srcSet={srcSetFor(withBase(block.src))} alt={altText(block.alt)} className="w-full h-full object-cover" />
           </div>
           {block.caption && (
             <figcaption className="mt-3 text-xs font-mono text-zinc-500">
@@ -178,7 +179,7 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ post, onNavigate }) 
 
             <div className="mt-7 pt-6 border-t border-line flex items-center gap-3">
               <span className="w-10 h-10 rounded-full overflow-hidden bg-surface-sunken border border-line shrink-0">
-                {author?.photo && <img loading="lazy" decoding="async" src={withBase(author.photo)} alt="" className="w-full h-full object-cover" />}
+                {author?.photo && <img loading="lazy" decoding="async" src={withBase(author.photo)} srcSet={srcSetFor(withBase(author.photo))} alt="" className="w-full h-full object-cover" />}
               </span>
               <p className="text-xs sm:text-sm font-mono text-zinc-600 flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span>
@@ -216,7 +217,7 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ post, onNavigate }) 
             className="max-w-5xl mx-auto mb-12"
           >
             <div className="rounded-2xl overflow-hidden border border-line bg-surface-sunken aspect-[16/9]">
-              <img loading="lazy" decoding="async" src={withBase(post.heroImage.src)} alt={altText(post.heroImage.alt)} className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src={withBase(post.heroImage.src)} srcSet={srcSetFor(withBase(post.heroImage.src))} alt={altText(post.heroImage.alt)} className="w-full h-full object-cover" />
             </div>
             {post.heroImage.alt.startsWith('[[') && (
               <figcaption className="mt-3">
@@ -248,7 +249,7 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ post, onNavigate }) 
             {/* 9. AUTHOR BOX */}
             <motion.aside {...fadeUp} className="mt-8 rounded-2xl border border-line bg-white p-6 flex flex-col sm:flex-row gap-5 shadow-xs">
               <span className="w-20 h-20 rounded-2xl overflow-hidden bg-surface-sunken border border-line shrink-0">
-                {author?.photo && <img loading="lazy" decoding="async" src={withBase(author.photo)} alt="" className="w-full h-full object-cover" />}
+                {author?.photo && <img loading="lazy" decoding="async" src={withBase(author.photo)} srcSet={srcSetFor(withBase(author.photo))} alt="" className="w-full h-full object-cover" />}
               </span>
               <div className="flex-1">
                 <h2 className="text-xs font-mono uppercase tracking-wider text-zinc-500 font-semibold">Written by</h2>

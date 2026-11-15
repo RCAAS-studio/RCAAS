@@ -6,7 +6,7 @@ import { RoutePath } from '../types';
 import { PILLARS, INDUSTRIES } from '../data/siteData';
 import { CASE_STUDY_CONTENT, caseStudyPath } from '../content/work';
 import { PILLAR_ICONS, industryIcon } from '../data/icons';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { useSession } from '../../auth/useSession';
 import { useClickOutside } from '../../../hooks/useClickOutside';
 import { AccountMenu } from './AccountMenu';
@@ -193,7 +193,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenP
       <header ref={navRef} className="snav" data-menu={menu ? '' : undefined}>
         <NavLink to="/" go={go} className="snav-brand" aria-label="RCAAS Technology, home">
           <span className="snav-mark" aria-hidden="true" />
-          <img src={withBase('/logo.png')} alt="" width={522} height={106} className="snav-logo" />
+          <img src={withBase('/logo.png')} srcSet={srcSetFor(withBase('/logo.png'))} alt="" width={522} height={106} className="snav-logo" />
         </NavLink>
 
         <nav ref={linksRef} className="snav-links" aria-label="Main">
@@ -381,7 +381,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
           <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-500">See it working</p>
           <NavLink to="/gallery/" go={go} className="group relative block overflow-hidden rounded-xl bg-zinc-950">
             <img
-              src={IMG['menu/live-tour-card']}
+              src={IMG['menu/live-tour-card']} srcSet={srcSetFor(IMG['menu/live-tour-card'])}
               alt=""
               className="aspect-[4/3] w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105"
             />
@@ -432,7 +432,7 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
               <motion.li key={w.slug} variants={rise}>
                 <NavLink to={caseStudyPath(w)} go={go} className="group block rounded-2xl p-2 transition-colors hover:bg-zinc-100/80 focus-visible:bg-zinc-100/80 focus-visible:outline-none">
                   <span className="relative block overflow-hidden rounded-xl bg-zinc-950">
-                    <img src={w.image} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img src={w.image} srcSet={srcSetFor(w.image)} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider ring-1 ring-inset ${st.cls}`}>
                       {st.label}
                     </span>

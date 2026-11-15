@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { ArrowLeft, Box, PenTool, Send, ShieldCheck } from 'lucide-react';
 import { AuthPanel } from '../../auth/AuthPanel';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { withBase } from '../../../lib/basePath';
 
 /* /login in the rcaas.tech look. The form is the studio's own AuthPanel,
@@ -26,7 +26,7 @@ export const LoginScreen: React.FC = () => (
       {/* The place: a real capture, framed like a viewfinder, with a scan line passing over it. */}
       <aside className="relative m-3 hidden overflow-hidden rounded-2xl bg-zinc-950 lg:flex lg:flex-col lg:justify-between">
         <img
-          src={IMG['heritage-motion-backdrop/3d-model-of-chilancho-stupa']}
+          src={IMG['heritage-motion-backdrop/3d-model-of-chilancho-stupa']} srcSet={srcSetFor(IMG['heritage-motion-backdrop/3d-model-of-chilancho-stupa'])}
           alt=""
           className="login-drift absolute inset-0 h-full w-full object-cover opacity-70"
         />
@@ -42,7 +42,7 @@ export const LoginScreen: React.FC = () => (
 
         <div className="relative flex items-start justify-between p-12">
           <a href="/" aria-label="RCAAS Technology, home" className="transition-opacity hover:opacity-80">
-            <img src={withBase('/logo.png')} alt="" width={522} height={106} className="h-8 w-auto brightness-0 invert" />
+            <img src={withBase('/logo.png')} srcSet={srcSetFor(withBase('/logo.png'))} alt="" width={522} height={106} className="h-8 w-auto brightness-0 invert" />
           </a>
           <span className="inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] font-mono text-white/80 backdrop-blur-md">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
@@ -80,7 +80,7 @@ export const LoginScreen: React.FC = () => (
       <section className="login-paper relative flex flex-col px-6 py-6 sm:px-10">
         <div className="flex items-center justify-between">
           <a href="/" aria-label="RCAAS Technology, home" className="lg:invisible">
-            <img src={withBase('/logo.png')} alt="" width={522} height={106} className="h-7 w-auto" />
+            <img src={withBase('/logo.png')} srcSet={srcSetFor(withBase('/logo.png'))} alt="" width={522} height={106} className="h-7 w-auto" />
           </a>
           <a
             href="/"

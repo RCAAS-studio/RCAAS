@@ -34,7 +34,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="light" suppressHydrationWarning className={`${inter.variable} ${ui.variable}`}>
+    <html lang="en" data-theme="light" data-scroll-behavior="smooth" suppressHydrationWarning className={`${inter.variable} ${ui.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

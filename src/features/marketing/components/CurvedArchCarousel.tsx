@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import { RoutePath } from '../types';
 
@@ -254,7 +254,7 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
                 {/* Background Image with Cinematic Gradient Overlay */}
                 <div className="absolute inset-0 bg-zinc-900">
                   <img
-                    src={card.image}
+                    src={card.image} srcSet={srcSetFor(card.image)}
                     alt={card.title}
                     className="w-full h-full object-cover object-center filter brightness-[0.88] contrast-[1.05] transition-transform duration-700 hover:scale-105"
                     loading="lazy"

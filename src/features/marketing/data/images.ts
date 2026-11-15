@@ -2,7 +2,8 @@
 // To change a picture: replace the file at the path shown (same name, any size), or point the slot at a new file.
 // Keys are "<page or component>/<what the picture is>".
 
-import { withBase } from '../../../lib/basePath';
+import { withBase, withoutBase } from '../../../lib/basePath';
+import { IMAGE_WIDTHS, VARIANT_WIDTHS } from './imageSizes';
 
 const FILES = {
   'about/a-heritage-courtyard-during-restoration-and-the': '/assets/images/about/a-heritage-courtyard-during-restoration-and-the.webp',
@@ -129,3 +130,14 @@ export type ImageSlot = keyof typeof FILES;
 
 // Under a sub-path (the GitHub Pages copy), every file sits under it too.
 export const IMG = Object.fromEntries(Object.entries(FILES).map(([slot, file]) => [slot, withBase(file)])) as Record<ImageSlot, string>;
+
+/** `srcset` for a site photo: its 640 and 960 px copies (scripts/image-variants.mjs)
+ *  and the original, so a phone downloads the size it shows. Undefined for anything
+ *  else (logos, SVGs, outside links), which keeps its plain src. */
+export function srcSetFor(src: unknown): string | undefined {
+  if (typeof src !== 'string') return undefined;
+  const width = IMAGE_WIDTHS[withoutBase(src)];
+  if (!width) return undefined;
+  const stem = src.replace(/\.(webp|jpe?g|png)$/i, '');
+  return [...VARIANT_WIDTHS.filter((w) => w < width).map((w) => `${stem}-${w}w.webp ${w}w`), `${src} ${width}w`].join(', ');
+}

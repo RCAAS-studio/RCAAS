@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import { RoutePath } from '../types';
 import { SITE_METADATA, TOOLKIT } from '../data/siteData';
@@ -445,7 +445,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
                       {/* Top Image Preview Header with Circular Top Icon and Index Badge */}
                       <div className="relative h-48 w-full overflow-hidden bg-zinc-900">
                         <img
-                          src={pillar.image}
+                          src={pillar.image} srcSet={srcSetFor(pillar.image)}
                           alt={pillar.title}
                           className="w-full h-full object-cover object-center filter brightness-[0.9] contrast-[1.05] transition-transform duration-700 hover:scale-105"
                           loading="lazy"

@@ -103,6 +103,17 @@ const local = {
     try { await fs.stat(resolvePath(assetId)); return true; }
     catch (error) { if (error.code === 'ENOENT') return false; throw error; }
   },
+  async inventory() {
+    const out = new Map();
+    let ids;
+    try { ids = await fs.readdir(ASSET_DIR, { withFileTypes: true }); } catch (e) { if (e.code === 'ENOENT') return out; throw e; }
+    for (const id of ids.filter((e) => e.isDirectory() && /^[a-zA-Z0-9_-]+$/.test(e.name))) {
+      const entry = { files: 0, bytes: 0 };
+      for (const rel of await this.list(id.name)) { entry.files += 1; entry.bytes += (await fs.stat(resolvePath(id.name, rel))).size; }
+      out.set(id.name, entry);
+    }
+    return out;
+  },
   async remove(assetId, relPath) {
     if (relPath) return fs.rm(resolvePath(assetId, relPath), { force: true });
     await fs.rm(resolvePath(assetId), { recursive: true, force: true });
@@ -128,6 +139,8 @@ export const get = (assetId, relPath, opts) => driver.get(assetId, checked(asset
 
 export const list = async (assetId, under = '') => driver.list(assetId, checked(assetId, under));
 export const exists = async (assetId) => { checked(assetId); return driver.exists(assetId); };
+/** Every stored asset: id -> { files, bytes } (one bucket listing with S3). */
+export const inventory = () => driver.inventory();
 
 /** A whole (smallish) file, e.g. a mesh for the floor plan. */
 export async function readAll(assetId, relPath) {

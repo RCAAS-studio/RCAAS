@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -350,7 +350,7 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
                   <SpotlightCard className="h-full group" contentClassName="h-full flex flex-col">
                     <div className="h-32 overflow-hidden bg-zinc-900">
                       <img loading="lazy" decoding="async"
-                        src={project.image}
+                        src={project.image} srcSet={srcSetFor(project.image)}
                         alt={project.imageAlt}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
@@ -445,7 +445,7 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
             >
               <div className="lg:col-span-5 relative min-h-60inc-900">
                 <img loading="lazy" decoding="async"
-                  src={IMG['cost-guide/team-member-capturing-a-heritage-square-with-a-h']}
+                  src={IMG['cost-guide/team-member-capturing-a-heritage-square-with-a-h']} srcSet={srcSetFor(IMG['cost-guide/team-member-capturing-a-heritage-square-with-a-h'])}
                   alt="Team member capturing a heritage square with a handheld laser scanner"
                   className="absolute inset-0 w-full h-full object-cover"
                 />

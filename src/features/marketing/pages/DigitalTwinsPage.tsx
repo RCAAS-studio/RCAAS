@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { RoutePath } from '../types';
 import { SplatEmbed } from '../components/SplatEmbed';
 import { FaqList } from '../components/GuideParts';
@@ -661,7 +661,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
             <div className="border border-zinc-200 rounded-2xl overflow-hidden bg-zinc-950 text-white shadow-lg">
               <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
                 <img loading="lazy" decoding="async"
-                  src={IMG['digital-twins/lidar-point-cloud-cad-cross-section-view']}
+                  src={IMG['digital-twins/lidar-point-cloud-cad-cross-section-view']} srcSet={srcSetFor(IMG['digital-twins/lidar-point-cloud-cad-cross-section-view'])}
                   alt="LiDAR Point cloud CAD cross section view"
                   className="w-full h-full object-cover opacity-85"
                 />
@@ -886,7 +886,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                       {cap.image && (
                         <div className="relative rounded-xl overflow-hidden border border-zinc-200 aspect-video mb-6 shadow-xs group">
                           <img loading="lazy" decoding="async"
-                            src={cap.image}
+                            src={cap.image} srcSet={srcSetFor(cap.image)}
                             alt={cap.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
@@ -1223,7 +1223,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
           <div className="border border-zinc-200 rounded-2xl overflow-hidden bg-zinc-50 grid grid-cols-1 lg:grid-cols-12 shadow-xs">
             <div className="lg:col-span-7 aspect-video lg:aspect-auto relative overflow-hidden">
               <img loading="lazy" decoding="async"
-                src={IMG['digital-twins/chilancho-stupa-3d-documentation']}
+                src={IMG['digital-twins/chilancho-stupa-3d-documentation']} srcSet={srcSetFor(IMG['digital-twins/chilancho-stupa-3d-documentation'])}
                 alt="Chilancho Stupa 3D documentation"
                 className="w-full h-full object-cover"
               />

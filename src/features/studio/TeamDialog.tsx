@@ -56,7 +56,7 @@ export function TeamDialog({ onClose }: { onClose: () => void }) {
         </header>
         <div className="pl-dialog-body">
           <p className="pl-sub">
-            Admins see and manage every project; editors only see the ones they own or were added to.
+            Admins manage the team and storage. Everyone, admins included, sees only the projects they own or were added to.
             New accounts start as editors — anyone who has the team access code can create one.
           </p>
           {error && <p className="ed2-warn ed2-fine">{error}</p>}

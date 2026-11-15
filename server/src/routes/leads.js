@@ -28,6 +28,39 @@ const rateLimited = rateLimiter(Number(process.env.LEADS_RATE_MAX) || 5); // per
 /** No HTML in anything we store or ever render back. */
 const clean = (s) => String(s ?? '').replace(/[<>]/g, '').trim();
 
+/* A team email that failed for a passing reason (mailer.js `retry`) is sent
+ * again by `retryLeadEmails`, run with the scheduled-publish tick: after 5 min,
+ * 15 min, 1 h and 3 h, so 5 tries in all, and never for an enquiry over 2 days
+ * old. Settings problems (no key, no recipients, an unverified domain) wait
+ * for a person; the lead shows why. */
+const RETRY_AFTER = [5, 15, 60, 180].map((m) => m * 60000);
+const RETRY_WITHIN = 2 * 86400000;
+
+async function emailLead(lead, tried, now = Date.now()) {
+  const p = lead.propertyId ? await getProperty(lead.propertyId) : null;
+  const r = await sendLeadEmail(lead, p?.leadEmails ?? [], p ? p.theme?.brand || p.title : '');
+  const attempts = tried + 1;
+  const again = !r.sent && r.retry && attempts <= RETRY_AFTER.length ? new Date(now + RETRY_AFTER[attempts - 1]).toISOString() : null;
+  await setLeadDelivery(lead.id, { ...r, at: new Date(now).toISOString(), attempts, ...(again ? { nextAt: again } : {}) });
+  return r.sent;
+}
+
+let retrying = false;
+/** Send again every team email due a retry; returns how many went this time. */
+export async function retryLeadEmails(now = Date.now()) {
+  if (retrying) return 0;
+  retrying = true;
+  try {
+    let sent = 0;
+    for (const lead of await listLeads()) {
+      const d = lead.delivery;
+      if (!d || d.sent || !d.nextAt || Date.parse(d.nextAt) > now || now - Date.parse(lead.createdAt) > RETRY_WITHIN) continue;
+      if (await emailLead(lead, d.attempts ?? 1, now)) sent += 1;
+    }
+    return sent;
+  } finally { retrying = false; }
+}
+
 // An enquiry from a tour or website: filed with its project and emailed to its team (rate-limited).
 leadsRouter.post('/', async (req, res, next) => {
   try {
@@ -90,11 +123,7 @@ leadsRouter.post('/', async (req, res, next) => {
 
     // Email after answering the visitor: a slow mail service never makes them
     // wait, and a failed send is recorded on the lead, not lost.
-    (async () => {
-      const p = propertyId ? await getProperty(propertyId) : null;
-      const r = await sendLeadEmail(lead, p?.leadEmails ?? [], p ? p.theme?.brand || p.title : '');
-      await setLeadDelivery(lead.id, { ...r, at: new Date().toISOString() });
-    })().catch((err) => console.warn('[leads] email:', err.message));
+    emailLead(lead, 0).catch((err) => console.warn('[leads] email:', err.message));
   } catch (err) {
     next(err);
   }

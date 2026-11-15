@@ -7,6 +7,7 @@ import { TEAM_MEMBERS } from '../content/team';
 import { Placeholder, WithPlaceholders } from './Placeholder';
 import { linkHandler } from './GuideParts';
 import { withBase } from '../../../lib/basePath';
+import { srcSetFor } from '../data/images';
 
 const altText = (alt: string) => (alt.startsWith('[[') ? '' : alt);
 
@@ -64,7 +65,7 @@ export const BlogCard: React.FC<{ post: BlogPost; onNavigate: (path: RoutePath) 
     >
       <div className={`relative overflow-hidden bg-surface-sunken ${featured ? 'aspect-[16/9] lg:aspect-auto lg:w-3/5' : 'aspect-[16/9]'}`}>
         <img loading="lazy" decoding="async"
-          src={withBase(post.heroImage.src)}
+          src={withBase(post.heroImage.src)} srcSet={srcSetFor(withBase(post.heroImage.src))}
           alt={altText(post.heroImage.alt)}
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />

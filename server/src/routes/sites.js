@@ -25,7 +25,7 @@ import { DATA_DIR, writeFileWhole } from '../dataDir.js';
 import * as storage from '../storage.js';
 import { getProperty, getPublishedScene, getEmbed, listScenes, listPublished } from '../store.js';
 import { requireEditorSession } from '../middleware/auth.js';
-import { visibleProject } from './properties.js';
+import { visibleProject } from '../middleware/projectAccess.js';
 import { imageKind, imageSize } from './assets.js';
 import { embedKey } from './embed.js';
 import { record } from '../activity.js';

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { startCanvasLoop } from '../lib/canvasLoop';
 
 export const HeritageMotionBackdrop: React.FC = () => {
@@ -105,7 +105,7 @@ export const HeritageMotionBackdrop: React.FC = () => {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
       <img loading="lazy" decoding="async"
-        src={IMG['heritage-motion-backdrop/3d-model-of-chilancho-stupa']}
+        src={IMG['heritage-motion-backdrop/3d-model-of-chilancho-stupa']} srcSet={srcSetFor(IMG['heritage-motion-backdrop/3d-model-of-chilancho-stupa'])}
         alt="3D model of Chilancho Stupa"
         className="h-full w-full object-cover opacity-12 filter grayscale scale-105 animate-[pulse_8s_ease-in-out_infinite]"
       />

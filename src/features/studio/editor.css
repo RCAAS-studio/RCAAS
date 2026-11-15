@@ -1498,3 +1498,6 @@ a.ed2-switch-item:hover { background: var(--ed-raise); }
 
 /* Inline emphasis (<b>, <strong>) one step under titles (650), not the browser's 700 (2026-11-03 type scale). */
 .ed2 :is(b, strong) { font-weight: 600; }
+
+/* Storage dialog: section titles (StorageDialog.tsx) */
+.pl-dialog-h { margin: 6px 0 -4px; font: 650 13.5px var(--sans); color: var(--ed-text); }

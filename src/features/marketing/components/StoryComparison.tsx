@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { ChevronsLeftRight } from 'lucide-react';
 import { withBase } from '../../../lib/basePath';
+import { srcSetFor } from '../data/images';
 
 /** A presentation concept using one real still, never a fictitious dated pair. */
 export function StoryComparison() {
@@ -30,9 +31,9 @@ export function StoryComparison() {
           activePointer.current = null;
           if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
         }}>
-        <img src={image} alt="" width="1600" height="900" loading="lazy" className="story-comparison-muted" data-fx="seen" draggable={false} />
+        <img src={image} srcSet={srcSetFor(image)} alt="" width="1600" height="900" loading="lazy" className="story-comparison-muted" data-fx="seen" draggable={false} />
         <div className="story-comparison-reveal" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
-          <img src={image} alt="" width="1600" height="900" loading="lazy" data-fx="seen" draggable={false} />
+          <img src={image} srcSet={srcSetFor(image)} alt="" width="1600" height="900" loading="lazy" data-fx="seen" draggable={false} />
         </div>
         <span className="story-comparison-label story-comparison-colour">Colour treatment</span>
         <span className="story-comparison-label story-comparison-original">Muted treatment</span>

@@ -40,6 +40,8 @@ jobs:
       - run: npm test
       # The whole app, studio and tours included, as a Node host would run it.
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
 
   postgres:
     runs-on: ubuntu-latest

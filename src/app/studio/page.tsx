@@ -10,6 +10,7 @@ import { useStudioSession } from '../../features/auth/useStudioSession';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { NewProjectDialog } from '../../features/studio/NewProjectDialog';
 import { TeamDialog } from '../../features/studio/TeamDialog';
+import { StorageDialog } from '../../features/studio/StorageDialog';
 import { ShareDialog, BrandingDialog, EnquiriesDialog } from '../../features/studio/ProjectDialogs';
 import type { ApiScene, ProjectStatus, Property } from '../../@types/scene.types';
 import '../../features/studio/editor.css';
@@ -54,6 +55,7 @@ export default function StudioPage() {
   const [last, setLast] = useState<string | null>(null);
   const [me, setMe] = useState<SessionUser | null>(null);
   const [team, setTeam] = useState(false);
+  const [storage, setStorage] = useState(false);
 
   useEffect(() => {
     try { setLast(localStorage.getItem(LAST_PROJECT_KEY)); } catch { /* private mode */ }
@@ -109,11 +111,13 @@ export default function StudioPage() {
             <span className="pl-brand-word">RCAAS <span>Studio</span></span>
           </span>
           <span className="pl-top-actions">
+            {me?.role === 'admin' && <button className="pl-btn" onClick={() => setStorage(true)}>Storage</button>}
             {me?.role === 'admin' && <button className="pl-btn" onClick={() => setTeam(true)}>Team</button>}
             <ThemeToggle className="ed2-theme" />
           </span>
         </header>
         {team && <TeamDialog onClose={() => setTeam(false)} />}
+        {storage && <StorageDialog onClose={() => setStorage(false)} />}
 
         <section className="pl-body">
           <div className="pl-head">

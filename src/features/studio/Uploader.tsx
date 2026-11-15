@@ -79,7 +79,8 @@ export function slugify(title: string): string {
 export function formatBytes(n: number): string {
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+  if (n < 1024 ** 3) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(n / 1024 ** 3).toFixed(2)} GB`;
 }
 
 /** Saving is an upsert by id, so a second "Reception" would silently replace
@@ -349,6 +350,7 @@ function VariantSlot({ tier, state, onFiles, off = false }: {
       {state.status === 'error' && (
         <>
           <p className="up-slot-error">{state.error}</p>
+          <p className="up-slot-hint">Pick the same files again to continue: what already arrived isn’t sent twice, even after a reload.</p>
           <div className="up-browse-row">
             <button type="button" className="up-browse" onClick={() => folderInputRef.current?.click()}>Try folder again</button>
             <button type="button" className="up-browse-zip" onClick={() => zipInputRef.current?.click()}>or a .zip</button>

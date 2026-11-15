@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Hotspot {
@@ -146,7 +146,7 @@ export const InteractiveTourFeaturesDemo: React.FC = () => {
         <div className="lg:col-span-8 relative aspect-16/10 sm:aspect-video rounded-xl overflow-hidden border border-zinc-300 bg-zinc-950 shadow-inner group select-none">
           {/* Main Backdrop Image */}
           <img loading="lazy" decoding="async"
-            src={IMG['interactive-tour-features-demo/interactive-3d-virtual-tour-space']}
+            src={IMG['interactive-tour-features-demo/interactive-3d-virtual-tour-space']} srcSet={srcSetFor(IMG['interactive-tour-features-demo/interactive-3d-virtual-tour-space'])}
             alt="Interactive 3D Virtual Tour Space"
             className={`w-full h-full object-cover transition-all duration-700 ${
               viewMode === 'dollhouse' ? 'scale-105 filter brightness-90 saturate-75' : 'scale-100'

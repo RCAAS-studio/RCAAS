@@ -48,6 +48,7 @@ import { hotspotRooms, nightsOf, roomHotspotBooked, roomsFree, roomsNeeded, stay
 import { SESSIONS, SESSION_LABEL, eventCalendar, eventProblem, hallFree, hallHotspotFree } from '../events.js';
 import { WAIT_STATUSES, waitersWithSpace } from '../waitlist.js';
 import { textGuest, validPhone, validEmail, PHONE_WRONG } from '../notify.js';
+import { queueRetry, queueTexts } from '../outbox.js';
 import { rateLimiter } from '../rateLimit.js';
 import { siteLink, tourLink } from '../publicUrls.js';
 
@@ -199,13 +200,15 @@ function guestFrom(req, res) {
 function tellTheTeam(p, r, subject, heading, rows) {
   (async () => {
     const lines = rows.filter(([, v]) => v).map(([k, v]) => `${`${k}:`.padEnd(10)}${v}`);
-    const sent = await sendMail({
+    const mail = {
       to: teamRecipients(p.leadEmails ?? []),
       subject: subject.slice(0, 180),
       text: [heading, '', ...lines, '', 'Confirm or decline it in the studio: the project’s Reservations.'].join('\n'),
       replyTo: r.email || undefined
-    });
+    };
+    const sent = await sendMail(mail);
     await withReservations(p.id, (list) => { const x = list.find((y) => y.id === r.id); if (x) x.delivery = { ...sent, at: new Date().toISOString() }; });
+    await queueRetry('email', mail, sent, { pid: p.id, rid: r.id, field: 'delivery', key: null });
   })().catch((err) => console.warn('[reservations] email:', err.message));
 }
 
@@ -566,13 +569,16 @@ function tellWaiter(p, w) {
   const link = w.of === 'hall' && w.hotspot ? tourLink(p.id, w.space)
     : `${siteLink(p.id)}#${w.of === 'room' ? 'stay' : w.of === 'hall' ? 'events' : `reserve${w.outlet ? `-${w.outlet}` : ''}`}`;
   const text = `${venue}: good news, ${what} may now be free. Book it before someone else does: ${link}`;
-  Promise.all([
-    textGuest(w.phone, text),
-    w.email ? sendMail({ to: [w.email], subject: `A place may be free at ${venue}`, text: `Hello ${w.name},\n\n${text}\n\n${venue}`, ...venueMail(p) }) : null
-  ]).then(([texted, mailed]) => withReservations(p.id, (list) => {
-    const x = list.find((y) => y.id === w.id);
-    if (x) x.noticeDelivery = { ...texted, ...(mailed ? { email: mailed } : {}), at: new Date().toISOString() };
-  })).catch((err) => console.warn('[waitlist] notice:', err.message));
+  const mail = w.email ? { to: [w.email], subject: `A place may be free at ${venue}`, text: `Hello ${w.name},\n\n${text}\n\n${venue}`, ...venueMail(p) } : null;
+  const ref = { pid: p.id, rid: w.id, field: 'noticeDelivery' };
+  Promise.all([textGuest(w.phone, text), mail ? sendMail(mail) : null]).then(async ([texted, mailed]) => {
+    await withReservations(p.id, (list) => {
+      const x = list.find((y) => y.id === w.id);
+      if (x) x.noticeDelivery = { ...texted, ...(mailed ? { email: mailed } : {}), at: new Date().toISOString() };
+    });
+    await queueTexts(texted, w.phone, text, ref);
+    if (mail) await queueRetry('email', mail, mailed, { ...ref, key: 'email' });
+  }).catch((err) => console.warn('[waitlist] notice:', err.message));
 }
 
 // The Reservations inbox: every booking and waitlist entry (the team, or the project's staff).
@@ -839,10 +845,16 @@ reservationsRouter.patch('/:id/reservations/:rid', requireEditorSession, wrap(as
     : (status === 'confirmed'
       ? `${venue}: your table for ${r.party} on ${shortDay(r.date)} at ${r.time} is confirmed. See you then.`
       : `${venue}: sorry, we can’t seat you on ${shortDay(r.date)} at ${r.time}. Another time may be free: ${siteLink(p.id)}#reserve${r.outlet ? `-${r.outlet}` : ""}`);
-  Promise.all([textGuest(r.phone, short), r.email ? sendMail({ to: [r.email], ...mail, ...venueMail(p) }) : null])
-    .then(([texted, mailed]) => withReservations(p.id, (list) => {
-      const x = list.find((y) => y.id === r.id);
-      if (x) x.guestDelivery = { ...(mailed ?? { sent: false, reason: 'no email address' }), ...texted, at: new Date().toISOString() };
-    }))
+  const guestMail = r.email ? { to: [r.email], ...mail, ...venueMail(p) } : null;
+  const ref = { pid: p.id, rid: r.id, field: 'guestDelivery' };
+  Promise.all([textGuest(r.phone, short), guestMail ? sendMail(guestMail) : null])
+    .then(async ([texted, mailed]) => {
+      await withReservations(p.id, (list) => {
+        const x = list.find((y) => y.id === r.id);
+        if (x) x.guestDelivery = { ...(mailed ?? { sent: false, reason: 'no email address' }), ...texted, at: new Date().toISOString() };
+      });
+      await queueTexts(texted, r.phone, short, ref);
+      if (guestMail) await queueRetry('email', guestMail, mailed, { ...ref, key: null });
+    })
     .catch((err) => console.warn('[reservations] guest message:', err.message));
 }));

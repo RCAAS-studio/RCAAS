@@ -7,6 +7,7 @@ import { STORY_AUDIENCES, STORY_FORMATS, STORY_QUESTIONS, nextStoryTab, storytel
 import { StorytellingShowcase } from '../components/StorytellingShowcase';
 import { StoryComparison } from '../components/StoryComparison';
 import '../storytelling.css';
+import { srcSetFor } from '../data/images';
 
 interface Props { onNavigate: (path: RoutePath) => void }
 const FORMAT_ICONS = [Compass, Film, Smartphone, Monitor, SplitSquareHorizontal];
@@ -72,7 +73,7 @@ export const VisualStorytellingPage: React.FC<Props> = ({ onNavigate }) => {
           </div>
         </div>
         <figure className="story-hero-media">
-          <img src={withBase('/media/hero.jpg')} alt="A view through the captured brick courtyard towards Chilancho Stupa in Kirtipur"
+          <img src={withBase('/media/hero.jpg')} srcSet={srcSetFor(withBase('/media/hero.jpg'))} alt="A view through the captured brick courtyard towards Chilancho Stupa in Kirtipur"
             width="1600" height="900" fetchPriority="high" decoding="async" data-fx="seen" />
           <figcaption><span>Chilancho Stupa, Kirtipur</span><span>Still from a 3D capture</span></figcaption>
         </figure>
@@ -105,7 +106,7 @@ export const VisualStorytellingPage: React.FC<Props> = ({ onNavigate }) => {
         {STORY_FORMATS.map((format, index) => (
           <div key={format.id} role="tabpanel" id={`format-panel-${index}`} aria-labelledby={`format-tab-${index}`} hidden={activeFormat !== index} tabIndex={0}>
             {activeFormat === index && <div className="story-format-detail" id={format.id}>
-              <figure className="story-format-image"><img src={withBase(format.image)} alt={format.imageAlt} width="1600" height="900" loading="lazy" decoding="async" data-fx="seen" /><figcaption>{format.imageCaption}</figcaption></figure>
+              <figure className="story-format-image"><img src={withBase(format.image)} srcSet={srcSetFor(withBase(format.image))} alt={format.imageAlt} width="1600" height="900" loading="lazy" decoding="async" data-fx="seen" /><figcaption>{format.imageCaption}</figcaption></figure>
               <div className="story-format-copy"><h3>{format.name}</h3><p>{format.description}</p><h4>What we plan together</h4><ul>{format.includes.map(item => <li key={item}>{item}</li>)}</ul><p className="story-ideal"><strong>Ideal for</strong> {format.ideal}</p>
                 <details className="story-specs"><summary>Production details</summary><p>{format.specs}</p></details>
                 <a {...link(storytellingEnquiry(format.id))} className="story-button story-button-dark">Discuss this format <ArrowUpRight size={17} aria-hidden="true" /><span className="sr-only">: {format.name}</span></a>
@@ -135,7 +136,7 @@ export const VisualStorytellingPage: React.FC<Props> = ({ onNavigate }) => {
       <section id="evidence" className="story-section story-wrap" aria-labelledby="evidence-title">
         <div className="story-section-heading"><h2 id="evidence-title">A real place.<br />A starting point for stories.</h2><p>The Chilancho Stupa capture is an in-house RCAAS research project. The excerpt and existing interactive viewer above are the available evidence.</p></div>
         <div className="story-evidence">
-          <figure><img src={withBase('/media/hero.jpg')} alt="Brick stupas and carved architectural details in the Chilancho capture" width="1600" height="900" loading="lazy" decoding="async" data-fx="seen" /><figcaption>Chilancho Stupa · Kirtipur, Kathmandu Valley</figcaption></figure>
+          <figure><img src={withBase('/media/hero.jpg')} srcSet={srcSetFor(withBase('/media/hero.jpg'))} alt="Brick stupas and carved architectural details in the Chilancho capture" width="1600" height="900" loading="lazy" decoding="async" data-fx="seen" /><figcaption>Chilancho Stupa · Kirtipur, Kathmandu Valley</figcaption></figure>
           <div><p className="story-service">Heritage research</p><h3>Chilancho Stupa</h3><dl><div><dt>The objective</dt><dd>Record the place in 3D so its form and architectural detail can be explored.</dd></div><div><dt>The available work</dt><dd>A captured model in the existing XGRIDS viewer and a short camera-move excerpt.</dd></div><div><dt>The next possibility</dt><dd>A story-led edit, with interpretation and approved context shaped around an audience.</dd></div></dl><a href="#showcase" className="story-text-link">See the capture <ArrowUpRight size={17} aria-hidden="true" /></a></div>
         </div>
       </section>

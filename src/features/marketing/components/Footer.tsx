@@ -7,6 +7,7 @@ import { withBase } from '../../../lib/basePath';
 import { studioHref } from '../../../lib/hosts';
 import { emailProblem } from '../../../lib/contactRules';
 import { sendLead } from '../lib/leads';
+import { srcSetFor } from '../data/images';
 
 interface FooterProps {
   onNavigate: (path: RoutePath) => void;
@@ -126,7 +127,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenRegister }) =>
           {/* Brand, sign-up, contact */}
           <div className="rc-footer-brand">
             <a href={withBase('/')} onClick={(event) => navigate(event, '/')} className="rc-footer-logo" aria-label="RCAAS Technology, home">
-              <img src={withBase('/logo.png')} alt="" width="522" height="106" loading="lazy" decoding="async" />
+              <img src={withBase('/logo.png')} srcSet={srcSetFor(withBase('/logo.png'))} alt="" width="522" height="106" loading="lazy" decoding="async" />
             </a>
             <p className="rc-footer-description">{SITE_METADATA.tagline}</p>
             <p className="rc-footer-location">Reality capture & immersive experiences.<br />{SITE_METADATA.location}</p>

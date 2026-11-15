@@ -33,7 +33,8 @@ export function EventBooking({ project, events, preview = false, initialHall = '
   tour?: boolean;
 }) {
   const [cal, setCal] = useState<EventCalendar | null>(null);
-  const [hall, setHall] = useState(events.halls.some((h) => h.id === initialHall) ? initialHall : '');
+  // a venue with one hall has nothing to pick: start on it
+  const [hall, setHall] = useState(events.halls.some((h) => h.id === initialHall) ? initialHall : events.halls.length === 1 ? events.halls[0].id : '');
   // A website chapter's "Book this hall" (SiteParts BookThisHall) picks it here.
   useEffect(() => {
     const pick = (e: Event) => { const id = (e as CustomEvent<string>).detail; if (events.halls.some((h) => h.id === id)) setHall(id); };

@@ -11,6 +11,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
+    "test:e2e": "playwright test",
     "test": "node --test test/*.test.mjs && cd server && npm test",
     "docs:dev-guide": "node scripts/dev-guide.mjs",
     "css:rcaas": "tailwindcss -i src/features/marketing/rcaas.css -o src/features/marketing/rcaas.out.css --minify"
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/cli": "^4.3.3",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.17",

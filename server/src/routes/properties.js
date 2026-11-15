@@ -34,6 +34,8 @@ import path from 'node:path';
 import { DATA_DIR } from '../dataDir.js';
 import { sendMail, teamRecipients, venueMail } from '../mailer.js';
 import { conversionKey } from './stats.js';
+import { visibleProject } from '../middleware/projectAccess.js';
+export { visibleProject } from '../middleware/projectAccess.js';
 
 export const propertiesRouter = Router();
 
@@ -65,12 +67,6 @@ async function manageable(req, res) {
 }
 
 /** Anyone who can see the project: its enquiries, newest first. */
-export async function visibleProject(req, res) {
-  const session = await freshSession(req);
-  const p = await getProperty(req.params.id);
-  if (!p || !propertyIsVisible(p, session)) { res.status(404).json(NOT_FOUND); return null; }
-  return p;
-}
 /** Anyone who can see the project, or is on its client's staff: for the
  *  routes that answer guests (enquiries, reservations, the report). */
 export async function staffProject(req, res) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -477,7 +477,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                   className="grid grid-cols-1 lg:grid-cols-12 gap-0 rounded-2xl border border-line bg-white overflow-hidden shadow-sm"
                 >
                   <div className="lg:col-span-5 relative min-h-55 bg-zinc-900">
-                    <img loading="lazy" decoding="async" src={step.image} alt={step.imageAlt} className="absolute inset-0 w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={step.image} srcSet={srcSetFor(step.image)} alt={step.imageAlt} className="absolute inset-0 w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 bg-white/95 border border-line px-3 py-1.5 rounded-md text-xs font-mono text-zinc-900 shadow-xs">
                       Step {step.number} · {step.title}
@@ -558,7 +558,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                   <SpotlightCard className="h-full group" contentClassName="h-full flex flex-col">
                     <div className="relative h-44 overflow-hidden bg-zinc-900">
                       <img loading="lazy" decoding="async"
-                        src={discipline.image}
+                        src={discipline.image} srcSet={srcSetFor(discipline.image)}
                         alt={discipline.imageAlt}
                         className="w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-700"
                       />
@@ -796,7 +796,7 @@ export const HowWeWorkPage: React.FC<HowWeWorkPageProps> = ({ onNavigate }) => {
                 <SpotlightCard className="h-full group" contentClassName="h-full flex flex-col">
                   <div className="relative h-48 overflow-hidden bg-zinc-900">
                     <img loading="lazy" decoding="async"
-                      src={explainer.image}
+                      src={explainer.image} srcSet={srcSetFor(explainer.image)}
                       alt={explainer.imageAlt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />

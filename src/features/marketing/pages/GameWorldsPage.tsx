@@ -1,5 +1,5 @@
 import React from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import { ArrowRight, Box, Cpu, Gamepad2, Layers, Package, ScanLine, Sparkles } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -151,7 +151,7 @@ export const GameWorldsPage: React.FC<GameWorldsPageProps> = ({ onNavigate }) =>
             <div className="rounded-2xl overflow-hidden border border-line bg-surface p-3 shadow-lg">
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-zinc-900">
                 <img
-                  src={IMG['game-worlds/a-visitor-exploring-a-real-heritage-courtyard-ca']}
+                  src={IMG['game-worlds/a-visitor-exploring-a-real-heritage-courtyard-ca']} srcSet={srcSetFor(IMG['game-worlds/a-visitor-exploring-a-real-heritage-courtyard-ca'])}
                   alt="A visitor exploring a real heritage courtyard captured in 3D"
                   width="1376"
                   height="768"

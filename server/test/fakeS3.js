@@ -50,7 +50,7 @@ export async function startFakeS3({ bucket, accessKeyId, secretAccessKey, pageSi
       const size = Math.min(pageSize, Number(query['max-keys'] ?? 1000));
       const page = all.slice(start, start + size);
       const more = start + size < all.length;
-      return xml(res, 200, `<ListBucketResult><KeyCount>${page.length}</KeyCount>${page.map((k) => `<Contents><Key>${esc(k)}</Key></Contents>`).join('')}` +
+      return xml(res, 200, `<ListBucketResult><KeyCount>${page.length}</KeyCount>${page.map((k) => `<Contents><Key>${esc(k)}</Key><Size>${objects.get(k).body.length}</Size></Contents>`).join('')}` +
         `<IsTruncated>${more}</IsTruncated>${more ? `<NextContinuationToken>${start + size}</NextContinuationToken>` : ''}</ListBucketResult>`);
     }
 

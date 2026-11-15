@@ -89,9 +89,10 @@ export async function sendMail({ to, subject, text, replyTo, fromName }) {
       }),
       signal: AbortSignal.timeout(15000)
     });
-    if (!res.ok) return { sent: false, reason: resendReason(res.status, await res.json().catch(() => null)) };
+    // `retry`: a passing fault (busy, down, unreachable) worth sending again; settings problems aren't
+    if (!res.ok) return { sent: false, reason: resendReason(res.status, await res.json().catch(() => null)), ...(res.status === 429 || res.status >= 500 ? { retry: true } : {}) };
     return { sent: true, to };
   } catch (err) {
-    return { sent: false, reason: err.name === 'TimeoutError' ? 'The email service didn’t answer' : 'Couldn’t reach the email service' };
+    return { sent: false, retry: true, reason: err.name === 'TimeoutError' ? 'The email service didn’t answer' : 'Couldn’t reach the email service' };
   }
 }

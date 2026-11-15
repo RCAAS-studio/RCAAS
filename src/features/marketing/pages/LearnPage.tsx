@@ -9,6 +9,7 @@ import { CostGuidePage, READING_MINUTES as COST_MINUTES } from './CostGuidePage'
 import { SpotlightCard } from '../components/SpotlightCard';
 import { Placeholder } from '../components/Placeholder';
 import { buttonClass } from '../components/ui';
+import { srcSetFor } from '../data/images';
 
 interface LearnPageProps {
   currentPath: RoutePath;
@@ -95,7 +96,7 @@ const LearnHub: React.FC<{ onNavigate: (path: RoutePath) => void }> = ({ onNavig
                   <SpotlightCard className="h-full" contentClassName="h-full flex flex-col">
                     <div className="relative h-52 overflow-hidden bg-zinc-900">
                       <img loading="lazy" decoding="async"
-                        src={guide.image}
+                        src={guide.image} srcSet={srcSetFor(guide.image)}
                         alt={guide.imageAlt}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />

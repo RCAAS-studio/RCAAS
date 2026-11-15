@@ -3,11 +3,17 @@
 .next-new/
 .next-old/
 .next-preview/
+.next-browser/
+playwright-report/
+test-results/
 out/
 next-env.d.ts
 
 # documents
-docs/
+docs/*
+!docs/ARCHITECTURE.md
+!docs/FOLDER_STRUCTURE.md
+!docs/MARKETING_DEVELOPMENT.md
 
 # zed
 .zed/

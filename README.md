@@ -182,3 +182,5 @@ Built around **Three.js** and **React Three Fiber** for hyper-smooth real-time s
 
 </div>
 # RCAAS
+
+Developer references: [Architecture](docs/ARCHITECTURE.md), [folder ownership and file locations](docs/FOLDER_STRUCTURE.md), and [marketing development](docs/MARKETING_DEVELOPMENT.md). The homepage route is `src/app/(marketing)/page.tsx`; its named sections are in `src/features/marketing/home/components`. Run `npm run test:e2e` for Playwright browser regressions after installing Chromium with `npx playwright install chromium`.

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { startCanvasLoop } from '../lib/canvasLoop';
 
 interface SplatEmbedProps {
@@ -565,7 +565,7 @@ export const SplatEmbed: React.FC<SplatEmbedProps> = ({ initialDemo = 'chilancho
         /* Facade Mode with Active Kinetic Scanner */
         <div className="relative h-full w-full">
           <img
-            src={activeSpace.poster}
+            src={activeSpace.poster} srcSet={srcSetFor(activeSpace.poster)}
             alt={`Preview of the interactive 3D model of ${activeSpace.name}`}
             className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
             loading="lazy"

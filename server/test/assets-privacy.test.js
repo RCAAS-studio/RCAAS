@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomBytes, createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm, utimes, writeFile } from 'node:fs/promises';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
@@ -277,4 +277,85 @@ for (const driver of ['local', 's3']) test(`private files, publication, referenc
   await writeFile(path.join(f.data, 'uploads-staging', pending, 'empty.bin'), '');
   assert.equal((await f.request('POST', `/api/assets/${pending}/finalize`, {}, owner.cookie)).status, 400);
   assert.equal((await f.read(pending, 'scan.lcc2', owner.cookie)).status, 404, 'A rejected upload must not expose a partially copied package');
+});
+
+for (const driver of ['local', 's3']) test(`storage report and idle-upload removal, admins only (${driver})`, async t => {
+  let failing = false;
+  const f = await fixture(t, driver, { failRequest: (method, key) => failing && method === 'PUT' && key.endsWith('/tile with spaces.bin') });
+  const admin = await f.signup('admin@example.test'), editor = await f.signup('editor@example.test');
+  assert.equal((await f.request('GET', '/api/storage')).status, 401);
+  assert.equal((await f.request('GET', '/api/storage', undefined, editor.cookie)).status, 403);
+  assert.equal((await f.request('POST', '/api/storage/remove-idle-uploads', { idleDays: 1 }, editor.cookie)).status, 403);
+  assert.equal((await f.request('POST', '/api/storage/remove-idle-uploads', { idleDays: 0 }, admin.cookie)).status, 400);
+
+  const project = (await f.request('POST', '/api/properties', { title: 'Storage project' }, admin.cookie)).json.id;
+  const used = await f.upload(admin.cookie, scanFiles());
+  assert.equal((await f.request('PUT', '/api/scenes/stored-room', doc('stored-room', project, used), admin.cookie)).status, 200);
+  const spare = await f.upload(admin.cookie, scanFiles());
+  const half = Buffer.alloc(64, 7);
+  const idle = (await f.request('POST', '/api/assets', { files: [{ relPath: 'scan.lcc2', bytes: half.length }] }, editor.cookie)).json.assetId;
+  assert.equal((await f.request('PUT', `/api/assets/${idle}/files/chunk?relPath=scan.lcc2&offset=0`, half.subarray(0, 20), editor.cookie)).status, 200);
+  let partial = null;
+  if (driver === 's3') {
+    partial = (await f.request('POST', '/api/assets', { files: scanFiles().map(([relPath, bytes]) => ({ relPath, bytes: bytes.length })) }, admin.cookie)).json.assetId;
+    for (const [file, bytes] of scanFiles()) assert.equal((await f.request('PUT', `/api/assets/${partial}/files/chunk?relPath=${encodeURIComponent(file)}&offset=0`, bytes, admin.cookie)).status, 200);
+    failing = true;
+    assert.notEqual((await f.request('POST', `/api/assets/${partial}/finalize`, {}, admin.cookie)).status, 200);
+    failing = false;
+  }
+
+  const scanBytes = scanFiles().reduce((sum, [, bytes]) => sum + bytes.length, 0);
+  let report = (await f.request('GET', '/api/storage', undefined, admin.cookie)).json;
+  assert.equal(report.driver, driver);
+  const row = report.projects.find(p => p.id === project);
+  assert.equal(row.title, 'Storage project'); assert.equal(row.assets, 1); assert.ok(row.bytes >= scanBytes);
+  assert.deepEqual(report.unused.map(u => u.id), [spare], 'only the upload nothing points at is unused');
+  assert.equal(report.unused[0].uploadedBy, 'admin');
+  assert.ok(report.totalBytes >= 2 * scanBytes && report.totalBytes < 3 * scanBytes, 'a partial cloud copy is not counted as stored');
+  const waiting = report.unfinished.find(u => u.id === idle);
+  assert.deepEqual([waiting.stagedBytes, waiting.declaredBytes, waiting.ownerName, waiting.finished], [20, 64, 'editor', false]);
+  if (partial) assert.ok(report.unfinished.find(u => u.id === partial).partialBytes > 0, 'the failed copy is reported with its stored bytes');
+
+  assert.deepEqual((await f.request('POST', '/api/storage/remove-idle-uploads', { idleDays: 1 }, admin.cookie)).json.removed, [], 'fresh uploads are never removed');
+  const old = new Date(Date.now() - 3 * 86400000);
+  const age = async dir => {
+    for (const item of await readdir(dir, { withFileTypes: true })) {
+      const full = path.join(dir, item.name);
+      if (item.isDirectory()) await age(full);
+      await utimes(full, old, old);
+    }
+    await utimes(dir, old, old);
+  };
+  for (const id of [idle, partial].filter(Boolean)) {
+    await age(path.join(f.data, 'uploads-staging', id));
+    const recordFile = path.join(f.data, 'asset-records', `${id}.json`);
+    await writeFile(recordFile, JSON.stringify({ ...JSON.parse(await readFile(recordFile, 'utf8')), createdAt: old.toISOString() }));
+  }
+  const cleaned = (await f.request('POST', '/api/storage/remove-idle-uploads', { idleDays: 2 }, admin.cookie)).json;
+  assert.deepEqual(cleaned.removed.map(r => r.id).sort(), [idle, partial].filter(Boolean).sort());
+  report = (await f.request('GET', '/api/storage', undefined, admin.cookie)).json;
+  assert.deepEqual(report.unfinished, []);
+  assert.deepEqual(report.unused.map(u => u.id), [spare], 'the partial copy is gone from storage, finished uploads stay');
+  assert.equal((await f.request('PUT', `/api/assets/${idle}/files/chunk?relPath=scan.lcc2&offset=20`, half.subarray(20), editor.cookie)).status, 404);
+  assert.equal((await f.read(used, 'scan.lcc2', admin.cookie)).status, 200);
+  assert.equal((await f.read(spare, 'scan.lcc2', admin.cookie)).status, 200);
+});
+
+test('starting new uploads is rate limited per account; other accounts are unaffected', async t => {
+  const f = await fixture(t, 'local', { env: { UPLOAD_START_RATE_MAX: '3' } });
+  const a = await f.signup('first@example.test'), b = await f.signup('second@example.test');
+  const start = who => f.request('POST', '/api/assets', { files: [{ relPath: 'scan.lcc2', bytes: 10 }] }, who.cookie);
+  for (let i = 0; i < 3; i++) assert.equal((await start(a)).status, 200);
+  const refused = await start(a);
+  assert.equal(refused.status, 429); assert.match(refused.json.error, /pick the same files again/);
+  assert.equal((await start(b)).status, 200);
+});
+
+test('health fails (503) when free disk is under HEALTH_MIN_FREE_MB, without saying why to the caller', async t => {
+  const fine = await fixture(t, 'local');
+  const ok = await fine.request('GET', '/api/health');
+  assert.deepEqual([ok.status, ok.json], [200, { ok: true }]);
+  const full = await fixture(t, 'local', { env: { HEALTH_MIN_FREE_MB: String(1024 * 1024 * 1024) } });
+  const low = await full.request('GET', '/api/health');
+  assert.deepEqual([low.status, low.json], [503, { ok: false }], 'production replies carry no paths or sizes');
 });

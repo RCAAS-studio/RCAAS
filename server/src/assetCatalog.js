@@ -25,3 +25,14 @@ export async function completeAssetRecord(id, files) {
   await writeFileWhole(fileOf(id), JSON.stringify({ ...record, status: 'ready', completedAt: new Date().toISOString(), files }));
 }
 export const removeAssetRecord = id => fs.rm(fileOf(id), { force: true });
+/** Every catalog record: id -> record. */
+export async function allAssetRecords() {
+  let names;
+  try { names = await fs.readdir(directory); } catch (error) { if (error.code === 'ENOENT') return new Map(); throw error; }
+  const out = new Map();
+  for (const name of names.filter(name => name.endsWith('.json') && validAssetId(name.slice(0, -5)))) {
+    const record = await assetRecord(name.slice(0, -5));
+    if (record) out.set(record.assetId, record);
+  }
+  return out;
+}

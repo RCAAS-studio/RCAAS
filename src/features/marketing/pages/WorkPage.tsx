@@ -7,6 +7,7 @@ import { CaseStudyPage } from './CaseStudyPage';
 import { SplatEmbed } from '../components/SplatEmbed';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { pageShellClass } from '../components/ui';
+import { srcSetFor } from '../data/images';
 
 interface WorkPageProps {
   currentPath: RoutePath;
@@ -152,7 +153,7 @@ export const WorkPage: React.FC<WorkPageProps> = ({ currentPath, onNavigate }) =
                     {/* Poster Image */}
                     <div className="relative aspect-16/10 w-full overflow-hidden bg-zinc-900">
                       <img loading="lazy" decoding="async"
-                        src={project.heroImage}
+                        src={project.heroImage} srcSet={srcSetFor(project.heroImage)}
                         alt={project.posterAlt || `3D view of ${project.title}`}
                         className="h-full w-full object-cover object-center opacity-85 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
                       />

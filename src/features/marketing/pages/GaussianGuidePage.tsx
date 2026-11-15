@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -564,7 +564,7 @@ export const GaussianGuidePage: React.FC<GaussianGuidePageProps> = ({ onNavigate
                     )}
                     <figure className="rounded-xl border border-line bg-white overflow-hidden shadow-xs group">
                       <div className="aspect-[4/3] overflow-hidden bg-zinc-900">
-                        <img loading="lazy" decoding="async" src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                        <img loading="lazy" decoding="async" src={item.image} srcSet={srcSetFor(item.image)} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       </div>
                       <figcaption className="p-3">
                         <p className="text-sm font-bold text-zinc-900 font-display">{item.title}</p>
@@ -606,7 +606,7 @@ export const GaussianGuidePage: React.FC<GaussianGuidePageProps> = ({ onNavigate
                   <SpotlightCard className="h-full group" contentClassName="h-full flex flex-col">
                     <div className="h-32 overflow-hidden bg-zinc-900">
                       <img loading="lazy" decoding="async"
-                        src={use.image}
+                        src={use.image} srcSet={srcSetFor(use.image)}
                         alt={use.imageAlt}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />

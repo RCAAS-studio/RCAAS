@@ -295,7 +295,7 @@ export function NewProjectDialog({ onClose }: { onClose: () => void }) {
                     <p className="np-drop-title">{stage ? `Converting: ${stage}…` : `Uploading… ${pct}%`}</p>
                     <div className="np-bar"><div style={{ width: `${pct}%` }} /></div>
                     <p className="np-drop-sub">
-                      {formatBytes(progress?.bytesSent ?? 0)} of {formatBytes(progress?.bytesTotal ?? 0)}. A dropped connection resumes where it stopped.
+                      {formatBytes(progress?.bytesSent ?? 0)} of {formatBytes(progress?.bytesTotal ?? 0)}. A dropped connection resumes where it stopped. After a reload, pick the same files again to continue.
                     </p>
                   </div>
                 )}

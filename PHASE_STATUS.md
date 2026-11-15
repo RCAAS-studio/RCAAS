@@ -14,7 +14,7 @@ Review date: 14 November 2026. Current phase: **04, in progress**. Rechecked the
 | 05 Studio/publishing | Existing authoring, undo, snapshots, ready checks and website preview. | Full authoring workflow browser/device evidence and additional planned UX. |
 | 06 Viewer | Existing navigation, auto quality, hotspots, translations and reduced-motion paths. | Real GPU/mobile/4G timing and accessibility checks. |
 | 07 Client websites | Existing templates, draft/publish, preview and host helpers. | Final client content, clean links and actual host/TLS checks. |
-| 08 Bookings/leads | Server validation, clash checks, per-project queues and stored delivery results. | Verified sender/recipient delivery and durable notification retries. |
+| 08 Bookings/leads | Server validation, clash checks, per-project queues and stored delivery results. Enquiry emails and booking notices (guest SMS/WhatsApp/email, waitlist, team booking email) are retried on passing failures (15 Nov). | Verified sender domain; real SMS/WhatsApp provider checks. |
 | 09 Analytics | Existing visitor/intent reports. | Validate definitions, privacy choices and real reporting journeys. |
 | 10 Commercial lifecycle | Some project/review functionality exists. | Renewal, suspension, retention, billing and named operating responsibilities. |
 | 11 AI/languages | Optional existing concierge/translation features and translated viewer. | Keys, budgets, grounded output checks; company pages are English. |
@@ -53,7 +53,7 @@ Read-only inventory found 3 projects (`basera`, `chyasal-house`, `office-chyasal
 
 ## Next implementation slice
 
-Continue Phase 04 using `PHASE_04_ASSETS.md`: verify real private R2 delivery and browser uploads, then add usage/catalog reporting, deliberate abandoned-upload cleanup and a persistent resume workflow. Draft privacy and whole-asset reference protection already exist; do not reimplement them. Keep staging/restore deployment gates open and do not advance to Phase 05 based on test totals alone.
+Continue Phase 04 using `PHASE_04_ASSETS.md`: usage reporting, deliberate idle-upload removal, resume after reload and a per-account upload rate limit were added on 15 November. Phase 05–07 remaining gates are browser/device/content evidence. Phase 08: enquiry emails and booking notices now retry. Phase 11: monthly Claude token budget. Phase 13: health check covers disk and data folder. Phase 04 left: storage quotas (needs the owner's numbers), a retention rule for unused finished uploads (owner), a processing queue, and real private R2 delivery and browser/device uploads. Draft privacy and whole-asset reference protection already exist; do not reimplement them. Keep staging/restore deployment gates open and do not advance to Phase 05 based on test totals alone.
 
 ## Validation
 

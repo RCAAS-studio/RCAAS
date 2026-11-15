@@ -1,5 +1,5 @@
 import React from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
 import { RoutePath } from '../types';
@@ -87,7 +87,7 @@ export const ThankYouPage: React.FC<ThankYouPageProps> = ({ onNavigate }) => {
               transition={{ duration: 0.5, delay: 0.35 + i * 0.1 }}
               className="group relative block aspect-[4/3] rounded-2xl overflow-hidden border border-line bg-zinc-900"
             >
-              <img loading="lazy" decoding="async" src={work.image} alt={`3D view of ${work.name}`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img loading="lazy" decoding="async" src={work.image} srcSet={srcSetFor(work.image)} alt={`3D view of ${work.name}`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
               <span className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
                 <span className="text-sm font-bold text-white font-display">{work.name}</span>

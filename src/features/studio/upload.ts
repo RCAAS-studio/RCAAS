@@ -11,7 +11,7 @@
  * uploaded as one file and extracted server-side on finalize
  * (server/src/routes/assets.js), so the client never needs to look inside it.
  */
-import { createAsset, initAssetFile, uploadAssetChunk, finalizeAsset, finalizeAudio, finalizeVideo360 } from '../../lib/api';
+import { ApiError, createAsset, initAssetFile, uploadAssetChunk, finalizeAsset, finalizeAudio, finalizeVideo360 } from '../../lib/api';
 import type { StagedFile, UploadProgress, UploadResult } from '../../@types/upload.types';
 import type { ConvertedModel, UpChoice } from './modelConvert';
 
@@ -188,7 +188,7 @@ export async function uploadVariant(
   if (!isZip && !files.some((f) => f.relPath.toLowerCase().endsWith('.lcc2'))) {
     const c = await convertOffThread(files, up, onStage);
     onStage('');
-    const result = await sendFiles([{ relPath: c.file.name, file: c.file }], onProgress);
+    const result = await sendFiles([{ relPath: c.file.name, file: c.file }], onProgress, finalizeAsset);
     return {
       ...result,
       converted: {
@@ -198,14 +198,62 @@ export async function uploadVariant(
     };
   }
 
-  return sendFiles(files, onProgress);
+  return sendFiles(files, onProgress, finalizeAsset);
 }
 
-/** Create an asset, push every file 8 MB at a time, finalize. */
-async function sendFiles(files: StagedFile[], onProgress: (p: UploadProgress) => void): Promise<UploadResult> {
+/* Resume after a reload: each unfinished upload's id is kept in this browser
+ * under a hash of its files (path, size, last modified). Picking the same
+ * files again continues from the server's byte counts, and retries a
+ * finalize that failed. A changed file, another account or an upload the
+ * server removed (Storage → idle uploads) starts afresh. */
+const RESUME_KEY = 'rcaas-upload-resume';
+const RESUME_MAX = 20;
+
+export async function uploadFingerprint(files: StagedFile[]): Promise<string | null> {
+  if (!globalThis.crypto?.subtle) return null; // not a secure context: no resume after reload
+  const text = files.map(({ relPath, file }) => `${relPath}\u0000${file.size}\u0000${file.lastModified}`).sort().join('\n');
+  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function resumeList(): Record<string, string> {
+  try { const all = JSON.parse(localStorage.getItem(RESUME_KEY) || '{}'); return all && typeof all === 'object' && !Array.isArray(all) ? all : {}; }
+  catch { return {}; }
+}
+export function rememberUpload(print: string | null, assetId: string | null) {
+  if (!print) return;
+  const all = resumeList();
+  delete all[print];
+  if (assetId) all[print] = assetId;
+  const keys = Object.keys(all);
+  for (const old of keys.slice(0, Math.max(0, keys.length - RESUME_MAX))) delete all[old];
+  try { localStorage.setItem(RESUME_KEY, JSON.stringify(all)); } catch { /* private mode: no resume after reload */ }
+}
+export const rememberedUpload = (print: string | null) => (print && typeof resumeList()[print] === 'string' ? resumeList()[print] : null);
+
+/** The remembered upload if the server still has it for this account, else a new one. */
+async function startOrResume(files: StagedFile[]): Promise<{ assetId: string; print: string | null }> {
+  const print = await uploadFingerprint(files);
+  const known = rememberedUpload(print);
+  if (known) {
+    try {
+      await initAssetFile(known, files[0].relPath);
+      return { assetId: known, print };
+    } catch (e) {
+      // gone, finished, or someone else's: start a new one
+      if (!(e instanceof ApiError) || ![403, 404, 409].includes(e.status)) throw e;
+      rememberUpload(print, null);
+    }
+  }
   const created = await createAsset(files.map(({ relPath, file }) => ({ relPath, bytes: file.size })));
-  if (!created?.assetId) throw new Error('Could not start the upload — the server is unreachable.');
-  const { assetId } = created;
+  if (!created?.assetId) throw new Error('Could not start the upload: the server is unreachable.');
+  rememberUpload(print, created.assetId);
+  return { assetId: created.assetId, print };
+}
+
+/** Create (or resume) an asset, push every file 8 MB at a time, finalize. */
+async function sendFiles<T>(files: StagedFile[], onProgress: (p: UploadProgress) => void, finalize: (assetId: string) => Promise<T | null>): Promise<T> {
+  const { assetId, print } = await startOrResume(files);
 
   const bytesTotal = files.reduce((sum, f) => sum + f.file.size, 0);
   const sentPerFile = new Map<string, number>();
@@ -220,8 +268,15 @@ async function sendFiles(files: StagedFile[], onProgress: (p: UploadProgress) =>
     await uploadOneFile(assetId, staged, (sent) => { sentPerFile.set(staged.relPath, sent); report(); });
   }
 
-  const result = await finalizeAsset(assetId);
-  if (!result) throw new Error('Upload finished but the server did not confirm it — try again.');
+  let result: T | null;
+  try { result = await finalize(assetId); }
+  catch (e) {
+    // a refused package is gone from the server; anything else can be retried by picking the same files
+    if (e instanceof ApiError && e.status >= 400 && e.status < 500 && e.status !== 409) rememberUpload(print, null);
+    throw e;
+  }
+  if (!result) throw new Error('Upload finished but the server did not confirm it. Pick the same files again to retry.');
+  rememberUpload(print, null);
   return result;
 }
 
@@ -251,11 +306,7 @@ export async function uploadAudio(file: File, onProgress: (p: UploadProgress) =>
   if (invalid) throw new Error(invalid);
   // Keep the name readable in the inspector, but nothing a path could trip on.
   const relPath = file.name.replace(/[^A-Za-z0-9._-]+/g, '-');
-  const created = await createAsset([{ relPath, bytes: file.size }]);
-  if (!created?.assetId) throw new Error('Could not start the upload: the server is unreachable.');
-  await uploadOneFile(created.assetId, { relPath, file }, (bytesSent) => onProgress({ bytesSent, bytesTotal: file.size }));
-  const result = await finalizeAudio(created.assetId);
-  if (!result) throw new Error('Upload finished but the server did not confirm it. Try again.');
+  const result = await sendFiles([{ relPath, file }], onProgress, finalizeAudio);
   return `asset://${result.assetId}/${result.file}`;
 }
 
@@ -299,10 +350,5 @@ export async function uploadVideo360(file: File, onProgress: (p: UploadProgress)
   const invalid = await checkVideo360(file);
   if (invalid) throw new Error(invalid);
   const relPath = file.name.replace(/[^A-Za-z0-9._-]+/g, '-');
-  const created = await createAsset([{ relPath, bytes: file.size }]);
-  if (!created?.assetId) throw new Error('Could not start the upload: the server is unreachable.');
-  await uploadOneFile(created.assetId, { relPath, file }, (bytesSent) => onProgress({ bytesSent, bytesTotal: file.size }));
-  const result = await finalizeVideo360(created.assetId);
-  if (!result) throw new Error('Upload finished but the server did not confirm it. Try again.');
-  return result;
+  return sendFiles([{ relPath, file }], onProgress, finalizeVideo360);
 }

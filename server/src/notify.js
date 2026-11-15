@@ -48,9 +48,10 @@ export const whatsappOn = () => !!(process.env.WHATSAPP_TOKEN && process.env.WHA
 async function post(url, init) {
   try {
     const res = await fetch(url, { method: 'POST', ...init, signal: AbortSignal.timeout(15000) });
-    return res.ok ? { sent: true } : { sent: false, reason: `the service said ${res.status}` };
+    // `retry`: busy, down or unreachable, worth sending again (outbox.js); a refusal isn't
+    return res.ok ? { sent: true } : { sent: false, reason: `the service said ${res.status}`, ...(res.status === 429 || res.status >= 500 ? { retry: true } : {}) };
   } catch (err) {
-    return { sent: false, reason: err.name === 'TimeoutError' ? 'the service didn’t answer' : 'couldn’t reach the service' };
+    return { sent: false, retry: true, reason: err.name === 'TimeoutError' ? 'the service didn’t answer' : 'couldn’t reach the service' };
   }
 }
 

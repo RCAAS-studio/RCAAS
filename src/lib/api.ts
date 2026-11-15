@@ -442,6 +442,18 @@ export const makeResetLink = (id: string) =>
   request<{ path: string; expires: string }>(`/api/team/${encodeURIComponent(id)}/reset`, { method: 'POST' });
 export const removeTeammate = (id: string) =>
   request<{ projectsReassigned: number }>(`/api/team/${encodeURIComponent(id)}`, { method: 'DELETE' });
+/** Admin-only: what's stored per project, finished uploads nothing uses, unfinished uploads. */
+export type StorageReport = {
+  driver: 'local' | 's3'; totalBytes: number; totalFiles: number;
+  projects: { id: string; title: string | null; assets: number; bytes: number }[];
+  unused: { id: string; files: number; bytes: number; uploadedAt: string | null; uploadedBy: string | null }[];
+  ai: { month: string; calls: number; inputTokens: number; outputTokens: number; limit: number | null };
+  unfinished: { id: string; ownerName: string | null; startedAt: string | null; lastActivityAt: string; stagedBytes: number; partialBytes: number; declaredBytes: number | null; finished: boolean }[];
+};
+export const getStorage = () => request<StorageReport>('/api/storage');
+/** Admin-only: remove unfinished uploads idle for at least `idleDays`. */
+export const removeIdleUploads = (idleDays: number) =>
+  request<{ removed: { id: string; bytes: number }[]; kept: { id: string; reason: string }[] }>('/api/storage/remove-idle-uploads', { method: 'POST', body: JSON.stringify({ idleDays }) });
 /** "Forgot password": the server emails a reset link if the email has an account. */
 export const requestPasswordReset = (email: string) =>
   request<{ ok: true }>('/api/auth/forgot', { method: 'POST', body: JSON.stringify({ email }) });

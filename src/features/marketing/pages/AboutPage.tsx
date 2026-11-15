@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -192,7 +192,7 @@ const TeamCard: React.FC<{ member: TeamMember }> = ({ member }) => {
       <div className="relative aspect-4/5 overflow-hidden bg-surface-sunken">
         {member.photo && (
           <img loading="lazy" decoding="async"
-            src={withBase(member.photo)}
+            src={withBase(member.photo)} srcSet={srcSetFor(withBase(member.photo))}
             alt={member.photoIsPlaceholder ? '' : member.name ?? 'Team member'}
             className="team-portrait absolute inset-0 w-full h-full object-cover"
           />
@@ -382,7 +382,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           >
             <div className="lg:col-span-5 relative min-h-65 bg-zinc-900">
               <img loading="lazy" decoding="async"
-                src={IMG['about/a-heritage-courtyard-during-restoration-and-the']}
+                src={IMG['about/a-heritage-courtyard-during-restoration-and-the']} srcSet={srcSetFor(IMG['about/a-heritage-courtyard-during-restoration-and-the'])}
                 alt="A heritage courtyard during restoration, and the same courtyard being scanned"
                 className="absolute inset-0 w-full h-full object-cover"
               />
@@ -436,7 +436,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                     transition={{ duration: 0.45, delay: i * 0.1 }}
                     className="relative rounded-2xl overflow-hidden border border-line bg-zinc-900 aspect-4/5roup"
                   >
-                    <img loading="lazy" decoding="async" src={half.image} alt="" className="absolute inset-0 w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-700" />
+                    <img loading="lazy" decoding="async" src={half.image} srcSet={srcSetFor(half.image)} alt="" className="absolute inset-0 w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-700" />
                     <div className="absolute inset-0 bg-linear-to-trom-black/75 via-black/10 to-transparent" />
                     <figcaption className="absolute bottom-4 left-4 right-4">
                       <span className="w-9 h-9 rounded-lg bg-white/95 flex items-center justify-center shadow-xs mb-2">

@@ -260,7 +260,7 @@ ${h('learn')}
 <p>Nobody needs to read every file. The code is about ${Math.round(graph.files.reduce((n, f) => n + read(f).split('\n').length, 0) / 1000)} thousand lines across ${graph.files.length} files, and most of a day's understanding comes from following a few requests from the button to the file on disk. This plan gets a developer (or the owner) to the point of making a safe change by the end of one day.</p>
 ${table(['When', 'Do this', 'Read'], [
   ['Hour 1', 'Run it and use it like a client. Open the home page, a tour, the studio, a project\'s website (<code>/s/:project</code>) and the Reservations inbox. Book a table from a hotspot and confirm it.', `${ch('setup')}, ${ch('product')}`],
-  ['Hour 2', 'Learn the shape: two programs (the Next.js site and the Express API), and how a page is built from layouts and components.', `${ch('arch')}, ${ch('layout')}. Files: <code>src/app/layout.tsx</code>, <code>src/app/(site)/layout.tsx</code>, <code>src/features/marketing/layout/SitePage.tsx</code>, <code>src/app/(site)/page.tsx</code>`],
+  ['Hour 2', 'Learn the shape: two programs (the Next.js site and the Express API), and how a page is built from layouts and components.', `${ch('arch')}, ${ch('layout')}. Files: <code>src/app/layout.tsx</code>, <code>src/app/(marketing)/layout.tsx</code>, <code>src/features/marketing/MarketingShell.tsx</code>, <code>src/app/(marketing)/page.tsx</code>`],
   ['Hour 3', 'Follow one request end to end, with the files open side by side: a guest\'s Book now on a table hotspot.', `${ch('flows')}. Files: <code>HotspotBookCard.tsx</code> → <code>lib/api.ts requestHere</code> → <code>server/src/routes/reservations.js</code> → <code>server/src/reservations.js</code>`],
   ['Hour 4', 'See the data. Open the data folder (<code>server/src/data</code> in development) and read a space\'s JSON, a published copy (<code>:id@n.json</code>), a website and a reservations file.', `${ch('data')}`],
   ['Hour 5', 'The 3D tour: how a scan loads, how the camera walks, how hotspots follow the view.', `${ch('three')}. Files: <code>App.tsx</code> (<code>Stage</code>), <code>useSceneManager.ts</code>, <code>useLccWalker.ts</code>, <code>sceneDoc.ts</code>, <code>HotspotMarkers.tsx</code>`],
@@ -391,7 +391,7 @@ ${table(['Where', 'Command', 'Runs'], [...scripts('package.json').map(([k, v]) =
 
 ${h('repo', 5)}
 ${table(['Folder', 'What is in it'], [
-  ['src/app', `Next.js routes. <code>(site)</code> is the marketing site, <code>studio</code> the authoring app, <code>tour</code> and <code>t</code> the tours, <code>s</code> client websites. ${ch('layout')} shows how each page is put together, and ${ch('pages')} lists them all.`],
+  ['src/app', `Next.js routes. <code>(marketing)</code> is the marketing site, <code>studio</code> the authoring app, <code>tour</code> and <code>t</code> the tours, <code>s</code> client websites. ${ch('layout')} shows how each page is put together, and ${ch('pages')} lists them all.`],
   ['src/features/auth', 'Sign-in, sign-up, forgot and change password (<code>AuthPanel</code>, <code>PasswordChange</code>), and who is signed in (<code>useSession</code>, <code>useStudioSession</code>).'],
   ['src/features/booking', 'Booking rules (<code>booking.ts</code>) and every booking form: tables, rooms, halls, the waitlist, and Book now on a hotspot (<code>HotspotBookCard</code>).'],
   ['src/features/hotspots', 'Hotspot markers and cards over the 3D view, their icons, and the maths that places them.'],
@@ -416,19 +416,17 @@ ${table(['Folder', 'What is in it'], [
 ].map(([a, b]) => `<tr><td><code>${a}</code></td><td>${b}</td></tr>`))}
 
 ${h('layout')}
-<p>Next.js builds every page from the folders in <code>src/app</code>. A <code>layout.tsx</code> wraps every page below it and stays on screen while you move between those pages; a <code>page.tsx</code> is one URL. A folder in brackets, like <code>(site)</code>, groups pages under one layout without adding to the URL. That is why the nav never reloads on the marketing site: it lives in the group's layout, not in each page.</p>
+<p>Next.js builds every page from the folders in <code>src/app</code>. A <code>layout.tsx</code> wraps every page below it and stays on screen while you move between those pages; a <code>page.tsx</code> is one URL. A folder in brackets, like <code>(marketing)</code>, groups pages under one layout without adding to the URL. That is why the nav never reloads on the marketing site: it lives in the group's layout, not in each page.</p>
 <h2>The marketing site</h2>
-<div class="tree">src/app/layout.tsx                    every page: &lt;html&gt;, the Inter font, globals.css, the theme
-│                                     script (dark or light before first paint), site-wide metadata
-└─ src/app/(site)/layout.tsx          the marketing pages: &lt;main class="site lp"&gt; (the scroll
-   │                                  container), site.css + landing.css, JSON-LD, and the Navbar
-   ├─ features/marketing/layout/Navbar.tsx    stays put while pages change; AccountMenu when signed in
-   └─ src/app/(site)/page.tsx         one page, e.g. the home page
-      └─ features/marketing/layout/SitePage.tsx   slides in and out between pages, then adds:
-         ├─ the page's own sections   home: features/marketing/home/Hero, ScanStory,
-         │                            WhyTours, ProvenSpecs, WaysIn, FourSteps, EnquiryBleed, Sectors
-         ├─ features/marketing/layout/ContactBand.tsx   "Have a space worth walking?" (contact={false} hides it)
-         └─ features/marketing/layout/Footer.tsx        links: add a page to its COLUMNS list</div>
+<div class="tree">src/app/layout.tsx: document, fonts, theme and global metadata
++ src/app/(marketing)/layout.tsx: scoped CSS and persistent MarketingShell
+  + features/marketing/MarketingShell.tsx: header, footer, actions and one main
+  + src/app/(marketing)/page.tsx: native home entry
+    + features/marketing/home/HomeRoute.tsx: action adapter
+      + features/marketing/home/HomePage.tsx: ten named section components
+  + src/app/(marketing)/services/.../page.tsx: native service URL entries
+  + features/marketing/routing/: compatibility content adapter and metadata
+  + src/app/(marketing)/[...slug]/: moved/blog/unknown compatibility URLs</div>
 <h2>The tour and the studio</h2>
 <div class="tree">src/app/tour/page.tsx → TourClient.tsx → features/scene/App.tsx (browser only)
                                            ├─ Stage: the 3D canvas (scan, camera, hotspots)
@@ -595,7 +593,7 @@ ${h('recipes', 16)}
 <h3>Add a database table</h3>
 <p>Add <code>server/db/00N_name.sql</code> (tables in the <code>app</code> schema, row-level security on), and keep the store's exports the same as its file version so routes don't change.</p>
 <h3>Add a marketing page</h3>
-<p>Add <code>src/app/(site)/name/page.tsx</code> with a <code>canonical</code>, render it inside <code>SitePage</code>, and add its path to <code>PAGES</code> in <code>src/app/sitemap.xml/route.ts</code>.</p>
+<p>Add <code>src/app/(marketing)/name/page.tsx</code> with a <code>canonical</code>, use the shared <code>MarketingShell</code> layout and <code>marketingMetadata</code>, update <code>ROUTES</code>, and add indexable pages to <code>PAGES</code> in <code>src/app/sitemap.xml/route.ts</code>.</p>
 <h3>Change a tour string</h3>
 <p>Wrap it in <code>t('…')</code> and add Nepali and Chinese to <code>i18n.ts</code>.</p>
 <h3>Before you finish</h3>

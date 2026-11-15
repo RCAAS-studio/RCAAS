@@ -368,6 +368,9 @@
 @keyframes ws-desk-in { from { opacity: 0; transform: translateY(18px); } }
 /* inside the desk a booking needs no chapter head of its own: the tab names it */
 .ws-desk .ws-chap { width: auto; margin-top: clamp(28px, 4vw, 48px); }
+/* the booking forms sit in the same centred column as the menus above them */
+.ws-desk .tb { width: min(980px, 100%); margin-inline: auto; }
+.ws-desk > .ws-head { width: var(--wide); margin-inline: auto; } /* same side margins as every other chapter */
 .ws-desk .ws-chap > .ws-head { display: none; }
 .ws-book .ws-head { margin-bottom: clamp(32px, 5vw, 56px); }
 
@@ -641,7 +644,7 @@ html[data-ws-intro] .ws::before {
   .ws-gallery button:nth-child(even) { margin-top: 12vw; }
   .ws-map { min-height: 300px; }
   .ws-lb-prev, .ws-lb-next { top: auto; bottom: 8px; translate: none; }
-  .ws-desk-tabs { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+  .ws-desk-tabs { gap: 2px 18px; } /* every choice in view: wrap, not a hidden sideways scroll */
   .ws-desk-tabs button { flex: none; }
   /* the enquiry pill is a full-width bar at the foot of a phone */
   .ws-wa { bottom: calc(66px + env(safe-area-inset-bottom, 0px)); right: 14px; width: 52px; height: 52px; }

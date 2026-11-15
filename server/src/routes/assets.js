@@ -26,12 +26,14 @@ import { assetGuard, refuseStaff, freshSession } from '../access.js';
 import { recordAsset } from '../activity.js';
 import * as storage from '../storage.js';
 import { buildFloorPlan, renameRooms, saveMarks } from '../floorplan.js';
-import { DATA_DIR, writeFileWhole } from '../dataDir.js';
+import { writeFileWhole } from '../dataDir.js';
 import { withWriteLock } from '../writeQueue.js';
 import { assetRecord, createAssetRecord, completeAssetRecord, removeAssetRecord } from '../assetCatalog.js';
 import { readAssetAccess, assertAssetUnreferenced, mayManageAsset } from '../assetAccess.js';
 import { cleanAssetPath } from '../assetReferences.js';
 import { assetsChanged } from '../assetChanges.js';
+import { STAGING_DIR, OWNERS_DIR } from './storage.js';
+import { rateLimiter } from '../rateLimit.js';
 import { uploadPath, uploadManifest, checkUploadSize, stagedInventory, verifyUpload, uploadError, LCC_INDEX_MAX_BYTES } from '../uploadPolicy.js';
 
 export const assetsRouter = Router();
@@ -44,9 +46,8 @@ assetsRouter.param('assetId', (req, res, next, id) => {
   next();
 });
 
-const STAGING_DIR = path.join(DATA_DIR, 'uploads-staging');
-// Keep authorization separate from uploaded files: a ZIP cannot replace it.
-const OWNERS_DIR = path.join(DATA_DIR, 'upload-owners');
+// STAGING_DIR: chunks before finalize. OWNERS_DIR: who started each upload,
+// kept apart from uploaded files so a ZIP cannot replace it.
 const CHUNK_MAX = '16mb'; // client sends 8 MB chunks (§7.1); headroom for slop
 
 const ownerFile = (assetId) => path.join(OWNERS_DIR, `${assetId}.json`);
@@ -108,10 +109,14 @@ async function stagedBytes(assetId, relPath) {
 /* Create — mints an assetId and its staging area                        */
 /* -------------------------------------------------------------------- */
 
+// Per account, per 10 minutes: resuming reuses its upload, so only a flood of new ones is refused.
+const tooManyUploads = rateLimiter(Number(process.env.UPLOAD_START_RATE_MAX) || 30);
+
 // Start an upload: a new asset id to send a scan's files to (team accounts, not staff).
 assetsRouter.post('/', requireEditorSession, async (req, res, next) => {
   try {
     if (await refuseStaff(req, res)) return;
+    if (tooManyUploads(req.session.sub ?? req.ip)) return res.status(429).json({ error: 'Too many new uploads in the last 10 minutes. Wait a few minutes, or pick the same files again to continue one that stopped.' });
     const files = uploadManifest(req.body?.files);
     const assetId = newAssetId();
     await fs.mkdir(path.join(STAGING_DIR, assetId), { recursive: true });

@@ -79,13 +79,33 @@ For deterministic interruption, hostile archive, permissions and simulated outag
 | --- | --- | --- |
 | P0 before deployment | Verify private bucket configuration, proxy/range behavior, cache policy and failed/recovered reads against actual R2. | Operator + engineer; isolated test prefix, genuine range/checksum/access evidence. Keep `ASSET_DRIVER=local` until the existing cutover decision changes. |
 | P0 before deployment | Exercise studio upload → save → publish → mobile viewer using real export/media and actual browsers. | Engineer + owner/device reviewer; loading/error evidence, including host-only cookie preview. |
-| P1 | Persistent resume UI and retry-finalization action. | Engineer; current retry recovers transient chunks and the API supports retained IDs, but a refreshed page or UI retry does not restore an upload session. |
+| Done 15 Nov | Usage report and deliberate idle-upload removal (see "Storage panel" below). | Quotas and rate limits remain under the catalog row. |
+| Done 15 Nov | Resume after reload and finalize retry (pick the same files again); per-account rate limit on new uploads (`UPLOAD_START_RATE_MAX`, default 30 per 10 min). | See "Resume and rate limit" below. |
+| P1 (was) | Persistent resume UI and retry-finalization action. | Engineer; current retry recovers transient chunks and the API supports retained IDs, but a refreshed page or UI retry does not restore an upload session. |
 | P1 | Catalog/usage reporting, project/account storage quotas and upload/finalize rate limits. | Engineer + operator; source-byte records exist, full storage/transfer metering does not. |
 | P1 | Retention and explicit purge policy, abandoned staging/partial-copy cleanup, shared media replacement/deletion audit and cloud orphan reporting. | Owner + engineer; preserve retained versions and recheck references under the same write queue before removal. No timed deletion introduced here. |
 | P1 | Durable thumbnail/processing queue with retry and resource budgets. | Engineer; current thumbnails/automatic floor plans are not that queue. |
 | P1 | Evaluate S3 multipart/resume and large-transfer capacity if 4 GiB object or staging limits are insufficient. | Engineer + operator; retain bounded memory and prove abort/retry behavior before changing delivery. |
 
 Cost assumptions: each finalized source currently needs an object PUT; public/private serving proxies reads and HEAD operations through the API, and retries can repeat writes. Staging uses local disk; backups/derivatives add storage. No currency estimate or provider free-tier claim is made because current pricing, scan sizes, request counts and traffic were not measured. Collect these before estimating R2 and VPS cost.
+
+## Storage panel (15 November 2026)
+
+| Files | Change |
+| --- | --- |
+| `server/src/routes/storage.js` (new) | `GET /api/storage` and `POST /api/storage/remove-idle-uploads`, admin only. Report: total stored, per-project bytes, finished uploads nothing references, unfinished uploads (staged bytes, declared bytes, partial cloud copy, last activity). Removal: unfinished uploads idle ≥ `idleDays` (1–365, default 7), rechecked under `documents` then `upload:<id>`; deletes staging, owner file and, for a `staging` catalog record, its partial objects and record. Finished assets are never deleted. |
+| `server/src/storage.js`, `storage-s3.js` | `inventory()`: id → files/bytes from the disk or one bucket listing (S3 now reads `<Size>`). |
+| `server/src/assetCatalog.js` | `allAssetRecords()`. |
+| `src/features/studio/StorageDialog.tsx`, `src/app/studio/page.tsx`, `src/lib/api.ts`, `editor.css` | Admin "Storage" button and dialog; confirm before removal, toast after. |
+| `server/test/assets-privacy.test.js`, `fakeS3.js` | Local + fake-S3 regression; mutation-checked (fails without the age guard or partial-copy removal). |
+
+Evidence: 65 client and 187 API tests (185 passed, 2 intentional skips), types, lint (0 errors, 6 known warnings), production build. Throwaway copy of this PC's data in headless Chrome at 1280/390 px: report, confirm, Esc, removal and toast, no console errors. Report matched `npm run assets:unused` (9 unused scans, 1.33 GB). No real data, R2, deployment or commit.
+
+Owner decision still needed: a retention rule for finished uploads nothing uses (today they are listed, never purged).
+
+## Resume and rate limit (15 November 2026)
+
+`src/features/studio/upload.ts`: the browser keeps each unfinished upload's id under a SHA-256 of its files (path, size, last modified). Picking the same files again reuses it: the server's per-file byte counts decide what is still sent, and a failed finalize is retried. 403/404/409 on the remembered id (another account, removed, finished) starts a new upload; a 4xx finalize refusal forgets it. `server/src/routes/assets.js`: `POST /api/assets` allows 30 new uploads per account per 10 minutes (429 otherwise). Evidence: `test/upload-resume.test.mjs` (mutation-checked), the per-account limit test, and the real client code against a throwaway API (interrupted 3-file scan resumed with only the missing tile re-sent). Limits: a converted model resumes only within one page load; a different browser can't resume another browser's upload.
 
 ## Migration and rollback
 

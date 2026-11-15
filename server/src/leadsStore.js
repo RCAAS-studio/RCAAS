@@ -43,7 +43,7 @@ export function leadsCsv(leads) {
   const head = ['Received', 'Name', 'Phone', 'Email', 'Space', 'Looking for', 'Dates', 'Message', 'Was looking at', 'Emailed'];
   const rows = leads.map((l) => [
     l.createdAt, l.name, l.phone, l.email, l.sceneName || l.sceneId, l.requirement, l.dates, l.message, l.hotspotLabel,
-    l.delivery ? (l.delivery.sent ? 'yes' : `no: ${l.delivery.reason}`) : ''
+    l.delivery ? (l.delivery.sent ? 'yes' : `no: ${l.delivery.reason}${l.delivery.nextAt ? ' (trying again)' : ''}`) : ''
   ]);
   // BOM so Excel reads it as UTF-8 (Nepali names), CRLF as Excel expects
   return '﻿' + [head, ...rows].map((r) => r.map(cell).join(',')).join('\r\n') + '\r\n';

@@ -5,10 +5,12 @@ import cookieParser from 'cookie-parser';
 import { scenesRouter, galleryRouter } from './routes/scenes.js';
 import { authRouter } from './routes/auth.js';
 import { embedRouter } from './routes/embed.js';
-import { leadsRouter } from './routes/leads.js';
+import { leadsRouter, retryLeadEmails } from './routes/leads.js';
+import { retryOutbox } from './outbox.js';
 import { assetsRouter } from './routes/assets.js';
 import { propertiesRouter } from './routes/properties.js';
 import { teamRouter } from './routes/team.js';
+import { storageRouter } from './routes/storage.js';
 import { statsRouter } from './routes/stats.js';
 import { conciergeRouter } from './routes/concierge.js';
 import { studioAiRouter } from './routes/studioAi.js';
@@ -16,6 +18,8 @@ import { sitesRouter, publishDue } from './routes/sites.js';
 import { reservationsRouter } from './routes/reservations.js';
 import { demoEngineRouter } from './routes/demoEngine.js';
 import { originAllowed } from './publicUrls.js';
+import { promises as fsp } from 'node:fs';
+import { DATA_DIR } from './dataDir.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -68,9 +72,21 @@ app.use(express.json({ limit: '2mb' })); // scene JSON docs are small; thumbs ar
 // In development it says which copy of the API this is, so a new one (or
 // scripts/dev.mjs) can recognise and stop a copy an editor left running.
 // With a database it is also asked, so an uptime monitor sees the database go down.
+// For an uptime monitor: 503 when the database, a writable DATA_DIR or free disk
+// (HEALTH_MIN_FREE_MB, default 1024) fails; the reason goes to the log, not the reply.
 app.get('/api/health', async (req, res) => {
-  const ok = !db || (await db.pool.query('select 1').then(() => true, () => false));
-  res.status(ok ? 200 : 503).json(DEV ? { ok, service: 'rcaas-api', pid: process.pid, dir: HERE } : { ok });
+  const failing = [];
+  if (db && !(await db.pool.query('select 1').then(() => true, () => false))) failing.push('database');
+  const probe = path.join(DATA_DIR, `.health-${process.pid}`);
+  try { await fsp.writeFile(probe, 'ok'); await fsp.rm(probe, { force: true }); } catch { failing.push('data folder not writable'); }
+  try {
+    const { bavail, bsize } = await fsp.statfs(DATA_DIR);
+    const freeMb = Math.floor((bavail * bsize) / 1048576);
+    if (freeMb < (Number(process.env.HEALTH_MIN_FREE_MB) || 1024)) failing.push(`disk low: ${freeMb} MB free`);
+  } catch { failing.push('disk space unreadable'); }
+  const ok = !failing.length;
+  if (!ok) console.warn('[health]', failing.join('; '));
+  res.status(ok ? 200 : 503).json(DEV ? { ok, failing, service: 'rcaas-api', pid: process.pid, dir: HERE } : { ok });
 });
 app.use('/api/scenes', scenesRouter);
 app.use('/api/scenes', studioAiRouter); // translate and suggest, with Claude
@@ -81,6 +97,7 @@ app.use('/api/leads', leadsRouter);
 app.use('/api/assets', assetsRouter);
 app.use('/api/properties', propertiesRouter);
 app.use('/api/team', teamRouter);
+app.use('/api/storage', storageRouter);
 app.use('/api/stats', statsRouter);
 app.use('/api/concierge', conciergeRouter);
 app.use('/api/sites', reservationsRouter);
@@ -137,7 +154,11 @@ function listen(port, tries = 0) {
 }
 listen(PORT);
 
-// Websites scheduled to go live (routes/sites.js), checked every 30 s.
-const tick = () => publishDue().then((n) => n && console.log(`[sites] published ${n} scheduled website(s)`)).catch((err) => console.warn('[sites] schedule:', err.message));
+// Websites scheduled to go live (routes/sites.js) and enquiry emails due a retry (routes/leads.js), checked every 30 s.
+const tick = () => {
+  publishDue().then((n) => n && console.log(`[sites] published ${n} scheduled website(s)`)).catch((err) => console.warn('[sites] schedule:', err.message));
+  retryLeadEmails().then((n) => n && console.log(`[leads] sent ${n} enquiry email(s) on retry`)).catch((err) => console.warn('[leads] retry:', err.message));
+  retryOutbox().then((n) => n && console.log(`[outbox] sent ${n} booking notice(s) on retry`)).catch((err) => console.warn("[outbox] retry:", err.message));
+};
 setInterval(tick, Number(process.env.SCHEDULE_TICK_MS) || 30000).unref();
 tick();

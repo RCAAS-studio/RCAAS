@@ -4,6 +4,7 @@ import { ArrowUpRight, Footprints, Globe } from 'lucide-react';
 import { RoutePath } from '../types';
 import { pageShellClass } from '../components/ui';
 import { API_BASE_URL, getGallery, withoutNightVersions, type GalleryItem } from '../../../lib/api';
+import { srcSetFor } from '../data/images';
 
 /* /gallery/: every space published from the studio (GET /api/gallery), then
  * the clients' own websites with a tour inside (GET /api/sites). Links are
@@ -40,7 +41,7 @@ const Card: React.FC<{ href: string; pic: string | null | undefined; title: stri
         <img
           loading="lazy"
           decoding="async"
-          src={`${API_BASE_URL}${pic}`}
+          src={`${API_BASE_URL}${pic}`} srcSet={srcSetFor(`${API_BASE_URL}${pic}`)}
           alt=""
           className="h-full w-full object-cover object-center opacity-85 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
         />

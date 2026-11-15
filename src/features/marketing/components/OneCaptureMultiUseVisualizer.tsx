@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IMG } from '../data/images';
+import { IMG, srcSetFor } from '../data/images';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RoutePath } from '../types';
 
@@ -267,7 +267,7 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
               {/* Visual Simulated Viewport */}
               <div className="relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden border border-zinc-200 bg-zinc-950 shadow-inner group">
                 <img loading="lazy" decoding="async"
-                  src={active.image}
+                  src={active.image} srcSet={srcSetFor(active.image)}
                   alt={active.name}
                   className="w-full h-full object-cover object-center filter brightness-[0.88] contrast-[1.05] transition-transform duration-700"
                 />

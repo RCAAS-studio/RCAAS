@@ -98,18 +98,23 @@ export function createS3Driver(env = process.env) {
     return res;
   }
 
-  /** Every key under a prefix (ListObjectsV2, page by page). */
-  async function listKeys(keyPrefix, max = Infinity) {
-    const keys = [];
+  /** Every object under a prefix (ListObjectsV2, page by page): { key, bytes }. */
+  async function listObjects(keyPrefix, max = Infinity) {
+    const found = [];
     let token;
     do {
       const query = { 'list-type': '2', prefix: keyPrefix, ...(token ? { 'continuation-token': token } : {}), ...(max < 1000 ? { 'max-keys': String(max) } : {}) };
       const xml = await text(await ok(await request('GET', null, { query, payloadHash: EMPTY_SHA256 }), 'list'));
-      for (const m of xml.matchAll(/<Key>([^<]*)<\/Key>/g)) keys.push(m[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'"));
+      for (const [, item] of xml.matchAll(/<Contents>([\s\S]*?)<\/Contents>/g)) {
+        const key = item.match(/<Key>([^<]*)<\/Key>/)?.[1];
+        if (key === undefined) continue;
+        found.push({ key: key.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'"), bytes: Number(item.match(/<Size>(\d+)<\/Size>/)?.[1] ?? 0) });
+      }
       token = /<IsTruncated>true<\/IsTruncated>/.test(xml) ? xml.match(/<NextContinuationToken>([^<]+)<\/NextContinuationToken>/)?.[1] : undefined;
-    } while (token && keys.length < max);
-    return keys;
+    } while (token && found.length < max);
+    return found;
   }
+  const listKeys = async (keyPrefix, max) => (await listObjects(keyPrefix, max)).map((o) => o.key);
 
   return {
     name: 's3',
@@ -160,6 +165,18 @@ export function createS3Driver(env = process.env) {
 
     async exists(assetId) {
       return (await listKeys(keyOf(assetId), 1)).length > 0;
+    },
+
+    /** Every asset in the bucket: id -> { files, bytes }, from one listing. */
+    async inventory() {
+      const out = new Map();
+      for (const { key, bytes } of await listObjects(prefix)) {
+        const id = key.slice(prefix.length).split('/')[0];
+        if (!id) continue;
+        const entry = out.get(id) ?? { files: 0, bytes: 0 };
+        entry.files += 1; entry.bytes += bytes; out.set(id, entry);
+      }
+      return out;
     },
 
     async remove(assetId, rel) {
