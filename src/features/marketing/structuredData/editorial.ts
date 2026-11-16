@@ -164,7 +164,7 @@ export function addEditorialSchema(context: GraphContext): boolean {
       '@id': 'https://rcaas.tech/learn/#page',
       url: 'https://rcaas.tech/learn/',
       name: 'Guides to 3D Tours, VR & Digital Twins | RCAAS',
-      description: 'Plain-language guides from RCAAS on 3D virtual tours, Gaussian splatting and planning a 3D experience in Nepal, written from our own projects.',
+      description: 'RCAAS learning resources on 3D virtual tours, Gaussian splatting and planning a 3D experience. Guides are reviewed before publication; contact our team for help.',
       mainEntity: {
         '@type': 'ItemList',
         itemListElement: PUBLISHED_GUIDES.map((guide, idx) => ({

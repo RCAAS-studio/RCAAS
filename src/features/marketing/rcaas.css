@@ -10,6 +10,11 @@
 @import "tailwindcss/utilities.css" layer(utilities) source(none);
 @source "./**/*.{ts,tsx}";
 
+/* Keep company card focus visible against the dark section; the unlayered
+   global focus fallback otherwise overrides Tailwind's layered utilities. */
+.rcaas #industries a:focus-visible,
+.rcaas a[data-carousel-card]:focus-visible { outline: 2px solid var(--color-accent-soft); outline-offset: 4px; }
+
 /* Company pages only: a soft grid with a pointer-following, gently shifted patch. */
 .rcaas .company-grid { position: fixed; inset: 0; z-index: 21; pointer-events: none; overflow: hidden; contain: strict; }
 .rcaas .company-grid::before, .rcaas .company-grid-halo { position: absolute; inset: -12px; background-size: 72px 72px; filter: blur(.45px); }
@@ -23,7 +28,7 @@
 .rcaas .audit-dialog-content { display: flex; flex-direction: column; max-height: 85dvh; }
 .rcaas .audit-dialog-scroll { min-height: 0; overflow: auto; padding: 12px; }
 .rcaas .audit-dialog :is(button, input, select):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) { .rcaas .company-grid-halo { display: none; } .rcaas .team-portrait, .rcaas .team-card { transition: none; } .rcaas .team-card:is(:hover,:focus-within) .team-portrait { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rcaas .company-grid-halo { display: none; } .rcaas .team-portrait, .rcaas .team-card { transition: none; } .rcaas .team-card:is(:hover,:focus-within) .team-portrait { transform: none; } .rcaas [data-story-progress] { animation: none !important; width: 100%; } }
 
 /* Footer: reference layout with the original RCAAS light colours. */
 .rcaas .rc-footer {
@@ -561,7 +566,7 @@ html:has(.rcaas) {
     rgba(225, 29, 72, 0.06);
   background-repeat: no-repeat;
 }
-.rcaas .snav-drop-btn { display: grid; place-items: center; width: 22px; height: 30px; margin-left: -6px; border-radius: 8px; color: #a1a1aa; transition: color 0.2s; }
+.rcaas .snav-drop-btn { display: grid; place-items: center; width: 24px; height: 30px; margin-left: 0; border-radius: 8px; color: #a1a1aa; transition: color 0.2s; }
 .rcaas .snav-drop-btn:hover, .rcaas .snav-drop-btn[aria-expanded="true"] { color: var(--color-ink); }
 
 /* the scan line along the bar's foot, drawn left to right by the page's scroll */

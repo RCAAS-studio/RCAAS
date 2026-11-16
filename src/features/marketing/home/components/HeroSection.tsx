@@ -13,7 +13,7 @@ const scrollToLive = () => {
 return (<section id="hero" className="relative pt-16 pb-20 md:pt-24 md:pb-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mx-auto max-w-4xl text-center"
@@ -61,8 +61,9 @@ return (<section id="hero" className="relative pt-16 pb-20 md:pt-24 md:pb-28">
             </div>
 
             {/* Trust Line */}
-            <div className="mt-7 text-xs text-zinc-500 font-mono flex items-center justify-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent"></span>
+            <div className="mt-7 text-xs text-zinc-500 font-mono text-center text-balance">
+              {/* The dot sits inline with the words, so it stays beside them when the line wraps on a phone. */}
+              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" aria-hidden="true"></span>
               <span>Geomatics engineers and game developers, based in Kathmandu.</span>
             </div>
 

@@ -117,6 +117,11 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenP
       setDrop(k);
     }
   };
+  const enterDrop = (key: DropKey) => {
+    hold();
+    setDrop(key);
+    requestAnimationFrame(() => navRef.current?.querySelector<HTMLAnchorElement>(`#snav-drop-${key} a[href]`)?.focus());
+  };
   useClickOutside([navRef], () => setDrop(null));
 
   const go = (path: RoutePath) => {
@@ -231,6 +236,12 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenP
                   aria-controls={`snav-drop-${dk}`}
                   aria-label={`${l.label}: show the list`}
                   onClick={() => setDrop(drop === dk ? null : dk)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey && drop === dk)) {
+                      e.preventDefault();
+                      enterDrop(dk);
+                    }
+                  }}
                 >
                   <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${drop === dk ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </button>
@@ -344,6 +355,8 @@ const NavDrop: React.FC<{ which: DropKey; go: (p: RoutePath) => void; onEnter: (
     exit="shut"
     onPointerEnter={onEnter}
     onPointerLeave={onLeave}
+    onFocusCapture={onEnter}
+    onBlurCapture={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) onLeave(); }}
   >
     <span className="snav-drop-corners" aria-hidden="true" />
 

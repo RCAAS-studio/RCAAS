@@ -1,5 +1,7 @@
 # RCAAS website: publication-safety report
 
+**16 November continuation:** recovered source decisions now restore the two educational guides' publication hold; the guide descriptions/registries and unconfirmed corporate social schema were corrected. The gate also rejects empty HTML output. Both intended npm build paths were rechecked. Earlier counts and unavailable-source statements below describe that earlier run; see [the six-task completion matrix](RCAAS_WEBSITE_SIX_TASK_COMPLETION.md) and [latest QA](design/COMPANY_WEBSITE_FINAL_QA.md) for current evidence and remaining business/provider approvals.
+
 Date: 15 November 2026. Continues `docs/WEBSITE_SPEC_GAP_ANALYSIS.md` (revision 2). Nothing has been committed, pushed, merged or deployed. No visual design, route, layout or styling was changed: every edit is to copy, data, metadata plumbing or tooling.
 
 ## 1. Result in one paragraph

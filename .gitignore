@@ -20,6 +20,8 @@ docs/*
 !docs/WEBSITE_SPEC_GAP_ANALYSIS.md
 !docs/WEBSITE_PUBLICATION_SAFETY_REPORT.md
 !docs/TECHNICAL_SEO_AUDIT.md
+!docs/RCAAS_WEBSITE_SIX_TASK_COMPLETION.md
+!docs/design/
 
 # zed
 .zed/

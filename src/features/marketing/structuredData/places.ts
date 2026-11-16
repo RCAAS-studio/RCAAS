@@ -61,10 +61,10 @@ export function addPlaceSchema(context: GraphContext): boolean {
       '@id': 'https://rcaas.tech/industries/#page',
       url: 'https://rcaas.tech/industries/',
       name: 'Immersive Experiences by Industry | RCAAS',
-      description: 'How RCAAS helps hotels, schools, developers, factories, heritage sites, municipalities, insurers and game studios with 3D experiences, data and assets.',
+      description: 'Explore 3D experiences, survey data and assets for hotels, education, property, heritage, municipalities, game studios, filmmakers and nonprofits in Nepal.',
       mainEntity: {
         '@type': 'ItemList',
-        itemListElement: INDUSTRIES.map((industry, idx) => ({
+        itemListElement: INDUSTRIES.filter((industry) => !findIndustryContent(industry.link)?.draft).map((industry, idx) => ({
           '@type': 'ListItem',
           position: idx + 1,
           name: industry.title,

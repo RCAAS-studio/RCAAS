@@ -1,5 +1,7 @@
 # RCAAS technical SEO audit
 
+**16 November continuation:** the six-task audit adds Gallery/Cookies/Security breadcrumbs, removes draft-sector claims from industry metadata/discovery schema, removes an unconfirmed corporate LinkedIn identity, and holds two guides under the recovered owner decision. This changes the current indexable marketing set to 28. Earlier counts and open items below remain dated history. See [the completion matrix](RCAAS_WEBSITE_SIX_TASK_COMPLETION.md) and [latest QA](design/COMPANY_WEBSITE_FINAL_QA.md) for the current assessment; no public URL was renamed.
+
 Date: 15 November 2026. Follows `docs/WEBSITE_PUBLICATION_SAFETY_REPORT.md`. Scope: the public marketing site only. Nothing is committed, pushed or deployed, and no draft page was published. No visual design, approved copy (beyond the metadata and two schema strings named below), route or architecture was changed.
 
 ## 1. Method

@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 const { scanHtml, scanDirs } = await import('../scripts/check-placeholders.mjs');
 const { pageMeta } = await import('../src/features/marketing/meta.ts');
@@ -45,6 +47,55 @@ test('scanDirs walks nested output and reports the offending file', () => {
     assert.match(failures[0].file, /services/);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('the publication CLI fails closed for empty output and unapproved indexable copy', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rcaas-gate-cli-'));
+  const cli = fileURLToPath(new URL('../scripts/check-placeholders.mjs', import.meta.url));
+  const run = () => spawnSync(process.execPath, [cli, dir], { encoding: 'utf8' });
+  try {
+    assert.equal(run().status, 2, 'an empty output directory must not pass the publication gate');
+    fs.writeFileSync(path.join(dir, 'index.html'), page('', '<p>[[TBI: approval required]]</p>'));
+    assert.equal(run().status, 1, 'an indexable placeholder must fail the command used by postbuild');
+    fs.writeFileSync(path.join(dir, 'index.html'), page('<meta name="robots" content="noindex, nofollow"/>', '<p>[[TBI: approval required]]</p>'));
+    assert.equal(run().status, 0, 'a review draft may retain its editorial marker');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('unapproved guides stay noindex and outside the Learn discovery graph', () => {
+  const held = ['/learn/what-is-gaussian-splatting/', '/learn/3d-virtual-tour-vs-360-tour-vs-video/', '/learn/planning-a-3d-experience-cost-and-timeline/'];
+  const hub = buildMarketingGraph('/learn/')['@graph'].find(node => node['@type'] === 'CollectionPage');
+  for (const route of held) {
+    assert.match(pageMeta(route).robots, /noindex/, route);
+    assert.ok(!hub.mainEntity.itemListElement.some(item => item.url.endsWith(route)), route);
+  }
+  assert.doesNotMatch(JSON.stringify(hub), /written from our own projects/i);
+});
+
+test('Industry discovery schema and descriptions do not advertise draft sectors as approved', () => {
+  const hub = buildMarketingGraph('/industries/')['@graph'].find(node => node['@type'] === 'CollectionPage');
+  assert.doesNotMatch(pageMeta('/industries/').description, /bank|insur|factor/i);
+  assert.doesNotMatch(JSON.stringify(hub), /banking-financial-institutions|non-life-insurance|\/factories\//);
+  assert.ok(hub.mainEntity.itemListElement.length >= 5);
+});
+
+test('unconfirmed corporate social profiles are not asserted as verified identities', () => {
+  const organization = buildMarketingGraph('/')['@graph'][0];
+  assert.deepEqual(organization.sameAs ?? [], []);
+});
+
+test('visible policy and Gallery breadcrumbs have matching host-aware schema', () => {
+  for (const route of ['/gallery/', '/cookies/', '/security/']) {
+    for (const [site, trailing] of [['https://rcaas.tech', false], ['https://owner.github.io/RCAAS', true]]) {
+      const graph = alignSchemaUrls(buildMarketingGraph(route), site, trailing)['@graph'];
+      const breadcrumbs = graph.filter(node => node['@type'] === 'BreadcrumbList');
+      assert.equal(breadcrumbs.length, 1, route);
+      assert.deepEqual(breadcrumbs[0].itemListElement.map(item => item.position), [1, 2]);
+      assert.equal(breadcrumbs[0].itemListElement[1].item, site + (trailing ? route : route.slice(0, -1)));
+    }
   }
 });
 

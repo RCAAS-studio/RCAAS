@@ -449,7 +449,7 @@ export const DroneMappingPage: React.FC<DroneMappingPageProps> = ({ onNavigate }
                   alt={showcaseMode === 'ortho' ? 'True-scale aerial orthomosaic map' : 'Digital surface model elevation gradient'}
                   className="w-full h-full object-cover opacity-90 transition-opacity duration-300"
                 />
-                <div className="absolute inset-0 bg-linear-to-trom-black/85 via-black/25 to-black/35" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-black/35" />
 
                 {/* Aerial Telemetry HUD */}
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-xs font-mono">

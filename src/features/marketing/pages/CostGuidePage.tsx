@@ -449,7 +449,7 @@ export const CostGuidePage: React.FC<CostGuidePageProps> = ({ onNavigate }) => {
                   alt="Team member capturing a heritage square with a handheld laser scanner"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-linear-to-trom-black/70 via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5 bg-white/95 border border-line p-4 rounded-xl shadow-sm">
                   <p className="text-xs font-mono text-zinc-500 mb-1.5" aria-live="polite">
                     {prepDone.length} of {PREPARATION.length} ready

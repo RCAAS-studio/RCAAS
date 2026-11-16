@@ -1,0 +1,4260 @@
+[
+ {
+  "route": "/",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "800",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 196,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Basera Boutique \"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Nepathya School \"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Madan Ashrit Mem\"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to ITECO Nepal Road\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "basera-boutique-hotel-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences/3d-virtual-tours",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "basera-boutique-hotel-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/visual-storytelling",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "header > a 124x21 \"Find your format\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "600",
+   "lh": "36.72px",
+   "left": 20,
+   "top": 175,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/game-worlds-assets",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33px",
+   "left": 16,
+   "top": 248,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/3d-laser-scanning",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#showcase > input.w-32.accent-accent.cursor-pointer 128x16 \"Cut plane height slider\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33px",
+   "left": 16,
+   "top": 252,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/drone-mapping",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#showcase > input.w-32.accent-accent.cursor-pointer 128x16 \"Contour interval adjustm\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33px",
+   "left": 16,
+   "top": 252,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "36px",
+   "left": 16,
+   "top": 222,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/hospitality-tourism",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "basera-boutique-hotel-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/education",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "nepathya-school-college-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/real-estate-architecture",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "basera-boutique-hotel-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/heritage-culture",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/government-municipalities",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/gaming",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/filmmaking",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/nonprofit-international-development",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/work",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "36px",
+   "left": 16,
+   "top": 222,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/platform",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 320px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "section > input#ea-consent.mt-0.5.h-5.w-5.rounded 13x20 \"\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/how-we-work",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#explained > a.mt-auto.text-xs.font-semibold.text-accent 169x16 \"What is Gaussian splatti\"",
+   "section#explained > a.mt-auto.text-xs.font-semibold.text-accent 164x16 \"More on 3D laser scannin\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/3d-virtual-tour-vs-360-tour-vs-video",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33.6px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/what-is-gaussian-splatting",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33.6px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/about",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "a-heritage-courtyard-during-restoration-and-the-640w.webp 320px for 467px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/faq",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#getting-started > a.mt-3.flex.w-fit.items-center 134x16 \"Plan your experience\"",
+   "section#getting-started > a.mt-3.flex.w-fit.items-center 106x16 \"Full comparison\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 115x16 \"For municipalities\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 101x16 \"Partner with us\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 117x16 \"Heritage research\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/contact",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [
+   "section#form > div.absolute.left-[-9999px].w-px.h-px [-9999..-9998]"
+  ],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#form > input.w-4.h-4.shrink-0.accent-accent 16x16 \"\"",
+   "section#form > input#c-consent.mt-0.5.h-5.w-5.rounded 20x20 \"\"",
+   "section#form > a.text-accent.hover:text-accent-strong.underline.underline-offset-2 75x15 \"Privacy Policy\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/gallery",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "36px",
+   "left": 16,
+   "top": 222,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/cookies",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 256,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/security",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 256,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/thank-you",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 234,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/privacy",
+  "width": 320,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 398,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "800",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 182,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Basera Boutique \"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Nepathya School \"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Madan Ashrit Mem\"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to ITECO Nepal Road\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "basera-boutique-hotel-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences/3d-virtual-tours",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "basera-boutique-hotel-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/visual-storytelling",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "header > a 124x21 \"Find your format\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "600",
+   "lh": "36.72px",
+   "left": 20,
+   "top": 175,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/game-worlds-assets",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33px",
+   "left": 16,
+   "top": 233,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/3d-laser-scanning",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section > a.text-xs.font-semibold.text-accent.hover:underline 146x16 \"WhatsApp survey team →\"",
+   "section#showcase > input.w-32.accent-accent.cursor-pointer 128x16 \"Cut plane height slider\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33px",
+   "left": 16,
+   "top": 233,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/drone-mapping",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section > a.text-xs.font-semibold.text-accent.hover:underline 137x16 \"WhatsApp flight team →\"",
+   "section#showcase > input.w-32.accent-accent.cursor-pointer 128x16 \"Contour interval adjustm\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33px",
+   "left": 16,
+   "top": 233,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "36px",
+   "left": 16,
+   "top": 222,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/hospitality-tourism",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "basera-boutique-hotel-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/education",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "nepathya-school-college-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/real-estate-architecture",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "basera-boutique-hotel-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/heritage-culture",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/government-municipalities",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/gaming",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/filmmaking",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/nonprofit-international-development",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/work",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "36px",
+   "left": 16,
+   "top": 222,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/platform",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [
+   "chilancho-stupa-640w.webp 390px for 931px"
+  ],
+  "textClip": [],
+  "tapSmall": [
+   "section > input#ea-consent.mt-0.5.h-5.w-5.rounded 13x20 \"\"",
+   "section > a.text-accent.hover:text-accent-strong.underline.underline-offset-2 75x15 \"Privacy Policy\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/how-we-work",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#explained > a.mt-auto.text-xs.font-semibold.text-accent 169x16 \"What is Gaussian splatti\"",
+   "section#explained > a.mt-auto.text-xs.font-semibold.text-accent 164x16 \"More on 3D laser scannin\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/3d-virtual-tour-vs-360-tour-vs-video",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33.6px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/what-is-gaussian-splatting",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "33.6px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/about",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/faq",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#getting-started > a.mt-3.flex.w-fit.items-center 134x16 \"Plan your experience\"",
+   "section#getting-started > a.mt-3.flex.w-fit.items-center 106x16 \"Full comparison\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 115x16 \"For municipalities\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 101x16 \"Partner with us\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 117x16 \"Heritage research\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/contact",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [
+   "section#form > div.absolute.left-[-9999px].w-px.h-px [-9999..-9998]"
+  ],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#form > input.w-4.h-4.shrink-0.accent-accent 16x16 \"\"",
+   "section#form > input#c-consent.mt-0.5.h-5.w-5.rounded 20x20 \"\"",
+   "section#form > a.text-accent.hover:text-accent-strong.underline.underline-offset-2 75x15 \"Privacy Policy\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 258,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/gallery",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "30px",
+   "weight": "700",
+   "lh": "36px",
+   "left": 16,
+   "top": 222,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/cookies",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 256,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/security",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 256,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/thank-you",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 234,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/privacy",
+  "width": 390,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x35 \"FAQ\""
+  ],
+  "h1": {
+   "size": "36px",
+   "weight": "700",
+   "lh": "40.32px",
+   "left": 16,
+   "top": 379,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "60px",
+   "weight": "800",
+   "lh": "64.8px",
+   "left": 24,
+   "top": 214,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Basera Boutique \"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Nepathya School \"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to Madan Ashrit Mem\"",
+   "section#proof > button.transition-all.duration-300.rounded-full.focus:outline-none 8x40 \"Jump to ITECO Nepal Road\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences/3d-virtual-tours",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/visual-storytelling",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "header > a 124x21 \"Find your format\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "61.44px",
+   "weight": "600",
+   "lh": "62.6688px",
+   "left": 32,
+   "top": 189,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/game-worlds-assets",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "52.8px",
+   "left": 24,
+   "top": 249,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/3d-laser-scanning",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section > a.text-xs.font-semibold.text-accent.hover:underline 146x16 \"WhatsApp survey team →\"",
+   "section#showcase > input.w-32.accent-accent.cursor-pointer 128x16 \"Cut plane height slider\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "52.8px",
+   "left": 24,
+   "top": 249,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/drone-mapping",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section > a.text-xs.font-semibold.text-accent.hover:underline 137x16 \"WhatsApp flight team →\"",
+   "section#showcase > input.w-32.accent-accent.cursor-pointer 128x16 \"Contour interval adjustm\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "52.8px",
+   "left": 24,
+   "top": 249,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "48px",
+   "left": 24,
+   "top": 278,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/hospitality-tourism",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/education",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/real-estate-architecture",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/heritage-culture",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/government-municipalities",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/gaming",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/filmmaking",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/nonprofit-international-development",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/work",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "48px",
+   "left": 24,
+   "top": 278,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/platform",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section > input#ea-consent.mt-0.5.h-5.w-5.rounded 20x20 \"\"",
+   "section > a.text-accent.hover:text-accent-strong.underline.underline-offset-2 75x15 \"Privacy Policy\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/how-we-work",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#explained > a.mt-auto.text-xs.font-semibold.text-accent 169x16 \"What is Gaussian splatti\"",
+   "section#explained > a.mt-auto.text-xs.font-semibold.text-accent 164x16 \"More on 3D laser scannin\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/3d-virtual-tour-vs-360-tour-vs-video",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/what-is-gaussian-splatting",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/about",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/faq",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#getting-started > a.mt-3.flex.w-fit.items-center 134x16 \"Plan your experience\"",
+   "section#getting-started > a.mt-3.flex.w-fit.items-center 106x16 \"Full comparison\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 115x16 \"For municipalities\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 101x16 \"Partner with us\"",
+   "section#working-together > a.mt-3.flex.w-fit.items-center 117x16 \"Heritage research\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/contact",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [
+   "section#form > div.absolute.left-[-9999px].w-px.h-px [-9999..-9998]"
+  ],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "section#form > input.w-4.h-4.shrink-0.accent-accent 16x16 \"\"",
+   "section#form > input#c-consent.mt-0.5.h-5.w-5.rounded 20x20 \"\"",
+   "section#form > a.text-accent.hover:text-accent-strong.underline.underline-offset-2 75x15 \"Privacy Policy\"",
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 298,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/gallery",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "48px",
+   "left": 24,
+   "top": 278,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/cookies",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 296,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/security",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 296,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/thank-you",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 274,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/privacy",
+  "width": 768,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [
+   "footer > a.rc-footer-contact-email 137x18 \"inquiry.rcaas@gmail.com\"",
+   "nav > a 22x33 \"FAQ\""
+  ],
+  "h1": {
+   "size": "48px",
+   "weight": "700",
+   "lh": "53.76px",
+   "left": 24,
+   "top": 399,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "72px",
+   "weight": "800",
+   "lh": "77.76px",
+   "left": 64,
+   "top": 214,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 32,
+   "top": 270,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 32,
+   "top": 270,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences/3d-virtual-tours",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/visual-storytelling",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "57.344px",
+   "weight": "600",
+   "lh": "58.4909px",
+   "left": 32,
+   "top": 307,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/game-worlds-assets",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 32,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/3d-laser-scanning",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 32,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/drone-mapping",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 32,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 32,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/hospitality-tourism",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/education",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/real-estate-architecture",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/heritage-culture",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/government-municipalities",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/gaming",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/filmmaking",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/nonprofit-international-development",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/work",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 32,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/platform",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/how-we-work",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/3d-virtual-tour-vs-360-tour-vs-video",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "54.4px",
+   "weight": "700",
+   "lh": "60.928px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/what-is-gaussian-splatting",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "54.4px",
+   "weight": "700",
+   "lh": "60.928px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/about",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/faq",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 339,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/contact",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [
+   "section#form > div.absolute.left-[-9999px].w-px.h-px [-9999..-9998]"
+  ],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/gallery",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 32,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/cookies",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 272,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/security",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 272,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/thank-you",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 96,
+   "top": 274,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/privacy",
+  "width": 1024,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 32,
+   "top": 356,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "72px",
+   "weight": "800",
+   "lh": "77.76px",
+   "left": 272,
+   "top": 214,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 112,
+   "top": 270,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 112,
+   "top": 270,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences/3d-virtual-tours",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/visual-storytelling",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "80.64px",
+   "weight": "600",
+   "lh": "82.2528px",
+   "left": 80,
+   "top": 207,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/game-worlds-assets",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 176,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/3d-laser-scanning",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 176,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/drone-mapping",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 176,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 112,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/hospitality-tourism",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/education",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/real-estate-architecture",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/heritage-culture",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/government-municipalities",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/gaming",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/filmmaking",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/nonprofit-international-development",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/work",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 112,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/platform",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/how-we-work",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/3d-virtual-tour-vs-360-tour-vs-video",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "54.4px",
+   "weight": "700",
+   "lh": "60.928px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/what-is-gaussian-splatting",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "54.4px",
+   "weight": "700",
+   "lh": "60.928px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/about",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/faq",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 334,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/contact",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [
+   "section#form > div.absolute.left-[-9999px].w-px.h-px [-9999..-9998]"
+  ],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/gallery",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 112,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/cookies",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 272,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/security",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 272,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/thank-you",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 304,
+   "top": 274,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/privacy",
+  "width": 1440,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 112,
+   "top": 356,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "72px",
+   "weight": "800",
+   "lh": "77.76px",
+   "left": 512,
+   "top": 214,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 352,
+   "top": 270,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 352,
+   "top": 270,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/immersive-experiences/3d-virtual-tours",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/visual-storytelling",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "84px",
+   "weight": "600",
+   "lh": "85.68px",
+   "left": 320,
+   "top": 207,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/game-worlds-assets",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 416,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/3d-laser-scanning",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 416,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/services/digital-twins/drone-mapping",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "66px",
+   "left": 416,
+   "top": 221,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 352,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/hospitality-tourism",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/education",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/real-estate-architecture",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/heritage-culture",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/government-municipalities",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/gaming",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/filmmaking",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/industries/nonprofit-international-development",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/work",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 352,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/platform",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/how-we-work",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/3d-virtual-tour-vs-360-tour-vs-video",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "54.4px",
+   "weight": "700",
+   "lh": "60.928px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/learn/what-is-gaussian-splatting",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "54.4px",
+   "weight": "700",
+   "lh": "60.928px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/about",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/faq",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 334,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/contact",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [
+   "section#form > div.absolute.left-[-9999px].w-px.h-px [-9999..-9998]"
+  ],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 274,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/gallery",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "60px",
+   "left": 352,
+   "top": 250,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/cookies",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 272,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/security",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 272,
+   "align": "start"
+  },
+  "errors": []
+ },
+ {
+  "route": "/thank-you",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 544,
+   "top": 274,
+   "align": "center"
+  },
+  "errors": []
+ },
+ {
+  "route": "/privacy",
+  "width": 1920,
+  "overflowX": 0,
+  "overflowers": [],
+  "broken": [],
+  "distorted": [],
+  "upscaled": [],
+  "textClip": [],
+  "tapSmall": [],
+  "h1": {
+   "size": "60px",
+   "weight": "700",
+   "lh": "67.2px",
+   "left": 352,
+   "top": 356,
+   "align": "start"
+  },
+  "errors": []
+ }
+]

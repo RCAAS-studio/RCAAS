@@ -40,9 +40,6 @@ export function buildMarketingGraph(currentPath: string, metadata = pageMeta(cur
       'Game environment and asset development',
       'Gaussian splat game assets',
     ],
-    sameAs: [
-      'https://linkedin.com/company/rcaas-technology',
-    ],
   };
   const graphItems: GraphItem[] = [baseOrg];
   const context = { currentPath, pathOnly: metadata.pathOnly, blogRoute: metadata.blogRoute, caseStudyRoute: metadata.caseStudyRoute, baseOrg, graphItems };

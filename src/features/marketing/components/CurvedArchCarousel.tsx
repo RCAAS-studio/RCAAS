@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { IMG, srcSetFor } from '../data/images';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { withBase } from '../../../lib/basePath';
 import { RoutePath } from '../types';
 
 export interface ArchCardItem {
@@ -92,6 +93,8 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
   const [isPaused, setIsPaused] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pointerStart = useRef<{ id: number; x: number; y: number } | null>(null);
+  const suppressPointerClick = useRef(false);
   const totalCards = DEFAULT_CARDS.length;
 
   // Window resize handler to calculate responsive arch spacing
@@ -112,21 +115,27 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
     setActiveIndex((prev) => (prev - 1 + totalCards) % totalCards);
   }, [totalCards]);
 
-  // Autoplay with pause on hover
+  const reducedMotion = useReducedMotion();
+  // Pause both for deliberate interaction and reduced-motion preferences.
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || reducedMotion) return;
     const timer = setInterval(() => {
       handleNext();
     }, 5500);
     return () => clearInterval(timer);
-  }, [isPaused, handleNext]);
+  }, [isPaused, reducedMotion, handleNext]);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {
+      e.preventDefault();
       handlePrev();
     } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
       handleNext();
+    }
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && e.target !== e.currentTarget) {
+      requestAnimationFrame(() => containerRef.current?.querySelector<HTMLAnchorElement>('a[data-carousel-card][tabindex="0"]')?.focus());
     }
   };
 
@@ -137,7 +146,9 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
       onKeyDown={handleKeyDown}
       className={`relative w-full overflow-hidden select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl ${className}`}
       onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      onMouseLeave={(e) => setIsPaused(e.currentTarget.contains(document.activeElement))}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setIsPaused(false); }}
       role="region"
       aria-label="Interactive project showcase arch carousel"
     >
@@ -210,18 +221,34 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
             const zIndex = 30 - Math.abs(offset) * 5;
 
             return (
-              <motion.div
+              <motion.a
                 key={card.id}
+                href={withBase(card.link)}
+                draggable={false}
+                data-carousel-card=""
+                tabIndex={isCurrent ? 0 : -1}
+                aria-label={`Explore ${card.title}`}
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.2}
-                onDragEnd={(_e, info) => {
-                  if (info.offset.x > 50) {
-                    handlePrev();
-                  } else if (info.offset.x < -50) {
-                    handleNext();
+                onPointerDown={(e) => {
+                  if (!e.isPrimary || e.button !== 0) return;
+                  suppressPointerClick.current = false;
+                  pointerStart.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+                  e.currentTarget.setPointerCapture(e.pointerId);
+                }}
+                onPointerUp={(e) => {
+                  const start = pointerStart.current;
+                  if (!start || start.id !== e.pointerId) return;
+                  pointerStart.current = null;
+                  const dx = e.clientX - start.x;
+                  const dy = e.clientY - start.y;
+                  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+                    suppressPointerClick.current = true;
+                    if (dx > 0) handlePrev(); else handleNext();
                   }
                 }}
+                onPointerCancel={() => { pointerStart.current = null; }}
                 animate={{
                   x: translateX,
                   y: translateY,
@@ -231,10 +258,17 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
                   opacity: opacity,
                 }}
                 transition={{
-                  duration: 0.5,
+                  duration: reducedMotion ? 0 : 0.5,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                onClick={() => {
+                onClick={(e) => {
+                  if (e.detail !== 0 && suppressPointerClick.current) {
+                    e.preventDefault();
+                    suppressPointerClick.current = false;
+                    return;
+                  }
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                  e.preventDefault();
                   if (isCurrent) {
                     onNavigate(card.link);
                   } else {
@@ -245,7 +279,7 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
                   zIndex,
                   transformStyle: 'preserve-3d',
                 }}
-                className={`absolute w-[280px] sm:w-[340px] h-[410px] sm:h-[450px] rounded-2xl overflow-hidden cursor-pointer transition-shadow duration-300 touch-pan-y ${
+                className={`absolute w-[280px] sm:w-[340px] h-[410px] sm:h-[450px] rounded-2xl overflow-hidden cursor-pointer transition-shadow duration-300 touch-pan-y focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent ${
                   isCurrent
                     ? 'ring-2 ring-accent shadow-2xl shadow-rose-950/20'
                     : 'shadow-lg hover:shadow-xl opacity-80 hover:opacity-100'
@@ -323,7 +357,7 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </motion.a>
             );
           })}
         </div>
@@ -337,13 +371,12 @@ export const CurvedArchCarousel: React.FC<CurvedArchCarouselProps> = ({
               key={card.id}
               type="button"
               onClick={() => setActiveIndex(idx)}
-              className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-accent/40 ${
-                idx === activeIndex
-                  ? 'w-7 h-2 bg-accent'
-                  : 'w-2 h-2 bg-zinc-300 hover:bg-zinc-400'
-              }`}
+              className="group flex h-8 w-10 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               aria-label={`Jump to ${card.title}`}
-            />
+              aria-current={idx === activeIndex ? 'true' : undefined}
+            >
+              <span aria-hidden="true" className={`h-2 rounded-full transition-[width,background-color] duration-300 motion-reduce:transition-none ${idx === activeIndex ? 'w-7 bg-accent' : 'w-2 bg-zinc-300 group-hover:bg-zinc-400'}`} />
+            </button>
           ))}
         </div>
         <span className="text-[10px] font-mono text-zinc-500 sm:hidden">

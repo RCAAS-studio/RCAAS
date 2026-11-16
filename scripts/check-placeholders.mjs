@@ -60,6 +60,10 @@ if (process.argv[1]?.endsWith('check-placeholders.mjs')) {
     process.exit(2);
   }
   const { pages, indexable, failures } = scanDirs(dirs);
+  if (!pages) {
+    console.error('check-placeholders: no HTML pages found in the supplied build output.');
+    process.exit(2);
+  }
   if (failures.length) {
     console.error(`check-placeholders: ${failures.length} indexable page(s) still show editorial placeholders:\n`);
     for (const f of failures) {

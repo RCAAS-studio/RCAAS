@@ -85,7 +85,7 @@ export function pageMeta(currentPath: string) {
     metaDesc = industry.metaDescription;
   } else if (currentPath.startsWith('/industries')) {
     title = 'Immersive Experiences by Industry | RCAAS';
-    metaDesc = 'How RCAAS helps hotels, schools, developers, factories, heritage sites, municipalities, insurers, game studios, filmmakers, nonprofits and banks with 3D experiences, data and assets.';
+    metaDesc = 'Explore 3D experiences, survey data and assets for hotels, education, property, heritage, municipalities, game studios, filmmakers and nonprofits in Nepal.';
   } else if (isCaseStudy(resolveCaseStudy(currentPath.split(/[?#]/)[0]))) {
     const study = resolveCaseStudy(currentPath.split(/[?#]/)[0]) as CaseStudyContent;
     title = study.titleTag;
@@ -110,7 +110,7 @@ export function pageMeta(currentPath: string) {
     metaDesc = 'An honest comparison of 3D virtual tours, 360° photo tours and video: how each works, what each is best at, and when to combine them.';
   } else if (currentPath.startsWith('/learn')) {
     title = 'Guides to 3D Tours, VR & Digital Twins | RCAAS';
-    metaDesc = 'Plain-language guides from RCAAS on 3D virtual tours, Gaussian splatting and planning a 3D experience in Nepal, written from our own projects.';
+    metaDesc = 'RCAAS learning resources on 3D virtual tours, Gaussian splatting and planning a 3D experience. Guides are reviewed before publication; contact our team for help.';
   } else if (currentPath.startsWith('/about')) {
     title = 'About RCAAS Technology: Engineers & Game Developers';
     metaDesc = 'RCAAS Technology is a Kathmandu-based reality capture and immersive experience company. Meet the engineers and game developers behind our work.';

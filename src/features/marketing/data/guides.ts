@@ -25,7 +25,7 @@ export const GUIDES: Guide[] = [
     readingTime: null,
     updated: null,
     // Publishing rule: needs real project observations (Register L02) before going live.
-    draft: false,
+    draft: true,
   },
   {
     title: 'What is Gaussian splatting?',
@@ -36,7 +36,9 @@ export const GUIDES: Guide[] = [
     author: null,
     readingTime: null,
     updated: null,
-    draft: false,
+    // The recovered owner decision (3 November, L02) holds educational guides
+    // until genuine project observations and editorial approval are supplied.
+    draft: true,
   },
   {
     title: 'Planning a 3D experience: cost and timeline',

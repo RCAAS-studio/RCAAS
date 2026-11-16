@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SITE_METADATA } from '../data/siteData';
 import { sendLead } from '../lib/leads';
 import { checkContactFields } from '../../../lib/contactRules';
@@ -18,6 +18,36 @@ interface ProjectPlannerModalProps {
 }
 
 export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen, onClose }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    dialogRef.current?.querySelector<HTMLButtonElement>('[aria-label="Close modal"]')?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { event.preventDefault(); onClose(); return; }
+      if (event.key !== 'Tab') return;
+      const controls = [...(dialogRef.current?.querySelectorAll<HTMLElement>('button, input, select, textarea, a[href], [tabindex]') ?? [])]
+        .filter(node => node.tabIndex >= 0 && !node.matches(':disabled') && node.getClientRects().length > 0);
+      const first = controls[0], last = controls[controls.length - 1];
+      if (!first) { event.preventDefault(); dialogRef.current?.focus(); return; }
+      if (!dialogRef.current?.contains(document.activeElement) || (!event.shiftKey && document.activeElement === last)) {
+        event.preventDefault(); first.focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault(); last.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus();
+    };
+  }, [isOpen, onClose]);
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [spaceType, setSpaceType] = useState('Hotels & Tourism');
   const [deliverables, setDeliverables] = useState<string[]>([
@@ -75,7 +105,7 @@ export const ProjectPlannerModal: React.FC<ProjectPlannerModalProps> = ({ isOpen
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-lg border border-line bg-white p-6 sm:p-8 shadow-2xl">
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Plan your experience" tabIndex={-1} className="relative w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-lg border border-line bg-white p-6 sm:p-8 shadow-2xl">
         
         {/* Close Button */}
         <button

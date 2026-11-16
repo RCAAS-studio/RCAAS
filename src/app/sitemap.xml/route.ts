@@ -29,7 +29,7 @@ const PAGES = LISTED_PAGES.filter((p) => !/noindex/i.test(pageMeta(p === '/' ? p
 // The static export (GitHub Pages) serves and canonicalises every page with a trailing slash; the Node host
 // redirects to the slash-less form. The sitemap must list the form each host calls canonical.
 const TRAIL = process.env.NEXT_OUTPUT_EXPORT === '1' ? '/' : '';
-const PAGES_MODIFIED = '2026-11-15';
+const PAGES_MODIFIED = '2026-11-16';
 
 async function get<T>(path: string): Promise<T[]> {
   try {

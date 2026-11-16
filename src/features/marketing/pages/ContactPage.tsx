@@ -217,7 +217,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 1, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.08 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink font-display text-balance mb-6 leading-[1.12]"
@@ -226,7 +226,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 1, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.16 }}
             className="text-base sm:text-lg text-zinc-600 leading-relaxed max-w-2xl"
@@ -471,7 +471,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                 </p>
               </div>
 
-              <dl className="divide-y divide-line border-t border-line">
+              <ul aria-label="Contact details" className="divide-y divide-line border-t border-line">
                 {directRows.map((row) => {
                   const Icon = row.icon;
                   const content = (
@@ -480,15 +480,14 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                         <Icon className="w-4 h-4 text-accent transition-colors group-hover:text-white" aria-hidden="true" />
                       </span>
                       <span className="flex-1 min-w-0">
-                        <dt className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">{row.label}</dt>
-                        <dd className="text-sm text-zinc-900 font-medium wrap-break-word">{row.value}</dd>
+                        <span className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500">{row.label}</span>
+                        <span className="block text-sm text-zinc-900 font-medium wrap-break-word">{row.value}</span>
                       </span>
                       {row.href && <ArrowRight className="w-4 h-4 text-zinc-300 transition-all group-hover:text-accent group-hover:translate-x-0.5" aria-hidden="true" />}
                     </>
                   );
-                  return row.href ? (
+                  return <li key={row.label}>{row.href ? (
                     <a
-                      key={row.label}
                       href={row.href}
                       target={row.href.startsWith('http') ? '_blank' : undefined}
                       rel={row.href.startsWith('http') ? 'noopener noreferrer' : undefined}
@@ -498,12 +497,12 @@ export const ContactPage: React.FC<ContactPageProps> = ({ currentPath, onNavigat
                       {content}
                     </a>
                   ) : (
-                    <div key={row.label} className="group flex items-center gap-4 px-6 py-4">
+                    <div className="group flex items-center gap-4 px-6 py-4">
                       {content}
                     </div>
-                  );
+                  )}</li>;
                 })}
-              </dl>
+              </ul>
 
               {/* Map: static map image linking to Google Maps once the office address is confirmed. */}
               <div className="border-t border-line p-4">

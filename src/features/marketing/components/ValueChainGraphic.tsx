@@ -73,12 +73,12 @@ const STEPS: ValueChainStep[] = [
   },
   {
     number: '05',
-    phase: 'Measure',
+    phase: 'Review',
     title: 'Outcome & Impact',
-    detail: 'Visitor engagement metrics, dwell time, direct bookings, admissions enquiries, and verified site dimensions.',
-    tools: 'Telemetry · Lead Flow · As-Built Accuracy',
+    detail: 'Agree what success means for your project, review the delivered experience, and give visitors a clear route to enquire or book.',
+    tools: 'Project Goals · Delivery Review · Enquiry Routes',
     badge: 'Results',
-    specs: ['Real-time visitor heatmaps & dwell time', 'Direct booking and lead conversion tracking', 'Permanent digital archive certification'],
+    specs: ['Goals and outputs agreed in the brief', 'Links to your enquiry or booking process', 'Survey checks defined for each project'],
     iconSvg: (
       <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -214,7 +214,7 @@ export const ValueChainGraphic: React.FC = () => {
           className="mt-4 rounded-xl border border-zinc-200/90 bg-white p-4 sm:p-5 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
         >
           <div className="flex items-start sm:items-center gap-3.5">
-            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-accent/10 text-accent font-mono text-xs font-bold border border-accent/20">
+            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-accent/10 text-accent-strong font-mono text-xs font-bold border border-accent/20">
               {selectedStep.number}
             </div>
             <div>

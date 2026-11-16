@@ -60,16 +60,16 @@ const CAPABILITIES: CapabilitySection[] = [
     anchor: 'vr',
     number: '02',
     title: 'VR Experiences',
-    badge: 'Spatial Presence · WebXR & Headsets',
+    badge: 'Headset experience · Agreed per project',
     whatItIs:
-      'Your 3D place, prepared for a virtual reality headset, so visitors stand directly inside it with true 1:1 human scale and depth perception.',
+      'Your captured place adapted for a headset experience, with scale and interaction checked for the project.',
     audienceExperiences:
       'The sense of being there: standing in a temple courtyard, walking a hotel lobby or touring an engineering workshop before enrolling.',
     youReceive: [
-      'VR-ready application package optimised for standalone headsets',
-      'WebXR browser link enabling instant entry without app stores',
+      'Delivery format agreed for the selected headset',
+      'Browser or app delivery assessed for each project',
       'Setup guidance and on-site support for events and exhibitions',
-      'Kiosk kiosk mode locks for visitor centre unattended use',
+      'Event or kiosk setup, where included in the project brief',
     ],
     bestFor: [
       'International Tourism Fairs & Trade Shows',
@@ -104,7 +104,7 @@ const CAPABILITIES: CapabilitySection[] = [
       'Architectural Scale Models for Off-Plan Sales',
     ],
     madeWith:
-      'High-density surface reconstruction, ultra-compressed WebAR polygon meshes, and WebXR browser camera tracking pipelines.',
+      'Captured assets prepared for the agreed mobile AR format, with compatibility checked per project.',
     image: IMG['immersive-experiences/showcase-3'],
   },
   {
@@ -120,7 +120,7 @@ const CAPABILITIES: CapabilitySection[] = [
     youReceive: [
       'Custom interactive WebGL application embeddable anywhere',
       'Touchscreen kiosk build for corporate lobbies and visitor centres',
-      'Real-time user engagement telemetry and heatmap dashboard',
+      'Interaction and reporting requirements assessed in the project brief',
       'Custom scripted narrative paths and multi-language audio narration',
     ],
     bestFor: [
@@ -195,7 +195,7 @@ const COMPARISON_ROWS = [
     feature: 'Device Compatibility',
     photos: 'Standard screens only',
     panos: 'Desktop and mobile browsers',
-    rcaas: 'Phone, tablet, laptop, touch kiosks & VR headsets',
+    rcaas: 'Desktop and mobile browsers; kiosk and headset delivery assessed per project',
   },
   {
     feature: 'Secondary Deliverables',
@@ -385,7 +385,7 @@ export const ImmersiveExperiencesPage: React.FC<ImmersiveExperiencesPageProps> =
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              WebXR & Headset Compatible
+              VR delivery assessed per project
             </span>
           </div>
         </div>

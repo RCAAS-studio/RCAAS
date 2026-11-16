@@ -31,6 +31,8 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
   const [paused, setPaused] = useState(false);
   const reduceMotion = useReducedMotion();
   const autoPlay = !reduceMotion && !paused && studies.length > 1;
+  // Keep the first server/client markup identical; CSS handles reduced-motion paint.
+  const animateProgress = !paused && studies.length > 1;
 
   useEffect(() => {
     if (!autoPlay) return;
@@ -105,10 +107,11 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
               <span className="absolute left-0 -top-px h-px w-full overflow-hidden" aria-hidden="true">
                 {isActive && (
                   <span
-                    key={`${active}-${autoPlay}`}
+                    key={`${active}-${animateProgress}`}
+                    data-story-progress=""
                     className="block h-full bg-accent"
                     style={
-                      autoPlay
+                      animateProgress
                         ? { animation: `story-progress ${STORY_MS}ms linear forwards` }
                         : { width: '100%' }
                     }
@@ -124,13 +127,13 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
               >
                 <span
                   className={`w-7 shrink-0 font-mono text-xs font-semibold tracking-[0.2em] transition-colors ${
-                    isActive ? 'text-accent' : 'text-zinc-500 group-hover/item:text-zinc-300'
+                    isActive ? 'text-accent-soft' : 'text-zinc-400 group-hover/item:text-zinc-300'
                   }`}
                 >
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-500">{study.tag}</span>
+                  <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-400">{study.tag}</span>
                   <span
                     className={`mt-1 block font-display text-xl font-bold tracking-tight transition-colors sm:text-2xl ${
                       isActive ? 'text-white' : 'text-zinc-500 group-hover/item:text-white'
@@ -148,7 +151,7 @@ export const CaseStudyShowcase: React.FC<CaseStudyShowcaseProps> = ({ studies, o
                 }`}
               >
                 <div className="overflow-hidden">
-                  <p className="text-sm leading-relaxed text-zinc-500">{study.line}</p>
+                  <p className="text-sm leading-relaxed text-zinc-400">{study.line}</p>
                   <a
                     href={study.path}
                     onClick={linkHandler(onNavigate, study.path)}

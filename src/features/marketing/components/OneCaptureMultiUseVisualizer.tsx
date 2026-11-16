@@ -436,12 +436,12 @@ export const OneCaptureMultiUseVisualizer: React.FC<VisualizerProps> = ({ onNavi
                 </div>
 
                 <div className="mt-6 pt-5 border-t border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="text-xs text-zinc-500">
+                  <div className="min-w-0 text-xs text-zinc-500">
                     <strong className="text-zinc-900 font-semibold">Best for:</strong> {active.forWhom}
                   </div>
                   <button
                     onClick={() => onNavigate(active.route)}
-                    className="loro-btn-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider max-w-full text-left sm:whitespace-nowrap self-start sm:self-auto"
+                    className="loro-btn-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider max-w-full shrink-0 text-left sm:whitespace-nowrap self-start sm:self-auto"
                   >
                     {active.buttonText} &rarr;
                   </button>

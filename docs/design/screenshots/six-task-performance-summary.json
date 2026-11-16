@@ -1,0 +1,373 @@
+{
+  "date": "2026-11-16",
+  "scope": "Local isolated production Node build, not a deployed or field-data audit. One Lighthouse sample per page/profile before and after; no statistical improvement claim.",
+  "conditions": "Lighthouse simulated throttling with the recorded profiles. Separate web-vitals 6.2.3 visits use 390/1440x900 at DPR 1, no network throttling, CPU 4x/1x, synthetic interactions, API GETs mocked and writes aborted. No external 3D iframe loaded.",
+  "rejectedSamples": "Earlier ignored-QA-directory builds generated incomplete Tailwind CSS; those samples are excluded. Cross-drive Windows dependency resolution also failed before the accepted builds.",
+  "before": [
+    {
+      "name": "home-mobile",
+      "lighthouseVersion": "13.6.0",
+      "performance": 85,
+      "accessibility": 96,
+      "LCPms": 4176.93,
+      "CLS": 0.0001431146158095261,
+      "TBTms": 114.50000000000045,
+      "failedAutomatedAccessibilityAudits": [
+        "color-contrast"
+      ],
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      }
+    },
+    {
+      "name": "home-desktop",
+      "lighthouseVersion": "13.6.0",
+      "performance": 99,
+      "accessibility": 93,
+      "LCPms": 946.7275,
+      "CLS": 0.001741817988824943,
+      "TBTms": 12.999999999999886,
+      "failedAutomatedAccessibilityAudits": [
+        "color-contrast",
+        "target-size"
+      ],
+      "formFactor": "desktop",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 40,
+        "throughputKbps": 10240,
+        "requestLatencyMs": 0,
+        "downloadThroughputKbps": 0,
+        "uploadThroughputKbps": 0,
+        "cpuSlowdownMultiplier": 1
+      },
+      "screenEmulation": {
+        "mobile": false,
+        "width": 1350,
+        "height": 940,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      }
+    },
+    {
+      "name": "services-mobile",
+      "lighthouseVersion": "13.6.0",
+      "performance": 86,
+      "accessibility": 97,
+      "LCPms": 3995.489,
+      "CLS": 0,
+      "TBTms": 127.5,
+      "failedAutomatedAccessibilityAudits": [
+        "color-contrast"
+      ],
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      }
+    },
+    {
+      "name": "contact-mobile",
+      "lighthouseVersion": "13.6.0",
+      "performance": 90,
+      "accessibility": 94,
+      "LCPms": 3609.7665,
+      "CLS": 0,
+      "TBTms": 75,
+      "failedAutomatedAccessibilityAudits": [
+        "definition-list",
+        "dlitem"
+      ],
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      }
+    },
+    {
+      "name": "storytelling-mobile",
+      "lighthouseVersion": "13.6.0",
+      "performance": 83,
+      "accessibility": 100,
+      "LCPms": 4581.063,
+      "CLS": 0.0001389291292050684,
+      "TBTms": 86.00000000000045,
+      "failedAutomatedAccessibilityAudits": [],
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      }
+    }
+  ],
+  "after": [
+    {
+      "name": "home-mobile",
+      "lighthouseVersion": "13.6.0",
+      "performance": 99,
+      "accessibility": 100,
+      "LCPms": 1210.29,
+      "CLS": 0.001891736696642252,
+      "TBTms": 102.5,
+      "failedAutomatedAccessibilityAudits": [],
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      }
+    },
+    {
+      "name": "home-desktop",
+      "lighthouseVersion": "13.6.0",
+      "performance": 100,
+      "accessibility": 100,
+      "LCPms": 332.227,
+      "CLS": 0.008759576982075981,
+      "TBTms": 0,
+      "failedAutomatedAccessibilityAudits": [],
+      "formFactor": "desktop",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 40,
+        "throughputKbps": 10240,
+        "requestLatencyMs": 0,
+        "downloadThroughputKbps": 0,
+        "uploadThroughputKbps": 0,
+        "cpuSlowdownMultiplier": 1
+      },
+      "screenEmulation": {
+        "mobile": false,
+        "width": 1350,
+        "height": 940,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      }
+    },
+    {
+      "name": "services-mobile",
+      "lighthouseVersion": "13.6.0",
+      "performance": 100,
+      "accessibility": 100,
+      "LCPms": 1206.978,
+      "CLS": 0,
+      "TBTms": 34,
+      "failedAutomatedAccessibilityAudits": [],
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      }
+    },
+    {
+      "name": "contact-mobile",
+      "lighthouseVersion": "13.6.0",
+      "performance": 99,
+      "accessibility": 100,
+      "LCPms": 1052.15,
+      "CLS": 0,
+      "TBTms": 109,
+      "failedAutomatedAccessibilityAudits": [],
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      }
+    },
+    {
+      "name": "storytelling-mobile",
+      "lighthouseVersion": "13.6.0",
+      "performance": 82,
+      "accessibility": 100,
+      "LCPms": 4951.548000000001,
+      "CLS": 0.0001389291292050684,
+      "TBTms": 80,
+      "failedAutomatedAccessibilityAudits": [],
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      }
+    }
+  ],
+  "webVitalsVersion": "6.2.3",
+  "scriptedVisits": [
+    {
+      "route": "/",
+      "width": 390,
+      "cpuRate": 4,
+      "LCPms": 424,
+      "INPms": 112,
+      "CLS": 0.0002840665558721114,
+      "iframes": 0,
+      "overflow": 0
+    },
+    {
+      "route": "/services/",
+      "width": 390,
+      "cpuRate": 4,
+      "LCPms": 1408,
+      "INPms": 80,
+      "CLS": 0,
+      "iframes": 0,
+      "overflow": 0
+    },
+    {
+      "route": "/contact/",
+      "width": 390,
+      "cpuRate": 4,
+      "LCPms": 184,
+      "INPms": 40,
+      "CLS": 0,
+      "iframes": 0,
+      "overflow": 0
+    },
+    {
+      "route": "/services/visual-storytelling/",
+      "width": 390,
+      "cpuRate": 4,
+      "LCPms": 344,
+      "INPms": 80,
+      "CLS": 0,
+      "iframes": 0,
+      "overflow": 0
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "cpuRate": 1,
+      "LCPms": 112,
+      "INPms": 176,
+      "CLS": 0.008430240910534015,
+      "iframes": 0,
+      "overflow": 0
+    },
+    {
+      "route": "/services/",
+      "width": 1440,
+      "cpuRate": 1,
+      "LCPms": 220,
+      "INPms": 80,
+      "CLS": 0.0006417943465202761,
+      "iframes": 0,
+      "overflow": 0
+    },
+    {
+      "route": "/contact/",
+      "width": 1440,
+      "cpuRate": 1,
+      "LCPms": 76,
+      "INPms": 48,
+      "CLS": 0.0006185847780832048,
+      "iframes": 0,
+      "overflow": 0
+    },
+    {
+      "route": "/services/visual-storytelling/",
+      "width": 1440,
+      "cpuRate": 1,
+      "LCPms": 108,
+      "INPms": 48,
+      "CLS": 0.0007226233797635888,
+      "iframes": 0,
+      "overflow": 0
+    }
+  ]
+}

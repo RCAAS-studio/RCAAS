@@ -35,8 +35,9 @@ export const GuideBreadcrumb: React.FC<{ label: string; onNavigate: (path: Route
   </nav>
 );
 
-export const GuideHeader: React.FC<{ eyebrow: string; title: string; minutes: number }> = ({ eyebrow, title, minutes }) => (
+export const GuideHeader: React.FC<{ eyebrow: string; title: string; minutes: number; draft?: boolean }> = ({ eyebrow, title, minutes, draft = false }) => (
   <header className="max-w-4xl mb-10">
+    {draft && <p role="note" className="mb-6 rounded-xl border border-line bg-surface p-4 text-sm text-muted">Draft for review. Project examples and editorial approval are still pending.</p>}
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}

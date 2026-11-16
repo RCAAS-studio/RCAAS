@@ -63,7 +63,7 @@ const LearnHub: React.FC<{ onNavigate: (path: RoutePath) => void }> = ({ onNavig
             <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
             <span className="font-semibold text-zinc-900">Guides</span>
             <span className="text-zinc-500">·</span>
-            <span>Written from real projects</span>
+            <span>Guides to help you plan</span>
           </motion.div>
 
           <motion.h1
@@ -81,13 +81,18 @@ const LearnHub: React.FC<{ onNavigate: (path: RoutePath) => void }> = ({ onNavig
             transition={{ duration: 0.5, delay: 0.16 }}
             className="text-base sm:text-lg text-zinc-600 leading-relaxed max-w-2xl"
           >
-            Straight answers to the questions people ask us most, written by our team from real projects. No jargon
-            unless we explain it.
+            Straight answers to common questions about 3D capture and immersive experiences. Technical terms are
+            explained as you go.
           </motion.p>
         </section>
 
         {/* 2. GUIDES */}
         <section aria-label="Guides" className="mb-20 sm:mb-28">
+          {PUBLISHED_GUIDES.length === 0 && (
+            <p className="text-base leading-relaxed text-muted">
+              Our guides are being reviewed. For help planning your project, contact our team.
+            </p>
+          )}
           <div className={`grid grid-cols-1 gap-6 ${PUBLISHED_GUIDES.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
             {PUBLISHED_GUIDES.map((guide, i) => (
               <motion.div key={guide.path} {...fadeUp} transition={{ duration: 0.45, delay: i * 0.1 }}>

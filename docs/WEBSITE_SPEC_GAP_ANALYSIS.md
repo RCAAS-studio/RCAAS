@@ -1,5 +1,7 @@
 # RCAAS website specification: gap analysis
 
+**16 November continuation:** the historical DOCX/PDF and newer completion/decision editions have now been located and compared. The earlier source-unavailability statements below are retained as dated audit history, not current findings. See [the six-task completion matrix](RCAAS_WEBSITE_SIX_TASK_COMPLETION.md) for source hashes, confirmed PDF counts, Word-pagination limits, recovered publication holds and the final release assessment. Newer approved architecture/design requirements remain in force.
+
 Audit date: 15 November 2026 (revision 2, the completion and publication-safety pass, the same day: see section 0A). Scope: "Website Planning (1)" (October 2026 skeleton, build spec and draft copy) compared with the current `main` working tree (clean at the start; head `1d304b4`). The first pass was a requirements audit and changed no code. Revision 2 corrected the confirmed publication blockers (section 0A and `docs/WEBSITE_PUBLICATION_SAFETY_REPORT.md`). Nothing has been committed, pushed or deployed.
 
 > `docs/*` is git-ignored in this repository. Both reports are now allow-listed in `.gitignore` (two `!docs/...` lines, uncommitted), so a plain `git add` tracks them; see section 12 of `docs/WEBSITE_PUBLICATION_SAFETY_REPORT.md` for the exact commands.

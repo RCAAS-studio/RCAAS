@@ -256,7 +256,7 @@ export const ComparisonGuidePage: React.FC<ComparisonGuidePageProps> = ({ onNavi
         <GuideBreadcrumb label="3D tour vs 360° tour vs video" onNavigate={onNavigate} />
 
         <article>
-          <GuideHeader eyebrow="Honest comparison" title={H1} minutes={READING_MINUTES} />
+          <GuideHeader eyebrow="Honest comparison" title={H1} minutes={READING_MINUTES} draft={!isGuidePublished('/learn/3d-virtual-tour-vs-360-tour-vs-video/')} />
 
           {/* 1. DIRECT ANSWER */}
           <ShortAnswer text={DIRECT_ANSWER} />

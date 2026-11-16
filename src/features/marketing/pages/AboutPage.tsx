@@ -386,7 +386,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                 alt="A heritage courtyard during restoration, and the same courtyard being scanned"
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-linear-to-trom-black/60 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
               <span className="absolute bottom-4 left-4 bg-white/95 border border-line px-3 py-1.5 rounded-md text-xs font-mono text-zinc-900 shadow-xs">
                 Monuments weather and change
               </span>
@@ -437,7 +437,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                     className="relative rounded-2xl overflow-hidden border border-line bg-zinc-900 aspect-4/5roup"
                   >
                     <img loading="lazy" decoding="async" src={half.image} srcSet={srcSetFor(half.image)} alt="" className="absolute inset-0 w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-linear-to-trom-black/75 via-black/10 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
                     <figcaption className="absolute bottom-4 left-4 right-4">
                       <span className="w-9 h-9 rounded-lg bg-white/95 flex items-center justify-center shadow-xs mb-2">
                         <Icon className="w-4 h-4 text-accent" />

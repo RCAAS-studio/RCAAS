@@ -361,7 +361,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 1, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="text-4xl sm:text-6xl font-bold tracking-tight text-ink font-display text-balance"
@@ -370,7 +370,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ currentPath, onNavig
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 1, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5 text-base sm:text-lg text-muted leading-relaxed max-w-3xl text-balance"

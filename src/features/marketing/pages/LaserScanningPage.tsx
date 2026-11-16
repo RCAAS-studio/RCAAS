@@ -643,11 +643,11 @@ export const LaserScanningPage: React.FC<LaserScanningPageProps> = ({ onNavigate
                 <div className="font-mono text-xs text-accent font-bold uppercase mb-2">Deliverable 05</div>
                 <h3 className="text-lg font-semibold text-zinc-900 mb-2">3D Mesh or Scan-to-BIM</h3>
                 <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
-                  Optional parametric Revit family model (LOD 200/300) or high-density textured polygon mesh for visualisation and clash detection.
+                  Optional mesh or CAD/BIM modelling, with the level of detail, intended use and delivery format agreed before work begins.
                 </p>
               </div>
               <div className="font-mono text-xs text-zinc-500 pt-3 border-t border-zinc-100">
-                Formats: RVT · IFC · OBJ
+                Formats: Agreed per project
               </div>
             </div>
 

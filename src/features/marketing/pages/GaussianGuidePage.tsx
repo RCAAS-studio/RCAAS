@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { RoutePath } from '../types';
-import { readingMinutes } from '../data/guides';
+import { isGuidePublished, readingMinutes } from '../data/guides';
 import { SpotlightCard } from '../components/SpotlightCard';
 import {
   ComparisonTable,
@@ -411,7 +411,7 @@ export const GaussianGuidePage: React.FC<GaussianGuidePageProps> = ({ onNavigate
         <GuideBreadcrumb label="What is Gaussian splatting?" onNavigate={onNavigate} />
 
         <article>
-          <GuideHeader eyebrow="Explained simply" title={H1} minutes={READING_MINUTES} />
+          <GuideHeader eyebrow="Explained simply" title={H1} minutes={READING_MINUTES} draft={!isGuidePublished('/learn/what-is-gaussian-splatting/')} />
 
           {/* 1. DIRECT ANSWER */}
           <ShortAnswer text={DIRECT_ANSWER} />

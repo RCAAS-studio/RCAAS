@@ -27,7 +27,10 @@ const LIDAR_COLORS = [
 
 export const CaptureLidarCursor: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [mousePos, setMousePos] = useState<{ x: number; y: number }>({ x: -100, y: -100 });
+  const cursorRef = useRef<HTMLDivElement | null>(null);
+  const coordinateRef = useRef<HTMLSpanElement | null>(null);
+  const visibleRef = useRef(false);
+  const lastMoveRef = useRef(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -47,6 +50,7 @@ export const CaptureLidarCursor: React.FC = () => {
       setIsCoarsePointer(true);
       return;
     }
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     // Initialize 3D LiDAR point cloud orbiting swarm (simulating 3D laser scan beam)
     const initialPoints: Point3D[] = [];
@@ -77,13 +81,15 @@ export const CaptureLidarCursor: React.FC = () => {
       posRef.current.targetX = e.clientX;
       posRef.current.targetY = e.clientY;
 
-      if (!isVisible) {
+      if (!visibleRef.current) {
+        visibleRef.current = true;
         setIsVisible(true);
         posRef.current.x = e.clientX;
         posRef.current.y = e.clientY;
       }
 
-      setMousePos({ x: e.clientX, y: e.clientY });
+      lastMoveRef.current = performance.now();
+      schedule();
 
       // Check if hovering clickable/interactive element
       const target = e.target as HTMLElement | null;
@@ -95,14 +101,13 @@ export const CaptureLidarCursor: React.FC = () => {
 
     const handleMouseDown = () => setIsClicking(true);
     const handleMouseUp = () => setIsClicking(false);
-    const handleMouseEnter = () => setIsVisible(true);
-    const handleMouseLeave = () => setIsVisible(false);
-
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('mouseenter', handleMouseEnter);
-    document.addEventListener('mouseleave', handleMouseLeave);
+    const handleMouseEnter = () => { visibleRef.current = true; setIsVisible(true); };
+    const stop = () => {
+      if (animFrameRef.current !== null) cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    };
+    const handleMouseLeave = () => { visibleRef.current = false; setIsVisible(false); stop(); };
+    const handleVisibility = () => { if (document.hidden) stop(); };
 
     // Canvas render loop
     const canvas = canvasRef.current;
@@ -121,6 +126,15 @@ export const CaptureLidarCursor: React.FC = () => {
     let lastTime = performance.now();
 
     const render = (time: number) => {
+      animFrameRef.current = null;
+      if (document.hidden || !visibleRef.current) return;
+      const { targetX: x, targetY: y } = posRef.current;
+      if (cursorRef.current) cursorRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      if (coordinateRef.current) coordinateRef.current.textContent = `${(x * 0.05).toFixed(1)},${(y * 0.05).toFixed(1)},${(1.2 + ((x + y) % 150) * 0.02).toFixed(2)}m`;
+      if (reducedMotion.matches) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
       const dt = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
 
@@ -301,10 +315,21 @@ export const CaptureLidarCursor: React.FC = () => {
         ctx.restore();
       }
 
-      animFrameRef.current = requestAnimationFrame(render);
+      // Keep the creative cursor, but let settled particles rest instead of
+      // clearing a full-screen canvas forever when the pointer is idle.
+      if (time - lastMoveRef.current < 800 || trailPointsRef.current.length > 0) schedule();
     };
-
-    animFrameRef.current = requestAnimationFrame(render);
+    const schedule = () => {
+      if (animFrameRef.current === null && !document.hidden) animFrameRef.current = requestAnimationFrame(render);
+    };
+    const motionChanged = () => { lastMoveRef.current = performance.now(); schedule(); };
+    reducedMotion.addEventListener('change', motionChanged);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mouseenter', handleMouseEnter);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
@@ -312,25 +337,23 @@ export const CaptureLidarCursor: React.FC = () => {
       window.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      reducedMotion.removeEventListener('change', motionChanged);
       window.removeEventListener('resize', updateCanvasSize);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isVisible]);
+  }, []);
 
   if (isCoarsePointer) {
     return null; // Don't show custom cursor on mobile touch screens
   }
 
-  // Calculate dynamic simulated 3D coordinates based on position
-  const simX = (mousePos.x * 0.05).toFixed(1);
-  const simY = (mousePos.y * 0.05).toFixed(1);
-  const simZ = (1.2 + ((mousePos.x + mousePos.y) % 150) * 0.02).toFixed(2);
-
   return (
     <div
       // Top of the layer scale (see index.css): above the header and modals, never interactive.
-      className="pointer-events-none fixed inset-0 z-[60] overflow-hidden"
-      style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.2s ease-out' }}
+      className="pointer-events-none fixed inset-0 z-[60] overflow-hidden transition-opacity duration-200 motion-reduce:transition-none"
+      style={{ opacity: isVisible ? 1 : 0 }}
+      data-lidar-cursor=""
       aria-hidden="true"
     >
       {/* 3D LiDAR Point Cloud Particle Canvas */}
@@ -341,9 +364,10 @@ export const CaptureLidarCursor: React.FC = () => {
 
       {/* Capture Icon Mark (Viewfinder Reticle & HUD) */}
       <div
+        ref={cursorRef}
         className="pointer-events-none absolute left-0 top-0 will-change-transform"
         style={{
-          transform: `translate3d(${mousePos.x}px, ${mousePos.y}px, 0)`,
+          transform: 'translate3d(-100px, -100px, 0)',
                   }}
       >
         {/* Reticle Container (Centers on cursor point) */}
@@ -418,20 +442,20 @@ export const CaptureLidarCursor: React.FC = () => {
             style={{ letterSpacing: '0.02em' }}
           >
             <span className="text-accent mr-1">XYZ</span>
-            {simX},{simY},{simZ}m
+            <span ref={coordinateRef}>0.0,0.0,1.20m</span>
           </div>
 
           {/* Target Capture Status Badge (Bottom Right when hovering) */}
           {isHovered && (
             <div className="absolute -bottom-4 -right-10 select-none rounded bg-zinc-950 px-1.5 py-0.5 font-mono text-[8px] font-bold text-white shadow-md flex items-center gap-1 border border-zinc-800 whitespace-nowrap">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent animate-ping" />
+              <span className="h-1.5 w-1.5 rounded-full bg-accent animate-ping motion-reduce:animate-none" />
               <span>CAPTURE</span>
             </div>
           )}
 
           {/* Click Pulse Shutter Effect */}
           {isClicking && (
-            <div className="absolute inset-0 animate-ping rounded-full border border-accent opacity-75" />
+            <div className="absolute inset-0 animate-ping rounded-full border border-accent opacity-75 motion-reduce:animate-none" />
           )}
         </div>
       </div>

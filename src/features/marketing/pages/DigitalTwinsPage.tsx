@@ -98,7 +98,7 @@ const CAPABILITIES: CapabilityItem[] = [
     anchor: 'as-built',
     number: '03',
     title: 'As-Built Drawings & CAD/BIM-Ready Data',
-    badge: 'Scan-to-CAD · Revit Ready · Parametric Geometry',
+    badge: 'Scan-to-CAD · CAD/BIM Scope Agreed Per Project',
     whatItIs:
       'Your laser scan converted into the exact 2D drawings and 3D architectural files your design, engineering, and construction teams work with every day.',
     youReceive: [
@@ -106,7 +106,7 @@ const CAPABILITIES: CapabilityItem[] = [
       'Longitudinal and cross building sections capturing structural slab depths and sags',
       'Exterior facade elevations highlighting ornamentation, stone carvings and openings',
       'CAD vector files structured with clean layer hierarchies (walls, openings, steps)',
-      'Point cloud reference files indexed for immediate insertion into AutoCAD and Revit',
+      'Point cloud reference files prepared for the design software agreed in your brief',
     ],
     bestFor: [
       'Architects beginning adaptive reuse, interior renovation, or structural retrofitting',
@@ -115,11 +115,11 @@ const CAPABILITIES: CapabilityItem[] = [
       'Contractors validating structural handover before fit-out works commence',
     ],
     madeWith:
-      'Autodesk Revit, AutoCAD, and specialized point-cloud extraction pipelines drafted by qualified architectural technicians.',
+      'Point-cloud extraction and drafting tools chosen to match your required CAD or BIM deliverable.',
     image: IMG['digital-twins/showcase-3'],
     specDetails: {
-      accuracyProfile: 'Drafted to agreed Level of Detail (LOD 200/300) from scan data',
-      primaryFormats: 'DWG, DXF, RVT, IFC, Vector PDF',
+      accuracyProfile: 'Level of detail and checking agreed before drafting',
+      primaryFormats: 'CAD/BIM formats agreed in the project brief',
       captureMethod: 'Extracted directly from registered LiDAR slice geometries',
     },
   },
@@ -132,7 +132,7 @@ const CAPABILITIES: CapabilityItem[] = [
     whatItIs:
       'The geodetic surveying that anchors your 3D scan to the real world: ground control networks, boundary georeferencing, topographic leveling, and GIS layer structuring.',
     youReceive: [
-      'Georeferenced spatial data aligned with Nepal National Grid or WGS84 coordinates',
+      'Georeferenced spatial data aligned with the coordinate system agreed for your site',
       'Survey benchmark control point documentation and datum reports',
       'Topographic site survey drawings, with scope agreed per project',
       'GIS geodatabase layers ready for QGIS, ArcGIS, and municipal planning software',
@@ -508,30 +508,30 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
 
             {/* Technical Specification Summary Card */}
             <div className="lg:col-span-4 bg-zinc-50 border border-zinc-200 rounded-xl p-6 relative">
-              <div className="font-mono text-xs uppercase tracking-wider text-zinc-600 mb-4 pb-2 border-b border-zinc-200 flex justify-between items-center">
+              <div className="font-mono text-xs uppercase tracking-wider text-zinc-600 mb-4 pb-2 border-b border-zinc-200 flex justify-between items-center gap-3">
                 <span>Survey Specification Profile</span>
-                <span className="text-accent font-bold">RCAAS Survey</span>
+                <span className="text-accent font-bold shrink-0">RCAAS Survey</span>
               </div>
               <ul className="space-y-3 text-sm">
-                <li className="flex items-center justify-between text-zinc-700">
-                  <span className="font-medium">Sensor hardware:</span>
-                  <span className="font-mono text-xs text-zinc-900">Handheld SLAM LiDAR + drone</span>
+                <li className="flex items-baseline justify-between gap-4 text-zinc-700">
+                  <span className="font-medium shrink-0">Sensor hardware:</span>
+                  <span className="font-mono text-xs text-zinc-900 text-right">Handheld SLAM LiDAR + drone</span>
                 </li>
-                <li className="flex items-center justify-between text-zinc-700">
-                  <span className="font-medium">Coordinate datums:</span>
-                  <span className="font-mono text-xs text-zinc-900">WGS84 / Nepal Grid (UTM)</span>
+                <li className="flex items-baseline justify-between gap-4 text-zinc-700">
+                  <span className="font-medium shrink-0">Coordinate datums:</span>
+                  <span className="font-mono text-xs text-zinc-900 text-right">Coordinate system agreed for the site</span>
                 </li>
-                <li className="flex items-center justify-between text-zinc-700">
-                  <span className="font-medium">Primary point formats:</span>
-                  <span className="font-mono text-xs text-zinc-900">E57 · LAS · LAZ · RCP</span>
+                <li className="flex items-baseline justify-between gap-4 text-zinc-700">
+                  <span className="font-medium shrink-0">Primary point formats:</span>
+                  <span className="font-mono text-xs text-zinc-900 text-right">E57 · LAS · LAZ · RCP</span>
                 </li>
-                <li className="flex items-center justify-between text-zinc-700">
-                  <span className="font-medium">CAD deliverables:</span>
-                  <span className="font-mono text-xs text-zinc-900">DWG · DXF · RVT · PDF</span>
+                <li className="flex items-baseline justify-between gap-4 text-zinc-700">
+                  <span className="font-medium shrink-0">CAD deliverables:</span>
+                  <span className="font-mono text-xs text-zinc-900 text-right">CAD/PDF formats agreed per project</span>
                 </li>
-                <li className="flex items-center justify-between text-zinc-700">
-                  <span className="font-medium">Contact method:</span>
-                  <span className="font-mono text-xs text-zinc-900">Non-invasive</span>
+                <li className="flex items-baseline justify-between gap-4 text-zinc-700">
+                  <span className="font-medium shrink-0">Contact method:</span>
+                  <span className="font-mono text-xs text-zinc-900 text-right">Non-invasive</span>
                 </li>
               </ul>
 
@@ -674,7 +674,7 @@ export const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ onNavigate }
                     <span>LIDAR REFLECTANCE INTENSITY: ACTIVE</span>
                   </div>
                   <div className="bg-black/70 px-3 py-1.5 rounded border border-zinc-800 text-zinc-300">
-                    CRS: EPSG:32645 (WGS 84 / UTM zone 45N)
+                    CRS confirmed in the project brief
                   </div>
                 </div>
 

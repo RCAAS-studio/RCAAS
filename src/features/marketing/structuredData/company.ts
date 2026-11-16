@@ -5,7 +5,20 @@ import type { GraphContext } from './types';
 
 export function addCompanySchema(context: GraphContext): boolean {
   const { currentPath, baseOrg, graphItems } = context;
-  if (currentPath.startsWith('/platform')) {
+  const breadcrumbLabels: Record<string, string> = {
+    '/gallery': 'Live tours', '/cookies': 'Cookie Policy', '/security': 'Security',
+  };
+  const path = context.pathOnly.replace(/\/$/, '');
+  if (breadcrumbLabels[path]) {
+    graphItems.push({
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://rcaas.tech/' },
+        { '@type': 'ListItem', position: 2, name: breadcrumbLabels[path], item: `https://rcaas.tech${path}/` },
+      ],
+    });
+    return true;
+  } else if (currentPath.startsWith('/platform')) {
     // 3DModel (P03 demo) and SoftwareApplication (P01 name/URL) are added once confirmed.
     graphItems.push({
       '@type': 'WebPage',
