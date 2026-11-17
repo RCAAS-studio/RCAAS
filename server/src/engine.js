@@ -12,6 +12,7 @@
  * has the last word.
  */
 import { nightsOf } from './stays.js';
+import { readPublicJson } from './publicJson.js';
 
 const day = (d) => Math.floor(Date.parse(`${d}T12:00:00Z`) / 86400000);
 const hash = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -24,8 +25,7 @@ export function demoBooked(params) {
 }
 
 const cache = new Map(); // filled-in link -> { at, booked }
-// ponytail: names, not resolved addresses; a hostname pointing at a private address still passes. Resolve first if links come from strangers.
-const PRIVATE_HOST = /^(localhost|127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|0\.|\[)/i;
+const inFlight = new Map(); // Coalesce identical requests; bound total outbound work.
 
 /** The nights of a stay the engine says are taken, or null when it can't say. */
 export async function engineBooked(template, stay) {
@@ -38,16 +38,14 @@ export async function engineBooked(template, stay) {
 
   let u;
   try { u = new URL(url); } catch { return null; }
-  const dev = process.env.NODE_ENV !== 'production';
-  if (!(u.protocol === 'https:' || (dev && u.protocol === 'http:')) || (!dev && PRIVATE_HOST.test(u.hostname))) return null;
+  if (u.protocol !== 'https:') return null;
   const hit = cache.get(url);
   if (hit && Date.now() - hit.at < 60000) return hit.booked;
+  if (inFlight.has(url)) return inFlight.get(url);
+  if (inFlight.size >= 8) return null;
+  const task = (async () => {
   try {
-    const r = await fetch(u, { signal: AbortSignal.timeout(4000), redirect: 'error', headers: { accept: 'application/json' } });
-    if (!r.ok) return null;
-    const body = await r.text();
-    if (body.length > 65536) return null;
-    const j = JSON.parse(body);
+    const j = await readPublicJson(u);
     const booked = j?.available === false ? nights
       : Array.isArray(j?.booked) ? j.booked.filter((d) => typeof d === 'string' && nights.includes(d)) : null;
     if (booked) {
@@ -58,4 +56,7 @@ export async function engineBooked(template, stay) {
   } catch {
     return null;
   }
+  })();
+  inFlight.set(url, task);
+  try { return await task; } finally { inFlight.delete(url); }
 }

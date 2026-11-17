@@ -1,4 +1,11 @@
 # Studio release readiness
+
+## Production-blocker remediation update — 17 November 2026
+
+Current recommendation remains **NOT READY for production**, pending external staging/provider, operational restore and physical-device acceptance. The historical security findings below are superseded by [STUDIO_PRODUCTION_BLOCKERS.md](STUDIO_PRODUCTION_BLOCKERS.md): Next 16.4.5 and React/React DOM 19.2.9 installed; npm root/server audits report zero advisories; the booking-engine DNS/rebinding and unbounded-body risks have code corrections and isolated regressions. Three.js remains 0.164.1 and XGRIDS is untouched. Current full suite: 86 client + 199 server passes, two server skips; 12 Studio component browser passes; types/lint pass with six existing warnings. New whole-store restore exercise passes. Final real-browser/build/integrity evidence is recorded in the blocker report, along with uncompleted cases and provider acceptance procedures. No live restore, DNS/deployment or notification occurred.
+
+Final patched production build and **three real Studio scenarios passed**, including UI project creation, website editing/publishing, failed-save recovery and anonymous published-site isolation. The original scene and 38 capture files (65,754,605 bytes) retained their hashes; prior disposable snapshots remained unchanged. The local development React-version mismatch was independently repaired and localhost:3000 home/Studio/login/API health all returned 200.
+
 17 November 2026. **NOT READY for production launch.** The local core is testable and suitable for continued controlled staging work, but security hardening and provider/device/operational acceptance remain open. This is a scoped audit with explicit verification gaps, not a claim that every feature is complete.
 
 ## Actual checks

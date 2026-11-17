@@ -25,6 +25,44 @@ async function signIn(page: Page) {
   await expect(page.getByRole('heading', { name: 'Architecture audit project', exact: true })).toBeVisible();
 }
 
+test('real website editing survives a failed save and keeps published content isolated', async ({page,browser})=>{
+  await signIn(page);
+  await page.goto('/studio');
+  await page.getByRole('button',{name:/New project/}).click();
+  const creation=page.getByRole('dialog',{name:'New project'});
+  await creation.getByLabel('Project name').fill('Disposable website acceptance');
+  await creation.getByRole('button',{name:'Create empty project',exact:true}).click();
+  await expect(page).toHaveURL(/\/studio\/[^/]+\/?$/);
+  const project={id:new URL(page.url()).pathname.split('/').filter(Boolean).at(-1)!};
+  expect((await page.request.put(`/api/properties/${project.id}/features`,{data:{website:true}})).ok()).toBe(true);
+  await page.goto(`/studio/${project.id}/site`);
+  const title=page.getByLabel('Title', {exact:true});
+  await expect(title).toBeVisible();
+  await title.fill('Staging website original');
+  await page.getByRole('button',{name:'Save',exact:true}).click();
+  await expect(page.locator('.se-state')).toContainText('Saved');
+  await page.getByRole('button',{name:'Publish',exact:true}).click();
+  await expect(page.locator('.se-state')).toContainText('Published');
+  const anonymous=await browser.newContext();
+  try {
+    const read=async()=> {const response=await anonymous.request.get(`${runtime.base}/api/sites/${project.id}`);expect(response.ok()).toBe(true);return (await response.json()).site;};
+    expect((await read()).hero.title).toBe('Staging website original');
+    await title.fill('Unpublished local edit');
+    await page.route(`**/api/sites/${project.id}/draft`,route=>route.request().method()==='PUT'?route.abort():route.continue());
+    await page.getByRole('button',{name:'Save',exact:true}).click();
+    await expect(page.locator('.se-err')).toBeVisible();
+    await expect(title).toHaveValue('Unpublished local edit');
+    expect((await read()).hero.title).toBe('Staging website original');
+    await page.unroute(`**/api/sites/${project.id}/draft`);
+    await page.getByRole('button',{name:'Save',exact:true}).click();
+    await expect(page.locator('.se-state')).toContainText('Saved');
+    await page.reload();await expect(page.getByLabel('Title',{exact:true})).toHaveValue('Unpublished local edit');
+    expect((await read()).hero.title).toBe('Staging website original');
+    const visitor=await anonymous.newPage();await visitor.goto(`${runtime.base}/s/${project.id}`);
+    await expect(visitor.getByRole('heading',{level:1})).toContainText('Staging website original');
+  } finally {await anonymous.close();}
+});
+
 test('real login, session persistence, invalid session and logout access control', async ({ page, context }) => {
   await page.goto(projectPath);
   await expect(page).toHaveURL(/\/login\?next=/);

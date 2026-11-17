@@ -1,4 +1,9 @@
 # Studio functional audit
+
+## Production-blocker remediation — 17 November 2026
+
+This update supersedes the open framework/engine-network findings below; their original entries remain historical evidence. See [STUDIO_PRODUCTION_BLOCKERS.md](STUDIO_PRODUCTION_BLOCKERS.md) for exact advisory applicability, package versions, tests and remaining staging gates. Next/React received same-minor security patches; booking-engine requests now validate and pin public DNS destinations, bound response bytes and total time, reject redirects and unsafe URL forms, coalesce requests and cap concurrency. Booking availability/hold semantics are unchanged. Added whole-store disposable recovery checks and expanded real-browser project/site/failure-recovery coverage. A stale running development process caused HTTP 500 after the dependency update; a scoped restart/cache move restored home, Studio, login and API health to 200. No live provider or client-data operation was performed.
+
 17 November 2026. The authoritative source is the local checkout. Existing marketing/carousel changes were preserved. No client storage, accounts, reservations or published files were mutated.
 
 ## Implemented correction: copy destination load failure (P1)

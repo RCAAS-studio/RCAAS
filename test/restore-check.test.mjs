@@ -76,6 +76,22 @@ test('a tampered archive is refused before anything is extracted', async (t) => 
   assert.deepEqual(await readdir(root).then((l) => l.includes('drill')), false);
 });
 
+test('recovery preserves account state, site publication, reservations and private asset metadata byte for byte',async t=>{
+  const root=await mkdtemp(path.join(tmpdir(),'rcaas-complete-recovery-'));
+  t.after(()=>rm(root,{recursive:true,force:true}));
+  const {data,snap}=await fixture(root,files=>{
+    files['users/u1.json']={id:'u1',role:'admin',passwordHash:'synthetic-hash',sessionVersion:3,resetTokenHash:'synthetic-reset'};
+    files['sites/p.json']={draft:{title:'Next'},published:{title:'Live'}};
+    files['reservations/p.json']=[{id:'r1',status:'confirmed',kind:'stay',date:'2026-12-01'}];
+    files['asset-records/ast_a.json']={assetId:'ast_a',ownerId:'u1',status:'ready'};
+    files['upload-owners/ast_a.json']={ownerId:'u1'};
+    files['leads/p.json']=[{id:'synthetic-lead'}];
+  });
+  const target=path.join(root,'restored');const result=check(snap,target,'--live',data);
+  assert.equal(result.ok,true,JSON.stringify(result.errors));
+  for(const file of ['users/u1.json','properties/p.json','scenes/s.json','scenes/s@1.json','scenes/s@2.json','sites/p.json','reservations/p.json','asset-records/ast_a.json','upload-owners/ast_a.json','leads/p.json','activity/p.jsonl'])assert.deepEqual(await readFile(path.join(target,'data',file)),await readFile(path.join(data,file)),file);
+});
+
 test('broken data fails the drill: missing published snapshot, missing published scan, unreadable JSON', async (t) => {
   const root = await mkdtemp(path.join(tmpdir(), 'rcaas-drill-'));
   t.after(() => rm(root, { recursive: true, force: true }));
