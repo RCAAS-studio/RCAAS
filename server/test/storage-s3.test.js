@@ -5,7 +5,8 @@
  */
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { createReadStream, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { createReadStream, mkdtempSync, rmSync, writeFileSync, readdirSync } from 'node:fs';
+import os from 'node:os';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { Readable } from 'node:stream';
@@ -32,6 +33,21 @@ after(async () => {
 });
 
 const text = async (stream) => { let s = ''; for await (const c of stream) s += c; return s; };
+
+test('failed and retried stream uploads remove their temporary spool files', async t => {
+  t.mock.method(os, 'tmpdir', () => TMP);
+  const broken = Readable.from((async function* () {
+    yield Buffer.from('partial upload');
+    throw new Error('upload cancelled');
+  })());
+  await assert.rejects(storage.put('ast_cancelled', 'data.bin', broken), /upload cancelled/);
+  assert.deepEqual(readdirSync(TMP).filter(name => name.startsWith('rcaas-upload-')), []);
+  assert.equal(await storage.exists('ast_cancelled'), false);
+  await storage.put('ast_cancelled', 'data.bin', Readable.from(['retry completed']));
+  assert.equal(await text(storage.get('ast_cancelled', 'data.bin')), 'retry completed');
+  assert.deepEqual(readdirSync(TMP).filter(name => name.startsWith('rcaas-upload-')), []);
+  await storage.remove('ast_cancelled');
+});
 
 test('put, stat, read (whole and a byte range), list across pages, and remove', async () => {
   assert.equal(storage.DRIVER, 's3');

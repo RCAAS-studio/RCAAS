@@ -1,5 +1,22 @@
 # Studio release readiness
 
+## Staging acceptance continuation — 17 November 2026
+
+**NOT READY** for production or live staging sign-off. See
+[STUDIO_STAGING_ACCEPTANCE.md](STUDIO_STAGING_ACCEPTANCE.md) for fresh results,
+cross-browser failures and exact owner actions, and [the Windows staging
+runbook](../../deploy/STAGING.md) for isolated deployment/provider/recovery steps.
+Fixed a reproduced failed-stream S3 temporary-file leak; added a guarded,
+staging-only storage acceptance CLI and cross-browser critical-test selection.
+No live infrastructure designation was supplied, so no provider calls or
+migrations were performed. Fresh unit/API totals: 289 passes, two skips; types
+and lint pass with six existing warnings; 12 component cases pass. Production
+build passes. Final critical matrix: **7 passes, 2 WebKit failures** (cookie
+reporting mismatch independently reproduced; capture draw timeout unresolved).
+Original scene and 38 capture files retain their hashes. Multi-browser acceptance is not wholly green; refer to the new
+report rather than treating the historical Chromium result below as universal.
+Marketing, renderer pins and client stores are preserved. No commit/push/deploy.
+
 ## Production-blocker remediation update — 17 November 2026
 
 Current recommendation remains **NOT READY for production**, pending external staging/provider, operational restore and physical-device acceptance. The historical security findings below are superseded by [STUDIO_PRODUCTION_BLOCKERS.md](STUDIO_PRODUCTION_BLOCKERS.md): Next 16.4.5 and React/React DOM 19.2.9 installed; npm root/server audits report zero advisories; the booking-engine DNS/rebinding and unbounded-body risks have code corrections and isolated regressions. Three.js remains 0.164.1 and XGRIDS is untouched. Current full suite: 86 client + 199 server passes, two server skips; 12 Studio component browser passes; types/lint pass with six existing warnings. New whole-store restore exercise passes. Final real-browser/build/integrity evidence is recorded in the blocker report, along with uncompleted cases and provider acceptance procedures. No live restore, DNS/deployment or notification occurred.

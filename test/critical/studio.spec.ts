@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import path from 'node:path';
 
 const runtime = JSON.parse(readFileSync(process.env.RCAAS_CRITICAL_CONFIG!, 'utf8'));
@@ -30,7 +30,7 @@ test('real website editing survives a failed save and keeps published content is
   await page.goto('/studio');
   await page.getByRole('button',{name:/New project/}).click();
   const creation=page.getByRole('dialog',{name:'New project'});
-  await creation.getByLabel('Project name').fill('Disposable website acceptance');
+  await creation.getByLabel('Project name').fill(`Disposable website ${randomUUID()}`);
   await creation.getByRole('button',{name:'Create empty project',exact:true}).click();
   await expect(page).toHaveURL(/\/studio\/[^/]+\/?$/);
   const project={id:new URL(page.url()).pathname.split('/').filter(Boolean).at(-1)!};

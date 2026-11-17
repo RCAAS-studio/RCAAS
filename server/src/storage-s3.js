@@ -123,13 +123,13 @@ export function createS3Driver(env = process.env) {
     async put(assetId, rel, readStream, contentType) {
       let file = typeof readStream.path === 'string' && !readStream.readableFlowing ? readStream.path : null;
       let spooled = null;
-      if (file) readStream.destroy(); // read again below, with its size known
-      else {
-        spooled = path.join(os.tmpdir(), `rcaas-upload-${randomUUID()}`);
-        await pipeline(readStream, createWriteStream(spooled));
-        file = spooled;
-      }
       try {
+        if (file) readStream.destroy(); // read again below, with its size known
+        else {
+          spooled = path.join(os.tmpdir(), `rcaas-upload-${randomUUID()}`);
+          await pipeline(readStream, createWriteStream(spooled));
+          file = spooled;
+        }
         const { size } = await fs.stat(file);
         await ok(await request('PUT', keyOf(assetId, rel), {
           headers: { 'content-length': size, 'content-type': contentType },
