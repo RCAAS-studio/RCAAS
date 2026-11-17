@@ -109,3 +109,36 @@ test('hierarchy search combines words across labels, types and locations without
   assert.equal(actions.matchesHierarchy('hall rooftop', 'Hall', 'Ground floor'), false);
   assert.equal(actions.matchesHierarchy('  ', undefined, ''), true);
 });
+
+test('copy refuses a failed destination read before mutation or PUT, and can retry safely', async t => {
+  const id = 'copy-failed-destination', calls = [];
+  let changed = false;
+  t.mock.method(globalThis, 'fetch', async (_url, options) => {
+    calls.push(options.method ?? 'GET');
+    return new Response('{"error":"Temporarily unavailable"}', { status: 503 });
+  });
+  await assert.rejects(actions.updateDestinationDraft(id, () => { changed = true; }), /could not be loaded/);
+  assert.equal(changed, false);
+  assert.deepEqual(calls, ['GET']);
+  const original = await fixture(t, id);
+  let sent;
+  t.mock.method(globalThis, 'fetch', async (_url, options) => {
+    sent = JSON.parse(options.body);
+    return new Response('{}', { headers: { 'X-Draft-Revision': 'copied' } });
+  });
+  await actions.updateDestinationDraft(id, () => doc.setHotspots(id, [...doc.hotspotsFor(id), { ...original.hotspots[0], id: 'copy', label: 'Copied' }]));
+  assert.equal(sent.hotspots.length, 2);
+  assert.deepEqual(sent.hotspots[0], original.hotspots[0]);
+  assert.deepEqual(sent.splat, original.splat);
+  assert.equal(doc.hasUnsavedChanges(id), false);
+});
+
+test('copy conflict preserves destination content and unsaved copied work', async t => {
+  const id = 'copy-conflict';
+  const original = await fixture(t, id);
+  t.mock.method(globalThis, 'fetch', async () => new Response('{"error":"Changed elsewhere"}', { status: 409 }));
+  await assert.rejects(actions.updateDestinationDraft(id, () => doc.setHotspots(id, [...doc.hotspotsFor(id), { ...original.hotspots[0], id: 'copy' }])), error => error.status === 409);
+  assert.deepEqual(doc.hotspotsFor(id)[0], original.hotspots[0]);
+  assert.equal(doc.hotspotsFor(id).length, 2);
+  assert.equal(doc.hasUnsavedChanges(id), true);
+});

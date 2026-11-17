@@ -2,6 +2,13 @@
 import { saveScene } from '../../lib/api';
 import { docLoaded, loadSceneDoc, markSaved, sceneDocFor } from '../scene/sceneDoc';
 
+/** Copy operations must establish the destination baseline before any local mutation. */
+export async function updateDestinationDraft(sceneId: string, change: () => void) {
+  await loadSceneDoc(sceneId, 'draft', { strict: true });
+  change();
+  return saveDraft(sceneId);
+}
+
 export async function saveDraft(sceneId: string) {
   if (!docLoaded(sceneId)) await loadSceneDoc(sceneId, 'draft', { strict: true });
   // Store setters mutate arrays/objects. Freeze the payload in time so edits

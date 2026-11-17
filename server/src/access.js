@@ -2,9 +2,9 @@
  * Who may work on what (2026-09-24 ownership, applied to spaces and assets
  * 2026-09-25). A space belongs to its project (`propertyId`); you can work on
  * it if you can see that project — its owner, a member, or an admin — or if
- * it's in no project (or its project was deleted). An asset is judged by the
- * spaces that use it; one no space uses yet (an upload in progress) is open
- * to whoever is signed in, as it always was.
+ * its owner when it is unfiled (including after project deletion). Asset
+ * access delegates to assetAccess.js; unreferenced uploads are private to
+ * their creator, not available to every signed-in account.
  */
 import { getProperty, getScene, propertyIsVisible } from './store.js';
 import { getUserById } from './usersStore.js';

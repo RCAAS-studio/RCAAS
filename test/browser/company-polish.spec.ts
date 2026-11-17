@@ -43,16 +43,15 @@ test('planner stays within the viewport and retains keyboard focus until closed'
   await expect(dialog).toHaveCount(0);
 });
 
-test('industry masonry fits the viewport and keeps audience descriptions complete', async ({ page }) => {
+test('industry filmstrip preserves discovery and fits the viewport', async ({ page }) => {
   await page.goto('./');
   const section = page.locator('#industries');
   await section.scrollIntoViewIfNeeded();
-  await expect(section.locator('a')).toHaveCount(11);
-  expect(await section.locator('.truncate').count()).toBe(0);
-  const columns = await section.locator('[class*="columns-1"]').evaluate(node => getComputedStyle(node).columnCount);
-  expect(Number(columns)).toBe(page.viewportSize()!.width >= 1280 ? 4 : 1);
-  const clipped = await section.locator('a').evaluateAll(nodes => nodes.some(node => node.scrollWidth > node.clientWidth + 1));
-  expect(clipped).toBe(false);
+  await expect(section.locator('[data-industry-link]')).toHaveCount(11);
+  await expect(section.getByRole('combobox', { name: 'Choose an industry' })).toHaveValue('0');
+  await section.getByRole('button', { name: 'Next industry', exact: true }).click();
+  await expect(section.getByRole('combobox', { name: 'Choose an industry' })).toHaveValue('1');
+  await expect(section.locator('[data-active="true"] h3')).toHaveText('Education');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

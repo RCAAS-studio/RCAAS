@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { SCENE_BY_ID } from "../../scene/scenes";
 import { loadTracks } from "../../scene/viewpoints";
-import { saveDraft } from "../draftActions";
+import { saveDraft, updateDestinationDraft } from "../draftActions";
 import { DraftRecovery } from "../DraftRecovery";
-import { hotspotsFor, sceneDocFor, loadSceneDoc, markSaved, hasUnsavedChanges, setHotspots, copyHotspotId } from "../../scene/sceneDoc";
-import { saveScene, ApiError } from "../../../lib/api";
+import { hotspotsFor, sceneDocFor, hasUnsavedChanges, setHotspots, copyHotspotId } from "../../scene/sceneDoc";
+import { ApiError } from "../../../lib/api";
 import { HotspotIcon } from "../../hotspots/HotspotIcon";
 
 /**
@@ -34,14 +34,12 @@ export function CopyToSpaces({ sceneId, propertyId, onClose }: { sceneId: string
     let n = 0;
     try {
       for (const target of to) {
-        await loadSceneDoc(target); // its saved draft first, so nothing of its own is lost
-        const newHs = hotspots.filter((h) => pickHs.has(h.id)).map((h) => ({ ...structuredClone(h), id: copyHotspotId(target) }));
-        setHotspots(target, [...hotspotsFor(target), ...newHs]);
-        const newTr = tracks.filter((t) => pickTr.has(t.id)).map((t) => ({ ...structuredClone(t), id: `${t.id}-${target}-${Date.now().toString(36)}` }));
-        if (newTr.length) loadTracks(target, [...sceneDocFor(target).tracks, ...newTr], { replace: true });
-        const sent = structuredClone(sceneDocFor(target));
-        await saveScene(target, sent);
-        markSaved(target, sent);
+        await updateDestinationDraft(target, () => {
+          const newHs = hotspots.filter((h) => pickHs.has(h.id)).map((h) => ({ ...structuredClone(h), id: copyHotspotId(target) }));
+          setHotspots(target, [...hotspotsFor(target), ...newHs]);
+          const newTr = tracks.filter((t) => pickTr.has(t.id)).map((t) => ({ ...structuredClone(t), id: `${t.id}-${target}-${Date.now().toString(36)}` }));
+          if (newTr.length) loadTracks(target, [...sceneDocFor(target).tracks, ...newTr], { replace: true });
+        });
         n += 1;
       }
       setDone(`Copied into ${n} space${n === 1 ? '' : 's'} and saved their drafts. Open each to check the spots, then publish.`);

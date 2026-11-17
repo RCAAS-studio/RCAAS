@@ -1,15 +1,13 @@
 import { serialized } from './writeQueue.js';
 /**
- * File-backed scene store. CLAUDE.md's actual plan is Django + DRF + Postgres;
- * this Node service is the pre-database stand-in, so the storage layer is
- * isolated behind this one module — swapping in Postgres later means
- * rewriting this file, not the routes that call it.
+ * File-backed scene/project store used by the Express API. PostgreSQL, when
+ * configured, currently stores accounts only; project and scene documents
+ * remain under DATA_DIR. Changing that boundary requires a migration.
  *
  * One JSON file per scene under data/scenes/<id>.json, each already shaped to
  * the CLAUDE.md scene schema (splat + spawn + camera + waypoints + hotspots +
- * tracks + theme + neighbours). Splat binaries themselves stay out of this
- * service entirely — they're served as static files (Next's /public today,
- * S3 + CDN later, per CLAUDE.md's storage plan).
+ * tracks + theme + neighbours). Assets use the separate local/S3 driver and
+ * authorized asset routes; enabling S3 does not make document storage stateless.
  */
 import { promises as fs } from 'fs';
 import path from 'path';

@@ -22,6 +22,7 @@ docs/*
 !docs/TECHNICAL_SEO_AUDIT.md
 !docs/RCAAS_WEBSITE_SIX_TASK_COMPLETION.md
 !docs/design/
+!docs/studio/
 
 # zed
 .zed/
