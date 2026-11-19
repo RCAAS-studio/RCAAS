@@ -44,8 +44,14 @@ export function originAllowed(origin, hostname, dev = false) {
   let url;
   try { url = new URL(origin); } catch { return false; }
   if (hostname && url.hostname === String(hostname).toLowerCase()) return true;
-  if (!multi()) return false;
-  if (origin === originOf(process.env.STUDIO_URL) || origin === originOf(process.env.TOURS_URL)) return true;
+ // Allow configured Studio and Tours origins independently.
+if (
+  origin === originOf(process.env.STUDIO_URL) ||
+  origin === originOf(process.env.TOURS_URL)
+) return true;
+
+// Client-specific websites require full multi-host configuration.
+if (!multi()) return false;
   const sites = sitesDomain(), main = new URL(mainUrl());
   if (url.protocol !== main.protocol || !url.hostname.endsWith(`.${sites}`)) return false;
   return LABEL.test(url.hostname.slice(0, -sites.length - 1));

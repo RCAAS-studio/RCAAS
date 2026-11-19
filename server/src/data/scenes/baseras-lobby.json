@@ -1,0 +1,55 @@
+{
+  "id": "baseras-lobby",
+  "version": 2,
+  "propertyId": "baseras",
+  "title": "Lobby",
+  "splat": {
+    "format": "lcc2",
+    "variants": {
+      "high": {
+        "assetId": "ast_3f0e06abad88",
+        "meta": "Basera Boutique Hotel/BBH_Lobby.lcc2",
+        "bytes": 115593818
+      }
+    }
+  },
+  "transform": {
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": 1
+  },
+  "unitScale": 1,
+  "spawn": {
+    "position": [
+      0,
+      1.7,
+      3
+    ],
+    "yaw": 0,
+    "eyeHeight": 1.65
+  },
+  "camera": {
+    "fov": 60,
+    "near": 0.25,
+    "far": 300,
+    "mode": "viewpoint"
+  },
+  "viewpoints": [],
+  "hotspots": [],
+  "tracks": [],
+  "audio": null,
+  "cta": null,
+  "theme": null,
+  "booking": null,
+  "neighbours": [],
+  "status": "draft",
+  "ownerId": "1a54e8fc-7b15-43fa-959f-b008afee3d46"
+}

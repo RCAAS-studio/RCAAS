@@ -1,0 +1,23 @@
+{
+  "ownerId": "1a54e8fc-7b15-43fa-959f-b008afee3d46",
+  "members": [],
+  "staff": [],
+  "status": "in-progress",
+  "id": "baseras",
+  "version": 1,
+  "title": "Baseras",
+  "createdAt": "2026-11-19T10:25:39.726Z",
+  "kind": "hotel",
+  "features": {
+    "enquiries": true,
+    "reservations": true,
+    "website": true,
+    "report": true,
+    "activity": true
+  },
+  "theme": {
+    "accent": "#d6b97d",
+    "font": "poppins",
+    "logo": "brand_baseras/logo.jpg?v=1795083940687"
+  }
+}
